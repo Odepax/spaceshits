@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<title>2D Movement</title>
+		<style>
+			* {
+				box-sizing: border-box;
+				margin: 0;
+				padding: 0;
+				font-family: "Source Sans Pro", "Open Sans", "Arial", "Helvetica", sans-serif;
+				font-size: 13pt;
+			}
+
+			body {
+				background: black;
+				overflow: hidden;
+				color: white;
+
+				-webkit-transform: translateZ(0);
+				-moz-transform: translateZ(0);
+				-ms-transform: translateZ(0);
+				-o-transform: translateZ(0);
+				transform: translateZ(0);
+			}
+
+			canvas {
+				cursor: crosshair;
+				z-index: 0;
+			}
+
+			@keyframes modal {
+				from {
+					margin-bottom: -40pt;
+					opacity: 0;
+				}
+				to {
+					margin-top: 0;
+					opacity: 1;
+				}
+			}
+			.modal {
+				padding: 10pt 12pt;
+			}
+			.modal.in {
+				animation: modal 1s ease-in-out;
+			}
+			.modal.out {
+				animation: modal 1s ease-in-out;
+				animation-direction: reverse;
+				opacity: 0;
+			}
+			.modal footer {
+				margin-top: 10pt;
+				text-align: right;
+			}
+
+			#popup-zone {
+				position: fixed;
+				top: 0;
+				right: 0;
+				bottom: 0;
+				left: 0;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				z-index: -1;
+			}
+			#popup-zone.active {
+				z-index: 1;
+			}
+			#popup-zone .modal {
+				max-width: 400pt;
+			}
+
+			#announcement-zone {
+				position: fixed;
+				right: 0;
+				bottom: 0;
+				left: 0;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				max-width: 400pt;
+				margin: 0 auto;
+				z-index: -1;
+			}
+			#announcement-zone .modal {
+				margin-bottom: 20pt;
+			}
+
+			button {
+				padding: 5pt 7pt;
+				margin-left: 10pt;
+				background: rgba(255, 255, 255, .9);
+				color: black;
+				border: none;
+				cursor: pointer;
+			}
+
+			button:hover, button:focus {
+				background: white;
+			}
+		</style>
+	</head>
+	<body>
+		<canvas id="canvas" tabindex="1"></canvas>
+		<section id="popup-zone"></section>
+		<section id="announcement-zone"></section>
+		<button
+			style="position: fixed; top: 0; right: 0;"
+			onclick="world.isRunning ? world.freeze() : world.run()"
+		>PLAY / PAUSE</button>
+		<script>
+			const DEBUG = location.search.includes("debug=true")
+
+			const canvas = document.getElementById("canvas")
+
+			window.addEventListener("resize", () => {
+				canvas.width = window.innerWidth
+				canvas.height = window.innerHeight 
+			}, false)
+
+			window.dispatchEvent(new Event("resize"))
+
+			const blockingMessageZone = document.getElementById("popup-zone")
+			const nonBlockingMessageZone = document.getElementById("announcement-zone")
+		</script>
+		<script src="app.js"></script>
+	</body>
+</html>
