@@ -76,6 +76,18 @@ const Color = {
  * @typedef {Number} Angle
  * @description The implementation must ensure the value is always between [ -PI, PI ].
  */
+const Angle = {
+	/**
+	 * @param {Angle} angle
+	 * @return {Angle}
+	 */
+	normalize(angle) {
+		while (angle > +PI) angle -= 2 * PI
+		while (angle < -PI) angle += 2 * PI
+		
+		return angle
+	}
+}
 
 /**
  * @param {Transform} transform
