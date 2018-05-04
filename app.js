@@ -90,19 +90,6 @@ const Angle = {
 }
 
 /**
- * @param {Transform} transform
- */
-CanvasRenderingContext2D.prototype.applyTransform = function applyTransform(transform, rotate = true) {
-	this.translate(transform.x, transform.y)
-	
-	rotate && this.rotate(transform.a)
-}
-
-CanvasRenderingContext2D.prototype.resetTransform = function resetTransform() {
-	this.setTransform(1, 0, 0, 1, 0, 0)
-}
-
-/**
  * @interface WorldObject
  * 
  * @method update

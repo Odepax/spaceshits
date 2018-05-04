@@ -29,66 +29,6 @@
 				z-index: 0;
 			}
 
-			@keyframes modal {
-				from {
-					margin-bottom: -40pt;
-					opacity: 0;
-				}
-				to {
-					margin-top: 0;
-					opacity: 1;
-				}
-			}
-			.modal {
-				padding: 10pt 12pt;
-			}
-			.modal.in {
-				animation: modal 1s ease-in-out;
-			}
-			.modal.out {
-				animation: modal 1s ease-in-out;
-				animation-direction: reverse;
-				opacity: 0;
-			}
-			.modal footer {
-				margin-top: 10pt;
-				text-align: right;
-			}
-
-			#popup-zone {
-				position: fixed;
-				top: 0;
-				right: 0;
-				bottom: 0;
-				left: 0;
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				z-index: -1;
-			}
-			#popup-zone.active {
-				z-index: 1;
-			}
-			#popup-zone .modal {
-				max-width: 400pt;
-			}
-
-			#announcement-zone {
-				position: fixed;
-				right: 0;
-				bottom: 0;
-				left: 0;
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				max-width: 400pt;
-				margin: 0 auto;
-				z-index: -1;
-			}
-			#announcement-zone .modal {
-				margin-bottom: 20pt;
-			}
-
 			button {
 				padding: 5pt 7pt;
 				margin-left: 10pt;
@@ -105,15 +45,12 @@
 	</head>
 	<body>
 		<canvas id="canvas" tabindex="1"></canvas>
-		<section id="popup-zone"></section>
-		<section id="announcement-zone"></section>
 		<button
 			style="position: fixed; top: 0; right: 0;"
 			onclick="world.isRunning ? world.freeze() : world.run()"
 		>PLAY / PAUSE</button>
 		<script>
 			const DEBUG = location.search.includes("debug=true")
-
 			const canvas = document.getElementById("canvas")
 
 			window.addEventListener("resize", () => {
@@ -122,9 +59,24 @@
 			}, false)
 
 			window.dispatchEvent(new Event("resize"))
+		</script>
+		<script>
+			/**
+			 * @param {Object} transform
+			 * @param {Number} transform.x
+			 * @param {Number} transform.y
+			 * @param {Number} transform.a
+			 * @param {Boolean} rotate
+			 */
+			CanvasRenderingContext2D.prototype.applyTransform = function applyTransform(transform, rotate = true) {
+				this.translate(transform.x, transform.y)
 
-			const blockingMessageZone = document.getElementById("popup-zone")
-			const nonBlockingMessageZone = document.getElementById("announcement-zone")
+				rotate && this.rotate(transform.a)
+			}
+
+			CanvasRenderingContext2D.prototype.resetTransform = function resetTransform() {
+				this.setTransform(1, 0, 0, 1, 0, 0)
+			}
 		</script>
 		<script src="app.js"></script>
 	</body>
