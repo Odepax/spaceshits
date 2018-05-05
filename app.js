@@ -648,6 +648,8 @@ class RepeatedAction {
 	}
 }
 
+// -----------------------------------------------------------------
+
 class Force {
 	/**
 	 * @param {Distance} x
@@ -672,7 +674,14 @@ class Force {
 }
 
 class Friction {
-	constructor() {
+	/**
+	 * @param {Distance} [movementResistanceFactor = 0.05]
+	 * @param {Anlge} [rotationResistanceFactor = 2 * PI]
+	 */
+	constructor(movementResistanceFactor = 0.05, rotationResistanceFactor = 2 * PI) {
+		this.movementResistanceFactor = movementResistanceFactor
+		this.rotationResistanceFactor = rotationResistanceFactor
+
 		this.x = 0
 		this.y = 0
 		this.a = 0
@@ -693,9 +702,9 @@ class Friction {
 	 * @param {World} world
 	 */
 	updateFrom(speed, world) {
-		this.x = speed.x * speed.x * world.timeEnlapsed
-		this.y = speed.y * speed.y * world.timeEnlapsed
-		this.a = speed.a * speed.a * world.timeEnlapsed
+		this.x = this.movementResistanceFactor * speed.x * speed.x
+		this.y = this.movementResistanceFactor * speed.y * speed.y
+		this.a = this.rotationResistanceFactor * speed.a * speed.a
 	}
 }
 
@@ -1659,9 +1668,7 @@ class DartShip extends Ship {
 			transform,
 			targetTransform,
 			movementAcceleration: 130,
-			movementSpeed: 140,
 			rotationAcceleration: 2,
-			rotationSpeed: 2,
 			color,
 			health: 100,
 			healthRegeneration: 0,
@@ -1705,10 +1712,8 @@ class SiegeShip extends Ship {
 		super({
 			transform,
 			targetTransform,
-			movementAcceleration: 130,
-			movementSpeed: 140,
-			rotationAcceleration: 2,
-			rotationSpeed: 2,
+			movementAcceleration: 50,
+			rotationAcceleration: 0.5,
 			color,
 			health: 100,
 			healthRegeneration: 0,
