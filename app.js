@@ -31,6 +31,8 @@ function randBetween() {
 	return arguments[parseInt(Math.random() * arguments.length)]
 }
 
+// -----------------------------------------------------------------
+
 /**
  * @typedef {String} Color
  */
@@ -331,6 +333,8 @@ class Transform {
 		return this
 	}
 }
+
+// -----------------------------------------------------------------
 
 /**
  * @interface WorldObject
@@ -644,68 +648,54 @@ class RepeatedAction {
 	}
 }
 
-/**
- * @implements {WorldObject}
- */
 class Force {
-	/**
-	 * @param {Force} other
-	 * @param {Distance} addX
-	 * @param {Distance} addY
-	 * @param {Angle} [addA]
-	 * @return {Force}
-     */
-	static cloneFromBase(other, addX, addY, addA = 0) {
-		return new Force(other.x + addX, other.y + addY, other.a + addA)
-	}
-
 	/**
 	 * @param {Distance} x
 	 * @param {Distance} y
-	 * @param {Angle} [a]
+	 * @param {Angle} [a = 0]
 	 */
 	constructor(x, y, a = 0) {
 		this.x = x
 		this.y = y
 		this.a = a
-		
-		this.subjects = new Set()
-	}
-
-	update(world) {
-		for (const subject of this.subjects) {
-			subject.x += this.x * world.timeEnlapsed
-			subject.y += this.y * world.timeEnlapsed
-			subject.a += this.a * world.timeEnlapsed
-		}
 	}
 
 	/**
 	 * @param {Transform | Force} subject
+	 * @param {World} world
 	 */
-	applyTo(subject) {
-		this.subjects.add(subject)
-	}
-
-	/**
-	 * @param {Transform | Force} subject
-	 */
-	release(subject) {
-		this.subjects.delete(subject)
-	}
-
-	releaseAll() {
-		this.subjects.clear()
+	drive(subject, world) {
+		subject.x += this.x * world.timeEnlapsed
+		subject.y += this.y * world.timeEnlapsed
+		subject.a += this.a * world.timeEnlapsed
 	}
 }
 
-class Friction extends Force {
-	update(world) {
-		for (const subject of this.subjects) {
-			subject.x = abs(subject.x) < 0.001 ? 0 : subject.x - sign(subject.x) * min(abs(this.x), abs(subject.x)) * world.timeEnlapsed
-			subject.y = abs(subject.y) < 0.001 ? 0 : subject.y - sign(subject.y) * min(abs(this.y), abs(subject.y)) * world.timeEnlapsed
-			subject.a = abs(subject.a) < 0.001 ? 0 : subject.a - sign(subject.a) * min(abs(this.a), abs(subject.a)) * world.timeEnlapsed
-		}
+class Friction {
+	constructor() {
+		this.x = 0
+		this.y = 0
+		this.a = 0
+	}
+
+	/**
+	 * @param {Transform | Force} subject
+	 * @param {World} world
+	 */
+	drive(subject, world) {
+		subject.x = abs(subject.x) < 0.001 ? 0 : subject.x - sign(subject.x) * min(abs(this.x), abs(subject.x)) * world.timeEnlapsed
+		subject.y = abs(subject.y) < 0.001 ? 0 : subject.y - sign(subject.y) * min(abs(this.y), abs(subject.y)) * world.timeEnlapsed
+		subject.a = abs(subject.a) < 0.001 ? 0 : subject.a - sign(subject.a) * min(abs(this.a), abs(subject.a)) * world.timeEnlapsed
+	}
+
+	/**
+	 * @param {Force} speed
+	 * @param {World} world
+	 */
+	updateFrom(speed, world) {
+		this.x = speed.x * speed.x * world.timeEnlapsed
+		this.y = speed.y * speed.y * world.timeEnlapsed
+		this.a = speed.a * speed.a * world.timeEnlapsed
 	}
 }
 
@@ -819,22 +809,15 @@ Turret.Bullet = class Bullet {
 	 */
 	constructor({ transform, speed, baseSpeed, size, lifeTime }) {
 		this.transform = transform
-		this.speed = Force.cloneFromBase(baseSpeed, speed * cos(this.transform.a), speed * sin(this.transform.a))
+		this.speed = new Force(
+			baseSpeed.x + speed * cos(this.transform.a),
+			baseSpeed.y + speed * sin(this.transform.a),
+			baseSpeed.a
+		)
+
 		this.size = size
 		this.remainingLifeTime = lifeTime
 		this.lifeTime = lifeTime
-	}
-
-	beforeAdd(world) {
-		this.speed.applyTo(this.transform)
-
-		world.add(this.speed)
-	}
-
-	afterDelete(world) {
-		this.speed.releaseAll()
-
-		world.delete(this.speed)
 	}
 	
 	mustBeDeleted(world) {
@@ -842,6 +825,8 @@ Turret.Bullet = class Bullet {
 	}
 	
 	update(world) {
+		this.speed.drive(this.transform, world)
+
 		world.graphics.applyTransform(this.transform)
 		
 		this.draw(world)
@@ -1415,9 +1400,13 @@ class LOML {
  */
 LOML.Missile = class Missile {
 	constructor({ transform, targetTransform, baseSpeed, movementAcceleration, movementSpeed, rotationAcceleration, rotationSpeed }) {
-		this.friction = new Friction(0, 0, 0)
+		this.friction = new Friction()
 		this.acceleration = new Force(0, 0, 0)
-		this.speed = Force.cloneFromBase(baseSpeed, 100 * cos(transform.a), 100 * sin(transform.a))
+		this.speed = new Force(
+			baseSpeed.x + 100 * cos(transform.a),
+			baseSpeed.y + 100 * sin(transform.a),
+			baseSpeed.a
+		)
 
 		this.transform = transform
 		this.targetTransform = targetTransform
@@ -1431,26 +1420,6 @@ LOML.Missile = class Missile {
 		this.remainingLifeTime = 7
 		this.lifeTime = 7
 	}
-	
-	beforeAdd(world) {
-		this.friction.applyTo(this.speed)
-		this.acceleration.applyTo(this.speed)
-		this.speed.applyTo(this.transform)
-		
-		world.add(this.friction)
-		world.add(this.acceleration)
-		world.add(this.speed)
-	}
-
-	afterDelete(world) {
-		this.friction.releaseAll()
-		this.acceleration.releaseAll()
-		this.speed.releaseAll()
-
-		world.delete(this.speed)
-		world.delete(this.acceleration)
-		world.delete(this.friction)
-	}
 
 	mustBeDeleted(world) {
 		return (this.remainingLifeTime -= world.timeEnlapsed) < 0
@@ -1461,9 +1430,12 @@ LOML.Missile = class Missile {
 		this.acceleration.y = this.movementAcceleration * sin(this.transform.a)
 		this.acceleration.a = this.rotationAcceleration * sign(this.transform.optimalAngleToward(this.targetTransform))
 		
-		this.friction.x = this.speed.x * this.movementAcceleration / this.movementSpeed
-		this.friction.y = this.speed.y * this.movementAcceleration / this.movementSpeed
-		this.friction.a = this.speed.a * this.rotationAcceleration / this.rotationSpeed
+		this.acceleration.drive(this.speed, world)
+
+		this.friction.updateFrom(this.speed, world)
+		this.friction.drive(this.speed, world)
+		
+		this.speed.drive(this.transform, world)
 
 		world.graphics.applyTransform(this.transform)
 		
@@ -1583,7 +1555,7 @@ class Ship {
 	 * @param {LOMLSlot[]} options.lomlSlots
 	 */
 	constructor({ transform, targetTransform, movementAcceleration, movementSpeed, rotationAcceleration, rotationSpeed, color, health, healthRegeneration, turretSlots, lomlSlots }) {
-		this.friction = new Friction(0, 0, 0)
+		this.friction = new Friction()
 		this.acceleration = new Force(0, 0, 0)
 		this.speed = new Force(0, 0, 0)
 
@@ -1606,16 +1578,6 @@ class Ship {
 		this.isFiring = false
 	}
 	
-	beforeAdd(world) {
-		this.friction.applyTo(this.speed)
-		this.acceleration.applyTo(this.speed)
-		this.speed.applyTo(this.transform)
-		
-		world.add(this.friction)
-		world.add(this.acceleration)
-		world.add(this.speed)
-	}
-	
 	afterAdd(world) {
 		world.add(this.core)
 
@@ -1624,14 +1586,6 @@ class Ship {
 	}
 
 	afterDelete(world) {
-		this.friction.releaseAll()
-		this.acceleration.releaseAll()
-		this.speed.releaseAll()
-
-		world.delete(this.speed)
-		world.delete(this.acceleration)
-		world.delete(this.friction)
-
 		for (const slot of this.turretSlots) slot.turret && world.delete(slot.turret)
 		for (const slot of this.lomlSlots) slot.loml && world.delete(slot.loml)
 
@@ -1660,9 +1614,12 @@ class Ship {
 			this.acceleration.y = -this.movementAcceleration * sin(this.transform.a)
 		}
 
-		this.friction.x = this.speed.x * this.movementAcceleration / this.movementSpeed
-		this.friction.y = this.speed.y * this.movementAcceleration / this.movementSpeed
-		this.friction.a = this.speed.a * this.rotationAcceleration / this.rotationSpeed
+		this.acceleration.drive(this.speed, world)
+		
+		this.friction.updateFrom(this.speed, world)
+		this.friction.drive(this.speed, world)
+
+		this.speed.drive(this.transform, world)
 
 		this.core.transform.offset(0, 0, this.transform)
 
