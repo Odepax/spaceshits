@@ -1,6 +1,6 @@
-let logCount = 500
+let _logCount = 500
 function log() {
-	if (--logCount > 0) {
+	if (--_logCount > 0) {
 		console.log(...arguments)
 	}
 }
@@ -63,11 +63,11 @@ const Color = {
 /**
  * @interface Position
  *
- * @property {DistanceValue} x
+ * @property {Distance} x
  * @memberOf Position
  * @required
  * 
- * @property {DistanceValue} y
+ * @property {Distance} y
  * @memberOf Position
  * @required
  */
@@ -86,6 +86,249 @@ const Angle = {
 		while (angle < -PI) angle += 2 * PI
 		
 		return angle
+	},
+
+	/**
+	 * @param {Angle} base
+	 * @param {Angle} target
+	 * @return {Angle}
+	 */
+	optimalAngleBetween(base, target) {
+		return Angle.normalize(target - base)
+	},
+
+	/**
+	 * @param {Angle} base
+	 * @param {Angle} target
+	 * @return {Angle} Always negative.
+	 */
+	leftAngleBetween(base, target) {
+		const distance = this.optimalAngleBetween(base, target)
+
+		return distance > 0 ? distance - 2 * PI : distance
+	},
+
+	/**
+	 * @param {Angle} base
+	 * @param {Angle} target
+	 * @return {Angle} Always positive.
+	 */
+	rightAngleBetween(base, target) {
+		const distance = this.optimalAngleBetween(base, target)
+
+		return distance < 0 ? distance + 2 * PI : distance
+	}
+}
+
+/**
+ * @interface Rotation
+ *
+ * @property {Angle} a
+ * @memberOf Rotation
+ * @required
+ */
+
+/**
+ * @implements {Position}
+ * @implements {Rotation}
+ */
+class Transform {
+	/**
+	 * @param {Distance} x
+	 * @param {Distance} y
+	 * @param {Angle} [a]
+	 */
+	constructor(x, y, a = 0) {
+		this.x = x
+		this.y = y
+		this.a = a
+	}
+
+	get a() {
+		return this._a
+	}
+
+	set a(value) {
+		this._a = Angle.normalize(value)
+	}
+
+	/**
+	 * @param {Position} target
+	 * @return {Distance}
+	 */
+	distanceToward(target) {
+		const x = this.x - target.x
+		const y = this.y - target.y
+
+		return sqrt(x * x + y * y)
+	}
+
+	/**
+	 * @param {Position} target
+	 * @return {Angle}
+	 */
+	angleToward(target) {
+		return atan2(target.y - this.y, target.x - this.x)
+	}
+
+	/**
+	 * @param {Angle} angle
+	 * @return {Angle}
+	 */
+	optimalAngleTo(angle) {
+		return Angle.optimalAngleBetween(this.a, angle)
+	}
+
+	/**
+	 * @param {Angle} angle
+	 * @return {Angle} Always negative.
+	 */
+	leftAngleTo(angle) {
+		return Angle.leftAngleBetween(this.a, angle)
+	}
+
+	/**
+	 * @param {Angle} angle
+	 * @return {Angle} Always positive.
+	 */
+	rightAngleTo(angle) {
+		return Angle.rightAngleBetween(this.a, angle)
+	}
+
+	/**
+	 * @param {Position} target
+	 * @return {Angle}
+	 */
+	optimalAngleToward(target) {
+		return this.optimalAngleTo(this.angleToward(target))
+	}
+
+	/**
+	 * @param {Position} target
+	 * @return {Angle} Always negative.
+	 */
+	leftAngleToward(target) {
+		const distance = this.optimalAngleToward(target)
+
+		return distance > 0 ? distance - 2 * PI : distance
+	}
+
+	/**
+	 * @param {Position} target
+	 * @return {Angle} Always positive.
+	 */
+	rightAngleToward(target) {
+		const distance = this.optimalAngleToward(target)
+
+		return distance < 0 ? distance + 2 * PI : distance
+	}
+
+	/**
+	 * @return {Transform} A new object.
+	 */
+	clone() {
+		return new Transform(this.x, this.y, this.a)
+	}
+
+	/**
+	 * @param {Distance} offsetX
+	 * @param {Distance} offsetY
+	 * @param {Transform} [base = this]
+	 * @return {Transform} This object.
+	 */
+	offset(offsetX, offsetY, base = this) {
+		this.x = base.x + offsetX
+		this.y = base.y + offsetY
+
+		return this
+	}
+
+	/**
+	 * @param {Distance} offsetX
+	 * @param {Distance} offsetY
+	 * @param {Transform} [base = this]
+	 * @return {Transform} This object.
+	 */
+	relativeOffset(offsetX, offsetY, base = this) {
+		this.x = base.x + cos(base.a) * offsetX - sin(base.a) * offsetY
+		this.y = base.y + sin(base.a) * offsetX + cos(base.a) * offsetY
+
+		return this
+	}
+
+	/**
+	 * @param {Angle} angle
+	 * @param {Distance} distance
+	 * @param {Transform} [base = this]
+	 * @return {Transform} This object.
+	 */
+	angularOffset(angle, distance, base = this) {
+		this.x = base.x + cos(angle) * distance
+		this.y = base.y + sin(angle) * distance
+
+		return this
+	}
+
+	/**
+	 * @param {Angle} angle
+	 * @param {Distance} distance
+	 * @param {Transform} [base = this]
+	 * @return {Transform} This object.
+	 */
+	relativeAngularOffset(angle, distance, base = this) {
+		this.x = base.x + cos(base.a + angle) * distance
+		this.y = base.y + sin(base.a + angle) * distance
+
+		return this
+	}
+
+	/**
+	 * @param {Angle} angle
+	 * @return {Transform} This object.
+	 */
+	rotateLike(angle) {
+		this.a = angle
+
+		return this
+	}
+
+	/**
+	 * @param {Angle} angle
+	 * @return {Transform} This object.
+	 */
+	rotateBy(angle) {
+		this.a += angle
+
+		return this
+	}
+
+	/**
+	 * @param {Position} target
+	 * @return {Transform} This object.
+	 */
+	rotateToward(target) {
+		this.a = this.angleToward(target)
+
+		return this
+	}
+
+	/**
+	 * @param {Angle} leftBound
+	 * @param {Angle} rightBound
+	 * @param {Transform} This object.
+	 */
+	constrainAngleIn(leftBound, rightBound) {
+		const arcSize = Angle.rightAngleBetween(leftBound, rightBound)
+		const relativeAngle = Angle.rightAngleBetween(leftBound, this.a)
+
+		if (relativeAngle > arcSize) {
+			const distancetoLeftBound = 2 * PI - relativeAngle
+			const distanceToRightBound = abs(this.optimalAngleTo(rightBound))
+
+			this.a = distancetoLeftBound < distanceToRightBound ? leftBound : rightBound
+		}
+
+		return this
 	}
 }
 
@@ -124,9 +367,6 @@ const Angle = {
  * @param {World} world
  */
 
-/**
- * @implements {WorldObject}
- */
 class Input {
 	/**
 	 * @param {HTMLElement} observedElement
@@ -405,246 +645,6 @@ class RepeatedAction {
 }
 
 /**
- * @implements {Position}
- * @implements {AngleObject}
- */
-class Transform {
-	/**
-	 * @param {Angle} angle
-	 * @return {AngleValue}
-	 */
-	static normalizedAngle(angle) {
-		if (typeof angle == "object") {
-			angle = angle.a
-		}
-
-		while (angle > +PI) angle -= 2 * PI
-		while (angle < -PI) angle += 2 * PI
-		
-		return angle
-	}
-
-	/**
-	 * @param {Position} one
-	 * @param {Position} two
-	 * @return {Distance}
-	 */
-	static distanceBetween(one, two) {
-		const x = one.x - two.x
-		const y = one.y - two.y
-
-		return sqrt(x * x + y * y)
-	}
-
-	/**
-	 * @param {Angle} base
-	 * @param {Angle} target
-	 * @return {AngleValue}
-	 */
-	static optimalAngleBetween(base, target) {
-		let distance = (typeof target == "object" ? target.a : target) - (typeof base == "object" ? base.a : base)
-
-		return Transform.normalizedAngle(distance)
-	}
-
-	/**
-	 * @param {Angle} base
-	 * @param {Angle} target
-	 * @return {AngleValue} Always negative.
-	 */
-	static leftAngleBetween(base, target) {
-		const distance = Transform.optimalAngleBetween(base, target)
-
-		return distance > 0 ? distance - 2 * PI : distance
-	}
-
-	/**
-	 * @param {Angle} base
-	 * @param {Angle} target
-	 * @return {AngleValue} Always positive.
-	 */
-	static rightAngleBetween(base, target) {
-		const distance = Transform.optimalAngleBetween(base, target)
-
-		return distance < 0 ? distance + 2 * PI : distance
-	}
-	
-	/**
-	 * @param {Position} base
-	 * @param {Position} target
-	 * @return {AngleValue}
-	 */
-	static angleTo(base, target) {
-		return atan2(target.y - base.y, target.x - base.x)
-	}
-
-	/**
-	 * @param {Transform} other
-	 * @return {Transform}
-	 */
-	static clone(other) {
-		return new Transform(other.x, other.y, other.a)
-	}
-
-	/**
-	 * @param {Transform} other
-	 * @param {Distance} offsetX
-	 * @param {Distance} offsetY
-	 * @param {Angle} [offsetA]
-	 * @return {Transform}
-     */
-	static cloneWithOffset(other, offsetX, offsetY, offsetA = 0) {
-		return new Transform(other.x + offsetX, other.y + offsetY, other.a + (typeof offsetA == "object" ? offsetA.a : offsetA))
-	}
-
-	/**
-	 * @param {Transform} other
-	 * @param {Angle} angle
-	 * @param {Distance} distance
-	 * @param {Boolean} [rotate]
-	 * @return {Transform}
-	 */
-	static cloneWithAngularOffset(other, angle, distance, rotate = true) {
-		if (typeof angle == "object") {
-			angle = angle.a
-		}
-
-		return new Transform(other.x + distance * cos(angle), other.y + distance * sin(angle), rotate ? angle : other.a)
-	}
-
-	/**
-	 * @param {Position} one
-	 * @param {Position} two
-	 * @return {Transform}
-	 */
-	static middle(one, two) {
-		return new Transform((one.x + two.x) / 2, (one.y + two.y) / 2)
-	}
-
-	/**
-	 * @param {Distance} x
-	 * @param {Distance} y
-	 * @param {AngleValue} [a]
-	 */
-	constructor(x, y, a = 0) {
-		this.x = x
-		this.y = y
-		this.a = a
-	}
-	
-	get a() {
-		this._a = Transform.normalizedAngle(this._a)
-
-		return this._a
-	}
-	
-	set a(value) {
-		this._a = value
-	}
-}
-
-const TransformUpdate = {
-	/**
-	 * @param {Position} subject Is modified.
-	 * @param {Position} model
-	 * @param {Distance} offsetX
-	 * @param {Distance} offsetY
-	 */
-	offset(subject, model, offsetX, offsetY) {
-		subject.x = model.x + offsetX
-		subject.y = model.y + offsetY
-	},
-
-	/**
-	 * @param {Position} subject Is modified.
-	 * @param {Position} model
-	 * @param {Angle} angle
-	 * @param {Distance} distance
-	 */
-	angularOffset(subject, model, angle, distance) {
-		if (typeof angle == "object") {
-			angle = angle.a
-		}
-
-		subject.x = model.x + cos(angle) * distance
-		subject.y = model.y + sin(angle) * distance
-	},
-
-	/**
-	 * @param {Position} subject Is modified.
-	 * @param {Transform} model
-	 * @param {Distance} offsetX
-	 * @param {Distance} offsetY
-	 */
-	relativeOffset(subject, model, offsetX, offsetY) {
-		subject.x = model.x + cos(model.a) * offsetX - sin(model.a) * offsetY
-		subject.y = model.y + sin(model.a) * offsetX + cos(model.a) * offsetY
-	},
-
-	/**
-	 * @param {Position} subject Is modified.
-	 * @param {Transform} model
-	 * @param {Angle} angle
-	 * @param {Distance} distance
-	 */
-	relativeAngularOffset(subject, model, angle, distance) {
-		if (typeof angle == "object") {
-			angle = angle.a
-		}
-
-		subject.x = model.x + cos(model.a + angle) * distance
-		subject.y = model.y + sin(model.a + angle) * distance
-	},
-
-	/**
-	 * @param {AngleObject} subject Is modified.
-	 * @param {Angle} model
-	 * @param {Angle} [offsetAngle]
-	 */
-	similarAngle(subject, model, offsetAngle = 0) {
-		subject.a = (typeof model == "object" ? model.a : model) + (typeof offsetAngle == "object" ? offsetAngle.a : offsetAngle)
-	},
-
-	/**
-	 * @param {Transform} subject Is modified.
-	 * @param {Position} model
-	 * @param {Angle} [offsetAngle]
-	 */
-	directedAngle(subject, model, offsetAngle = 0) {
-		subject.a = Transform.angleTo(subject, model) + (typeof offsetAngle == "object" ? offsetAngle.a : offsetAngle)
-	},
-
-	/**
-	 * @param {AngleObject} subject Is modified.
-	 * @param {Angle} leftBound
-	 * @param {Angle} rightBound
-	 */
-	constrainAngleInArc(subject, leftBound, rightBound) {
-		const arcSize = Transform.rightAngleBetween(leftBound, rightBound)
-		const relativeAngle = Transform.rightAngleBetween(leftBound, subject.a)
-
-		if (relativeAngle > arcSize) {
-			const distancetoLeftBound = 2 * PI - relativeAngle
-			const distanceToRightBound = abs(Transform.optimalAngleBetween(subject.a, rightBound))
-
-			subject.a = distancetoLeftBound < distanceToRightBound ? leftBound : rightBound
-		}
-	},
-
-	/**
-	 * @param {Position} subject Is modified.
-	 * @param {Position} modelA
-	 * @param {Position} modelB
-	 */
-	middle(subject, modelA, modelB) {
-		subject.x = (modelA.x + modelB.x) / 2
-		subject.y = (modelA.y + modelB.y) / 2
-	}
-}
-
-/**
- * @implements {Position}
- * @implements {AngleObject}
  * @implements {WorldObject}
  */
 class Force {
@@ -656,13 +656,13 @@ class Force {
 	 * @return {Force}
      */
 	static cloneFromBase(other, addX, addY, addA = 0) {
-		return new Force(other.x + addX, other.y + addY, other.a + (typeof addA == "object" ? addA.a : addA))
+		return new Force(other.x + addX, other.y + addY, other.a + addA)
 	}
 
 	/**
 	 * @param {Distance} x
 	 * @param {Distance} y
-	 * @param {AngleValue} [a]
+	 * @param {Angle} [a]
 	 */
 	constructor(x, y, a = 0) {
 		this.x = x
@@ -700,15 +700,6 @@ class Force {
 }
 
 class Friction extends Force {
-	/**
-	 * @param {Distance} x
-	 * @param {Distance} y
-	 * @param {AngleValue} [a]
-	 */
-	constructor(x, y, a = 0) {
-		super(x, y, a)
-	}
-	
 	update(world) {
 		for (const subject of this.subjects) {
 			subject.x = abs(subject.x) < 0.001 ? 0 : subject.x - sign(subject.x) * min(abs(this.x), abs(subject.x)) * world.timeEnlapsed
@@ -739,9 +730,9 @@ class Turret {
 	 * @param {Object} options
 	 * @param {Transform} options.targetTransform
 	 * @param {Force} options.bulletBaseSpeed
-	 * @param {AngleValue} options.rotationSpeed
-	 * @param {AngleValue} options.rotationLeftBound
-	 * @param {AngleValue} options.rotationRightBound
+	 * @param {Angle} options.rotationSpeed
+	 * @param {Angle} options.rotationLeftBound
+	 * @param {Angle} options.rotationRightBound
 	 * @param {Distance} options.size
 	 * @param {Color} options.color
 	 * @param {Number} options.health
@@ -774,19 +765,22 @@ class Turret {
 	}
 
 	update(world) {
-		const target = { a: Transform.angleTo(this.transform, this.targetTransform) }
-		
-		TransformUpdate.constrainAngleInArc(target, this.rotationLeftBound, this.rotationRightBound)
+		const target = Transform.prototype.constrainAngleIn.call({
+			a: this.transform.angleToward(this.targetTransform),
+			optimalAngleTo(angle) {
+				return Angle.optimalAngleBetween(this.a, angle)
+			}
+		}, this.rotationLeftBound, this.rotationRightBound).a
 
-		let direction = Transform.optimalAngleBetween(this.transform, target.a)
+		let direction = this.transform.optimalAngleTo(target)
 
-		if (Transform.rightAngleBetween(this.rotationLeftBound, this.rotationRightBound) > PI) {
+		if (Angle.rightAngleBetween(this.rotationLeftBound, this.rotationRightBound) > PI) {
 			direction = -direction
 		}
 
 		this.transform.a += this.rotationSpeed * world.timeEnlapsed * direction
 
-		if (this.isFiring && abs(Transform.optimalAngleBetween(this.transform.a, Transform.angleTo(this.transform, this.targetTransform))) < 0.5) {
+		if (this.isFiring && abs(this.transform.optimalAngleToward(this.targetTransform)) < 0.5) {
 			this.timeEnlapsed += world.timeEnlapsed
 
 			if (this.timeEnlapsed > this.reloadTime) {
@@ -889,7 +883,12 @@ class ThunderTurret extends Turret {
 	}
 
 	fire(world) {
-		world.add(new ThunderTurret.Bullet(Transform.cloneWithAngularOffset(this.transform, this.transform.a + rand(-0.02, 0.02), this.size, true), this.bulletBaseSpeed))
+		world.add(new ThunderTurret.Bullet(
+			this.transform
+				.clone()
+				.relativeAngularOffset(rand(-0.02, 0.02), this.size),
+			this.bulletBaseSpeed
+		))
 	}
 
 	draw(world) {
@@ -955,11 +954,13 @@ class VulcanTurret extends Turret {
 
 	fire(world) {
 		for (let i = -2; i < 3; ++i) {
-			const bullet = new VulcanTurret.Bullet(Transform.cloneWithAngularOffset(this.transform, this.transform.a + i * 0.1, this.size, false), this.bulletBaseSpeed)
-
-			bullet.transform.a += rand(i * 0.1, i * 0.1 + 0.1)
-			
-			world.add(bullet)
+			world.add(new VulcanTurret.Bullet(
+				this.transform
+					.clone()
+					.relativeAngularOffset(i * 0.1, this.size)
+					.rotateBy(rand(i * 0.1, i * 0.1 + 0.1)),
+				this.bulletBaseSpeed
+			))
 		}
 	}
 
@@ -1029,10 +1030,20 @@ class RavagerTurret extends Turret {
 	}
 
 	fire(world) {
-		world.add(new RavagerTurret.Bullet(Transform.cloneWithAngularOffset(this.transform, this.transform.a + rand(-0.03, 0.01), this.size, true), this.bulletBaseSpeed))
+		world.add(new RavagerTurret.Bullet(
+			this.transform
+				.clone()
+				.relativeAngularOffset(rand(-0.03, 0.01), this.size),
+			this.bulletBaseSpeed
+		))
 
 		world.add(new UniqueAction(world => {
-			world.add(new RavagerTurret.Bullet(Transform.cloneWithAngularOffset(this.transform, this.transform.a + rand(-0.01, 0.03), this.size, true), this.bulletBaseSpeed))
+			world.add(new RavagerTurret.Bullet(
+				this.transform
+					.clone()
+					.relativeAngularOffset(rand(-0.01, 0.03), this.size),
+				this.bulletBaseSpeed
+			))
 		}, 0.1))
 	}
 
@@ -1096,7 +1107,12 @@ class AuroraTurret extends Turret {
 	}
 
 	fire(world) {
-		world.add(new AuroraTurret.Bullet(Transform.cloneWithAngularOffset(this.transform, this.transform.a + rand(-0.01, 0.01), this.size, true), this.bulletBaseSpeed))
+		world.add(new AuroraTurret.Bullet(
+			this.transform
+				.clone()
+				.relativeAngularOffset(rand(-0.01, 0.01), this.size),
+			this.bulletBaseSpeed
+		))
 	}
 
 	draw(world) {
@@ -1157,16 +1173,21 @@ class StormTurret extends Turret {
 	}
 
 	fire(world) {
-		const bullets = [
-			new StormTurret.Bullet(Transform.cloneWithAngularOffset(this.transform, this.transform.a + 0.4, this.size, false), this.bulletBaseSpeed),
-			new StormTurret.Bullet(Transform.cloneWithAngularOffset(this.transform, this.transform.a - 0.4, this.size, false), this.bulletBaseSpeed)
-		]
+		world.add(new StormTurret.Bullet(
+			this.transform
+				.clone()
+				.relativeAngularOffset(+0.4, this.size)
+				.rotateBy(rand(-0.02, 0.02)),
+			this.bulletBaseSpeed
+		))
 
-		bullets[0].transform.a += rand(-0.02, 0.02)
-		bullets[1].transform.a += rand(-0.02, 0.02)
-
-		world.add(bullets[0])
-		world.add(bullets[1])
+		world.add(new StormTurret.Bullet(
+			this.transform
+				.clone()
+				.relativeAngularOffset(-0.4, this.size)
+				.rotateBy(rand(-0.02, 0.02)),
+			this.bulletBaseSpeed
+		))
 	}
 
 	draw(world) {
@@ -1237,16 +1258,21 @@ class HurricaneTurret extends Turret {
 	fire(world) {
 		for (const i of [ 0.55, 0.4, 0.25 ]) {
 			world.add(new UniqueAction(world => {
-				const bullets = [
-					new StormTurret.Bullet(Transform.cloneWithAngularOffset(this.transform, this.transform.a + +i, this.size, false), this.bulletBaseSpeed),
-					new StormTurret.Bullet(Transform.cloneWithAngularOffset(this.transform, this.transform.a + -i, this.size, false), this.bulletBaseSpeed)
-				]
-				
-				bullets[0].transform.a += rand(-0.02, 0.02)
-				bullets[1].transform.a += rand(-0.02, 0.02)
+				world.add(new StormTurret.Bullet(
+					this.transform
+						.clone()
+						.relativeAngularOffset(+i, this.size)
+						.rotateBy(rand(-0.02, 0.02)),
+					this.bulletBaseSpeed
+				))
 
-				world.add(bullets[0])
-				world.add(bullets[1])
+				world.add(new StormTurret.Bullet(
+					this.transform
+						.clone()
+						.relativeAngularOffset(-i, this.size)
+						.rotateBy(rand(-0.02, 0.02)),
+					this.bulletBaseSpeed
+				))
 			}, i / 3))
 		}
 	}
@@ -1341,7 +1367,7 @@ class LOML {
 		for (const angle of [ -0.5, -0.2, 0.2, 0.5 ]) {
 			world.add(new UniqueAction(world => {
 				world.add(new LOML.Missile({
-					transform: Transform.cloneWithAngularOffset(this.transform, this.transform.a + angle, 12, false),
+					transform: this.transform.clone().relativeAngularOffset(angle, 12),
 					targetTransform: this.targetTransform,
 					baseSpeed: this.bulletBaseSpeed,
 					movementAcceleration: 200,
@@ -1433,7 +1459,7 @@ LOML.Missile = class Missile {
 	update(world) {
 		this.acceleration.x = this.movementAcceleration * cos(this.transform.a)
 		this.acceleration.y = this.movementAcceleration * sin(this.transform.a)
-		this.acceleration.a = this.rotationAcceleration * sign(Transform.optimalAngleBetween(this.transform.a, Transform.angleTo(this.transform, this.targetTransform)))
+		this.acceleration.a = this.rotationAcceleration * sign(this.transform.optimalAngleToward(this.targetTransform))
 		
 		this.friction.x = this.speed.x * this.movementAcceleration / this.movementSpeed
 		this.friction.y = this.speed.y * this.movementAcceleration / this.movementSpeed
@@ -1464,8 +1490,8 @@ class TurretSlot {
 	/**
 	 * @param {Distance} offsetX
 	 * @param {Distance} offsetY
-	 * @param {AngleValue} rotationLeftBound
-	 * @param {AngleValue} rotationRightBound
+	 * @param {Angle} rotationLeftBound
+	 * @param {Angle} rotationRightBound
 	 * @param {Turret} turret
 	 */
 	constructor(offsetX, offsetY, rotationLeftBound, rotationRightBound, turret) {
@@ -1481,7 +1507,7 @@ class LOMLSlot {
 	/**
 	 * @param {Distance} offsetX
 	 * @param {Distance} offsetY
-	 * @param {AngleValue} offsetA
+	 * @param {Angle} offsetA
 	 * @param {LOML} loml
 	 */
 	constructor(offsetX, offsetY, offsetA, loml) {
@@ -1508,8 +1534,8 @@ class ShipCore {
 	}
 	
 	update(world) {
-		TransformUpdate.directedAngle(this.transform, this.targetTransform)
-		
+		this.transform.rotateToward(this.targetTransform)
+
 		world.graphics.applyTransform(this.transform)
 		
 		world.graphics.beginPath()
@@ -1638,14 +1664,14 @@ class Ship {
 		this.friction.y = this.speed.y * this.movementAcceleration / this.movementSpeed
 		this.friction.a = this.speed.a * this.rotationAcceleration / this.rotationSpeed
 
-		TransformUpdate.offset(this.core.transform, this.transform, 0, 0)
+		this.core.transform.offset(0, 0, this.transform)
 
 		for (const slot of this.turretSlots) {
 			if (slot.turret) {
-				TransformUpdate.relativeOffset(slot.turret.transform, this.transform, slot.offsetX, slot.offsetY)
+				slot.turret.transform.relativeOffset(slot.offsetX, slot.offsetY, this.transform)
 				
-				slot.turret.rotationLeftBound = Transform.normalizedAngle(this.transform.a + slot.rotationLeftBound)
-				slot.turret.rotationRightBound = Transform.normalizedAngle(this.transform.a + slot.rotationRightBound)
+				slot.turret.rotationLeftBound = Angle.normalize(this.transform.a + slot.rotationLeftBound)
+				slot.turret.rotationRightBound = Angle.normalize(this.transform.a + slot.rotationRightBound)
 				slot.turret.transform.a += this.speed.a * world.timeEnlapsed
 
 				slot.turret.isFiring = this.isFiring
@@ -1654,8 +1680,9 @@ class Ship {
 
 		for (const slot of this.lomlSlots) {
 			if (slot.loml) {
-				TransformUpdate.relativeOffset(slot.loml.transform, this.transform, slot.offsetX, slot.offsetY)
-				TransformUpdate.similarAngle(slot.loml.transform, this.transform, slot.offsetA)
+				slot.loml.transform
+					.relativeOffset(slot.offsetX, slot.offsetY, this.transform)
+					.rotateLike(slot.offsetA + this.transform.a)
 				
 				slot.loml.isFiring = this.isFiring
 			}
@@ -1803,7 +1830,9 @@ const player = new SiegeShip(new Transform(200, 200), world.input.mouseTransform
 // [ ] Constrain angle to arc > 180deg bug.
 
 world.add(player)
+
 world.add({
+	/** Player controller. */
 	update(world) {
 		if (world.input.isPressed("MouseLeft")) {
 			player.isFiring = true
@@ -1814,65 +1843,6 @@ world.add({
 })
 
 world.run()
-
-/*
-const player = {
-	friction: new Friction(0, 0, 0),
-	acceleration: new Force(0, 0, 0),
-	speed: new Force(0, 0, 0),
-	transform: new Transform(20, 250, 0),
-	
-	beforeAdd(world) {
-		this.friction.applyTo(this.speed)
-		this.acceleration.applyTo(this.speed)
-		this.speed.applyTo(this.transform)
-		
-		world.add(this.friction)
-		world.add(this.acceleration)
-		world.add(this.speed)
-	},
-	
-	afterAdd(world) {
-		const ship = new ScorpionShip(0, 0, Color.RED)
-		
-		ship.transform = this.transform
-		
-		world.add(ship)
-	},
-	
-	update(world) {
-		this.acceleration.a = 0
-		this.acceleration.x = 0
-		this.acceleration.y = 0
-		
-		if (world.input.isPressed("KeyD")) this.acceleration.a = +0.3
-		if (world.input.isPressed("KeyA")) this.acceleration.a = -0.3
-		
-		if (world.input.isPressed("KeyW")) {
-			this.acceleration.x = 30 * cos(this.transform.a)
-			this.acceleration.y = 30 * sin(this.transform.a)
-		}
-		
-		if (world.input.isPressed("KeyS")) {
-			this.acceleration.x = -30 * cos(this.transform.a)
-			this.acceleration.y = -30 * sin(this.transform.a)
-		}
-
-		this.friction.a = this.speed.a / 2
-		this.friction.x = this.speed.x / 2
-		this.friction.y = this.speed.y / 2
-	}
-}
-*/
-
-/*
-i = 0
-for (const c in Color) {
-	const s = new ScorpionShip(++i * 60, 600, Color[c])
-	s.transform.a = 1
-	world.add(s)
-}
-*/
 
 if (DEBUG) {
 	world.add({
@@ -1898,6 +1868,7 @@ if (DEBUG) {
 			world.graphics.fillText("Keys: " + Array.from(world.input.currentlyPressedKeys).join(", "), 10, 10 + 16 * ++i)
 
 			for (const [ desc, [ t, c ] ] of new Map([
+				[ "Mouse  - T", [ world.input.mouseTransform, Color.GREY ] ],
 				[ "World  - F", [ player.friction, Color.GREY ] ],
 				[ "Player - A", [ player.acceleration, Color.RED ] ],
 				[ "       - S", [ player.speed, Color.YELLOW ] ],
@@ -1915,7 +1886,7 @@ if (DEBUG) {
 						this.records.set(t, [])
 					}
 
-					this.records.get(t).push(Transform.clone(t))
+					this.records.get(t).push(Transform.prototype.clone.call(t))
 
 					let j = 0
 					for (const record of this.records.get(t)) {

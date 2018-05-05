@@ -45,10 +45,6 @@
 	</head>
 	<body>
 		<canvas id="canvas" tabindex="1"></canvas>
-		<button
-			style="position: fixed; top: 0; right: 0;"
-			onclick="world.isRunning ? world.freeze() : world.run()"
-		>PLAY / PAUSE</button>
 		<script>
 			const DEBUG = location.search.includes("debug=true")
 			const canvas = document.getElementById("canvas")
@@ -79,5 +75,57 @@
 			}
 		</script>
 		<script src="app.js"></script>
+		<script>
+			if (DEBUG) {
+				const pauseButton = document.createElement("button")
+
+				pauseButton.textContent = "PLAY / PAUSE"
+				
+				pauseButton.style.position = "fixed"
+				pauseButton.style.top = "0"
+				pauseButton.style.right = "0"
+
+				pauseButton.onclick = function onclick() {
+					world.isRunning ? world.freeze() : world.run()
+				}
+
+				document.body.appendChild(pauseButton)
+			}
+		</script>
+		<script>
+			if (DEBUG) {
+				const img = document.createElement("img")
+
+				img.src = "transform-api.svg"
+				img.style.width = "100%"
+				img.style.height = "auto"
+
+				const h1 = document.createElement("h1")
+
+				h1.textContent = "API"
+				h1.style.width = "100%"
+				h1.style.fontFamily = "sans-serif"
+				h1.style.textAlign = "center"
+				h1.style.fontSize = "30px"
+
+				const apiDocumentation = document.createElement("div")
+
+				apiDocumentation.style.position = "fixed"
+				apiDocumentation.style.top = "36px"
+				apiDocumentation.style.right = "0"
+				apiDocumentation.style.bottom = "0"
+				apiDocumentation.style.maxWidth = "96px"
+				apiDocumentation.style.overflowY = "auto"
+				apiDocumentation.style.borderLeft = "1px dashed silver"
+
+				apiDocumentation.onclick = function onclick() {
+					apiDocumentation.style.maxWidth = apiDocumentation.style.maxWidth == "960px" ? "96px" : "960px"
+				}
+
+				apiDocumentation.appendChild(h1)
+				apiDocumentation.appendChild(img)
+				document.body.appendChild(apiDocumentation)
+			}
+		</script>
 	</body>
 </html>
