@@ -1606,23 +1606,6 @@ class Ship {
 	}
 
 	update(world) {
-		this.acceleration.x = 0
-		this.acceleration.y = 0
-		this.acceleration.a = 0
-		
-		if (world.input.isPressed("KeyD")) this.acceleration.a = +this.rotationAcceleration
-		if (world.input.isPressed("KeyA")) this.acceleration.a = -this.rotationAcceleration
-		
-		if (world.input.isPressed("KeyW")) {
-			this.acceleration.x = this.movementAcceleration * cos(this.transform.a)
-			this.acceleration.y = this.movementAcceleration * sin(this.transform.a)
-		}
-		
-		if (world.input.isPressed("KeyS")) {
-			this.acceleration.x = -this.movementAcceleration * cos(this.transform.a)
-			this.acceleration.y = -this.movementAcceleration * sin(this.transform.a)
-		}
-
 		this.acceleration.drive(this.speed, world)
 		
 		this.friction.updateFrom(this.speed, world)
@@ -1796,6 +1779,23 @@ world.add(player)
 world.add({
 	/** Player controller. */
 	update(world) {
+		player.acceleration.x = 0
+		player.acceleration.y = 0
+		player.acceleration.a = 0
+
+		if (world.input.isPressed("KeyD")) player.acceleration.a = +player.rotationAcceleration
+		if (world.input.isPressed("KeyA")) player.acceleration.a = -player.rotationAcceleration
+
+		if (world.input.isPressed("KeyW")) {
+			player.acceleration.x = player.movementAcceleration * cos(player.a)
+			player.acceleration.y = player.movementAcceleration * sin(player.a)
+		}
+
+		if (world.input.isPressed("KeyS")) {
+			player.acceleration.x = -player.movementAcceleration * cos(player.a)
+			player.acceleration.y = -player.movementAcceleration * sin(player.a)
+		}
+
 		if (world.input.isPressed("MouseLeft")) {
 			player.isFiring = true
 		} else {
