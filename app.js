@@ -1852,9 +1852,9 @@ if (DEBUG) {
 
 					let j = 0
 					for (const record of this.records.get(t)) {
-						this.barAt(0, j, record.x * 2)
-						this.barAt(1, j, record.y)
-						this.barAt(2, j, record.a * 100)
+						this.barAt(0, j, record.x / 3.9)
+						this.barAt(1, j, record.y / 2)
+						this.barAt(2, j, record.a * 145)
 
 						++j
 					}
