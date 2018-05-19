@@ -1342,11 +1342,25 @@ class ThunderTurret extends Turret {
 	}
 
 	fire(world) {
+		/*
 		world.add(new ThunderTurret.Bullet(
 			this.transform
 				.clone()
 				.relativeAngularOffset(rand(-0.02, 0.02), this.size),
 			this.bulletBaseSpeed
+		))
+		*/
+		
+		world.add(new Shell(
+			this.transform
+				.clone()
+				.rotateBy(rand(-0.02, 0.02), this.size),
+			this.bulletBaseSpeed,
+			300,
+			5,
+			2,
+			Team.RED,
+			new Explosion(0, 0, 1, 10, 10)
 		))
 	}
 
@@ -1371,22 +1385,6 @@ class ThunderTurret extends Turret {
 
 		world.graphics.strokeStyle = Color.GREY
 		world.graphics.stroke()
-	}
-}
-
-ThunderTurret.Bullet = class ThunderBullet extends Turret.Bullet {
-	/**
-	 * @param {Transform} transform
-	 * @param {Force} baseSpeed
-	 */
-	constructor(transform, baseSpeed) {
-		super({
-			transform,
-			speed: rand(170, 230),
-			baseSpeed,
-			size: 2,
-			lifeTime: 3
-		})
 	}
 }
 
@@ -1451,22 +1449,6 @@ class VulcanTurret extends Turret {
 	}
 }
 
-VulcanTurret.Bullet = class VulcanBullet extends Turret.Bullet {
-	/**
-	 * @param {Transform} transform
-	 * @param {Force} baseSpeed
-	 */
-	constructor(transform, baseSpeed) {
-		super({
-			transform,
-			speed: rand(150, 210),
-			baseSpeed,
-			size: 2,
-			lifeTime: 1
-		})
-	}
-}
-
 class RavagerTurret extends Turret {
 	/**
 	 * @param {Transform} targetTransform
@@ -1528,22 +1510,6 @@ class RavagerTurret extends Turret {
 	}
 }
 
-RavagerTurret.Bullet = class RavagerBullet extends Turret.Bullet {
-	/**
-	 * @param {Transform} transform
-	 * @param {Force} baseSpeed
-	 */
-	constructor(transform, baseSpeed) {
-		super({
-			transform,
-			speed: rand(180, 200),
-			baseSpeed,
-			size: 3,
-			lifeTime: 5
-		})
-	}
-}
-
 class AuroraTurret extends Turret {
 	/**
 	 * @param {Transform} targetTransform
@@ -1591,22 +1557,6 @@ class AuroraTurret extends Turret {
 
 		world.graphics.strokeStyle = Color.GREY
 		world.graphics.stroke()
-	}
-}
-
-AuroraTurret.Bullet = class AuroraBullet extends Turret.Bullet {
-	/**
-	 * @param {Transform} transform
-	 * @param {Force} baseSpeed
-	 */
-	constructor(transform, baseSpeed) {
-		super({
-			transform,
-			speed: rand(220, 260),
-			baseSpeed,
-			size: 4,
-			lifeTime: 5
-		})
 	}
 }
 
@@ -1674,22 +1624,6 @@ class StormTurret extends Turret {
 
 		world.graphics.strokeStyle = Color.GREY
 		world.graphics.stroke()
-	}
-}
-
-StormTurret.Bullet = class StormBullet extends Turret.Bullet {
-	/**
-	 * @param {Transform} transform
-	 * @param {Force} baseSpeed
-	 */
-	constructor(transform, baseSpeed) {
-		super({
-			transform,
-			speed: rand(170, 230),
-			baseSpeed,
-			size: 2,
-			lifeTime: 3
-		})
 	}
 }
 
@@ -1768,111 +1702,10 @@ class HurricaneTurret extends Turret {
 	}
 }
 
-HurricaneTurret.Bullet = class HurricaneBullet extends Turret.Bullet {
-	/**
-	 * @param {Transform} transform
-	 * @param {Force} baseSpeed
-	 */
-	constructor(transform, baseSpeed) {
-		super({
-			transform,
-			speed: rand(180, 240),
-			baseSpeed,
-			size: 2,
-			lifeTime: 3
-		})
-	}
-}
-
 // -----------------------------------------------------------------
 
-/**
- * @implements {WorldObject}
- */
-class LOML {
-	/**
-	 * @param {Transform} targetTransform
-	 * @param {Force} bulletBaseSpeed
-	 * @param {Color} color
-	 */
-	constructor(targetTransform, bulletBaseSpeed, color) {
-		this.transform = new Transform(0, 0)
-		this.targetTransform = targetTransform
-		this.bulletBaseSpeed = bulletBaseSpeed
-
-		this.color = color
-
-		this.reloadTime = rand(2.5, 3.5)
-		this.timeEnlapsed = 0
-		this.isFiring = false
-	}
-
-	update(world) {
-		if (this.isFiring) {
-			this.timeEnlapsed += world.timeEnlapsed
-
-			if (this.timeEnlapsed > this.reloadTime) {
-				this.timeEnlapsed -= this.reloadTime
-
-				this.fire(world)
-			}
-		}
-
-		this.draw(world)
-	}
-
-	fire(world) {
-		let i = 0
-		for (const angle of [ -0.5, -0.2, 0.2, 0.5 ]) {
-			world.add(new UniqueAction(world => {
-				world.add(new LOML.Missile({
-					transform: this.transform.clone().relativeAngularOffset(angle, 12),
-					targetTransform: this.targetTransform,
-					baseSpeed: this.bulletBaseSpeed,
-					movementAcceleration: 200,
-					movementSpeed: 200,
-					rotationAcceleration: 4,
-					rotationSpeed: 4
-				}))
-			}, 0.1 * ++i))
-		}
-	}
-
-	draw(world) {
-		world.graphics.applyTransform(this.transform)
-
-		world.graphics.beginPath()
-		world.graphics.moveTo(0, -10)
-		world.graphics.lineTo(0, 10)
-
-		world.graphics.strokeStyle = this.color
-		world.graphics.lineWidth = 2
-		world.graphics.lineCap = "round"
-		world.graphics.stroke()
-
-		world.graphics.beginPath()
-		world.graphics.moveTo(4, -8)
-		world.graphics.lineTo(8, -8)
-		world.graphics.moveTo(4, -4)
-		world.graphics.lineTo(8, -4)
-		world.graphics.moveTo(4, 0)
-		world.graphics.lineTo(8, 0)
-		world.graphics.moveTo(4, +4)
-		world.graphics.lineTo(8, +4)
-		world.graphics.moveTo(4, +8)
-		world.graphics.lineTo(8, +8)
-
-		world.graphics.strokeStyle = Color.GREY
-		world.graphics.stroke()
-
-		world.graphics.resetTransform()
-	}
-}
-
-/**
- * @implements {WorldObject}
- */
-LOML.Missile = class Missile {
+/*
+class Missile {
 	constructor({ transform, targetTransform, baseSpeed, movementAcceleration, movementSpeed, rotationAcceleration, rotationSpeed }) {
 		this.friction = new Friction()
 		this.acceleration = new Force(0, 0, 0)
@@ -1929,83 +1762,14 @@ LOML.Missile = class Missile {
 		world.graphics.stroke()
 	}
 }
+*/
 
 // -----------------------------------------------------------------
 
-class TurretSlot {
-	/**
-	 * @param {Distance} offsetX
-	 * @param {Distance} offsetY
-	 * @param {Angle} rotationLeftBound
-	 * @param {Angle} rotationRightBound
-	 * @param {Turret} turret
-	 */
-	constructor(offsetX, offsetY, rotationLeftBound, rotationRightBound, turret) {
-		this.offsetX = offsetX
-		this.offsetY = offsetY
-		this.rotationLeftBound = rotationLeftBound
-		this.rotationRightBound = rotationRightBound
-		this.turret = turret
-	}
-}
-
-class LOMLSlot {
-	/**
-	 * @param {Distance} offsetX
-	 * @param {Distance} offsetY
-	 * @param {Angle} offsetA
-	 * @param {LOML} loml
-	 */
-	constructor(offsetX, offsetY, offsetA, loml) {
-		this.offsetX = offsetX
-		this.offsetY = offsetY
-		this.offsetA = offsetA
-		this.loml = loml
-	}
-}
-
 /**
  * @implements {WorldObject}
- */
-class ShipCore {
-	/**
-	 * @param {Transform} targetTransform
-	 * @param {Color} color
-	 */
-	constructor(targetTransform, color) {
-		this.transform = new Transform(0, 0)
-		this.targetTransform = targetTransform
-
-		this.color = color
-	}
-	
-	update(world) {
-		this.transform.rotateToward(this.targetTransform)
-
-		world.graphics.applyTransform(this.transform)
-		
-		world.graphics.beginPath()
-		world.graphics.arc(0, 0, 15, 0, 2 * PI)
-
-		world.graphics.fillStyle = this.color
-		world.graphics.fill()
-
-		world.graphics.beginPath()
-		world.graphics.moveTo(-3, -4)
-		world.graphics.lineTo(3, 0)
-		world.graphics.lineTo(-3, 4)
-
-		world.graphics.strokeStyle = Color.DARK
-		world.graphics.lineWidth = 2
-		world.graphics.lineCap = "round"
-		world.graphics.stroke()
-
-		world.graphics.resetTransform()
-	}
-}
-
-/**
- * @implements {WorldObject}
+ * @implements {Moving}
+ * @implements {Teamed}
  * @abstract
  *
  * @method draw
@@ -2013,96 +1777,79 @@ class ShipCore {
  * @protected
  * @param {World} world
  */
-class Ship {
+class Ship extends Transform {
 	/**
+	 * @param {Tranform} transform
+	 * @param {Tranform} target
+	 * @param {Core} core
+	 * @param {Team} team
 	 * @param {Object} options
-	 * @param {Transform} options.transform
-	 * @param {Transform} options.targetTransform
 	 * @param {Distance} options.movementAcceleration
-	 * @param {Distance} options.movementSpeed
 	 * @param {Angle} options.rotationAcceleration
-	 * @param {Angle} options.rotationSpeed
-	 * @param {Color} options.color
-	 * @param {Number} options.health
-	 * @param {Number} options.healthRegeneration
-	 * @param {TurretSlot[]} options.turretSlots
-	 * @param {LOMLSlot[]} options.lomlSlots
 	 */
-	constructor({ transform, targetTransform, movementAcceleration, movementSpeed, rotationAcceleration, rotationSpeed, color, health, healthRegeneration, turretSlots, lomlSlots }) {
-		this.friction = new Friction()
-		this.acceleration = new Force(0, 0, 0)
-		this.speed = new Force(0, 0, 0)
+	constructor(transform, target, core, team, { movementAcceleration, rotationAcceleration }) {
+		super(transform.x, transform.y, transform.a)
 
-		this.transform = transform
-		this.targetTransform = targetTransform
+		this.target = target
+
+		Moving.init(this)
+		Teamed.init(this, team)
 
 		this.movementAcceleration = movementAcceleration
-		this.movementSpeed = movementSpeed
 		this.rotationAcceleration = rotationAcceleration
-		this.rotationSpeed = rotationSpeed
 		
-		this.color = color
-
-		this.health = health
-		this.healthRegeneration = healthRegeneration
-
-		this.core = new ShipCore(targetTransform, color)
-		this.turretSlots = turretSlots
-		this.lomlSlots = lomlSlots
+		this.core = core
+		this.turretSlots = new Set()
 		this.isFiring = false
 	}
 	
 	afterAdd(world) {
 		world.add(this.core)
 
-		for (const slot of this.turretSlots) slot.turret && world.add(slot.turret)
-		for (const slot of this.lomlSlots) slot.loml && world.add(slot.loml)
+		for (const slot of this.turretSlots) {
+			world.add(slot.turret)
+		}
 	}
 
 	afterDelete(world) {
-		for (const slot of this.turretSlots) slot.turret && world.delete(slot.turret)
-		for (const slot of this.lomlSlots) slot.loml && world.delete(slot.loml)
+		for (const slot of this.turretSlots) {
+			world.delete(slot.turret)
+		}
 
 		world.delete(this.core)
+		
+		this.core = null
+		this.turretSlots = null
 	}
 
 	mustBeDeleted(world) {
-		return this.health < 0
+		return this.core.mustBeDeleted(world)
 	}
 
 	update(world) {
-		this.acceleration.drive(this.speed, world)
-		
-		this.friction.updateFrom(this.speed, world)
-		this.friction.drive(this.speed, world)
+		Moving.update(this, world)
 
-		this.speed.drive(this.transform, world)
-
-		this.core.transform.offset(0, 0, this.transform)
+		this.core.offset(0, 0, this)
 
 		for (const slot of this.turretSlots) {
-			if (slot.turret) {
-				slot.turret.transform.relativeOffset(slot.offsetX, slot.offsetY, this.transform)
-				
-				slot.turret.rotationLeftBound = Angle.normalize(this.transform.a + slot.rotationLeftBound)
-				slot.turret.rotationRightBound = Angle.normalize(this.transform.a + slot.rotationRightBound)
-				slot.turret.transform.a += this.speed.a * world.timeEnlapsed
+			if (slot.turret.mustBeDeleted(world)) {
+				this.turretSlots.delete(slot)
+			} else {
+				slot.turret.relativeOffset(slot.offsetX, slot.offsetY, this)
 
-				slot.turret.isFiring = this.isFiring
+				if (slot.offsetA == undefined) {
+					slot.turret.rotationLeftBound = Angle.normalize(this.a + slot.rotationLeftBound)
+					slot.turret.rotationRightBound = Angle.normalize(this.a + slot.rotationRightBound)
+					slot.turret.a += this.speed.a * world.timeEnlapsed
+				} else {
+					slot.turret.a = this.a + slot.offsetA
+				}
+
+				slot.turret.mustFire = this.isFiring
 			}
 		}
 
-		for (const slot of this.lomlSlots) {
-			if (slot.loml) {
-				slot.loml.transform
-					.relativeOffset(slot.offsetX, slot.offsetY, this.transform)
-					.rotateLike(slot.offsetA + this.transform.a)
-				
-				slot.loml.isFiring = this.isFiring
-			}
-		}
-
-		world.graphics.applyTransform(this.transform)
+		world.graphics.applyTransform(this)
 
 		this.draw(world)
 
@@ -2110,6 +1857,7 @@ class Ship {
 	}
 }
 
+/*
 class DartShip extends Ship {
 	constructor(transform, targetTransform, color) {
 		super({
@@ -2154,28 +1902,18 @@ class DartShip extends Ship {
 		world.graphics.fill()
 	}
 }
+*/
 
 class SiegeShip extends Ship {
-	constructor(transform, targetTransform, color) {
-		super({
-			transform,
-			targetTransform,
-			movementAcceleration: 50,
-			rotationAcceleration: 0.5,
-			color,
-			health: 100,
-			healthRegeneration: 0,
-			turretSlots: null,
-			lomlSlots: null
-		})
+	constructor(transform, target, team) {
+		super(transform, target, Core.T3(target, team), team, { movementAcceleration: 100, rotationAcceleration: 2 })
 
-		this.turretSlots = [
-			new TurretSlot(-49, -39, -2.72, -0.30, new ThunderTurret(targetTransform, this.speed, color)),
-			new TurretSlot(-49, +39, +0.30, +2.72, new ThunderTurret(targetTransform, this.speed, color)),
-			new TurretSlot(105, -26, -2.86, -0.15, new ThunderTurret(targetTransform, this.speed, color)),
-			new TurretSlot(105, +26, +0.15, +2.86, new ThunderTurret(targetTransform, this.speed, color))
-		]
+	//	this.turretSlots.add(new TurretSlot(-49, -39, new ThunderTurret(/* ... */), { leftRotationBound: -2.72, rightRotationBound: -0.30}))
+	//	this.turretSlots.add(new TurretSlot(-49, +39, new ThunderTurret(/* ... */), { leftRotationBound: +0.30, rightRotationBound: +2.72}))
+	//	this.turretSlots.add(new TurretSlot(105, -26, new ThunderTurret(/* ... */), { leftRotationBound: -2.86, rightRotationBound: -0.15}))
+	//	this.turretSlots.add(new TurretSlot(105, +26, new ThunderTurret(/* ... */), { leftRotationBound: +0.15, rightRotationBound: +2.86}))
 
+		/*
 		this.lomlSlots = [
 			new LOMLSlot(48, -12, -PI / 2, new LOML(targetTransform, this.speed, color)),
 			new LOMLSlot(48, +12, +PI / 2, new LOML(targetTransform, this.speed, color)),
@@ -2184,6 +1922,7 @@ class SiegeShip extends Ship {
 			new LOMLSlot(-2, -35, -PI / 2, new LOML(targetTransform, this.speed, color)),
 			new LOMLSlot(-2, +35, +PI / 2, new LOML(targetTransform, this.speed, color))
 		]
+		*/
 	}
 
 	draw(world) {
@@ -2228,18 +1967,76 @@ class SiegeShip extends Ship {
 
 const world = new World(canvas)
 
-const player = new SiegeShip(new Transform(200, 200), world.input.mouseTransform, Color.TEAL)
+const player = new SiegeShip(new Transform(200, 200, 1), world.input.mouseTransform, Team.RED)
 
 // TODO
 // ----
-//
 // [x] Scaling bug => scale up the ship.
 // [x] Rotate turrets with ship.
 // [x] Mv force transmission from ship to bullets. => TECH DEBT
-// [ ] Acceleration / max speed bug.
+// [x] Acceleration / max speed bug.
+// [x] Fix teams requirements.
+// [x] Fix colliders requirements.
+// [ ] Turret slot redesign.
 // [ ] Constrain angle to arc > 180deg bug.
 
 world.add(player)
+
+world.add({
+	transform: new Transform(800, 200),
+	
+	get x() { return this.transform.x },
+	get y() { return this.transform.y },
+	
+	beforeAdd(world) {
+		Destroyable.init(this, 100, 2)
+		Colliding.init(this, 20, 0)
+		Teamed.init(this, Team.BLUE)
+	},
+	
+	mustBeDeleted(world) {
+		return Destroyable.mustBeDeleted(this, world)
+	},
+	
+	/** Blob */
+	update(world) {
+	    Destroyable.update(this, world)
+		
+		world.graphics.applyTransform(this.transform)
+
+		this.drawBlob(world)
+		this.drawHealthBar(world)
+
+		world.graphics.resetTransform()
+	},
+	
+	drawBlob(world) {
+		world.graphics.beginPath()
+		world.graphics.arc(0, 0, this.collisionRadius, 0, 2 * PI)
+		
+		world.graphics.strokeStyle = Color.BLUE
+		world.graphics.lineWidth = 3
+		world.graphics.stroke()
+	},
+	
+	drawHealthBar(world) {
+		world.graphics.beginPath()
+		world.graphics.moveTo(-this.maxHealth / 2, this.collisionRadius + 10)
+		world.graphics.lineTo(+this.maxHealth / 2, this.collisionRadius + 10)
+		
+		world.graphics.strokeStyle = Color.RED
+		world.graphics.lineWidth = 5
+		world.graphics.stroke()
+		
+		world.graphics.beginPath()
+		world.graphics.moveTo(-this.maxHealth / 2, this.collisionRadius + 10)
+		world.graphics.lineTo(this.health - this.maxHealth / 2, this.collisionRadius + 10)
+		
+		world.graphics.strokeStyle = Color.GREEN
+		world.graphics.lineWidth = 5
+		world.graphics.stroke()
+	}
+})
 
 world.add({
 	/** Player controller. */
@@ -2248,23 +2045,42 @@ world.add({
 		player.acceleration.y = 0
 		player.acceleration.a = 0
 
-		if (world.input.isPressed("KeyD")) player.acceleration.a = +player.rotationAcceleration
-		if (world.input.isPressed("KeyA")) player.acceleration.a = -player.rotationAcceleration
+		     if (world.input.isPressed("KeyD")) player.acceleration.a = +player.rotationAcceleration
+		else if (world.input.isPressed("KeyA")) player.acceleration.a = -player.rotationAcceleration
 
-		if (world.input.isPressed("KeyW")) {
-			player.acceleration.x = player.movementAcceleration * cos(player.a)
-			player.acceleration.y = player.movementAcceleration * sin(player.a)
-		}
+		if (world.input.isPressed("KeyW") || world.input.isPressed("KeyS") || world.input.isPressed("KeyE") || world.input.isPressed("KeyQ")) {
+			let a = player.a
 
-		if (world.input.isPressed("KeyS")) {
-			player.acceleration.x = -player.movementAcceleration * cos(player.a)
-			player.acceleration.y = -player.movementAcceleration * sin(player.a)
+			if (world.input.isPressed("KeyS")) {
+				a += PI
+			}
+
+			if (world.input.isPressed("KeyE")) {
+				if (world.input.isPressed("KeyW")) {
+					a += PI / 4
+				} else if (world.input.isPressed("KeyS")) {
+					a -= PI / 4
+				} else {
+					a += PI / 2
+				}
+			} else if (world.input.isPressed("KeyQ")) {
+				if (world.input.isPressed("KeyW")) {
+					a -= PI / 4
+				} else if (world.input.isPressed("KeyS")) {
+					a += PI / 4
+				} else {
+					a -= PI / 2
+				}
+			}
+
+			player.acceleration.x = player.movementAcceleration * cos(a)
+			player.acceleration.y = player.movementAcceleration * sin(a)
 		}
 
 		if (world.input.isPressed("MouseLeft")) {
-			player.isFiring = true
+			player.mustFire = true
 		} else {
-			player.isFiring = false
+			player.mustFire = false
 		}
 	}
 })
@@ -2277,7 +2093,7 @@ if (DEBUG) {
 		records: new Map([
 			[ player.acceleration, [] ],
 			[ player.speed, [] ],
-			[ player.transform, [] ]
+			[ player, [] ]
 		]),
 
 		/** Debugger. */
@@ -2299,7 +2115,7 @@ if (DEBUG) {
 				[ "World  - F", [ player.friction, Color.GREY ] ],
 				[ "Player - A", [ player.acceleration, Color.RED ] ],
 				[ "       - S", [ player.speed, Color.YELLOW ] ],
-				[ "       - T", [ player.transform, Color.GREEN ] ]
+				[ "       - T", [ player, Color.GREEN ] ]
 			])) {
 				world.graphics.fillStyle = c
 
