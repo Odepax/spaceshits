@@ -1015,7 +1015,7 @@ class Explosion extends Transform {
 	update(world) {
 		Ephemeral.update(this, world)
 
-		const explosionProgress = 1 - this.remainingLifeTime / this.lifeTime
+		const explosionProgress = 1 - max(0, this.remainingLifeTime / this.lifeTime)
 
 		this.collisionRadius = explosionProgress * this.finalRadius
 
@@ -1030,7 +1030,7 @@ class Explosion extends Transform {
 		world.graphics.beginPath()
 		world.graphics.arc(0, 0, this.collisionRadius, 0, 2 * PI)
 
-		world.graphics.globalAlpha = 1.01 - explosionProgress
+		world.graphics.globalAlpha = 1 - explosionProgress
 		world.graphics.fillStyle = Color.YELLOW
 		world.graphics.fill()
 		world.graphics.globalAlpha = 1
@@ -1185,7 +1185,7 @@ class Shell extends Transform {
 		world.graphics.lineTo(+this.collisionRadius, 0)
 		
 		world.graphics.strokeStyle = Color.YELLOW
-		world.graphics.lineWidth = this.collisionRadius * this.remainingLifeTime / this.lifeTime
+		world.graphics.lineWidth = this.collisionRadius * max(0.01, this.remainingLifeTime / this.lifeTime)
 		world.graphics.lineCap = "round"
 		world.graphics.stroke()
 
