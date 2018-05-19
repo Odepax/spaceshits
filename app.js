@@ -993,6 +993,273 @@ const Teamed = {
 
 // -----------------------------------------------------------------
 
+/**
+ * @implements {WorldObject}
+ * @implements {Ephemeral}
+ * @implements {Colliding}
+ */
+class Explosion extends Transform {
+	constructor(x, y, lifeTime, radius, damage) {
+		super(x, y)
+
+		Ephemeral.init(this, lifeTime)
+		Colliding.init(this, 0, damage)
+
+		this.finalRadius = radius
+	}
+
+	mustBeDeleted(world) {
+		return Ephemeral.mustBeDeleted(this, world)
+	}
+
+	update(world) {
+		Ephemeral.update(this, world)
+
+		const explosionProgress = 1 - this.remainingLifeTime / this.lifeTime
+
+		this.collisionRadius = explosionProgress * this.finalRadius
+
+		for (const object of world.objects) {
+			if (object.collisionRadius && object.health && Colliding.test(this, object)) {
+				object.health -= this.collisionDamage * world.timeEnlapsed
+			}
+		}
+
+		world.graphics.applyTransform(this)
+
+		world.graphics.beginPath()
+		world.graphics.arc(0, 0, this.collisionRadius, 0, 2 * PI)
+
+		world.graphics.globalAlpha = 1.01 - explosionProgress
+		world.graphics.fillStyle = Color.YELLOW
+		world.graphics.fill()
+		world.graphics.globalAlpha = 1
+
+		world.graphics.resetTransform()
+	}
+}
+
+// -----------------------------------------------------------------
+
+/**
+ * @implements {WorldObject}
+ * @implements {Colliding}
+ * @implements {Destroyable}
+ * @implements {Teamed}
+ * @abstract
+ *
+ * @method draw
+ * @memberOf Asset
+ * @protected
+ * @param {World} world
+ */
+class Asset extends Transform {
+	/**
+	 * @param {Transform} target
+	 * @param {Distance} collisionRadius
+	 * @param {Number} health
+	 * @param {Number} healthRegeneration
+	 * @param {Team} team
+	 * @param {Explosion} explosion
+	 */
+	constructor(target, collisionRadius, health, healthRegeneration, team, explosion) {
+		super(0, 0)
+
+		this.target = target
+
+		Colliding.init(this, collisionRadius)
+		Destroyable.init(this, health, healthRegeneration)
+		Teamed.init(this, team)
+		
+		this.explosion = explosion
+	}
+
+	mustBeDeleted(world) {
+		return Destroyable.mustBeDeleted(this, world)
+	}
+
+	beforeDelete(world) {
+		this.explosion.x = this.x
+		this.explosion.y = this.y
+		
+		world.add(this.explosion)
+	}
+	
+	update(world) {
+		Destroyable.update(this, world)
+		
+		world.graphics.applyTransform(this)
+		
+		this.draw(world)
+
+		world.graphics.resetTransform()
+	}
+}
+
+class Core extends Asset {
+	update(world) {
+		this.rotateToward(this.target)
+		
+		super.update(world)
+	}
+	
+	draw(world) {
+		world.graphics.beginPath()
+		world.graphics.arc(0, 0, this.collisionRadius, 0, 2 * PI)
+
+		world.graphics.fillStyle = this.team.mainColor
+		world.graphics.fill()
+
+		world.graphics.beginPath()
+		world.graphics.moveTo(0, 0)
+		world.graphics.lineTo(this.collisionRadius, 0)
+
+		world.graphics.strokeStyle = Color.DARK
+		world.graphics.lineWidth = 2
+		world.graphics.lineCap = "round"
+		world.graphics.stroke()
+	}
+}
+
+for (let i = 1; i <= 3; ++i) {
+	/**
+	 * @param {Transform} target
+	 * @param {Team} team
+	 */
+	Core["T" + i] = function constructor(target, team) {
+		return new Core(target, 5 * i, 100 * i, 1, team, new Explosion(0, 0, 1 + i, 50 * i, 100 * i))
+	}
+}
+
+/**
+ * @implements {WorldObject}
+ * @implements {Moving.Linear}
+ * @implements {Colliding}
+ * @implements {Ephemeral}
+ * @implements {Teamed}
+ */
+class Shell extends Transform {
+	/**
+	 * @param {Transform} transform
+	 * @param {Force} baseSpeed
+	 * @param {Distance} movementSpeed
+	 * @param {Time} lifeTime
+	 * @param {Distance} radius
+	 * @param {Team} team
+	 * @param {Explosion} explosion
+	 */
+	constructor(transform, baseSpeed, movementSpeed, lifeTime, radius, team, explosion) {
+		super(transform.x, transform.y, transform.a)
+
+		Moving.Linear.initAngular(this, this.a, movementSpeed)
+
+		this.speedX += baseSpeed.x
+		this.speedY += baseSpeed.y
+
+		Colliding.init(this, radius)
+		Ephemeral.init(this, lifeTime)
+		Teamed.init(this, team)
+		
+		this.explosion = explosion
+	}
+	
+	mustBeDeleted(world) {
+		return Ephemeral.mustBeDeleted(this, world) || Colliding.testAny(this, Teamed.hostiles(this, world.objects))
+	}
+	
+	afterDelete(world) {
+		this.explosion.x = this.x
+		this.explosion.y = this.y
+		
+		world.add(this.explosion)
+	}
+	
+	update(world) {
+		Ephemeral.update(this, world)
+		Moving.Linear.update(this, world)
+
+		world.graphics.applyTransform(this)
+		
+		world.graphics.beginPath()
+		world.graphics.moveTo(-this.collisionRadius, 0)
+		world.graphics.lineTo(+this.collisionRadius, 0)
+		
+		world.graphics.strokeStyle = Color.YELLOW
+		world.graphics.lineWidth = this.collisionRadius * this.remainingLifeTime / this.lifeTime
+		world.graphics.lineCap = "round"
+		world.graphics.stroke()
+
+		world.graphics.resetTransform()
+	}
+}
+
+for (let i = 1; i <= 3; ++i) {
+	/**
+	 * @param {Transform} transform
+	 * @param {Force} baseSpeed
+	 * @param {Team} team
+	 */
+	Shell["T" + i] = function constructor(transform, baseSpeed, team) {
+		return new Shell(transform, baseSpeed, 300 - 50 * i, 1.5 * i, 1 + i, team, new Explosion(0, 0, i, 5 * i, 10 * i))
+	}
+}
+
+/**
+ * @abstract
+ *
+ * @method fire
+ * @memberOf Turret
+ * @protected
+ * @param {World} world
+ */
+class Turret extends Asset {
+	/**
+	 * @param {Transform} target
+	 * @param {Force} bulletBaseSpeed
+	 * @param {Angle} rotationSpeed
+	 * @param {Distance} collisionRadius
+	 * @param {Number} health
+	 * @param {Number} healthRegeneration
+	 * @param {Team} team
+	 * @param {Explosion} explosion
+	 * @param {Time} reloadTime
+	 */
+	constructor(target, bulletBaseSpeed, rotationSpeed, collisionRadius, health, healthRegeneration, team, explosion, reloadTime) {
+		super(target, collisionRadius, health, healthRegeneration, team, explosion)
+		
+		this.bulletBaseSpeed = bulletBaseSpeed
+        this.rotationSpeed = rotationSpeed
+        this.reloadTime = reloadTime
+		
+		this.mustFire = false
+		this.timeEnlapsed = 0
+		
+		this.leftRotationBound = undefined
+		this.rightRotationBound = undefined
+	}
+
+	update(world) {
+		if (this.leftRotationBound != undefined) {
+			const target = Transform.prototype.constrainAngleIn.call({
+				a: this.transform.angleToward(this.target),
+
+				optimalAngleTo(angle) {
+					return Angle.optimalAngleBetween(this.a, angle)
+				}
+			}, this.leftRotationBound, this.rightRotationBound).a
+
+			let direction = this.transform.optimalAngleTo(target)
+
+			if (Angle.rightAngleBetween(this.leftRotationBound, this.rightRotationBound) > PI) {
+				direction = -direction
+			}
+
+			this.a += this.rotationSpeed * world.timeEnlapsed * direction
+		}
+
+		if (this.canFire) {
+			this.timeEnlapsed += world.timeEnlapsed
+
 			if (this.timeEnlapsed > this.reloadTime) {
 				this.timeEnlapsed -= this.reloadTime
 				
@@ -1000,71 +1267,58 @@ const Teamed = {
 			}
 		}
 
-		world.graphics.applyTransform(this.transform)
-
-		this.draw(world)
-
-		world.graphics.resetTransform()
+		super.update(world)
 	}
-}
-
-/**
- * @implements {WorldObject}
- * @abstract
- *
- * @method draw
- * @memberOf Bullet
- * @protected
- * @optional
- * @param {World} world
- */
-Turret.Bullet = class Bullet {
+	
 	/**
-	 * @param {Object} options
-	 * @param {Transform} options.transform
-	 * @param {Distance} options.speed
-	 * @param {Force} options.baseSpeed
-	 * @param {Distance} options.size
-	 * @param {Time} options.lifeTime
+	 * @protected
 	 */
-	constructor({ transform, speed, baseSpeed, size, lifeTime }) {
-		this.transform = transform
-		this.speed = new Force(
-			baseSpeed.x + speed * cos(this.transform.a),
-			baseSpeed.y + speed * sin(this.transform.a),
-			baseSpeed.a
-		)
-
-		this.size = size
-		this.remainingLifeTime = lifeTime
-		this.lifeTime = lifeTime
-	}
-	
-	mustBeDeleted(world) {
-		return (this.remainingLifeTime -= world.timeEnlapsed) < 0
-	}
-	
-	update(world) {
-		this.speed.drive(this.transform, world)
-
-		world.graphics.applyTransform(this.transform)
-		
-		this.draw(world)
-
-		world.graphics.resetTransform()
-	}
-
-	draw(world) {
-		world.graphics.beginPath()
-		world.graphics.moveTo(-this.size, 0)
-		world.graphics.lineTo(+this.size, 0)
-		
-		world.graphics.strokeStyle = Color.YELLOW
-		world.graphics.lineWidth = this.size * this.remainingLifeTime / this.lifeTime
-		world.graphics.lineCap = "round"
-		world.graphics.stroke()
+	get canFire() {
+		return this.mustFire && abs(this.optimalAngleToward(this.targetTransform)) < 0.5
 	}
 }
+
+for (let i = 1; i <= 3; ++i) {
+	Turret["T" + i] = class extends Turret {
+		/**
+		 * @param {Transform} target
+		 * @param {Force} bulletBaseSpeed
+		 * @param {Team} team
+		 * @param {Time} reloadTime
+		 */
+		constructor(target, bulletBaseSpeed, team, reloadTime) {
+			super(target, bulletBaseSpeed, PI / i, 5 * i, 50 * i, i, team, new Explosion(0, 0, 1 + i, 10 * i, 20 * i), reloadTime)
+		}
+	}
+}
+
+// -----------------------------------------------------------------
+
+class TurretSlot {
+	/**
+	 * @param {Distance} offsetX
+	 * @param {Distance} offsetY
+	 * @param {Turret} turret
+	 * @param {Object} [options]
+	 * @param {Angle} [options.leftRotationBound] Alternative to offsetA.
+	 * @param {Angle} [options.rightRotationBound] Alternative to offsetA.
+	 * @param {Angle} [options.offsetA = 0] Alternative to leftRotationBound and rightRotationBound.
+	 */
+	constructor(offsetX, offsetY, turret, { offsetA, leftRotationBound, rightRotationBound } = { offsetA: 0 }) {
+		this.offsetX = offsetX
+		this.offsetY = offsetY
+		this.turret = turret
+		
+		if (offsetA == undefined) {
+			this.leftRotationBound = leftRotationBound
+			this.rightRotationBound = rightRotationBound
+		} else {
+			this.offsetA = offsetA
+		}
+	}
+}
+
+// -----------------------------------------------------------------
 
 class ThunderTurret extends Turret {
 	/**
