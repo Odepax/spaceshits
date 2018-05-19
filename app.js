@@ -1302,18 +1302,18 @@ class TurretSlot {
 	 * @param {Object} [options]
 	 * @param {Angle} [options.leftRotationBound] Alternative to offsetA.
 	 * @param {Angle} [options.rightRotationBound] Alternative to offsetA.
-	 * @param {Angle} [options.offsetA = 0] Alternative to leftRotationBound and rightRotationBound.
+	 * @param {Angle} [options.offsetA] Alternative to leftRotationBound and rightRotationBound.
 	 */
-	constructor(offsetX, offsetY, turret, { offsetA, leftRotationBound, rightRotationBound } = { offsetA: 0 }) {
+	constructor(offsetX, offsetY, turret, { offsetA, leftRotationBound, rightRotationBound } = {}) {
 		this.offsetX = offsetX
 		this.offsetY = offsetY
 		this.turret = turret
 		
-		if (offsetA == undefined) {
+		if (offsetA != undefined) {
+			this.offsetA = offsetA
+		} else if (leftRotationBound != undefined) {
 			this.leftRotationBound = leftRotationBound
 			this.rightRotationBound = rightRotationBound
-		} else {
-			this.offsetA = offsetA
 		}
 	}
 }
@@ -1837,12 +1837,15 @@ class Ship extends Transform {
 			} else {
 				slot.turret.relativeOffset(slot.offsetX, slot.offsetY, this)
 
-				if (slot.offsetA == undefined) {
-					slot.turret.rotationLeftBound = Angle.normalize(this.a + slot.rotationLeftBound)
-					slot.turret.rotationRightBound = Angle.normalize(this.a + slot.rotationRightBound)
-					slot.turret.a += this.speed.a * world.timeEnlapsed
-				} else {
+				if (slot.offsetA != undefined) {
 					slot.turret.a = this.a + slot.offsetA
+				} else {
+					if (slot.leftRotationBound != undefined) {
+						slot.turret.rotationLeftBound = Angle.normalize(this.a + slot.rotationLeftBound)
+						slot.turret.rotationRightBound = Angle.normalize(this.a + slot.rotationRightBound)
+					}
+					
+					slot.turret.a += this.speed.a * world.timeEnlapsed
 				}
 
 				slot.turret.mustFire = this.isFiring
