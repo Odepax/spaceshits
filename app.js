@@ -53,6 +53,24 @@ const Color = {
 }
 
 /**
+ * @interface Team
+ *
+ * @property {Color} mainColor
+ * @memberOf Team
+ * @required
+ *
+ * @property {Color} secondaryColor
+ * @memberOf Team
+ * @required
+ */
+const Team = {
+	RED: { mainColor: Color.RED, secondaryColor: Color.ORANGE },
+	GREEN: { mainColor: Color.GREEN, secondaryColor: Color.WHITE },
+	BLUE: { mainColor: Color.BLUE, secondaryColor: Color.TEAL },
+	PURPLE: { mainColor: Color.PURPLE, secondaryColor: Color.PINK }
+}
+
+/**
  * @typedef {Number} Time
  * @description In `s`.
  */
@@ -711,76 +729,269 @@ class Friction {
 // -----------------------------------------------------------------
 
 /**
- * @implements {WorldObject}
- * @abstract
+ * @interface Ephemeral
  *
- * @method draw
- * @memberOf Turret
- * @protected
- * @param {World} world
+ * @property {Time} lifeTime
+ * @memberOf Ephemeral
+ * @required
  *
- * @method fire
- * @memberOf Turret
- * @protected
- * @param {World} world
+ * @property {Time} remainingLifeTime
+ * @memberOf Ephemeral
+ * @required
  */
-class Turret {
+const Ephemeral = {
 	/**
-	 * @param {Object} options
-	 * @param {Transform} options.targetTransform
-	 * @param {Force} options.bulletBaseSpeed
-	 * @param {Angle} options.rotationSpeed
-	 * @param {Angle} options.rotationLeftBound
-	 * @param {Angle} options.rotationRightBound
-	 * @param {Distance} options.size
-	 * @param {Color} options.color
-	 * @param {Number} options.health
-	 * @param {Number} options.healthRegeneration
-	 * @param {Time} options.reloadTime
+	 * @param {Object} $
+	 * @param {Time} lifeTime
 	 */
-	constructor({ targetTransform, bulletBaseSpeed, rotationSpeed, rotationLeftBound, rotationRightBound, size, color, health, healthRegeneration, reloadTime }) {
-		this.transform = new Transform(0, 0)
-		this.targetTransform = targetTransform
-		this.bulletBaseSpeed = bulletBaseSpeed
-		
-		this.rotationSpeed = rotationSpeed
-		this.rotationLeftBound = rotationLeftBound
-		this.rotationRightBound = rotationRightBound
+	init($, lifeTime) {
+		$.lifeTime = lifeTime
+		$.remainingLifeTime = lifeTime
+	},
 	
-		this.size = size
-		this.color = color
+	/**
+	 * @param {Ephemeral} $
+	 * @param {World} world
+	 */
+	update($, world) {
+		$.remainingLifeTime -= world.timeEnlapsed
+	},
 
-		this.health = health
-		this.maxHealth = health
-		this.healthRegeneration = healthRegeneration
-
-		this.isFiring = false
-		this.reloadTime = reloadTime
-		this.timeEnlapsed = 0
+	/**
+	 * @param {Ephemeral} $
+	 * @param {World} world
+	 * @return {Boolean}
+	 */
+	mustBeDeleted($, world) {
+		return $.remainingLifeTime < 0
 	}
+}
 
-	mustBeDeleted(world) {
-		return this.health < 0
+/**
+ * @interface Destroyable
+ *
+ * @property {Number} health
+ * @memberOf Destroyable
+ * @required
+ *
+ * @property {Number} maxHealth
+ * @memberOf Destroyable
+ * @required
+ *
+ * @property {Number} healthRegeneration
+ * @memberOf Destroyable
+ * @required
+ */
+const Destroyable = {
+	/**
+	 * @param {Object} $
+	 * @param {Number} health
+	 * @param {Number} [healthRegeneration = 0]
+	 */
+	init($, health, healthRegeneration = 0) {
+		$.health = health
+		$.maxHealth = health
+		$.healthRegeneration = healthRegeneration
+	},
+
+	/**
+	 * @param {Destroyable} $
+	 * @param {World} world
+	 */
+	update($, world) {
+		if ($.health < $.maxHealth) {
+			$.health += $.healthRegeneration * world.timeEnlapsed
+		}
+	},
+
+	/**
+	 * @param {Destroyable} $
+	 * @param {World} world
+	 * @return {Boolean}
+	 */
+	mustBeDeleted($, world) {
+		return $.health < 0
 	}
+}
 
-	update(world) {
-		const target = Transform.prototype.constrainAngleIn.call({
-			a: this.transform.angleToward(this.targetTransform),
-			optimalAngleTo(angle) {
-				return Angle.optimalAngleBetween(this.a, angle)
+/**
+ * @interface Moving
+ * @extends {Transform}
+ *
+ * @property {Force} speed
+ * @memberOf Moving
+ * @required
+ *
+ * @property {Force} acceleration
+ * @memberOf Moving
+ * @required
+ *
+ * @property {Force} friction
+ * @memberOf Moving
+ * @required
+ */
+const Moving = {
+	/**
+	 * @param {Transform} $
+	 * @param {Force} speed
+	 * @param {Force} acceleration
+	 * @param {Friction} friction
+	 */
+	init($, { speed = new Force(0, 0), acceleration = new Force(0, 0), friction = new Friction() } = {}) {
+		$.speed = speed
+		$.acceleration = acceleration
+		$.friction = friction
+	},
+
+	/**
+	 * @param {Moving} $
+	 * @param {World} world
+	 */
+	update($, world) {
+		$.acceleration.drive($.speed, world)
+
+		$.friction.updateFrom($.speed, world)
+		$.friction.drive($.speed, world)
+
+		$.speed.drive($, world)
+	},
+
+	/**
+	 * @interface Moving.Linear
+	 * @extends {Transform}
+	 *
+	 * @property {Distance} speedX
+	 * @memberOf Moving.Linear
+	 * @required
+	 *
+	 * @property {Distance} speedY
+	 * @memberOf Moving.Linear
+	 * @required
+	 */
+	Linear: {
+		/**
+		 * @param {Transform} $
+		 * @param {Distance} speedX
+		 * @param {Distance} speedY
+		 */
+		init($, speedX, speedY) {
+			$.speedX = speedX
+			$.speedY = speedY
+		},
+
+		/**
+		 * @param {Transform} $
+		 * @param {Angle} angle
+		 * @param {Distance} speed
+		 */
+		initAngular($, angle, speed) {
+			$.speedX = cos(angle) * speed
+			$.speedY = sin(angle) * speed
+		},
+
+		/**
+		 * @param {Moving.Linear} $
+		 * @param {World} world
+		 */
+		update($, world) {
+			$.offset($.speedX * world.timeEnlapsed, $.speedY * world.timeEnlapsed)
+		}
+	}
+}
+
+/**
+ * @interface Colliding
+ * @extends {Transform}
+ *
+ * @property {Distance} collisionRadius
+ * @memberOf Colliding
+ * @required
+ *
+ * @property {Number} collisionDamage
+ * @memberOf Colliding
+ * @required
+ */
+const Colliding = {
+	/**
+	 * @param {Transform} $
+	 * @param {Distance} collisionRadius
+	 * @param {Number} [collisionDamage = 0]
+	 */
+	init($, collisionRadius, collisionDamage = 0) {
+		$.collisionRadius = collisionRadius
+		$.collisionDamage = collisionDamage
+	},
+
+	/**
+	 * @param {Colliding} $1
+	 * @param {Colliding} $2
+	 * @return {Boolean}
+	 */
+	test($1, $2) {
+		return $1.distanceToward($2) < $1.collisionRadius + $2.collisionRadius
+	},
+
+	/**
+	 * @param {Colliding} $
+	 * @param {Iterator} collidings
+	 * @return {Boolean}
+	 */
+	testAny($, collidings) {
+		for (const colliding of collidings) {
+			if (this.test($, colliding)) {
+				return true
 			}
-		}, this.rotationLeftBound, this.rotationRightBound).a
-
-		let direction = this.transform.optimalAngleTo(target)
-
-		if (Angle.rightAngleBetween(this.rotationLeftBound, this.rotationRightBound) > PI) {
-			direction = -direction
 		}
 
-		this.transform.a += this.rotationSpeed * world.timeEnlapsed * direction
+		return false
+	}
+}
 
-		if (this.isFiring && abs(this.transform.optimalAngleToward(this.targetTransform)) < 0.5) {
-			this.timeEnlapsed += world.timeEnlapsed
+/**
+ * @interface Teamed
+ * @extends {Colliding}
+ *
+ * @property {Team} team
+ * @memberOf Teamed
+ * @optional
+ */
+const Teamed = {
+	/**
+	 * @param {Colliding} $
+	 * @param {Team} [team = null]
+	 */
+	init($, team = null) {
+		$.team = team
+	},
+
+	/**
+	 * @param {Teamed} $1
+	 * @param {Teamed} $2
+	 * @return {Boolean}
+	 */
+	test($1, $2) {
+		return $2.team && $1.team == $2.team
+	},
+
+	/**
+	 * @param {Teamed} $
+	 * @param {Iterator} others
+	 * @return {Iterator}
+	 */
+	hostiles($, others) {
+		const result = []
+
+        for (const other of others) {
+			if (!this.test($, other)) {
+				result.push(other)
+			}
+		}
+
+		return result
+    }
+}
+
+// -----------------------------------------------------------------
 
 			if (this.timeEnlapsed > this.reloadTime) {
 				this.timeEnlapsed -= this.reloadTime
