@@ -1239,25 +1239,27 @@ class Turret extends Asset {
 	}
 
 	update(world) {
-		if (this.leftRotationBound != undefined) {
-			const target = Transform.prototype.constrainAngleIn.call({
-				a: this.transform.angleToward(this.target),
+		let target = 0
+
+		if (this.leftRotationBound == undefined) {
+			target = this.angleToward(this.target)
+		} else {
+			target = Transform.prototype.constrainAngleIn.call({
+				a: this.angleToward(this.target),
 
 				optimalAngleTo(angle) {
 					return Angle.optimalAngleBetween(this.a, angle)
 				}
 			}, this.leftRotationBound, this.rightRotationBound).a
-
-			let direction = this.transform.optimalAngleTo(target)
-
-			if (Angle.rightAngleBetween(this.leftRotationBound, this.rightRotationBound) > PI) {
-				direction = -direction
-			}
-			
-			this.a += this.rotationSpeed * world.timeEnlapsed * direction
-		} else {
-			this.rotateToward(this.target)
 		}
+
+		let direction = this.optimalAngleTo(target)
+
+		if (this.leftRotationBound != undefined && Angle.rightAngleBetween(this.leftRotationBound, this.rightRotationBound) > PI) {
+			direction = -direction
+		}
+
+		this.a += this.rotationSpeed * world.timeEnlapsed * direction
 
 		if (this.canFire) {
 			this.timeEnlapsed += world.timeEnlapsed
@@ -1302,21 +1304,17 @@ class TurretSlot {
 	 * @param {Distance} offsetY
 	 * @param {Turret} turret
 	 * @param {Object} [options]
-	 * @param {Angle} [options.leftRotationBound] Alternative to offsetA.
-	 * @param {Angle} [options.rightRotationBound] Alternative to offsetA.
-	 * @param {Angle} [options.offsetA] Alternative to leftRotationBound and rightRotationBound.
+	 * @param {Angle} options.leftRotationBound
+	 * @param {Angle} options.rightRotationBound
 	 */
-	constructor(offsetX, offsetY, turret, { offsetA, leftRotationBound, rightRotationBound } = {}) {
+	constructor(offsetX, offsetY, turret, { leftRotationBound, rightRotationBound } = {}) {
 		this.offsetX = offsetX
 		this.offsetY = offsetY
+
 		this.turret = turret
-		
-		if (offsetA != undefined) {
-			this.offsetA = offsetA
-		} else if (leftRotationBound != undefined) {
-			this.leftRotationBound = leftRotationBound
-			this.rightRotationBound = rightRotationBound
-		}
+
+		this.leftRotationBound = leftRotationBound
+		this.rightRotationBound = rightRotationBound
 	}
 }
 
@@ -1349,7 +1347,7 @@ class TestTurret extends Turret.T1 {
 		world.graphics.beginPath()
 
 		world.graphics.moveTo(0, 0)
-		world.graphics.lineTo(5, 0)
+		world.graphics.lineTo(50, 0)
 
 		world.graphics.strokeStyle = Color.GREY
 		world.graphics.stroke()
@@ -1491,16 +1489,12 @@ class Ship extends Transform {
 			} else {
 				slot.turret.relativeOffset(slot.offsetX, slot.offsetY, this)
 
-				if (slot.offsetA != undefined) {
-					slot.turret.a = this.a + slot.offsetA
-				} else {
-					if (slot.leftRotationBound != undefined) {
-						slot.turret.rotationLeftBound = Angle.normalize(this.a + slot.rotationLeftBound)
-						slot.turret.rotationRightBound = Angle.normalize(this.a + slot.rotationRightBound)
-					}
-					
-					slot.turret.a += this.speed.a * world.timeEnlapsed
+				if (slot.leftRotationBound != undefined) {
+					slot.turret.leftRotationBound = Angle.normalize(this.a + slot.leftRotationBound)
+					slot.turret.rightRotationBound = Angle.normalize(this.a + slot.rightRotationBound)
 				}
+
+				slot.turret.a += this.speed.a * world.timeEnlapsed
 
 				slot.turret.mustFire = this.mustFire
 			}
@@ -1518,9 +1512,8 @@ class TestBankShip extends Ship {
 	constructor(transform, target, team) {
 		super(transform, target, Core.T3(target, team), team, { movementAcceleration: 100, rotationAcceleration: 2 })
 
-		this.turretSlots.add(new TurretSlot(50, 50, new TestTurret(this.target, this.speed, this.team)))
-		this.turretSlots.add(new TurretSlot(-50, 50, new TestTurret(this.target, this.speed, this.team), { offsetA: 0 }))
-		this.turretSlots.add(new TurretSlot(50, -50, new TestTurret(this.target, this.speed, this.team), { leftRotationBound: -0.4, rightRotationBound: 0.4 }))
+		this.turretSlots.add(new TurretSlot(50, +50, new TestTurret(this.target, this.speed, this.team)))
+		this.turretSlots.add(new TurretSlot(50, -50, new TestTurret(this.target, this.speed, this.team), { leftRotationBound: -0.1, rightRotationBound: 0.1 }))
 	}
 
 	draw(world) {
@@ -1550,7 +1543,7 @@ const player = new TestBankShip(new Transform(200, 200, 1), world.input.mouseTra
 // [x] Acceleration / max speed bug.
 // [x] Fix teams requirements.
 // [x] Fix colliders requirements.
-// [ ] Turret slot redesign.
+// [x] Turret slot redesign.
 // [ ] Constrain angle to arc > 180deg bug.
 
 world.add(player)
