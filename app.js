@@ -1253,8 +1253,10 @@ class Turret extends Asset {
 			if (Angle.rightAngleBetween(this.leftRotationBound, this.rightRotationBound) > PI) {
 				direction = -direction
 			}
-
+			
 			this.a += this.rotationSpeed * world.timeEnlapsed * direction
+		} else {
+			this.rotateToward(this.target)
 		}
 
 		if (this.canFire) {
@@ -1274,7 +1276,7 @@ class Turret extends Asset {
 	 * @protected
 	 */
 	get canFire() {
-		return this.mustFire && abs(this.optimalAngleToward(this.targetTransform)) < 0.5
+		return this.mustFire && abs(this.optimalAngleToward(this.target)) < 0.5
 	}
 }
 
@@ -1320,382 +1322,34 @@ class TurretSlot {
 
 // -----------------------------------------------------------------
 
-class ThunderTurret extends Turret {
-	/**
-	 * @param {Transform} targetTransform
-	 * @param {Force} bulletBaseSpeed
-	 * @param {Color} color
-	 */
-	constructor(targetTransform, bulletBaseSpeed, color) {
-		super({
-			targetTransform,
-			bulletBaseSpeed,
-			rotationSpeed: 4,
-			rotationLeftBound: 0,
-			rotationRightBound: 0,
-			size: 20,
-			color,
-			health: 100,
-			healthRegeneration: 0,
-			reloadTime: rand(0.2, 0.3)
-		})
+class TestTurret extends Turret.T1 {
+	constructor(target, bulletBaseSpeed, team) {
+		super(target, bulletBaseSpeed, team, 0.2)
 	}
 
 	fire(world) {
-		/*
-		world.add(new ThunderTurret.Bullet(
-			this.transform
-				.clone()
-				.relativeAngularOffset(rand(-0.02, 0.02), this.size),
-			this.bulletBaseSpeed
-		))
-		*/
-		
-		world.add(new Shell(
-			this.transform
-				.clone()
-				.rotateBy(rand(-0.02, 0.02), this.size),
+		world.add(Shell.T1(
+			this.clone()
+				.relativeOffset(this.collisionRadius, 0)
+				.rotateBy(rand(-0.03, 0.03)),
 			this.bulletBaseSpeed,
-			300,
-			5,
-			2,
-			Team.RED,
-			new Explosion(0, 0, 1, 10, 10)
+			this.team
 		))
 	}
 
 	draw(world) {
 		world.graphics.beginPath()
-		world.graphics.moveTo(5, -6)
-		world.graphics.lineTo(2, -7)
-		world.graphics.lineTo(-7, 0)
-		world.graphics.lineTo(2, 7)
-		world.graphics.lineTo(5, 6)
+		world.graphics.arc(0, 0, this.collisionRadius, 1, -1)
 
-		world.graphics.strokeStyle = this.color
+		world.graphics.strokeStyle = this.team.mainColor
 		world.graphics.lineWidth = 2
 		world.graphics.lineCap = "round"
 		world.graphics.stroke()
 
 		world.graphics.beginPath()
-		world.graphics.moveTo(3, -2)
-		world.graphics.lineTo(15, -2)
-		world.graphics.moveTo(3, 2)
-		world.graphics.lineTo(15, 2)
 
-		world.graphics.strokeStyle = Color.GREY
-		world.graphics.stroke()
-	}
-}
-
-class VulcanTurret extends Turret {
-	/**
-	 * @param {Transform} targetTransform
-	 * @param {Force} bulletBaseSpeed
-	 * @param {Color} color
-	 */
-	constructor(targetTransform, bulletBaseSpeed, color) {
-		super({
-			targetTransform,
-			bulletBaseSpeed,
-			rotationSpeed: 3,
-			rotationLeftBound: 0,
-			rotationRightBound: 0,
-			size: 25,
-			color,
-			health: 100,
-			healthRegeneration: 0,
-			reloadTime: rand(0.2, 0.4)
-		})
-	}
-
-	fire(world) {
-		for (let i = -2; i < 3; ++i) {
-			world.add(new VulcanTurret.Bullet(
-				this.transform
-					.clone()
-					.relativeAngularOffset(i * 0.1, this.size)
-					.rotateBy(rand(i * 0.1, i * 0.1 + 0.1)),
-				this.bulletBaseSpeed
-			))
-		}
-	}
-
-	draw(world) {
-		world.graphics.beginPath()
-		world.graphics.moveTo(7, -10)
-		world.graphics.lineTo(1, -12)
-		world.graphics.lineTo(-10, 0)
-		world.graphics.lineTo(1, 12)
-		world.graphics.lineTo(7, 10)
-
-		world.graphics.strokeStyle = this.color
-		world.graphics.lineWidth = 2
-		world.graphics.lineCap = "round"
-		world.graphics.stroke()
-
-		world.graphics.beginPath()
-		world.graphics.moveTo(3, -6)
-		world.graphics.lineTo(18, -6)
-		world.graphics.moveTo(3, -2)
-		world.graphics.lineTo(18, -2)
-		world.graphics.moveTo(3, 2)
-		world.graphics.lineTo(18, 2)
-		world.graphics.moveTo(3, 6)
-		world.graphics.lineTo(18, 6)
-
-		world.graphics.strokeStyle = Color.GREY
-		world.graphics.stroke()
-	}
-}
-
-class RavagerTurret extends Turret {
-	/**
-	 * @param {Transform} targetTransform
-	 * @param {Force} bulletBaseSpeed
-	 * @param {Color} color
-	 */
-	constructor(targetTransform, bulletBaseSpeed, color) {
-		super({
-			targetTransform,
-			bulletBaseSpeed,
-			rotationSpeed: 2,
-			rotationLeftBound: 0,
-			rotationRightBound: 0,
-			size: 30,
-			color,
-			health: 100,
-			healthRegeneration: 0,
-			reloadTime: rand(1.2, 1.3)
-		})
-	}
-
-	fire(world) {
-		world.add(new RavagerTurret.Bullet(
-			this.transform
-				.clone()
-				.relativeAngularOffset(rand(-0.03, 0.01), this.size),
-			this.bulletBaseSpeed
-		))
-
-		world.add(new UniqueAction(world => {
-			world.add(new RavagerTurret.Bullet(
-				this.transform
-					.clone()
-					.relativeAngularOffset(rand(-0.01, 0.03), this.size),
-				this.bulletBaseSpeed
-			))
-		}, 0.1))
-	}
-
-	draw(world) {
-		world.graphics.beginPath()
-		world.graphics.arc(0, 0, 10, 1, -1)
-
-		world.graphics.strokeStyle = this.color
-		world.graphics.lineWidth = 2
-		world.graphics.lineCap = "round"
-		world.graphics.stroke()
-
-		world.graphics.beginPath()
-		world.graphics.moveTo(6, -4)
-		world.graphics.lineTo(24, -4)
-		world.graphics.moveTo(6, 0)
-		world.graphics.lineTo(24, 0)
-		world.graphics.moveTo(6, 4)
-		world.graphics.lineTo(24, 4)
-
-		world.graphics.strokeStyle = Color.GREY
-		world.graphics.stroke()
-	}
-}
-
-class AuroraTurret extends Turret {
-	/**
-	 * @param {Transform} targetTransform
-	 * @param {Force} bulletBaseSpeed
-	 * @param {Color} color
-	 */
-	constructor(targetTransform, bulletBaseSpeed, color) {
-		super({
-			targetTransform,
-			bulletBaseSpeed,
-			rotationSpeed: 2,
-			rotationLeftBound: 0,
-			rotationRightBound: 0,
-			size: 30,
-			color,
-			health: 100,
-			healthRegeneration: 0,
-			reloadTime: rand(1.4, 1.6)
-		})
-	}
-
-	fire(world) {
-		world.add(new AuroraTurret.Bullet(
-			this.transform
-				.clone()
-				.relativeAngularOffset(rand(-0.01, 0.01), this.size),
-			this.bulletBaseSpeed
-		))
-	}
-
-	draw(world) {
-		world.graphics.beginPath()
-		world.graphics.arc(0, 0, 10, 0.7, -0.7)
-
-		world.graphics.strokeStyle = this.color
-		world.graphics.lineWidth = 2
-		world.graphics.lineCap = "round"
-		world.graphics.stroke()
-
-		world.graphics.beginPath()
-		world.graphics.moveTo(0, -2)
-		world.graphics.lineTo(25, -2)
-		world.graphics.moveTo(0, 2)
-		world.graphics.lineTo(25, 2)
-
-		world.graphics.strokeStyle = Color.GREY
-		world.graphics.stroke()
-	}
-}
-
-class StormTurret extends Turret {
-	/**
-	 * @param {Transform} targetTransform
-	 * @param {Force} bulletBaseSpeed
-	 * @param {Color} color
-	 */
-	constructor(targetTransform, bulletBaseSpeed, color) {
-		super({
-			targetTransform,
-			bulletBaseSpeed,
-			rotationSpeed: 2,
-			rotationLeftBound: 0,
-			rotationRightBound: 0,
-			size: 30,
-			color,
-			health: 100,
-			healthRegeneration: 0,
-			reloadTime: rand(0.1, 0.2)
-		})
-	}
-
-	fire(world) {
-		world.add(new StormTurret.Bullet(
-			this.transform
-				.clone()
-				.relativeAngularOffset(+0.4, this.size)
-				.rotateBy(rand(-0.02, 0.02)),
-			this.bulletBaseSpeed
-		))
-
-		world.add(new StormTurret.Bullet(
-			this.transform
-				.clone()
-				.relativeAngularOffset(-0.4, this.size)
-				.rotateBy(rand(-0.02, 0.02)),
-			this.bulletBaseSpeed
-		))
-	}
-
-	draw(world) {
-		world.graphics.beginPath()
-		world.graphics.moveTo(-10, -16)
-		world.graphics.lineTo(-10, -5)
-		world.graphics.lineTo(8, 0)
-		world.graphics.lineTo(-10, 5)
-		world.graphics.lineTo(-10, 16)
-
-		world.graphics.strokeStyle = this.color
-		world.graphics.lineWidth = 2
-		world.graphics.lineCap = "round"
-		world.graphics.stroke()
-
-		world.graphics.beginPath()
-		world.graphics.moveTo(-6, -13)
-		world.graphics.lineTo(20, -13)
-		world.graphics.moveTo(-6, -9)
-		world.graphics.lineTo(20, -9)
-		world.graphics.moveTo(-6, 9)
-		world.graphics.lineTo(20, 9)
-		world.graphics.moveTo(-6, 13)
-		world.graphics.lineTo(20, 13)
-
-		world.graphics.strokeStyle = Color.GREY
-		world.graphics.stroke()
-	}
-}
-
-class HurricaneTurret extends Turret {
-	/**
-	 * @param {Transform} targetTransform
-	 * @param {Force} bulletBaseSpeed
-	 * @param {Color} color
-	 */
-	constructor(targetTransform, bulletBaseSpeed, color) {
-		super({
-			targetTransform,
-			bulletBaseSpeed,
-			rotationSpeed: 1,
-			rotationLeftBound: 0,
-			rotationRightBound: 0,
-			size: 40,
-			color,
-			health: 100,
-			healthRegeneration: 0,
-			reloadTime: rand(0.2, 0.3)
-		})
-	}
-
-	fire(world) {
-		for (const i of [ 0.55, 0.4, 0.25 ]) {
-			world.add(new UniqueAction(world => {
-				world.add(new StormTurret.Bullet(
-					this.transform
-						.clone()
-						.relativeAngularOffset(+i, this.size)
-						.rotateBy(rand(-0.02, 0.02)),
-					this.bulletBaseSpeed
-				))
-
-				world.add(new StormTurret.Bullet(
-					this.transform
-						.clone()
-						.relativeAngularOffset(-i, this.size)
-						.rotateBy(rand(-0.02, 0.02)),
-					this.bulletBaseSpeed
-				))
-			}, i / 3))
-		}
-	}
-
-	draw(world) {
-		world.graphics.beginPath()
-		world.graphics.moveTo(-22, -21)
-		world.graphics.lineTo(-13, -6)
-		world.graphics.lineTo(10, 0)
-		world.graphics.lineTo(-13, 6)
-		world.graphics.lineTo(-22, 21)
-
-		world.graphics.strokeStyle = this.color
-		world.graphics.lineWidth = 2
-		world.graphics.lineCap = "round"
-		world.graphics.stroke()
-
-		world.graphics.beginPath()
-		world.graphics.moveTo(-16, -18)
-		world.graphics.lineTo(23, -18)
-		world.graphics.moveTo(-13, -14)
-		world.graphics.lineTo(27, -14)
-		world.graphics.moveTo(-10, -10)
-		world.graphics.lineTo(30, -10)
-		world.graphics.moveTo(-10, 10)
-		world.graphics.lineTo(30, 10)
-		world.graphics.moveTo(-13, 14)
-		world.graphics.lineTo(27, 14)
-		world.graphics.moveTo(-16, 18)
-		world.graphics.lineTo(23, 18)
+		world.graphics.moveTo(0, 0)
+		world.graphics.lineTo(5, 0)
 
 		world.graphics.strokeStyle = Color.GREY
 		world.graphics.stroke()
@@ -1800,7 +1454,7 @@ class Ship extends Transform {
 		
 		this.core = core
 		this.turretSlots = new Set()
-		this.isFiring = false
+		this.mustFire = false
 	}
 	
 	afterAdd(world) {
@@ -1848,7 +1502,7 @@ class Ship extends Transform {
 					slot.turret.a += this.speed.a * world.timeEnlapsed
 				}
 
-				slot.turret.mustFire = this.isFiring
+				slot.turret.mustFire = this.mustFire
 			}
 		}
 
@@ -1860,105 +1514,21 @@ class Ship extends Transform {
 	}
 }
 
-/*
-class DartShip extends Ship {
-	constructor(transform, targetTransform, color) {
-		super({
-			transform,
-			targetTransform,
-			movementAcceleration: 130,
-			rotationAcceleration: 2,
-			color,
-			health: 100,
-			healthRegeneration: 0,
-			turretSlots: null,
-			lomlSlots: null
-		})
-
-		this.turretSlots = [
-			new TurretSlot(-26, +38, -0.28, 1.2, new RavagerTurret(targetTransform, this.speed, color)),
-			new TurretSlot(-26, -38, -1.2, 0.28, new AuroraTurret(targetTransform, this.speed, color))
-		]
-
-		this.lomlSlots = []
-	}
-
-	draw(world) {
-		world.graphics.beginPath()
-		world.graphics.moveTo(-61, 0)
-		world.graphics.lineTo(-68, 26)
-		world.graphics.lineTo(-74, 24)
-		world.graphics.lineTo(-74, 48)
-		world.graphics.lineTo(-26, 60)
-		world.graphics.lineTo(-26, 56)
-		world.graphics.bezierCurveTo(-66, 48, -38, -2, -10, 26)
-		world.graphics.lineTo(84, 0)
-		world.graphics.lineTo(-10, -26)
-		world.graphics.bezierCurveTo( -38, 2, -66, -48, -26, -56)
-		world.graphics.lineTo(-26, -60)
-		world.graphics.lineTo(-74, -48)
-		world.graphics.lineTo(-74, -24)
-		world.graphics.lineTo(-68, -26)
-		world.graphics.closePath()
-
-		world.graphics.fillStyle = Color.DARK
-		world.graphics.fill()
-	}
-}
-*/
-
-class SiegeShip extends Ship {
+class TestBankShip extends Ship {
 	constructor(transform, target, team) {
 		super(transform, target, Core.T3(target, team), team, { movementAcceleration: 100, rotationAcceleration: 2 })
 
-	//	this.turretSlots.add(new TurretSlot(-49, -39, new ThunderTurret(/* ... */), { leftRotationBound: -2.72, rightRotationBound: -0.30}))
-	//	this.turretSlots.add(new TurretSlot(-49, +39, new ThunderTurret(/* ... */), { leftRotationBound: +0.30, rightRotationBound: +2.72}))
-	//	this.turretSlots.add(new TurretSlot(105, -26, new ThunderTurret(/* ... */), { leftRotationBound: -2.86, rightRotationBound: -0.15}))
-	//	this.turretSlots.add(new TurretSlot(105, +26, new ThunderTurret(/* ... */), { leftRotationBound: +0.15, rightRotationBound: +2.86}))
-
-		/*
-		this.lomlSlots = [
-			new LOMLSlot(48, -12, -PI / 2, new LOML(targetTransform, this.speed, color)),
-			new LOMLSlot(48, +12, +PI / 2, new LOML(targetTransform, this.speed, color)),
-			new LOMLSlot(72, -12, -PI / 2, new LOML(targetTransform, this.speed, color)),
-			new LOMLSlot(72, +12, +PI / 2, new LOML(targetTransform, this.speed, color)),
-			new LOMLSlot(-2, -35, -PI / 2, new LOML(targetTransform, this.speed, color)),
-			new LOMLSlot(-2, +35, +PI / 2, new LOML(targetTransform, this.speed, color))
-		]
-		*/
+		this.turretSlots.add(new TurretSlot(50, 50, new TestTurret(this.target, this.speed, this.team)))
+		this.turretSlots.add(new TurretSlot(-50, 50, new TestTurret(this.target, this.speed, this.team), { offsetA: 0 }))
+		this.turretSlots.add(new TurretSlot(50, -50, new TestTurret(this.target, this.speed, this.team), { leftRotationBound: -0.4, rightRotationBound: 0.4 }))
 	}
 
 	draw(world) {
 		world.graphics.beginPath()
-		world.graphics.moveTo(-28, 0)
-		world.graphics.lineTo(-32, -13)
-		world.graphics.lineTo(-58, -15)
-		world.graphics.lineTo(-67, -40)
-		world.graphics.lineTo(-62, -40)
-		world.graphics.bezierCurveTo(-61, -20, -37, -24, -37, -39)
-		world.graphics.lineTo(-16, -32)
-		world.graphics.lineTo(13, -32)
-		world.graphics.lineTo(28, -28)
-		world.graphics.lineTo(36, -9)
-		world.graphics.lineTo(85, -9)
-		world.graphics.lineTo(90, -24)
-		world.graphics.lineTo(93, -25)
-		world.graphics.bezierCurveTo(95, -9, 116, -11, 117, -25)
-		world.graphics.lineTo(121, -24)
-		world.graphics.bezierCurveTo(129, -3, 129, 3, 121, 24)
-		world.graphics.lineTo(117, 25)
-		world.graphics.bezierCurveTo(116, 11, 95, 9, 93, 25)
-		world.graphics.lineTo(90, 24)
-		world.graphics.lineTo(85, 9)
-		world.graphics.lineTo(36, 9)
-		world.graphics.lineTo(28, 28)
-		world.graphics.lineTo(13, 32)
-		world.graphics.lineTo(-16, 32)
-		world.graphics.lineTo(-37, 39)
-		world.graphics.bezierCurveTo(-37, 24, -61, 20, -62, 40)
-		world.graphics.lineTo(-67, 40)
-		world.graphics.lineTo(-58, 15)
-		world.graphics.lineTo(-32, 13)
+		world.graphics.moveTo(-80, -30)
+		world.graphics.lineTo(+80, -30)
+		world.graphics.lineTo(+80, +30)
+		world.graphics.lineTo(-80, +30)
 		world.graphics.closePath()
 
 		world.graphics.fillStyle = Color.DARK
@@ -1970,7 +1540,7 @@ class SiegeShip extends Ship {
 
 const world = new World(canvas)
 
-const player = new SiegeShip(new Transform(200, 200, 1), world.input.mouseTransform, Team.RED)
+const player = new TestBankShip(new Transform(200, 200, 1), world.input.mouseTransform, Team.RED)
 
 // TODO
 // ----
