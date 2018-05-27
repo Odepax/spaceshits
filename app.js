@@ -1454,12 +1454,12 @@ class Ship extends Transform {
 
 		this.movementAcceleration = movementAcceleration
 		this.rotationAcceleration = rotationAcceleration
-		
+
 		this.core = core
 		this.turretSlots = new Set()
 		this.mustFire = false
 	}
-	
+
 	afterAdd(world) {
 		world.add(this.core)
 
@@ -1474,9 +1474,6 @@ class Ship extends Transform {
 		}
 
 		world.delete(this.core)
-		
-		this.core = null
-		this.turretSlots = null
 	}
 
 	mustBeDeleted(world) {
