@@ -1583,6 +1583,68 @@ Ship.M1AMoth = class M1AMoth extends Ship {
 
 // -----------------------------------------------------------------
 
+/**
+ * @implements {WorldObject}
+ */
+class KeyboardShipController {
+	/**
+	 * @param {Ship} ship
+	 */
+	constructor(ship) {
+		this.ship = ship
+	}
+
+	mustBeDeleted(world) {
+		return this.ship.mustBeDeleted(world)
+	}
+
+	update(world) {
+		this.ship.acceleration.x = 0
+		this.ship.acceleration.y = 0
+		this.ship.acceleration.a = 0
+
+			 if (world.input.isPressed("KeyD")) this.ship.acceleration.a = +this.ship.rotationAcceleration
+		else if (world.input.isPressed("KeyA")) this.ship.acceleration.a = -this.ship.rotationAcceleration
+
+		if (world.input.isPressed("KeyW") || world.input.isPressed("KeyS") || world.input.isPressed("KeyE") || world.input.isPressed("KeyQ")) {
+			let a = this.ship.a
+
+			if (world.input.isPressed("KeyS")) {
+				a += PI
+			}
+
+			if (world.input.isPressed("KeyE")) {
+				if (world.input.isPressed("KeyW")) {
+					a += PI / 4
+				} else if (world.input.isPressed("KeyS")) {
+					a -= PI / 4
+				} else {
+					a += PI / 2
+				}
+			} else if (world.input.isPressed("KeyQ")) {
+				if (world.input.isPressed("KeyW")) {
+					a -= PI / 4
+				} else if (world.input.isPressed("KeyS")) {
+					a += PI / 4
+				} else {
+					a -= PI / 2
+				}
+			}
+
+			this.ship.acceleration.x = this.ship.movementAcceleration * cos(a)
+			this.ship.acceleration.y = this.ship.movementAcceleration * sin(a)
+		}
+
+		if (world.input.isPressed("MouseLeft")) {
+			this.ship.mustFire = true
+		} else {
+			this.ship.mustFire = false
+		}
+	}
+}
+
+// -----------------------------------------------------------------
+
 const world = new World(canvas)
 
 const player = new Ship.M1AMoth(new Transform(200, 200, 1), world.input.mouseTransform, Team.RED)
@@ -1596,13 +1658,14 @@ const player = new Ship.M1AMoth(new Transform(200, 200, 1), world.input.mouseTra
 // [x] Fix teams requirements.
 // [x] Fix colliders requirements.
 // [x] Turret slot redesign.
-// [ ] Extract player controller to separate keyboard controller.
+// [x] Extract player controller to separate keyboard controller.
 // [ ] Create player rotative mouse controller.
 // [ ] Create AI controllers.
 // [ ] Implement relative camera.
 // [ ] Constrain angle to arc > 180deg bug.
 
 world.add(player)
+world.add(new KeyboardShipController(player))
 
 world.add({
 	transform: new Transform(800, 200),
@@ -1657,53 +1720,6 @@ world.add({
 		world.graphics.strokeStyle = Color.GREEN
 		world.graphics.lineWidth = 5
 		world.graphics.stroke()
-	}
-})
-
-world.add({
-	/** Player controller. */
-	update(world) {
-		player.acceleration.x = 0
-		player.acceleration.y = 0
-		player.acceleration.a = 0
-
-		     if (world.input.isPressed("KeyD")) player.acceleration.a = +player.rotationAcceleration
-		else if (world.input.isPressed("KeyA")) player.acceleration.a = -player.rotationAcceleration
-
-		if (world.input.isPressed("KeyW") || world.input.isPressed("KeyS") || world.input.isPressed("KeyE") || world.input.isPressed("KeyQ")) {
-			let a = player.a
-
-			if (world.input.isPressed("KeyS")) {
-				a += PI
-			}
-
-			if (world.input.isPressed("KeyE")) {
-				if (world.input.isPressed("KeyW")) {
-					a += PI / 4
-				} else if (world.input.isPressed("KeyS")) {
-					a -= PI / 4
-				} else {
-					a += PI / 2
-				}
-			} else if (world.input.isPressed("KeyQ")) {
-				if (world.input.isPressed("KeyW")) {
-					a -= PI / 4
-				} else if (world.input.isPressed("KeyS")) {
-					a += PI / 4
-				} else {
-					a -= PI / 2
-				}
-			}
-
-			player.acceleration.x = player.movementAcceleration * cos(a)
-			player.acceleration.y = player.movementAcceleration * sin(a)
-		}
-
-		if (world.input.isPressed("MouseLeft")) {
-			player.mustFire = true
-		} else {
-			player.mustFire = false
-		}
 	}
 })
 
