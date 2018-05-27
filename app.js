@@ -1273,7 +1273,7 @@ class Turret extends Asset {
 
 		super.update(world)
 	}
-	
+
 	/**
 	 * @protected
 	 */
@@ -1643,6 +1643,65 @@ class KeyboardShipController {
 	}
 }
 
+/**
+ * @implements {WorldObject}
+ */
+class RotatingMouseShipController {
+	/**
+	 * @param {Ship} ship
+	 */
+	constructor(ship) {
+		this.ship = ship
+	}
+
+	mustBeDeleted(world) {
+		return this.ship.mustBeDeleted(world)
+	}
+
+	update(world) {
+		this.ship.acceleration.x = 0
+		this.ship.acceleration.y = 0
+		this.ship.acceleration.a = 0
+
+		this.ship.acceleration.a = sign(this.ship.optimalAngleToward(this.ship.target)) * this.ship.rotationAcceleration
+
+		if (world.input.isPressed("KeyW") || world.input.isPressed("KeyS") || world.input.isPressed("KeyD") || world.input.isPressed("KeyA")) {
+			let a = this.ship.a
+
+			if (world.input.isPressed("KeyS")) {
+				a += PI
+			}
+
+			if (world.input.isPressed("KeyD")) {
+				if (world.input.isPressed("KeyW")) {
+					a += PI / 4
+				} else if (world.input.isPressed("KeyS")) {
+					a -= PI / 4
+				} else {
+					a += PI / 2
+				}
+			} else if (world.input.isPressed("KeyA")) {
+				if (world.input.isPressed("KeyW")) {
+					a -= PI / 4
+				} else if (world.input.isPressed("KeyS")) {
+					a += PI / 4
+				} else {
+					a -= PI / 2
+				}
+			}
+
+			this.ship.acceleration.x = this.ship.movementAcceleration * cos(a)
+			this.ship.acceleration.y = this.ship.movementAcceleration * sin(a)
+		}
+
+		if (world.input.isPressed("MouseLeft")) {
+			this.ship.mustFire = true
+		} else {
+			this.ship.mustFire = false
+		}
+	}
+}
+
 // -----------------------------------------------------------------
 
 const world = new World(canvas)
@@ -1659,13 +1718,13 @@ const player = new Ship.M1AMoth(new Transform(200, 200, 1), world.input.mouseTra
 // [x] Fix colliders requirements.
 // [x] Turret slot redesign.
 // [x] Extract player controller to separate keyboard controller.
-// [ ] Create player rotative mouse controller.
+// [x] Create player rotative mouse controller.
 // [ ] Create AI controllers.
 // [ ] Implement relative camera.
 // [ ] Constrain angle to arc > 180deg bug.
 
 world.add(player)
-world.add(new KeyboardShipController(player))
+world.add(new RotatingMouseShipController(player))
 
 world.add({
 	transform: new Transform(800, 200),
