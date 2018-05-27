@@ -395,15 +395,15 @@ class Input {
 	 */
 	constructor(observedElement) {
 		this.mouseTransform = new Transform(0, 0)
-		
+
 		this.currentlyPressedKeys = new Set()
 
 		this.pressedKeys = new Set()
 		this.releasedKeys = new Set()
-		
+
 		this.pressedKeys.next = new Set()
 		this.releasedKeys.next = new Set()
-		
+
 		this.observe(observedElement)
 	}
 
@@ -516,29 +516,29 @@ class World {
 		this.timeDelta = 0
 		this.timeEnlapsed = 0
 	}
-	
+
 	/**
 	 * @param {WorldObject} object
 	 */
 	add(object) {
         object.beforeAdd && object.beforeAdd(this)
-		
+
         this.objects.add(object)
-		
+
         object.afterAdd && object.afterAdd(this)
 	}
-	
+
 	/**
 	 * @param {WorldObject} object
 	 */
 	delete(object) {
         object.beforeDelete && object.beforeDelete(this)
-		
+
         this.objects.delete(object)
-		
+
         object.afterDelete && object.afterDelete(this)
 	}
-	
+
 	run() {
 		this.isRunning = true
 
@@ -590,10 +590,10 @@ class UniqueAction {
 	constructor(callback, timeout) {
 		this.callback = callback
 		this.timeout = timeout
-		
+
 		this.timeEnlapsed = 0
 	}
-	
+
 	update(world) {
 		this.timeEnlapsed += world.timeEnlapsed
 
@@ -601,7 +601,7 @@ class UniqueAction {
 			this.callback(world)
 		}
 	}
-	
+
 	mustBeDeleted(world) {
 		return this.timeEnlapsed > this.timeout
 	}
@@ -618,16 +618,16 @@ class IndefinitelyRepeatedAction {
 	constructor(callback, interval) {
 		this.callback = callback
 		this.interval = interval
-		
+
 		this.timeEnlapsed = 0
 	}
-	
+
 	update(world) {
 		this.timeEnlapsed += world.timeEnlapsed
 
 		if (this.timeEnlapsed > this.interval) {
 			this.timeEnlapsed -= this.interval
-			
+
 			this.callback(world)
 		}
 	}
@@ -646,21 +646,21 @@ class RepeatedAction {
 		this.callback = callback
 		this.interval = interval
 		this.callCount = callCount
-		
+
 		this.timeEnlapsed = 0
 	}
-	
+
 	update(world) {
 		this.timeEnlapsed += world.timeEnlapsed
 
 		if (this.timeEnlapsed > this.interval) {
 			this.timeEnlapsed -= this.interval
 			--this.callCount
-			
+
 			this.callback(world)
 		}
 	}
-	
+
 	mustBeDeleted(world) {
 		return this.callCount == 0
 	}
@@ -748,7 +748,7 @@ const Ephemeral = {
 		$.lifeTime = lifeTime
 		$.remainingLifeTime = lifeTime
 	},
-	
+
 	/**
 	 * @param {Ephemeral} $
 	 * @param {World} world
@@ -1099,10 +1099,10 @@ class Asset extends Transform {
 class Core extends Asset {
 	update(world) {
 		this.rotateToward(this.target)
-		
+
 		super.update(world)
 	}
-	
+
 	draw(world) {
 		world.graphics.beginPath()
 		world.graphics.arc(0, 0, this.collisionRadius, 0, 2 * PI)
@@ -1159,31 +1159,31 @@ class Shell extends Transform {
 		Colliding.init(this, radius)
 		Ephemeral.init(this, lifeTime)
 		Teamed.init(this, team)
-		
+
 		this.explosion = explosion
 	}
-	
+
 	mustBeDeleted(world) {
 		return Ephemeral.mustBeDeleted(this, world) || Colliding.testAny(this, Teamed.hostiles(this, world.objects))
 	}
-	
+
 	afterDelete(world) {
 		this.explosion.x = this.x
 		this.explosion.y = this.y
-		
+
 		world.add(this.explosion)
 	}
-	
+
 	update(world) {
 		Ephemeral.update(this, world)
 		Moving.Linear.update(this, world)
 
 		world.graphics.applyTransform(this)
-		
+
 		world.graphics.beginPath()
 		world.graphics.moveTo(-this.collisionRadius, 0)
 		world.graphics.lineTo(+this.collisionRadius, 0)
-		
+
 		world.graphics.strokeStyle = Color.YELLOW
 		world.graphics.lineWidth = this.collisionRadius * max(0.01, this.remainingLifeTime / this.lifeTime)
 		world.graphics.lineCap = "round"
@@ -1226,14 +1226,14 @@ class Turret extends Asset {
 	 */
 	constructor(target, bulletBaseSpeed, rotationSpeed, collisionRadius, health, healthRegeneration, team, explosion, reloadTime) {
 		super(target, collisionRadius, health, healthRegeneration, team, explosion)
-		
+
 		this.bulletBaseSpeed = bulletBaseSpeed
         this.rotationSpeed = rotationSpeed
         this.reloadTime = reloadTime
-		
+
 		this.mustFire = false
 		this.timeEnlapsed = 0
-		
+
 		this.leftRotationBound = undefined
 		this.rightRotationBound = undefined
 	}
@@ -1266,7 +1266,7 @@ class Turret extends Asset {
 
 			if (this.timeEnlapsed > this.reloadTime) {
 				this.timeEnlapsed -= this.reloadTime
-				
+
 				this.fire(world)
 			}
 		}
@@ -1319,8 +1319,13 @@ class TurretSlot {
 }
 
 // -----------------------------------------------------------------
+// G1 - Machine Gun (Liner)
+// H1 - Howitzer
+// S1 - Sprayer
+// M1 - Missile Launcher (Geyser)
+// D1 - Drone Launcher (WhiteHole)
 
-class TestTurret extends Turret.T1 {
+Turret.G1Dash = class G1Dash extends Turret.T1 {
 	constructor(target, bulletBaseSpeed, team) {
 		super(target, bulletBaseSpeed, team, 0.2)
 	}
@@ -1347,7 +1352,7 @@ class TestTurret extends Turret.T1 {
 		world.graphics.beginPath()
 
 		world.graphics.moveTo(0, 0)
-		world.graphics.lineTo(50, 0)
+		world.graphics.lineTo(6, 0)
 
 		world.graphics.strokeStyle = Color.GREY
 		world.graphics.stroke()
@@ -1508,20 +1513,67 @@ class Ship extends Transform {
 	}
 }
 
-class TestBankShip extends Ship {
+Ship.W1APollen = class W1APollen extends Ship {
 	constructor(transform, target, team) {
-		super(transform, target, Core.T3(target, team), team, { movementAcceleration: 100, rotationAcceleration: 2 })
+		super(transform, target, Core.T1(target, team), team, { movementAcceleration: 100, rotationAcceleration: 2 })
 
-		this.turretSlots.add(new TurretSlot(50, +50, new TestTurret(this.target, this.speed, this.team)))
-		this.turretSlots.add(new TurretSlot(50, -50, new TestTurret(this.target, this.speed, this.team), { leftRotationBound: -0.1, rightRotationBound: 0.1 }))
+		this.turretSlots.add(new TurretSlot(15.4, 0, new Turret.G1Dash(this.target, this.speed, this.team), {
+			leftRotationBound: -0.78,
+			rightRotationBound: 0.78
+		}))
 	}
 
 	draw(world) {
 		world.graphics.beginPath()
-		world.graphics.moveTo(-80, -30)
-		world.graphics.lineTo(+80, -30)
-		world.graphics.lineTo(+80, +30)
-		world.graphics.lineTo(-80, +30)
+		world.graphics.moveTo(-10.4, 0)
+		world.graphics.lineTo(-6.4, 15)
+		world.graphics.lineTo(8.6, 15)
+		world.graphics.lineTo(6.6, 7.5)
+		world.graphics.lineTo(15.4, 7.5)
+		world.graphics.lineTo(15.4, 7)
+		world.graphics.bezierCurveTo(6, 6.4, 6, -6.4, 15.4, -7)
+		world.graphics.lineTo(15.4, -7)
+		world.graphics.lineTo(15.4, -7.5)
+		world.graphics.lineTo(6.6, -7.5)
+		world.graphics.lineTo(8.6, -15)
+		world.graphics.lineTo(-6.4, -15)
+		world.graphics.closePath()
+
+		world.graphics.fillStyle = Color.DARK
+		world.graphics.fill()
+	}
+}
+
+Ship.M1AMoth = class M1AMoth extends Ship {
+	constructor(transform, target, team) {
+		super(transform, target, Core.T1(target, team), team, { movementAcceleration: 120, rotationAcceleration: 1.6 })
+
+		this.turretSlots.add(new TurretSlot(7.5, 17.9, new Turret.G1Dash(this.target, this.speed, this.team), {
+			leftRotationBound: -0.42,
+			rightRotationBound: 0.95
+		}))
+
+		this.turretSlots.add(new TurretSlot(7.5, -17.9, new Turret.G1Dash(this.target, this.speed, this.team), {
+			leftRotationBound: -0.95,
+			rightRotationBound: 0.42
+		}))
+	}
+
+	draw(world) {
+		world.graphics.beginPath()
+		world.graphics.moveTo(-13.8, 7.4)
+		world.graphics.lineTo(-4.8, 9.9)
+		world.graphics.lineTo(-10.2, 30)
+		world.graphics.lineTo(4.8, 30)
+		world.graphics.lineTo(6.2, 24.9)
+		world.graphics.bezierCurveTo(-3, 22.8, -0.3, 8.8, 9.8, 11.5)
+		world.graphics.lineTo(12.8, 0)
+		world.graphics.lineTo(9.8, -11.5)
+		world.graphics.bezierCurveTo(-0.3, -8.8, -3, -22.8, 6.2, -24.9)
+		world.graphics.lineTo(4.8, -30)
+		world.graphics.lineTo(-10.2, -30)
+		world.graphics.lineTo(-4.8, -9.9)
+		world.graphics.lineTo(-13.8, -7.4)
 		world.graphics.closePath()
 
 		world.graphics.fillStyle = Color.DARK
@@ -1533,7 +1585,7 @@ class TestBankShip extends Ship {
 
 const world = new World(canvas)
 
-const player = new TestBankShip(new Transform(200, 200, 1), world.input.mouseTransform, Team.RED)
+const player = new Ship.M1AMoth(new Transform(200, 200, 1), world.input.mouseTransform, Team.RED)
 
 // TODO
 // ----
@@ -1544,30 +1596,34 @@ const player = new TestBankShip(new Transform(200, 200, 1), world.input.mouseTra
 // [x] Fix teams requirements.
 // [x] Fix colliders requirements.
 // [x] Turret slot redesign.
+// [ ] Extract player controller to separate keyboard controller.
+// [ ] Create player rotative mouse controller.
+// [ ] Create AI controllers.
+// [ ] Implement relative camera.
 // [ ] Constrain angle to arc > 180deg bug.
 
 world.add(player)
 
 world.add({
 	transform: new Transform(800, 200),
-	
+
 	get x() { return this.transform.x },
 	get y() { return this.transform.y },
-	
+
 	beforeAdd(world) {
 		Destroyable.init(this, 100, 2)
 		Colliding.init(this, 20, 0)
 		Teamed.init(this, Team.BLUE)
 	},
-	
+
 	mustBeDeleted(world) {
 		return Destroyable.mustBeDeleted(this, world)
 	},
-	
+
 	/** Blob */
 	update(world) {
 	    Destroyable.update(this, world)
-		
+
 		world.graphics.applyTransform(this.transform)
 
 		this.drawBlob(world)
@@ -1575,29 +1631,29 @@ world.add({
 
 		world.graphics.resetTransform()
 	},
-	
+
 	drawBlob(world) {
 		world.graphics.beginPath()
 		world.graphics.arc(0, 0, this.collisionRadius, 0, 2 * PI)
-		
+
 		world.graphics.strokeStyle = Color.BLUE
 		world.graphics.lineWidth = 3
 		world.graphics.stroke()
 	},
-	
+
 	drawHealthBar(world) {
 		world.graphics.beginPath()
 		world.graphics.moveTo(-this.maxHealth / 2, this.collisionRadius + 10)
 		world.graphics.lineTo(+this.maxHealth / 2, this.collisionRadius + 10)
-		
+
 		world.graphics.strokeStyle = Color.RED
 		world.graphics.lineWidth = 5
 		world.graphics.stroke()
-		
+
 		world.graphics.beginPath()
 		world.graphics.moveTo(-this.maxHealth / 2, this.collisionRadius + 10)
 		world.graphics.lineTo(this.health - this.maxHealth / 2, this.collisionRadius + 10)
-		
+
 		world.graphics.strokeStyle = Color.GREEN
 		world.graphics.lineWidth = 5
 		world.graphics.stroke()
