@@ -1578,6 +1578,77 @@ Ship.M1AMoth = class M1AMoth extends Ship {
 	}
 }
 
+Ship.X1AScarab = class X1AScarab extends Ship {
+	constructor(transform, target, team) {
+		super(transform, target, Core.T1(target, team), team, { movementAcceleration: 100, rotationAcceleration: 1.6 })
+
+		this.turretSlots.add(new TurretSlot(19, 18.5, new Turret.G1Dash(this.target, this.speed, this.team), {
+			leftRotationBound: 0.52,
+			rightRotationBound: 2.07
+		}))
+
+		this.turretSlots.add(new TurretSlot(-3.5, 22.6, new Turret.G1Dash(this.target, this.speed, this.team), {
+			leftRotationBound: 0.37,
+			rightRotationBound: 2.60
+		}))
+
+		this.turretSlots.add(new TurretSlot(-21.2, 16, new Turret.G1Dash(this.target, this.speed, this.team), {
+			leftRotationBound: 1.06,
+			rightRotationBound: 2.60
+		}))
+
+		this.turretSlots.add(new TurretSlot(19, -18.5, new Turret.G1Dash(this.target, this.speed, this.team), {
+			leftRotationBound: -2.07,
+			rightRotationBound: -0.52
+		}))
+
+		this.turretSlots.add(new TurretSlot(-3.5, -22.6, new Turret.G1Dash(this.target, this.speed, this.team), {
+			leftRotationBound: -2.60,
+			rightRotationBound: -0.37
+		}))
+
+		this.turretSlots.add(new TurretSlot(-21.2, -16, new Turret.G1Dash(this.target, this.speed, this.team), {
+			leftRotationBound: -2.60,
+			rightRotationBound: -1.06
+		}))
+	}
+
+	draw(world) {
+		world.graphics.beginPath()
+		world.graphics.moveTo(-24.1, 0)
+		world.graphics.lineTo(-33.5, 2.6)
+		world.graphics.lineTo(-33.5, 12.5)
+		world.graphics.lineTo(-27.9, 14)
+		world.graphics.bezierCurveTo(-25.6, 6, -12.7, 7.4, -14.4, 17.6)
+		world.graphics.lineTo(-10.3, 18.8)
+		world.graphics.bezierCurveTo(-9, 14, -3.2, 11.8, 1, 15.3)
+		world.graphics.lineTo(7.5, 7.6)
+		world.graphics.lineTo(11.5, 20.6)
+		world.graphics.lineTo(12.2, 20.3)
+		world.graphics.bezierCurveTo(10.2, 12.2, 22.3, 7.3, 25.7, 16.7)
+		world.graphics.lineTo(26.5, 16.5)
+		world.graphics.lineTo(26.5, 9.5)
+		world.graphics.lineTo(34, 7.5)
+		world.graphics.lineTo(34, -7.5)
+		world.graphics.lineTo(26.5, -9.5)
+		world.graphics.lineTo(26.5, -16.5)
+		world.graphics.lineTo(25.7, -16.7)
+		world.graphics.bezierCurveTo(22.3, -7.3, 10.2, -12.2, 12.2, -20.3)
+		world.graphics.lineTo(11.5, -20.6)
+		world.graphics.lineTo(7.5, -7.6)
+		world.graphics.lineTo(1, -15.3)
+		world.graphics.bezierCurveTo(-3.2, -11.8, -9, -14, -10.3, -18.8)
+		world.graphics.lineTo(-14.4, -17.6)
+		world.graphics.bezierCurveTo(-12.7, -7.4, -25.6, -6, -27.9, -14)
+		world.graphics.lineTo(-33.5, -12.5)
+		world.graphics.lineTo(-33.5, -2.6)
+		world.graphics.closePath()
+
+		world.graphics.fillStyle = Color.DARK
+		world.graphics.fill()
+	}
+}
+
 // -----------------------------------------------------------------
 
 /**
@@ -1703,7 +1774,7 @@ class RotatingMouseShipController {
 
 const world = new World(canvas)
 
-const player = new Ship.M1AMoth(new Transform(200, 200, 1), world.input.mouseTransform, Team.RED)
+const player = new Ship.X1AScarab(new Transform(200, 200, 1), world.input.mouseTransform, Team.GREEN)
 
 // TODO
 // ----
@@ -1721,7 +1792,52 @@ const player = new Ship.M1AMoth(new Transform(200, 200, 1), world.input.mouseTra
 // [ ] Constrain angle to arc > 180deg bug.
 
 world.add(player)
-world.add(new RotatingMouseShipController(player))
+// world.add(new RotatingMouseShipController(player))
+world.add(new KeyboardShipController(player))
+
+world.add((function () {
+	const s = new Ship.W1APollen(new Transform(1060, 280, PI), player, Team.RED)
+
+	s.mustFire = () => true
+
+	return s
+})())
+world.add((function () {
+	const s = new Ship.W1APollen(new Transform(1030, 340, PI), player, Team.RED)
+
+	s.mustFire = () => true
+
+	return s
+})())
+world.add((function () {
+	const s = new Ship.W1APollen(new Transform(1000, 400, PI), player, Team.RED)
+
+	s.mustFire = () => true
+
+	return s
+})())
+world.add((function () {
+	const s = new Ship.W1APollen(new Transform(1030, 460, PI), player, Team.RED)
+
+	s.mustFire = () => true
+
+	return s
+})())
+world.add((function () {
+	const s = new Ship.W1APollen(new Transform(1060, 520, PI), player, Team.RED)
+
+	s.mustFire = () => true
+
+	return s
+})())
+world.add((function () {
+	const core = Core.T3(player, Team.RED)
+
+	core.x = 1050
+	core.y = 400
+
+	return core
+})())
 
 world.add({
 	transform: new Transform(800, 200),
