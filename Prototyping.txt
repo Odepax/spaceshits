@@ -1,0 +1,5 @@
+NAME:
+
+= Space Battleships Colliding + Bidimensional Movement Simulation Experiment
+= Spac                        +                         i               men
+= Spacimen
