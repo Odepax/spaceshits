@@ -1890,49 +1890,16 @@ const player = new Ship.A1AWasp(new Transform(200, 200, 1), world.input.mouseTra
 world.add(player)
 world.add(new KeyboardShipController(player))
 
-world.add((function () {
-	const s = new Ship.W1APollen(new Transform(1060, 280, PI), player, Team.RED)
+world.add(new Ship.W1APollen(new Transform(1060, 280, PI), player, Team.RED).apply(pollen => pollen.mustFire = true))
+world.add(new Ship.W1APollen(new Transform(1030, 340, PI), player, Team.RED).apply(pollen => pollen.mustFire = true))
+world.add(new Ship.W1APollen(new Transform(1000, 400, PI), player, Team.RED).apply(pollen => pollen.mustFire = true))
+world.add(new Ship.W1APollen(new Transform(1030, 460, PI), player, Team.RED).apply(pollen => pollen.mustFire = true))
+world.add(new Ship.W1APollen(new Transform(1060, 520, PI), player, Team.RED).apply(pollen => pollen.mustFire = true))
 
-	s.mustFire = () => true
-
-	return s
-})())
-world.add((function () {
-	const s = new Ship.W1APollen(new Transform(1030, 340, PI), player, Team.RED)
-
-	s.mustFire = () => true
-
-	return s
-})())
-world.add((function () {
-	const s = new Ship.W1APollen(new Transform(1000, 400, PI), player, Team.RED)
-
-	s.mustFire = () => true
-
-	return s
-})())
-world.add((function () {
-	const s = new Ship.W1APollen(new Transform(1030, 460, PI), player, Team.RED)
-
-	s.mustFire = () => true
-
-	return s
-})())
-world.add((function () {
-	const s = new Ship.W1APollen(new Transform(1060, 520, PI), player, Team.RED)
-
-	s.mustFire = () => true
-
-	return s
-})())
-world.add((function () {
-	const core = Core.T3(player, Team.RED)
-
+world.add(Core.T3(player, Team.RED).apply(core => {
 	core.x = 1050
 	core.y = 400
-
-	return core
-})())
+}))
 
 world.add({
 	transform: new Transform(800, 200),
