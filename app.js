@@ -1362,7 +1362,41 @@ Turret.G1Dash = class G1Dash extends Turret.T1 {
 		world.graphics.beginPath()
 
 		world.graphics.moveTo(0, 0)
-		world.graphics.lineTo(6, 0)
+		world.graphics.lineTo(this.collisionRadius + 1, 0)
+
+		world.graphics.strokeStyle = Color.GREY
+		world.graphics.stroke()
+	}
+}
+
+Turret.G2Liner = class G2Liner extends Turret.T2 {
+	constructor(target, bulletBaseSpeed, team) {
+		super(target, bulletBaseSpeed, team, 0.2)
+	}
+
+	fire(world) {
+		world.add(Shell.T2(
+			this.clone()
+				.relativeOffset(this.collisionRadius, 0)
+				.rotateBy(rand(-0.03, 0.03)),
+			this.bulletBaseSpeed,
+			this.team
+		))
+	}
+
+	draw(world) {
+		world.graphics.beginPath()
+		world.graphics.arc(0, 0, this.collisionRadius, 0.5, -0.5)
+
+		world.graphics.strokeStyle = this.team.mainColor
+		world.graphics.lineWidth = 2
+		world.graphics.lineCap = "round"
+		world.graphics.stroke()
+
+		world.graphics.beginPath()
+
+		world.graphics.moveTo(0, 0)
+		world.graphics.lineTo(this.collisionRadius + 2, 0)
 
 		world.graphics.strokeStyle = Color.GREY
 		world.graphics.stroke()
@@ -1745,6 +1779,116 @@ Ship.A1AWasp = class A1AWasp extends Ship {
 	}
 }
 
+Ship.Y2AScorpion = class Y2AScorpion extends Ship {
+	constructor(transform, target, team) {
+		super(transform, target, Core.T2(target, team), team, { movementAcceleration: 60, rotationAcceleration: 1.2 })
+
+		this.turretSlots.add(new TurretSlot(37.3, 0, new Turret.G1Dash(this.target, this.speed, this.team), {
+			leftRotationBound: -0.77,
+			rightRotationBound: 0.77
+		}))
+
+		this.turretSlots.add(new TurretSlot(13.2, 29.6, new Turret.G1Dash(this.target, this.speed, this.team), {
+			leftRotationBound: 1.41,
+			rightRotationBound: 2.52
+		}))
+
+		this.turretSlots.add(new TurretSlot(-10.9, 26.6, new Turret.G1Dash(this.target, this.speed, this.team), {
+			leftRotationBound: 1.18,
+			rightRotationBound: 2.53
+		}))
+
+		this.turretSlots.add(new TurretSlot(-29.8, 15.2, new Turret.G1Dash(this.target, this.speed, this.team), {
+			leftRotationBound: 1.33,
+			rightRotationBound: 2.63
+		}))
+
+		this.turretSlots.add(new TurretSlot(13.2, -29.6, new Turret.G1Dash(this.target, this.speed, this.team), {
+			leftRotationBound: -2.52,
+			rightRotationBound: -1.41
+		}))
+
+		this.turretSlots.add(new TurretSlot(-10.9, -26.6, new Turret.G1Dash(this.target, this.speed, this.team), {
+			leftRotationBound: -2.53,
+			rightRotationBound: -1.18
+		}))
+
+		this.turretSlots.add(new TurretSlot(-29.8, -15.2, new Turret.G1Dash(this.target, this.speed, this.team), {
+			leftRotationBound: -2.63,
+			rightRotationBound: -1.33
+		}))
+
+		this.turretSlots.add(new TurretSlot(-68.6, 0, new Turret.G2Liner(this.target, this.speed, this.team), {
+			leftRotationBound: 2.55,
+			rightRotationBound: -2.55
+		}))
+
+		this.turretSlots.add(new TurretSlot(47.5, 31.8, new Turret.G2Liner(this.target, this.speed, this.team), {
+			leftRotationBound: -1.22,
+			rightRotationBound: 1.19
+		}))
+
+		this.turretSlots.add(new TurretSlot(47.5, -31.8, new Turret.G2Liner(this.target, this.speed, this.team), {
+			leftRotationBound: -1.19,
+			rightRotationBound: 1.22
+		}))
+	}
+
+	draw(world) {
+		world.graphics.beginPath()
+		world.graphics.moveTo(-68.7, -18.7)
+		world.graphics.lineTo(-68.7, -12)
+		world.graphics.bezierCurveTo(-52.5, -10.9, -52.5, 10.9, -68.7, 12)
+		world.graphics.lineTo(-68.7, 18.7)
+		world.graphics.lineTo(-47.4, 8.1)
+		world.graphics.lineTo(-44.5, 17.5)
+		world.graphics.lineTo(-38, 9.7)
+		world.graphics.lineTo(-35.5, 11)
+		world.graphics.bezierCurveTo(-30, 4.1, -19.6, 10.6, -23.8, 18.7)
+		world.graphics.lineTo(-20.9, 28.1)
+		world.graphics.lineTo(-17.5, 24.1)
+		world.graphics.bezierCurveTo(-14.9, 17.1, -2.6, 18.1, -4.2, 28.3)
+		world.graphics.lineTo(-2.3, 34.4)
+		world.graphics.lineTo(3.6, 27.5)
+		world.graphics.lineTo(6.5, 27.3)
+		world.graphics.bezierCurveTo(8.5, 20, 21, 20.9, 20.1, 30.4)
+		world.graphics.lineTo(26.4, 34.7)
+		world.graphics.lineTo(20, 40.2)
+		world.graphics.lineTo(33.1, 43.9)
+		world.graphics.lineTo(40.5, 41.5)
+		world.graphics.bezierCurveTo(34.1, 36.9, 33.5, 27.1, 40.6, 22)
+		world.graphics.lineTo(33.2, 19.6)
+		world.graphics.lineTo(26.5, 10.3)
+		world.graphics.lineTo(37.3, 7.4)
+		world.graphics.lineTo(37.3, 7)
+		world.graphics.bezierCurveTo(28.1, 6.6, 28.1, -6.6, 37.3, -7)
+		world.graphics.lineTo(37.3, -7.4)
+	    world.graphics.lineTo(26.5, -10.3)
+		world.graphics.lineTo(33.2, -19.6)
+		world.graphics.lineTo(40.6, -22)
+		world.graphics.bezierCurveTo(33.5, -27.1, 34.1, -36.9, 40.5, -41.5)
+		world.graphics.lineTo(33.1, -43.9)
+		world.graphics.lineTo(20, -40.2)
+		world.graphics.lineTo(26.4, -34.7)
+		world.graphics.lineTo(20.1, -30.4)
+		world.graphics.bezierCurveTo(21, -20.9, 8.5, -20, 6.5, -27.3)
+		world.graphics.lineTo(3.6, -27.5)
+		world.graphics.lineTo(-2.3, -34.4)
+		world.graphics.lineTo(-4.2, -28.3)
+		world.graphics.bezierCurveTo(-2.6, -18.1, -14.9, -17.1, -17.5, -24.1)
+		world.graphics.lineTo(-20.9, -28.1)
+		world.graphics.lineTo(-23.8, -18.7)
+		world.graphics.bezierCurveTo(-19.6, -10.6, -30, -4.1, -35.5, -11)
+		world.graphics.lineTo(-38, -9.7)
+		world.graphics.lineTo(-44.5, -17.5)
+		world.graphics.lineTo(-47.4, -8.1)
+		world.graphics.closePath()
+
+		world.graphics.fillStyle = Color.DARK
+		world.graphics.fill()
+	}
+}
+
 // -----------------------------------------------------------------
 
 /**
@@ -1870,7 +2014,7 @@ class RotatingMouseShipController {
 
 const world = new World(canvas)
 
-const player = new Ship.A1AWasp(new Transform(200, 200, 1), world.input.mouseTransform, Team.GREEN)
+const player = new Ship.M1AMoth(new Transform(200, 200, 1), world.input.mouseTransform, Team.GREEN)
 
 // TODO
 // ----
@@ -1888,7 +2032,7 @@ const player = new Ship.A1AWasp(new Transform(200, 200, 1), world.input.mouseTra
 // [ ] Constrain angle to arc > 180deg bug.
 
 world.add(player)
-world.add(new KeyboardShipController(player))
+world.add(new RotatingMouseShipController(player))
 
 world.add(new Ship.W1APollen(new Transform(1060, 280, PI), player, Team.RED).apply(pollen => pollen.mustFire = true))
 world.add(new Ship.W1APollen(new Transform(1030, 340, PI), player, Team.RED).apply(pollen => pollen.mustFire = true))
