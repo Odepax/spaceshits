@@ -1889,6 +1889,75 @@ Ship.Y2AScorpion = class Y2AScorpion extends Ship {
 	}
 }
 
+Ship.M2ASkate = class M2ASkate extends Ship {
+	constructor(transform, target, team) {
+		super(transform, target, Core.T2(target, team), team, { movementAcceleration: 110, rotationAcceleration: 0.7 })
+
+		this.turretSlots.add(new TurretSlot(22.5, 0, new Turret.G1Dash(this.target, this.speed, this.team), {
+			leftRotationBound: -0.72,
+			rightRotationBound: 0.72
+		}))
+
+		this.turretSlots.add(new TurretSlot(15, 24.9, new Turret.G1Dash(this.target, this.speed, this.team), {
+			leftRotationBound: -0.21,
+			rightRotationBound: 1.13
+		}))
+
+		this.turretSlots.add(new TurretSlot(15, -24.9, new Turret.G1Dash(this.target, this.speed, this.team), {
+			leftRotationBound: -1.13,
+			rightRotationBound: 0.21
+		}))
+
+		this.turretSlots.add(new TurretSlot(6.9, 51.3, new Turret.G2Liner(this.target, this.speed, this.team), {
+			leftRotationBound: -0.30,
+			rightRotationBound: 1.16
+		}))
+
+		this.turretSlots.add(new TurretSlot(6.9, -51.3, new Turret.G2Liner(this.target, this.speed, this.team), {
+			leftRotationBound: -1.16,
+			rightRotationBound: 0.30
+		}))
+	}
+
+	draw(world) {
+		world.graphics.beginPath()
+		world.graphics.moveTo(-15, 3.5)
+		world.graphics.lineTo(-28, 7.5)
+		world.graphics.lineTo(-15, 18.6)
+		world.graphics.lineTo(-3.8, 21.6)
+		world.graphics.lineTo(-8.1, 37.6)
+		world.graphics.lineTo(-15.5, 37.6)
+		world.graphics.lineTo(-10.2, 60.7)
+		world.graphics.lineTo(-16.1, 82.6)
+		world.graphics.lineTo(0.4, 61.3)
+		world.graphics.bezierCurveTo(-10.9, 52.9, -3, 36.3, 10.4, 39.8)
+		world.graphics.lineTo(12.6, 31.8)
+		world.graphics.bezierCurveTo(3.6, 27.9, 9.1, 14.3, 18.8, 19.4)
+		world.graphics.lineTo(28, 11.7)
+		world.graphics.lineTo(21, 9.5)
+		world.graphics.lineTo(22.7, 7.1)
+		world.graphics.bezierCurveTo(13, 6.9, 13, -6.9, 22.7, -7.1)
+		world.graphics.lineTo(21, -9.5)
+		world.graphics.lineTo(28, -11.7)
+		world.graphics.lineTo(18.8, -19.4)
+		world.graphics.bezierCurveTo(9.1, -14.3, 3.6, -27.9, 12.6, -31.8)
+		world.graphics.lineTo(10.4, -39.8)
+		world.graphics.bezierCurveTo(-3, -36.3, -10.9, -52.9, 0.4, -61.3)
+		world.graphics.lineTo(-16.1, -82.6)
+		world.graphics.lineTo(-10.2, -60.7)
+		world.graphics.lineTo(-15.5, -37.6)
+		world.graphics.lineTo(-8.1, -37.6)
+		world.graphics.lineTo(-3.8, -21.6)
+		world.graphics.lineTo(-15, -18.6)
+		world.graphics.lineTo(-28, -7.5)
+		world.graphics.lineTo(-15, -3.5)
+		world.graphics.closePath()
+
+		world.graphics.fillStyle = Color.DARK
+		world.graphics.fill()
+	}
+}
+
 // -----------------------------------------------------------------
 
 /**
@@ -2014,7 +2083,7 @@ class RotatingMouseShipController {
 
 const world = new World(canvas)
 
-const player = new Ship.M1AMoth(new Transform(200, 200, 1), world.input.mouseTransform, Team.GREEN)
+const player = new Ship.M2ASkate(new Transform(200, 200, 1), world.input.mouseTransform, Team.GREEN)
 
 // TODO
 // ----
@@ -2032,11 +2101,11 @@ const player = new Ship.M1AMoth(new Transform(200, 200, 1), world.input.mouseTra
 // [ ] Constrain angle to arc > 180deg bug.
 
 world.add(player)
-world.add(new RotatingMouseShipController(player))
+world.add(new KeyboardShipController(player))
 
 world.add(new Ship.W1APollen(new Transform(1060, 280, PI), player, Team.RED).apply(pollen => pollen.mustFire = true))
 world.add(new Ship.W1APollen(new Transform(1030, 340, PI), player, Team.RED).apply(pollen => pollen.mustFire = true))
-world.add(new Ship.W1APollen(new Transform(1000, 400, PI), player, Team.RED).apply(pollen => pollen.mustFire = true))
+world.add(new Ship.M1AMoth(new Transform(1000, 400, PI), player, Team.RED).apply(pollen => pollen.mustFire = true))
 world.add(new Ship.W1APollen(new Transform(1030, 460, PI), player, Team.RED).apply(pollen => pollen.mustFire = true))
 world.add(new Ship.W1APollen(new Transform(1060, 520, PI), player, Team.RED).apply(pollen => pollen.mustFire = true))
 
