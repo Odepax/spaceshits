@@ -31,6 +31,16 @@ function randBetween() {
 	return arguments[parseInt(Math.random() * arguments.length)]
 }
 
+/**
+ * @param {Function} init
+ * @return {Object} This object.
+ */
+Object.prototype.apply = function apply(init) {
+	init(this)
+
+	return this
+}
+
 // -----------------------------------------------------------------
 
 /**
@@ -104,7 +114,7 @@ const Angle = {
 	normalize(angle) {
 		while (angle > +PI) angle -= 2 * PI
 		while (angle < -PI) angle += 2 * PI
-		
+
 		return angle
 	},
 
@@ -416,31 +426,31 @@ class Input {
 			this.mouseTransform.x = event.offsetX
 			this.mouseTransform.y = event.offsetY
 		}, false)
-		
+
 		element.addEventListener("contextmenu", event => {
 			event.preventDefault()
 		}, false)
-		
+
 		element.addEventListener("mousedown", event => {
 			event.preventDefault()
-			
+
 			switch (event.button) {
 				case 0: this.pressedKeys.next.add("MouseLeft"); break
 				case 2: this.pressedKeys.next.add("MouseRight"); break
 				case 1: this.pressedKeys.next.add("MouseMiddle"); break
 			}
 		}, false)
-		
+
 		element.addEventListener("mouseup", event => {
 			event.preventDefault()
-			
+
 			switch (event.button) {
 				case 0: this.releasedKeys.next.add("MouseLeft"); break
 				case 2: this.releasedKeys.next.add("MouseRight"); break
 				case 1: this.releasedKeys.next.add("MouseMiddle"); break
 			}
 		}, false)
-		
+
 		element.addEventListener("keydown", event => {
 			if (event.code != "F5" && event.code != "F11" && event.code != "F12") {
 				event.preventDefault()
@@ -448,7 +458,7 @@ class Input {
 
 			this.pressedKeys.next.add(event.code)
 		}, false)
-		
+
 		element.addEventListener("keyup", event => {
 			if (event.code != "F5" && event.code != "F11" && event.code != "F12") {
 				event.preventDefault()
@@ -462,18 +472,18 @@ class Input {
 		for (const key of this.pressedKeys.next) {
 			this.currentlyPressedKeys.add(key)
 		}
-		
+
 		for (const key of this.releasedKeys.next) {
 			this.currentlyPressedKeys.delete(key)
 		}
-		
+
 		this.pressedKeys = this.pressedKeys.next
 		this.releasedKeys = this.releasedKeys.next
-		
+
 		this.pressedKeys.next = new Set()
         this.releasedKeys.next = new Set()
 	}
-	
+
 	/**
 	 * @param {String} key
 	 * @return {Boolean}
@@ -560,7 +570,7 @@ class World {
 		this.timeDelta = (currentTimestamp - this.lastTimestamp) / 1000
 		this.timeEnlapsed = this.timeDelta * this.timeFactor
 		this.lastTimestamp = currentTimestamp
-		
+
 		this.graphics.clearRect(0, 0, this.graphics.canvas.width, this.graphics.canvas.height)
 
 		for (const object of this.objects) {
@@ -572,7 +582,7 @@ class World {
 		}
 
 		this.input.update()
-		
+
 		if (this.isRunning) {
 			requestAnimationFrame(currentTimestamp => this.frame(currentTimestamp))
 		}
@@ -1070,7 +1080,7 @@ class Asset extends Transform {
 		Colliding.init(this, collisionRadius)
 		Destroyable.init(this, health, healthRegeneration)
 		Teamed.init(this, team)
-		
+
 		this.explosion = explosion
 	}
 
@@ -1081,15 +1091,15 @@ class Asset extends Transform {
 	beforeDelete(world) {
 		this.explosion.x = this.x
 		this.explosion.y = this.y
-		
+
 		world.add(this.explosion)
 	}
-	
+
 	update(world) {
 		Destroyable.update(this, world)
-		
+
 		world.graphics.applyTransform(this)
-		
+
 		this.draw(world)
 
 		world.graphics.resetTransform()
@@ -1649,6 +1659,92 @@ Ship.X1AScarab = class X1AScarab extends Ship {
 	}
 }
 
+Ship.A1AWasp = class A1AWasp extends Ship {
+	constructor(transform, target, team) {
+		super(transform, target, Core.T1(target, team), team, { movementAcceleration: 100, rotationAcceleration: 1.6 })
+
+		this.turretSlots.add(new TurretSlot(21.6, 12.2, new Turret.G1Dash(this.target, this.speed, this.team), {
+			leftRotationBound: 0.48,
+			rightRotationBound: 1.40
+		}))
+
+		this.turretSlots.add(new TurretSlot(-1.5, 19.6, new Turret.G1Dash(this.target, this.speed, this.team), {
+			leftRotationBound: 1.11,
+			rightRotationBound: 1.88
+		}))
+
+		this.turretSlots.add(new TurretSlot(-16.5, 27.1, new Turret.G1Dash(this.target, this.speed, this.team), {
+			leftRotationBound: 0.32,
+			rightRotationBound: 1.88
+		}))
+
+		this.turretSlots.add(new TurretSlot(-31.5, 34.6, new Turret.G1Dash(this.target, this.speed, this.team), {
+			leftRotationBound: 0.32,
+			rightRotationBound: 3.05
+		}))
+
+		this.turretSlots.add(new TurretSlot(21.6, -12.2, new Turret.G1Dash(this.target, this.speed, this.team), {
+			leftRotationBound: -1.40,
+			rightRotationBound: -0.48
+		}))
+
+		this.turretSlots.add(new TurretSlot(-1.5, -19.6, new Turret.G1Dash(this.target, this.speed, this.team), {
+			leftRotationBound: -1.88,
+			rightRotationBound: -1.11
+		}))
+
+		this.turretSlots.add(new TurretSlot(-16.5, -27.1, new Turret.G1Dash(this.target, this.speed, this.team), {
+			leftRotationBound: -1.88,
+			rightRotationBound: -0.32
+		}))
+
+		this.turretSlots.add(new TurretSlot(-31.5, -34.6, new Turret.G1Dash(this.target, this.speed, this.team), {
+			leftRotationBound: -3.05,
+			rightRotationBound: -0.32
+		}))
+	}
+
+	draw(world) {
+		world.graphics.beginPath()
+		world.graphics.moveTo(-19, 0)
+		world.graphics.lineTo(-10.9, 4.7)
+		world.graphics.lineTo(-16.5, 4.7)
+		world.graphics.lineTo(-46.5, 19.7)
+		world.graphics.lineTo(-31.5, 19.7)
+		world.graphics.lineTo(-44.5, 23.7)
+		world.graphics.lineTo(-36.9, 30.2)
+		world.graphics.bezierCurveTo(-33.6, 26.4, -27.9, 26.9, -25.3, 31.6)
+		world.graphics.lineTo(-22.8, 30.4)
+		world.graphics.bezierCurveTo(-26.5, 21.6, -14.7, 16, -10.3, 24.1)
+		world.graphics.lineTo(-7.8, 22.9)
+		world.graphics.bezierCurveTo(-12.1, 10.5, 7.6, 8.7, 5.2, 21.9)
+		world.graphics.lineTo(12.8, 24.4)
+		world.graphics.lineTo(17.5, 17.9)
+		world.graphics.bezierCurveTo(8.6, 9.7, 22.8, -1.4, 28.3, 10.1)
+		world.graphics.lineTo(35.9, 7.6)
+		world.graphics.lineTo(48.9, 0)
+		world.graphics.lineTo(35.9, -7.6)
+		world.graphics.lineTo(28.3, -10.1)
+		world.graphics.bezierCurveTo(22.8, 1.4, 8.6, -9.7, 17.5, -17.9)
+		world.graphics.lineTo(12.8, -24.4)
+		world.graphics.lineTo(5.2, -21.9)
+		world.graphics.bezierCurveTo(7.6, -8.7, -12.1, -10.5, -7.8, -22.9)
+		world.graphics.lineTo(-10.3, -24.1)
+		world.graphics.bezierCurveTo(-14.7, -16, -26.5, -21.6, -22.8, -30.4)
+		world.graphics.lineTo(-25.3, -31.6)
+		world.graphics.bezierCurveTo(-27.9, -26.9, -33.6, -26.4, -36.9, -30.2)
+		world.graphics.lineTo(-44.5, -23.7)
+		world.graphics.lineTo(-31.5, -19.7)
+		world.graphics.lineTo(-46.5, -19.7)
+		world.graphics.lineTo(-16.5, -4.7)
+		world.graphics.lineTo(-10.9, -4.7)
+		world.graphics.closePath()
+
+		world.graphics.fillStyle = Color.DARK
+		world.graphics.fill()
+	}
+}
+
 // -----------------------------------------------------------------
 
 /**
@@ -1774,7 +1870,7 @@ class RotatingMouseShipController {
 
 const world = new World(canvas)
 
-const player = new Ship.X1AScarab(new Transform(200, 200, 1), world.input.mouseTransform, Team.GREEN)
+const player = new Ship.A1AWasp(new Transform(200, 200, 1), world.input.mouseTransform, Team.GREEN)
 
 // TODO
 // ----
@@ -1792,7 +1888,6 @@ const player = new Ship.X1AScarab(new Transform(200, 200, 1), world.input.mouseT
 // [ ] Constrain angle to arc > 180deg bug.
 
 world.add(player)
-// world.add(new RotatingMouseShipController(player))
 world.add(new KeyboardShipController(player))
 
 world.add((function () {
