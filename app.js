@@ -1215,6 +1215,92 @@ for (let i = 1; i <= 3; ++i) {
 }
 
 /**
+ * @implements {WorldObject}
+ * @implements {Moving}
+ * @implements {Colliding}
+ * @implements {Ephemeral}
+ * @implements {Teamed}
+ */
+class Missile extends Transform {
+	/**
+	 * @param {Transform} transform
+	 * @param {Transform} target
+	 * @param {Force} baseSpeed
+	 * @param {Distance} movementSpeed
+	 * @param {Angle} rotationSpeed
+	 * @param {Time} lifeTime
+	 * @param {Distance} radius
+	 * @param {Team} team
+	 * @param {Explosion} explosion
+	 */
+	constructor(transform, target, baseSpeed, movementAcceleration, rotationAcceleration, lifeTime, radius, team, explosion) {
+        super(transform.x, transform.y, transform.a)
+
+		this.target = target
+
+		Moving.init(this)
+
+		this.speed.x += baseSpeed.x
+		this.speed.y += baseSpeed.y
+		this.speed.a += baseSpeed.a
+
+		this.movementAcceleration = movementAcceleration
+		this.rotationAcceleration = rotationAcceleration
+
+		Colliding.init(this, radius)
+		Ephemeral.init(this, lifeTime)
+		Teamed.init(this, team)
+
+		this.explosion = explosion
+	}
+
+	mustBeDeleted(world) {
+		return Ephemeral.mustBeDeleted(this, world) || Colliding.testAny(this, Teamed.hostiles(this, world.objects))
+	}
+
+	afterDelete(world) {
+		this.explosion.x = this.x
+		this.explosion.y = this.y
+
+		world.add(this.explosion)
+	}
+
+	update(world) {
+		this.acceleration.a = sign(this.optimalAngleToward(this.target)) * this.rotationAcceleration
+		this.acceleration.x = this.movementAcceleration * cos(this.a)
+        this.acceleration.y = this.movementAcceleration * sin(this.a)
+
+		Ephemeral.update(this, world)
+		Moving.update(this, world)
+
+		world.graphics.applyTransform(this)
+
+		world.graphics.beginPath()
+		world.graphics.moveTo(-this.collisionRadius, 0)
+		world.graphics.lineTo(+this.collisionRadius, 0)
+
+		world.graphics.strokeStyle = this.team.secondaryColor
+		world.graphics.lineWidth = this.collisionRadius * max(0.01, this.remainingLifeTime / this.lifeTime)
+		world.graphics.lineCap = "round"
+		world.graphics.stroke()
+
+		world.graphics.resetTransform()
+	}
+}
+
+for (let i = 1; i <= 3; ++i) {
+	/**
+	 * @param {Transform} transform
+	 * @param {Transform} target
+	 * @param {Force} baseSpeed
+	 * @param {Team} team
+	 */
+	Missile["T" + i] = function constructor(transform, target, baseSpeed, team) {
+		return new Missile(transform, target, baseSpeed, 300 - 50 * i, 3.5 - i, 5 * i, 1 + i, team, new Explosion(0, 0, i, 5 * i, 10 * i))
+	}
+}
+
+/**
  * @abstract
  *
  * @method fire
@@ -1403,67 +1489,59 @@ Turret.G2Liner = class G2Liner extends Turret.T2 {
 	}
 }
 
-// -----------------------------------------------------------------
-
-/*
-class Missile {
-	constructor({ transform, targetTransform, baseSpeed, movementAcceleration, movementSpeed, rotationAcceleration, rotationSpeed }) {
-		this.friction = new Friction()
-		this.acceleration = new Force(0, 0, 0)
-		this.speed = new Force(
-			baseSpeed.x + 100 * cos(transform.a),
-			baseSpeed.y + 100 * sin(transform.a),
-			baseSpeed.a
-		)
-
-		this.transform = transform
-		this.targetTransform = targetTransform
-
-		this.movementAcceleration = movementAcceleration
-		this.movementSpeed = movementSpeed
-		this.rotationAcceleration = rotationAcceleration
-		this.rotationSpeed = rotationSpeed
-
-		this.size = 2
-		this.remainingLifeTime = 7
-		this.lifeTime = 7
+Turret.M1Paparazzi = class M1Paparazzi extends Turret.T1 {
+	constructor(target, bulletBaseSpeed, team) {
+		super(target, bulletBaseSpeed, team, 1)
 	}
 
-	mustBeDeleted(world) {
-		return (this.remainingLifeTime -= world.timeEnlapsed) < 0
+	fire(world) {
+		world.add(Missile.T1(
+			this.clone()
+			    .relativeOffset(this.collisionRadius, 0),
+			this.target,
+			this.bulletBaseSpeed,
+			this.team
+		))
+
+		world.add(new UniqueAction(world => {
+			world.add(Missile.T1(
+				this.clone()
+					.relativeOffset(this.collisionRadius, 0),
+				this.target,
+				this.bulletBaseSpeed,
+				this.team
+			))
+		}, 0.2))
 	}
 
-	update(world) {
-		this.acceleration.x = this.movementAcceleration * cos(this.transform.a)
-		this.acceleration.y = this.movementAcceleration * sin(this.transform.a)
-		this.acceleration.a = this.rotationAcceleration * sign(this.transform.optimalAngleToward(this.targetTransform))
-		
-		this.acceleration.drive(this.speed, world)
-
-		this.friction.updateFrom(this.speed, world)
-		this.friction.drive(this.speed, world)
-		
-		this.speed.drive(this.transform, world)
-
-		world.graphics.applyTransform(this.transform)
-		
-		this.draw(world)
-
-		world.graphics.resetTransform()
+	/**
+	 * @protected
+	 */
+	get canFire() {
+		return this.mustFire
 	}
 
 	draw(world) {
 		world.graphics.beginPath()
-		world.graphics.moveTo(-this.size, 0)
-		world.graphics.lineTo(+this.size, 0)
-		
-		world.graphics.strokeStyle = Color.YELLOW
-		world.graphics.lineWidth = this.size * this.remainingLifeTime / this.lifeTime
+		world.graphics.arc(0, 0, this.collisionRadius, 1, -1)
+
+		world.graphics.strokeStyle = this.team.mainColor
+		world.graphics.lineWidth = 2
 		world.graphics.lineCap = "round"
+		world.graphics.stroke()
+
+		world.graphics.beginPath()
+
+		world.graphics.moveTo(0, 0)
+		world.graphics.lineTo(2, 0)
+
+		world.graphics.moveTo(5, 0)
+		world.graphics.lineTo(6, 0)
+
+		world.graphics.strokeStyle = Color.GREY
 		world.graphics.stroke()
 	}
 }
-*/
 
 // -----------------------------------------------------------------
 
@@ -1585,6 +1663,37 @@ Ship.W1APollen = class W1APollen extends Ship {
 	}
 }
 
+Ship.W1BPollen = class W1BPollen extends Ship {
+	constructor(transform, target, team) {
+		super(transform, target, Core.T1(target, team), team, { movementAcceleration: 100, rotationAcceleration: 2 })
+
+		this.turretSlots.add(new TurretSlot(15.4, 0, new Turret.M1Paparazzi(this.target, this.speed, this.team), {
+			leftRotationBound: -0.78,
+			rightRotationBound: 0.78
+		}))
+	}
+
+	draw(world) {
+		world.graphics.beginPath()
+		world.graphics.moveTo(-10.4, 0)
+		world.graphics.lineTo(-6.4, 15)
+		world.graphics.lineTo(8.6, 15)
+		world.graphics.lineTo(6.6, 7.5)
+		world.graphics.lineTo(15.4, 7.5)
+		world.graphics.lineTo(15.4, 7)
+		world.graphics.bezierCurveTo(6, 6.4, 6, -6.4, 15.4, -7)
+		world.graphics.lineTo(15.4, -7)
+		world.graphics.lineTo(15.4, -7.5)
+		world.graphics.lineTo(6.6, -7.5)
+		world.graphics.lineTo(8.6, -15)
+		world.graphics.lineTo(-6.4, -15)
+		world.graphics.closePath()
+
+		world.graphics.fillStyle = Color.DARK
+		world.graphics.fill()
+	}
+}
+
 Ship.M1AMoth = class M1AMoth extends Ship {
 	constructor(transform, target, team) {
 		super(transform, target, Core.T1(target, team), team, { movementAcceleration: 120, rotationAcceleration: 1.6 })
@@ -1595,6 +1704,43 @@ Ship.M1AMoth = class M1AMoth extends Ship {
 		}))
 
 		this.turretSlots.add(new TurretSlot(7.5, -17.9, new Turret.G1Dash(this.target, this.speed, this.team), {
+			leftRotationBound: -0.95,
+			rightRotationBound: 0.42
+		}))
+	}
+
+	draw(world) {
+		world.graphics.beginPath()
+		world.graphics.moveTo(-13.8, 7.4)
+		world.graphics.lineTo(-4.8, 9.9)
+		world.graphics.lineTo(-10.2, 30)
+		world.graphics.lineTo(4.8, 30)
+		world.graphics.lineTo(6.2, 24.9)
+		world.graphics.bezierCurveTo(-3, 22.8, -0.3, 8.8, 9.8, 11.5)
+		world.graphics.lineTo(12.8, 0)
+		world.graphics.lineTo(9.8, -11.5)
+		world.graphics.bezierCurveTo(-0.3, -8.8, -3, -22.8, 6.2, -24.9)
+		world.graphics.lineTo(4.8, -30)
+		world.graphics.lineTo(-10.2, -30)
+		world.graphics.lineTo(-4.8, -9.9)
+		world.graphics.lineTo(-13.8, -7.4)
+		world.graphics.closePath()
+
+		world.graphics.fillStyle = Color.DARK
+		world.graphics.fill()
+	}
+}
+
+Ship.M1BMoth = class M1BMoth extends Ship {
+	constructor(transform, target, team) {
+		super(transform, target, Core.T1(target, team), team, { movementAcceleration: 120, rotationAcceleration: 1.6 })
+
+		this.turretSlots.add(new TurretSlot(7.5, 17.9, new Turret.M1Paparazzi(this.target, this.speed, this.team), {
+			leftRotationBound: -0.42,
+			rightRotationBound: 0.95
+		}))
+
+		this.turretSlots.add(new TurretSlot(7.5, -17.9, new Turret.M1Paparazzi(this.target, this.speed, this.team), {
 			leftRotationBound: -0.95,
 			rightRotationBound: 0.42
 		}))
@@ -1693,6 +1839,77 @@ Ship.X1AScarab = class X1AScarab extends Ship {
 	}
 }
 
+Ship.X1BScarab = class X1BScarab extends Ship {
+	constructor(transform, target, team) {
+		super(transform, target, Core.T1(target, team), team, { movementAcceleration: 100, rotationAcceleration: 1.6 })
+
+		this.turretSlots.add(new TurretSlot(19, 18.5, new Turret.G1Dash(this.target, this.speed, this.team), {
+			leftRotationBound: 0.52,
+			rightRotationBound: 2.07
+		}))
+
+		this.turretSlots.add(new TurretSlot(-3.5, 22.6, new Turret.M1Paparazzi(this.target, this.speed, this.team), {
+			leftRotationBound: 0.37,
+			rightRotationBound: 2.60
+		}))
+
+		this.turretSlots.add(new TurretSlot(-21.2, 16, new Turret.G1Dash(this.target, this.speed, this.team), {
+			leftRotationBound: 1.06,
+			rightRotationBound: 2.60
+		}))
+
+		this.turretSlots.add(new TurretSlot(19, -18.5, new Turret.G1Dash(this.target, this.speed, this.team), {
+			leftRotationBound: -2.07,
+			rightRotationBound: -0.52
+		}))
+
+		this.turretSlots.add(new TurretSlot(-3.5, -22.6, new Turret.M1Paparazzi(this.target, this.speed, this.team), {
+			leftRotationBound: -2.60,
+			rightRotationBound: -0.37
+		}))
+
+		this.turretSlots.add(new TurretSlot(-21.2, -16, new Turret.G1Dash(this.target, this.speed, this.team), {
+			leftRotationBound: -2.60,
+			rightRotationBound: -1.06
+		}))
+	}
+
+	draw(world) {
+		world.graphics.beginPath()
+		world.graphics.moveTo(-24.1, 0)
+		world.graphics.lineTo(-33.5, 2.6)
+		world.graphics.lineTo(-33.5, 12.5)
+		world.graphics.lineTo(-27.9, 14)
+		world.graphics.bezierCurveTo(-25.6, 6, -12.7, 7.4, -14.4, 17.6)
+		world.graphics.lineTo(-10.3, 18.8)
+		world.graphics.bezierCurveTo(-9, 14, -3.2, 11.8, 1, 15.3)
+		world.graphics.lineTo(7.5, 7.6)
+		world.graphics.lineTo(11.5, 20.6)
+		world.graphics.lineTo(12.2, 20.3)
+		world.graphics.bezierCurveTo(10.2, 12.2, 22.3, 7.3, 25.7, 16.7)
+		world.graphics.lineTo(26.5, 16.5)
+		world.graphics.lineTo(26.5, 9.5)
+		world.graphics.lineTo(34, 7.5)
+		world.graphics.lineTo(34, -7.5)
+		world.graphics.lineTo(26.5, -9.5)
+		world.graphics.lineTo(26.5, -16.5)
+		world.graphics.lineTo(25.7, -16.7)
+		world.graphics.bezierCurveTo(22.3, -7.3, 10.2, -12.2, 12.2, -20.3)
+		world.graphics.lineTo(11.5, -20.6)
+		world.graphics.lineTo(7.5, -7.6)
+		world.graphics.lineTo(1, -15.3)
+		world.graphics.bezierCurveTo(-3.2, -11.8, -9, -14, -10.3, -18.8)
+		world.graphics.lineTo(-14.4, -17.6)
+		world.graphics.bezierCurveTo(-12.7, -7.4, -25.6, -6, -27.9, -14)
+		world.graphics.lineTo(-33.5, -12.5)
+		world.graphics.lineTo(-33.5, -2.6)
+		world.graphics.closePath()
+
+		world.graphics.fillStyle = Color.DARK
+		world.graphics.fill()
+	}
+}
+
 Ship.A1AWasp = class A1AWasp extends Ship {
 	constructor(transform, target, team) {
 		super(transform, target, Core.T1(target, team), team, { movementAcceleration: 100, rotationAcceleration: 1.6 })
@@ -1733,6 +1950,264 @@ Ship.A1AWasp = class A1AWasp extends Ship {
 		}))
 
 		this.turretSlots.add(new TurretSlot(-31.5, -34.6, new Turret.G1Dash(this.target, this.speed, this.team), {
+			leftRotationBound: -3.05,
+			rightRotationBound: -0.32
+		}))
+	}
+
+	draw(world) {
+		world.graphics.beginPath()
+		world.graphics.moveTo(-19, 0)
+		world.graphics.lineTo(-10.9, 4.7)
+		world.graphics.lineTo(-16.5, 4.7)
+		world.graphics.lineTo(-46.5, 19.7)
+		world.graphics.lineTo(-31.5, 19.7)
+		world.graphics.lineTo(-44.5, 23.7)
+		world.graphics.lineTo(-36.9, 30.2)
+		world.graphics.bezierCurveTo(-33.6, 26.4, -27.9, 26.9, -25.3, 31.6)
+		world.graphics.lineTo(-22.8, 30.4)
+		world.graphics.bezierCurveTo(-26.5, 21.6, -14.7, 16, -10.3, 24.1)
+		world.graphics.lineTo(-7.8, 22.9)
+		world.graphics.bezierCurveTo(-12.1, 10.5, 7.6, 8.7, 5.2, 21.9)
+		world.graphics.lineTo(12.8, 24.4)
+		world.graphics.lineTo(17.5, 17.9)
+		world.graphics.bezierCurveTo(8.6, 9.7, 22.8, -1.4, 28.3, 10.1)
+		world.graphics.lineTo(35.9, 7.6)
+		world.graphics.lineTo(48.9, 0)
+		world.graphics.lineTo(35.9, -7.6)
+		world.graphics.lineTo(28.3, -10.1)
+		world.graphics.bezierCurveTo(22.8, 1.4, 8.6, -9.7, 17.5, -17.9)
+		world.graphics.lineTo(12.8, -24.4)
+		world.graphics.lineTo(5.2, -21.9)
+		world.graphics.bezierCurveTo(7.6, -8.7, -12.1, -10.5, -7.8, -22.9)
+		world.graphics.lineTo(-10.3, -24.1)
+		world.graphics.bezierCurveTo(-14.7, -16, -26.5, -21.6, -22.8, -30.4)
+		world.graphics.lineTo(-25.3, -31.6)
+		world.graphics.bezierCurveTo(-27.9, -26.9, -33.6, -26.4, -36.9, -30.2)
+		world.graphics.lineTo(-44.5, -23.7)
+		world.graphics.lineTo(-31.5, -19.7)
+		world.graphics.lineTo(-46.5, -19.7)
+		world.graphics.lineTo(-16.5, -4.7)
+		world.graphics.lineTo(-10.9, -4.7)
+		world.graphics.closePath()
+
+		world.graphics.fillStyle = Color.DARK
+		world.graphics.fill()
+	}
+}
+
+Ship.A1BWasp = class A1BWasp extends Ship {
+	constructor(transform, target, team) {
+		super(transform, target, Core.T1(target, team), team, { movementAcceleration: 100, rotationAcceleration: 1.6 })
+
+		this.turretSlots.add(new TurretSlot(21.6, 12.2, new Turret.G1Dash(this.target, this.speed, this.team), {
+			leftRotationBound: 0.48,
+			rightRotationBound: 1.40
+		}))
+
+		this.turretSlots.add(new TurretSlot(-1.5, 19.6, new Turret.M1Paparazzi(this.target, this.speed, this.team), {
+			leftRotationBound: 1.11,
+			rightRotationBound: 1.88
+		}))
+
+		this.turretSlots.add(new TurretSlot(-16.5, 27.1, new Turret.G1Dash(this.target, this.speed, this.team), {
+			leftRotationBound: 0.32,
+			rightRotationBound: 1.88
+		}))
+
+		this.turretSlots.add(new TurretSlot(-31.5, 34.6, new Turret.G1Dash(this.target, this.speed, this.team), {
+			leftRotationBound: 0.32,
+			rightRotationBound: 3.05
+		}))
+
+		this.turretSlots.add(new TurretSlot(21.6, -12.2, new Turret.G1Dash(this.target, this.speed, this.team), {
+			leftRotationBound: -1.40,
+			rightRotationBound: -0.48
+		}))
+
+		this.turretSlots.add(new TurretSlot(-1.5, -19.6, new Turret.M1Paparazzi(this.target, this.speed, this.team), {
+			leftRotationBound: -1.88,
+			rightRotationBound: -1.11
+		}))
+
+		this.turretSlots.add(new TurretSlot(-16.5, -27.1, new Turret.G1Dash(this.target, this.speed, this.team), {
+			leftRotationBound: -1.88,
+			rightRotationBound: -0.32
+		}))
+
+		this.turretSlots.add(new TurretSlot(-31.5, -34.6, new Turret.G1Dash(this.target, this.speed, this.team), {
+			leftRotationBound: -3.05,
+			rightRotationBound: -0.32
+		}))
+	}
+
+	draw(world) {
+		world.graphics.beginPath()
+		world.graphics.moveTo(-19, 0)
+		world.graphics.lineTo(-10.9, 4.7)
+		world.graphics.lineTo(-16.5, 4.7)
+		world.graphics.lineTo(-46.5, 19.7)
+		world.graphics.lineTo(-31.5, 19.7)
+		world.graphics.lineTo(-44.5, 23.7)
+		world.graphics.lineTo(-36.9, 30.2)
+		world.graphics.bezierCurveTo(-33.6, 26.4, -27.9, 26.9, -25.3, 31.6)
+		world.graphics.lineTo(-22.8, 30.4)
+		world.graphics.bezierCurveTo(-26.5, 21.6, -14.7, 16, -10.3, 24.1)
+		world.graphics.lineTo(-7.8, 22.9)
+		world.graphics.bezierCurveTo(-12.1, 10.5, 7.6, 8.7, 5.2, 21.9)
+		world.graphics.lineTo(12.8, 24.4)
+		world.graphics.lineTo(17.5, 17.9)
+		world.graphics.bezierCurveTo(8.6, 9.7, 22.8, -1.4, 28.3, 10.1)
+		world.graphics.lineTo(35.9, 7.6)
+		world.graphics.lineTo(48.9, 0)
+		world.graphics.lineTo(35.9, -7.6)
+		world.graphics.lineTo(28.3, -10.1)
+		world.graphics.bezierCurveTo(22.8, 1.4, 8.6, -9.7, 17.5, -17.9)
+		world.graphics.lineTo(12.8, -24.4)
+		world.graphics.lineTo(5.2, -21.9)
+		world.graphics.bezierCurveTo(7.6, -8.7, -12.1, -10.5, -7.8, -22.9)
+		world.graphics.lineTo(-10.3, -24.1)
+		world.graphics.bezierCurveTo(-14.7, -16, -26.5, -21.6, -22.8, -30.4)
+		world.graphics.lineTo(-25.3, -31.6)
+		world.graphics.bezierCurveTo(-27.9, -26.9, -33.6, -26.4, -36.9, -30.2)
+		world.graphics.lineTo(-44.5, -23.7)
+		world.graphics.lineTo(-31.5, -19.7)
+		world.graphics.lineTo(-46.5, -19.7)
+		world.graphics.lineTo(-16.5, -4.7)
+		world.graphics.lineTo(-10.9, -4.7)
+		world.graphics.closePath()
+
+		world.graphics.fillStyle = Color.DARK
+		world.graphics.fill()
+	}
+}
+
+Ship.A1CWasp = class A1CWasp extends Ship {
+	constructor(transform, target, team) {
+		super(transform, target, Core.T1(target, team), team, { movementAcceleration: 100, rotationAcceleration: 1.6 })
+
+		this.turretSlots.add(new TurretSlot(21.6, 12.2, new Turret.G1Dash(this.target, this.speed, this.team), {
+			leftRotationBound: 0.48,
+			rightRotationBound: 1.40
+		}))
+
+		this.turretSlots.add(new TurretSlot(-1.5, 19.6, new Turret.M1Paparazzi(this.target, this.speed, this.team), {
+			leftRotationBound: 1.11,
+			rightRotationBound: 1.88
+		}))
+
+		this.turretSlots.add(new TurretSlot(-16.5, 27.1, new Turret.M1Paparazzi(this.target, this.speed, this.team), {
+			leftRotationBound: 0.32,
+			rightRotationBound: 1.88
+		}))
+
+		this.turretSlots.add(new TurretSlot(-31.5, 34.6, new Turret.G1Dash(this.target, this.speed, this.team), {
+			leftRotationBound: 0.32,
+			rightRotationBound: 3.05
+		}))
+
+		this.turretSlots.add(new TurretSlot(21.6, -12.2, new Turret.G1Dash(this.target, this.speed, this.team), {
+			leftRotationBound: -1.40,
+			rightRotationBound: -0.48
+		}))
+
+		this.turretSlots.add(new TurretSlot(-1.5, -19.6, new Turret.M1Paparazzi(this.target, this.speed, this.team), {
+			leftRotationBound: -1.88,
+			rightRotationBound: -1.11
+		}))
+
+		this.turretSlots.add(new TurretSlot(-16.5, -27.1, new Turret.M1Paparazzi(this.target, this.speed, this.team), {
+			leftRotationBound: -1.88,
+			rightRotationBound: -0.32
+		}))
+
+		this.turretSlots.add(new TurretSlot(-31.5, -34.6, new Turret.G1Dash(this.target, this.speed, this.team), {
+			leftRotationBound: -3.05,
+			rightRotationBound: -0.32
+		}))
+	}
+
+	draw(world) {
+		world.graphics.beginPath()
+		world.graphics.moveTo(-19, 0)
+		world.graphics.lineTo(-10.9, 4.7)
+		world.graphics.lineTo(-16.5, 4.7)
+		world.graphics.lineTo(-46.5, 19.7)
+		world.graphics.lineTo(-31.5, 19.7)
+		world.graphics.lineTo(-44.5, 23.7)
+		world.graphics.lineTo(-36.9, 30.2)
+		world.graphics.bezierCurveTo(-33.6, 26.4, -27.9, 26.9, -25.3, 31.6)
+		world.graphics.lineTo(-22.8, 30.4)
+		world.graphics.bezierCurveTo(-26.5, 21.6, -14.7, 16, -10.3, 24.1)
+		world.graphics.lineTo(-7.8, 22.9)
+		world.graphics.bezierCurveTo(-12.1, 10.5, 7.6, 8.7, 5.2, 21.9)
+		world.graphics.lineTo(12.8, 24.4)
+		world.graphics.lineTo(17.5, 17.9)
+		world.graphics.bezierCurveTo(8.6, 9.7, 22.8, -1.4, 28.3, 10.1)
+		world.graphics.lineTo(35.9, 7.6)
+		world.graphics.lineTo(48.9, 0)
+		world.graphics.lineTo(35.9, -7.6)
+		world.graphics.lineTo(28.3, -10.1)
+		world.graphics.bezierCurveTo(22.8, 1.4, 8.6, -9.7, 17.5, -17.9)
+		world.graphics.lineTo(12.8, -24.4)
+		world.graphics.lineTo(5.2, -21.9)
+		world.graphics.bezierCurveTo(7.6, -8.7, -12.1, -10.5, -7.8, -22.9)
+		world.graphics.lineTo(-10.3, -24.1)
+		world.graphics.bezierCurveTo(-14.7, -16, -26.5, -21.6, -22.8, -30.4)
+		world.graphics.lineTo(-25.3, -31.6)
+		world.graphics.bezierCurveTo(-27.9, -26.9, -33.6, -26.4, -36.9, -30.2)
+		world.graphics.lineTo(-44.5, -23.7)
+		world.graphics.lineTo(-31.5, -19.7)
+		world.graphics.lineTo(-46.5, -19.7)
+		world.graphics.lineTo(-16.5, -4.7)
+		world.graphics.lineTo(-10.9, -4.7)
+		world.graphics.closePath()
+
+		world.graphics.fillStyle = Color.DARK
+		world.graphics.fill()
+	}
+}
+
+Ship.A1DWasp = class A1DWasp extends Ship {
+	constructor(transform, target, team) {
+		super(transform, target, Core.T1(target, team), team, { movementAcceleration: 100, rotationAcceleration: 1.6 })
+
+		this.turretSlots.add(new TurretSlot(21.6, 12.2, new Turret.G1Dash(this.target, this.speed, this.team), {
+			leftRotationBound: 0.48,
+			rightRotationBound: 1.40
+		}))
+
+		this.turretSlots.add(new TurretSlot(-1.5, 19.6, new Turret.M1Paparazzi(this.target, this.speed, this.team), {
+			leftRotationBound: 1.11,
+			rightRotationBound: 1.88
+		}))
+
+		this.turretSlots.add(new TurretSlot(-16.5, 27.1, new Turret.M1Paparazzi(this.target, this.speed, this.team), {
+			leftRotationBound: 0.32,
+			rightRotationBound: 1.88
+		}))
+
+		this.turretSlots.add(new TurretSlot(-31.5, 34.6, new Turret.M1Paparazzi(this.target, this.speed, this.team), {
+			leftRotationBound: 0.32,
+			rightRotationBound: 3.05
+		}))
+
+		this.turretSlots.add(new TurretSlot(21.6, -12.2, new Turret.G1Dash(this.target, this.speed, this.team), {
+			leftRotationBound: -1.40,
+			rightRotationBound: -0.48
+		}))
+
+		this.turretSlots.add(new TurretSlot(-1.5, -19.6, new Turret.M1Paparazzi(this.target, this.speed, this.team), {
+			leftRotationBound: -1.88,
+			rightRotationBound: -1.11
+		}))
+
+		this.turretSlots.add(new TurretSlot(-16.5, -27.1, new Turret.M1Paparazzi(this.target, this.speed, this.team), {
+			leftRotationBound: -1.88,
+			rightRotationBound: -0.32
+		}))
+
+		this.turretSlots.add(new TurretSlot(-31.5, -34.6, new Turret.M1Paparazzi(this.target, this.speed, this.team), {
 			leftRotationBound: -3.05,
 			rightRotationBound: -0.32
 		}))
@@ -1976,12 +2451,9 @@ class KeyboardShipController {
 	}
 
 	update(world) {
-		this.ship.acceleration.x = 0
-		this.ship.acceleration.y = 0
-		this.ship.acceleration.a = 0
-
 			 if (world.input.isPressed("KeyD")) this.ship.acceleration.a = +this.ship.rotationAcceleration
 		else if (world.input.isPressed("KeyA")) this.ship.acceleration.a = -this.ship.rotationAcceleration
+		else                                    this.ship.acceleration.a = 0
 
 		if (world.input.isPressed("KeyW") || world.input.isPressed("KeyS") || world.input.isPressed("KeyE") || world.input.isPressed("KeyQ")) {
 			let a = this.ship.a
@@ -2010,6 +2482,9 @@ class KeyboardShipController {
 
 			this.ship.acceleration.x = this.ship.movementAcceleration * cos(a)
 			this.ship.acceleration.y = this.ship.movementAcceleration * sin(a)
+		} else {
+			this.ship.acceleration.x = 0
+			this.ship.acceleration.y = 0
 		}
 
 		if (world.input.isPressed("MouseLeft")) {
@@ -2036,10 +2511,6 @@ class RotatingMouseShipController {
 	}
 
 	update(world) {
-		this.ship.acceleration.x = 0
-		this.ship.acceleration.y = 0
-		this.ship.acceleration.a = 0
-
 		this.ship.acceleration.a = sign(this.ship.optimalAngleToward(this.ship.target)) * this.ship.rotationAcceleration
 
 		if (world.input.isPressed("KeyW") || world.input.isPressed("KeyS") || world.input.isPressed("KeyD") || world.input.isPressed("KeyA")) {
@@ -2069,6 +2540,9 @@ class RotatingMouseShipController {
 
 			this.ship.acceleration.x = this.ship.movementAcceleration * cos(a)
 			this.ship.acceleration.y = this.ship.movementAcceleration * sin(a)
+		} else {
+			this.ship.acceleration.x = 0
+            this.ship.acceleration.y = 0
 		}
 
 		if (world.input.isPressed("MouseLeft")) {
@@ -2083,7 +2557,7 @@ class RotatingMouseShipController {
 
 const world = new World(canvas)
 
-const player = new Ship.M2ASkate(new Transform(200, 200, 1), world.input.mouseTransform, Team.GREEN)
+const player = new Ship.A1DWasp(new Transform(200, 200, 1), world.input.mouseTransform, Team.GREEN)
 
 // TODO
 // ----
@@ -2104,9 +2578,9 @@ world.add(player)
 world.add(new KeyboardShipController(player))
 
 world.add(new Ship.W1APollen(new Transform(1060, 280, PI), player, Team.RED).apply(pollen => pollen.mustFire = true))
-world.add(new Ship.W1APollen(new Transform(1030, 340, PI), player, Team.RED).apply(pollen => pollen.mustFire = true))
+world.add(new Ship.W1BPollen(new Transform(1030, 340, PI), player, Team.RED).apply(pollen => pollen.mustFire = true))
 world.add(new Ship.M1AMoth(new Transform(1000, 400, PI), player, Team.RED).apply(pollen => pollen.mustFire = true))
-world.add(new Ship.W1APollen(new Transform(1030, 460, PI), player, Team.RED).apply(pollen => pollen.mustFire = true))
+world.add(new Ship.W1BPollen(new Transform(1030, 460, PI), player, Team.RED).apply(pollen => pollen.mustFire = true))
 world.add(new Ship.W1APollen(new Transform(1060, 520, PI), player, Team.RED).apply(pollen => pollen.mustFire = true))
 
 world.add(Core.T3(player, Team.RED).apply(core => {
