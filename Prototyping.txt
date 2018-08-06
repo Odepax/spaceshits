@@ -1,1 +1,124 @@
+const Settings = {
+	ShipController: {
+		Keyboard: {
+			Forward: "KeyW",
+			Backward: "KeyS",
+			RotateLeft: "KeyA",
+			RotateRight: "KeyD",
+			Left: "KeyQ",
+			Right: "KeyE"
+		},
+		RotatingMouse: {
+			Forward: "KeyW",
+			Backward: "KeyS",
+			Left: "KeyA",
+			Right: "KeyD"
+		}
+	},
+	DirectFire: "MouseLeft",
+	IndirectFire: "MouseRight",
+	ToggleShield: "Space"
+}
 
+const Configuration = {
+	Ship: {
+		Fighter: {
+			T1: { MovementSpeed: 130, RotationSpeed: 1.5 },
+			T2: { MovementSpeed: 150, RotationSpeed: 1.4 },
+			T3: { MovementSpeed: 170, RotationSpeed: 1.3 }
+		},
+		Gunship: {
+			T1: { MovementSpeed: 100, RotationSpeed: 2.0 },
+			T2: { MovementSpeed: 90, RotationSpeed: 2.1 },
+			T3: { MovementSpeed: 80, RotationSpeed: 2.2 }
+		},
+		Cruiser: {
+			T1: { MovementSpeed: 70, RotationSpeed: 1.5 },
+			T2: { MovementSpeed: 50, RotationSpeed: 1.3 },
+			T3: { MovementSpeed: 30, RotationSpeed: 1.1 }
+		},
+		Carrier: {}
+	},
+	Core: {
+		T1: { Health: 100, Regen: 1, Radius:  5, Explosion: { Radius: 100, Damage: 10 } },
+		T2: { Health: 200, Regen: 1, Radius: 10, Explosion: { Radius: 200, Damage: 20 } },
+		T3: { Health: 300, Regen: 1, Radius: 15, Explosion: { Radius: 300, Damage: 30 } }
+	},
+	Gatling: {
+		T1: { Health: 100, Regen: 1, Radius: 5, RotationSpeed: 1.5, Explosion: { Radius: 50, Damage: 10 } }
+	},
+	Howitzer: {},
+	Sprayer: {},
+	MissileLauncher: {},
+	Shell: {
+		T1: {},
+		T2: {},
+		T3: {}
+	},
+	Missile: {
+		T1: {},
+		T2: {},
+		T3: {}
+	},
+	Shield: {
+		T1: {},
+		T2: {},
+		T3: {}
+	}
+}
+
+const Asset = {
+	Direct: {
+		Gatling: {
+			Dash: "DG1-1H Dash",
+			Liner: "DG2-1H Liner"
+		},
+		Howitzer: {
+			Ravager: "DH2-3M Ravager"
+		},
+		Sprayer: {}
+	},
+	Indirect: {
+		MissileLauncher: {
+			Paparazzi: "IM1-2M Paparazzi"
+		}
+	},
+	Special: {
+		Shield: {}
+	}
+}
+
+const Ship = {
+	Fighter: {
+		Moth: {
+			M1ADG2: "M1A-DG2 Moth",
+			M1BIM2: "M1B-IM2 Moth"
+		},
+		Skate: {
+			M2ADG5: "M2A-DG5 Skate"
+		}
+	},
+	Gunship: {
+		Pollen: {
+			W1ADG1: "W1A-DG1 Pollen",
+			W1BIM1: "W1B-IM1 Pollen"
+		},
+		Scorpion: {
+			Y2ADG10: "Y2A-DG10 Scorpion",
+			Y2BDG8DH2: "Y2B-DG8-DH2 Scorpion"
+		}
+	},
+	Cruiser: {
+		Scarab: {
+			X1ADG6: "X1A-DG6 Scarab",
+			X1BDG4IM2: "X1B-DG4-IM2 Scarab"
+		},
+		Wasp: {
+			A1ADG8: "A1A-DG8 Wasp",
+			A1BDG6IM2: "A1B-DG6-IM2 Wasp",
+			A1CDG4IM4: "A1C-DG4-IM4 Wasp",
+			A1DDG2IM6: "A1D-DG2-IM6 Wasp"
+		}
+	},
+	Carrier: {}
+}
