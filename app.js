@@ -1006,6 +1006,14 @@ const Teamed = {
  * @implements {Colliding}
  */
 class Explosion extends Transform {
+	/**
+	 * @param {Object} options
+	 * @param {Number} options.x
+	 * @param {Number} options.y
+	 * @param {Time} options.lifeTime
+	 * @param {Distance} options.radius
+	 * @param {Number} options.damage
+	 */
 	constructor({ x = 0, y = 0, lifeTime, radius, damage }) {
 		super(x, y)
 
@@ -1062,14 +1070,15 @@ class Explosion extends Transform {
  */
 class Asset extends Transform {
 	/**
-	 * @param {Transform} target
-	 * @param {Distance} collisionRadius
-	 * @param {Number} health
-	 * @param {Number} healthRegeneration
-	 * @param {Team} team
-	 * @param {Explosion} explosion
+	 * @param {Object} options
+	 * @param {Transform} options.target
+	 * @param {Distance} options.collisionRadius
+	 * @param {Number} options.health
+	 * @param {Number} options.healthRegeneration
+	 * @param {Team} options.team
+	 * @param {Explosion} options.explosion
 	 */
-	constructor(target, collisionRadius, health, healthRegeneration, team, explosion) {
+	constructor({ target, collisionRadius, health, healthRegeneration, team, explosion }) {
 		super(0, 0)
 
 		this.target = target
@@ -1134,7 +1143,14 @@ for (let i = 1; i <= 3; ++i) {
 	 * @param {Team} team
 	 */
 	Core["T" + i] = function constructor(target, team) {
-		return new Core(target, 5 * i, 100 * i, 1, team, new Explosion({ lifeTime: 1 + i, radius: 50 * i, damage: 100 * i }))
+		return new Core({
+			target,
+			collisionRadius: 5 * i,
+			health: 100 * i,
+			healthRegeneration: 1,
+			team,
+			explosion: new Explosion({ lifeTime: 1 + i, radius: 50 * i, damage: 100 * i })
+		})
 	}
 }
 
@@ -1147,15 +1163,16 @@ for (let i = 1; i <= 3; ++i) {
  */
 class Shell extends Transform {
 	/**
-	 * @param {Transform} transform
-	 * @param {Force} baseSpeed
-	 * @param {Distance} movementSpeed
-	 * @param {Time} lifeTime
-	 * @param {Distance} radius
-	 * @param {Team} team
-	 * @param {Explosion} explosion
+	 * @param {Object} options
+	 * @param {Transform} options.transform
+	 * @param {Force} options.baseSpeed
+	 * @param {Distance} options.movementSpeed
+	 * @param {Time} options.lifeTime
+	 * @param {Distance} options.radius
+	 * @param {Team} options.team
+	 * @param {Explosion} options.explosion
 	 */
-	constructor(transform, baseSpeed, movementSpeed, lifeTime, radius, team, explosion) {
+	constructor({ transform, baseSpeed, movementSpeed, lifeTime, radius, team, explosion }) {
 		super(transform.x, transform.y, transform.a)
 
 		Moving.Linear.initAngular(this, this.a, movementSpeed)
@@ -1207,7 +1224,15 @@ for (let i = 1; i <= 3; ++i) {
 	 * @param {Team} team
 	 */
 	Shell["T" + i] = function constructor(transform, baseSpeed, team) {
-		return new Shell(transform, baseSpeed, 300 - 50 * i, 1.5 * i, 1 + i, team, new Explosion({ lifeTime: i, radius: 5 * i, damage: 10 * i }))
+		return new Shell({
+			transform,
+			baseSpeed,
+			movementSpeed: 300 - 50 * i,
+			lifeTime: 1.5 * i,
+			radius: 1 + i,
+			team,
+			explosion: new Explosion({ lifeTime: i, radius: 5 * i, damage: 10 * i })
+		})
 	}
 }
 
@@ -1220,17 +1245,18 @@ for (let i = 1; i <= 3; ++i) {
  */
 class Missile extends Transform {
 	/**
-	 * @param {Transform} transform
-	 * @param {Transform} target
-	 * @param {Force} baseSpeed
-	 * @param {Distance} movementSpeed
-	 * @param {Angle} rotationSpeed
-	 * @param {Time} lifeTime
-	 * @param {Distance} radius
-	 * @param {Team} team
-	 * @param {Explosion} explosion
+	 * @param {Object} options
+	 * @param {Transform} options.transform
+	 * @param {Transform} options.target
+	 * @param {Force} options.baseSpeed
+	 * @param {Distance} options.movementSpeed
+	 * @param {Angle} options.rotationSpeed
+	 * @param {Time} options.lifeTime
+	 * @param {Distance} options.radius
+	 * @param {Team} options.team
+	 * @param {Explosion} options.explosion
 	 */
-	constructor(transform, target, baseSpeed, movementAcceleration, rotationAcceleration, lifeTime, radius, team, explosion) {
+	constructor({ transform, target, baseSpeed, movementAcceleration, rotationAcceleration, lifeTime, radius, team, explosion }) {
 		super(transform.x, transform.y, transform.a)
 
 		this.target = target
@@ -1293,7 +1319,17 @@ for (let i = 1; i <= 3; ++i) {
 	 * @param {Team} team
 	 */
 	Missile["T" + i] = function constructor(transform, target, baseSpeed, team) {
-		return new Missile(transform, target, baseSpeed, 300 - 50 * i, 3.5 - i, 5 * i, 1 + i, team, new Explosion({ lifeTime: i, radius: 5 * i, damage: 10 * i }))
+		return new Missile({
+			transform,
+			target,
+			baseSpeed,
+			movementAcceleration: 300 - 50 * i,
+			rotationAcceleration: 3.5 - i,
+			lifeTime: 5 * i,
+			radius: 1 + i,
+			team,
+			explosion: new Explosion({ lifeTime: i, radius: 5 * i, damage: 10 * i })
+		})
 	}
 }
 
@@ -1317,8 +1353,8 @@ class Turret extends Asset {
 	 * @param {Explosion} explosion
 	 * @param {Time} reloadTime
 	 */
-	constructor(target, bulletBaseSpeed, rotationSpeed, collisionRadius, health, healthRegeneration, team, explosion, reloadTime) {
-		super(target, collisionRadius, health, healthRegeneration, team, explosion)
+	constructor({ target, bulletBaseSpeed, rotationSpeed, collisionRadius, health, healthRegeneration, team, explosion, reloadTime }) {
+		super({ target, collisionRadius, health, healthRegeneration, team, explosion })
 
 		this.bulletBaseSpeed = bulletBaseSpeed
 		this.rotationSpeed = rotationSpeed
@@ -1384,7 +1420,17 @@ for (let i = 1; i <= 3; ++i) {
 		 * @param {Time} reloadTime
 		 */
 		constructor(target, bulletBaseSpeed, team, reloadTime) {
-			super(target, bulletBaseSpeed, PI / i, 5 * i, 50 * i, i, team, new Explosion({ lifeTime: 1 + i, radius: 10 * i, damage: 20 * i }), reloadTime)
+			super({
+				target,
+				bulletBaseSpeed,
+				rotationSpeed: PI / i,
+				collisionRadius: 5 * i,
+				health: 50 * i,
+				healthRegeneration: i,
+				team,
+				explosion: new Explosion({ lifeTime: 1 + i, radius: 10 * i, damage: 20 * i }),
+				reloadTime
+			})
 		}
 	}
 }
@@ -1410,7 +1456,17 @@ for (let i = 1; i <= 3; ++i) {
 		 * @param {Time} reloadTime
 		 */
 		constructor(target, bulletBaseSpeed, team, reloadTime) {
-			super(target, bulletBaseSpeed, PI / i, 5 * i, 50 * i, i, team, new Explosion({ lifeTime: 1 + i, radius: 10 * i, damage: 20 * i }), reloadTime)
+			super({
+				target,
+				bulletBaseSpeed,
+				rotationSpeed: PI / i,
+				collisionRadius: 5 * i,
+				health: 50 * i,
+				healthRegeneration: i,
+				team,
+				explosion: new Explosion({ lifeTime: 1 + i, radius: 10 * i, damage: 20 * i }),
+				reloadTime
+			})
 		}
 	}
 }
