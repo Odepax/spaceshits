@@ -1006,7 +1006,7 @@ const Teamed = {
  * @implements {Colliding}
  */
 class Explosion extends Transform {
-	constructor(x, y, lifeTime, radius, damage) {
+	constructor({ x = 0, y = 0, lifeTime, radius, damage }) {
 		super(x, y)
 
 		Ephemeral.init(this, lifeTime)
@@ -1134,7 +1134,7 @@ for (let i = 1; i <= 3; ++i) {
 	 * @param {Team} team
 	 */
 	Core["T" + i] = function constructor(target, team) {
-		return new Core(target, 5 * i, 100 * i, 1, team, new Explosion(0, 0, 1 + i, 50 * i, 100 * i))
+		return new Core(target, 5 * i, 100 * i, 1, team, new Explosion({ lifeTime: 1 + i, radius: 50 * i, damage: 100 * i }))
 	}
 }
 
@@ -1207,7 +1207,7 @@ for (let i = 1; i <= 3; ++i) {
 	 * @param {Team} team
 	 */
 	Shell["T" + i] = function constructor(transform, baseSpeed, team) {
-		return new Shell(transform, baseSpeed, 300 - 50 * i, 1.5 * i, 1 + i, team, new Explosion(0, 0, i, 5 * i, 10 * i))
+		return new Shell(transform, baseSpeed, 300 - 50 * i, 1.5 * i, 1 + i, team, new Explosion({ lifeTime: i, radius: 5 * i, damage: 10 * i }))
 	}
 }
 
@@ -1293,7 +1293,7 @@ for (let i = 1; i <= 3; ++i) {
 	 * @param {Team} team
 	 */
 	Missile["T" + i] = function constructor(transform, target, baseSpeed, team) {
-		return new Missile(transform, target, baseSpeed, 300 - 50 * i, 3.5 - i, 5 * i, 1 + i, team, new Explosion(0, 0, i, 5 * i, 10 * i))
+		return new Missile(transform, target, baseSpeed, 300 - 50 * i, 3.5 - i, 5 * i, 1 + i, team, new Explosion({ lifeTime: i, radius: 5 * i, damage: 10 * i }))
 	}
 }
 
@@ -1384,7 +1384,7 @@ for (let i = 1; i <= 3; ++i) {
 		 * @param {Time} reloadTime
 		 */
 		constructor(target, bulletBaseSpeed, team, reloadTime) {
-			super(target, bulletBaseSpeed, PI / i, 5 * i, 50 * i, i, team, new Explosion(0, 0, 1 + i, 10 * i, 20 * i), reloadTime)
+			super(target, bulletBaseSpeed, PI / i, 5 * i, 50 * i, i, team, new Explosion({ lifeTime: 1 + i, radius: 10 * i, damage: 20 * i }), reloadTime)
 		}
 	}
 }
@@ -1410,7 +1410,7 @@ for (let i = 1; i <= 3; ++i) {
 		 * @param {Time} reloadTime
 		 */
 		constructor(target, bulletBaseSpeed, team, reloadTime) {
-			super(target, bulletBaseSpeed, PI / i, 5 * i, 50 * i, i, team, new Explosion(0, 0, 1 + i, 10 * i, 20 * i), reloadTime)
+			super(target, bulletBaseSpeed, PI / i, 5 * i, 50 * i, i, team, new Explosion({ lifeTime: 1 + i, radius: 10 * i, damage: 20 * i }), reloadTime)
 		}
 	}
 }
