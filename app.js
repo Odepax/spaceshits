@@ -89,7 +89,7 @@ const Team = {
  * @property {Distance} x
  * @memberOf Position
  * @required
- * 
+ *
  * @property {Distance} y
  * @memberOf Position
  * @required
@@ -359,7 +359,7 @@ class Transform {
 
 /**
  * @interface WorldObject
- * 
+ *
  * @method update
  * @memberOf WorldObject
  * @required
@@ -474,7 +474,7 @@ class Input {
 		this.releasedKeys = this.releasedKeys.next
 
 		this.pressedKeys.next = new Set()
-        this.releasedKeys.next = new Set()
+		this.releasedKeys.next = new Set()
 	}
 
 	/**
@@ -543,7 +543,7 @@ class World {
 			this.objects.delete(object)
 
 			object.afterDelete && object.afterDelete(this)
-        }
+		}
 	}
 
 	run() {
@@ -988,14 +988,14 @@ const Teamed = {
 	hostiles($, others) {
 		const result = []
 
-        for (const other of others) {
+		for (const other of others) {
 			if (!this.test($, other)) {
 				result.push(other)
 			}
 		}
 
 		return result
-    }
+	}
 }
 
 // -----------------------------------------------------------------
@@ -1231,7 +1231,7 @@ class Missile extends Transform {
 	 * @param {Explosion} explosion
 	 */
 	constructor(transform, target, baseSpeed, movementAcceleration, rotationAcceleration, lifeTime, radius, team, explosion) {
-        super(transform.x, transform.y, transform.a)
+		super(transform.x, transform.y, transform.a)
 
 		this.target = target
 
@@ -1265,7 +1265,7 @@ class Missile extends Transform {
 	update(world) {
 		this.acceleration.a = sign(this.optimalAngleToward(this.target)) * this.rotationAcceleration
 		this.acceleration.x = this.movementAcceleration * cos(this.a)
-        this.acceleration.y = this.movementAcceleration * sin(this.a)
+		this.acceleration.y = this.movementAcceleration * sin(this.a)
 
 		Ephemeral.update(this, world)
 		Moving.update(this, world)
@@ -1321,8 +1321,8 @@ class Turret extends Asset {
 		super(target, collisionRadius, health, healthRegeneration, team, explosion)
 
 		this.bulletBaseSpeed = bulletBaseSpeed
-        this.rotationSpeed = rotationSpeed
-        this.reloadTime = reloadTime
+		this.rotationSpeed = rotationSpeed
+		this.reloadTime = reloadTime
 
 		this.mustFire = false
 		this.timeEnlapsed = 0
@@ -1575,8 +1575,7 @@ Turret.M1Paparazzi = class M1Paparazzi extends MissileLauncher.T1 {
 
 	fire(world) {
 		world.add(Missile.T1(
-			this.clone()
-			    .relativeOffset(this.collisionRadius, 0),
+			this.clone().relativeOffset(this.collisionRadius, 0),
 			this.target,
 			this.bulletBaseSpeed,
 			this.team
@@ -1634,7 +1633,7 @@ class Shield {
 
 		Colliding.init(this, 100, 0)
 		Destroyable.init(this, 500, 50)
-        Teamed.init(this, team)
+		Teamed.init(this, team)
 	}
 
 	mustBeDeleted(world) {
@@ -2454,7 +2453,7 @@ Ship.Y2AScorpion = class Y2AScorpion extends Ship {
 		world.graphics.lineTo(37.3, 7)
 		world.graphics.bezierCurveTo(28.1, 6.6, 28.1, -6.6, 37.3, -7)
 		world.graphics.lineTo(37.3, -7.4)
-	    world.graphics.lineTo(26.5, -10.3)
+		world.graphics.lineTo(26.5, -10.3)
 		world.graphics.lineTo(33.2, -19.6)
 		world.graphics.lineTo(40.6, -22)
 		world.graphics.bezierCurveTo(33.5, -27.1, 34.1, -36.9, 40.5, -41.5)
@@ -2564,7 +2563,7 @@ Ship.Y2BScorpion = class Y2AScorpion extends Ship {
 		world.graphics.lineTo(37.3, 7)
 		world.graphics.bezierCurveTo(28.1, 6.6, 28.1, -6.6, 37.3, -7)
 		world.graphics.lineTo(37.3, -7.4)
-	    world.graphics.lineTo(26.5, -10.3)
+		world.graphics.lineTo(26.5, -10.3)
 		world.graphics.lineTo(33.2, -19.6)
 		world.graphics.lineTo(40.6, -22)
 		world.graphics.bezierCurveTo(33.5, -27.1, 34.1, -36.9, 40.5, -41.5)
@@ -2768,7 +2767,7 @@ class RotatingMouseShipController {
 			this.ship.acceleration.y = this.ship.movementAcceleration * sin(a)
 		} else {
 			this.ship.acceleration.x = 0
-            this.ship.acceleration.y = 0
+			this.ship.acceleration.y = 0
 		}
 
 		if (world.input.isPressed("MouseLeft")) {
@@ -2816,7 +2815,7 @@ world.add({
 
 	/** Blob */
 	update(world) {
-	    Destroyable.update(this, world)
+		Destroyable.update(this, world)
 
 		world.graphics.applyTransform(this.transform)
 
