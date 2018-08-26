@@ -2782,23 +2782,7 @@ class RotatingMouseShipController {
 // -----------------------------------------------------------------
 
 const world = new World(canvas)
-
 const player = new Ship.Y2BScorpion(new Transform(200, 200, 1), world.input.mouseTransform, Team.GREEN)
-
-// TODO
-// ----
-// [x] Scaling bug => scale up the ship.
-// [x] Rotate turrets with ship.
-// [x] Mv force transmission from ship to bullets. => TECH DEBT
-// [x] Acceleration / max speed bug.
-// [x] Fix teams requirements.
-// [x] Fix colliders requirements.
-// [x] Turret slot redesign.
-// [x] Extract player controller to separate keyboard controller.
-// [x] Create player rotative mouse controller.
-// [ ] Create AI controllers.
-// [ ] Implement relative camera.
-// [ ] Constrain angle to arc > 180deg bug.
 
 world.add(player)
 world.add(new KeyboardShipController(player))
@@ -2871,6 +2855,21 @@ world.add({
 })
 
 world.run()
+
+// TODO
+// ----
+// [x] Scaling bug => scale up the ship.
+// [x] Rotate turrets with ship.
+// [x] Mv force transmission from ship to bullets. => TECH DEBT
+// [x] Acceleration / max speed bug.
+// [x] Fix teams requirements.
+// [x] Fix colliders requirements.
+// [x] Turret slot redesign.
+// [x] Extract player controller to separate keyboard controller.
+// [x] Create player rotative mouse controller.
+// [ ] Create AI controllers.
+// [ ] Implement relative camera.
+// [ ] Constrain angle to arc > 180deg bug.
 
 if (DEBUG) {
 	world.add({
