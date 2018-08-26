@@ -1,10 +1,3 @@
-let _logCount = 500
-function log() {
-	if (--_logCount > 0) {
-		console.log(...arguments)
-	}
-}
-
 const PI = Math.PI
 const abs = Math.abs
 const sign = Math.sign

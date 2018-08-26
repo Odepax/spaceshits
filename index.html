@@ -46,6 +46,14 @@
 	<body>
 		<canvas id="canvas" tabindex="1"></canvas>
 		<script>
+			let _logCount = 500
+			function log() {
+				if (--_logCount > 0) {
+					console.log(...arguments)
+				}
+			}
+		</script>
+		<script>
 			const DEBUG = location.search.includes("debug=true")
 			const canvas = document.getElementById("canvas")
 
