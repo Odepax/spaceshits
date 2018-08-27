@@ -1733,15 +1733,15 @@ class Shield {
  */
 class Ship extends Transform {
 	/**
-	 * @param {Tranform} transform
-	 * @param {Tranform} target
-	 * @param {Core} core
-	 * @param {Team} team
 	 * @param {Object} options
+	 * @param {Tranform} options.transform
+	 * @param {Tranform} options.target
+	 * @param {Core} options.core
+	 * @param {Team} options.team
 	 * @param {Distance} options.movementAcceleration
 	 * @param {Angle} options.rotationAcceleration
 	 */
-	constructor(transform, target, core, team, { movementAcceleration, rotationAcceleration }) {
+	constructor({ transform, target, core, team, movementAcceleration, rotationAcceleration }) {
 		super(transform.x, transform.y, transform.a)
 
 		this.target = target
@@ -1809,7 +1809,14 @@ class Ship extends Transform {
 
 Ship.W1APollen = class W1APollen extends Ship {
 	constructor(transform, target, team) {
-		super(transform, target, Core.T1(target, team), team, { movementAcceleration: 100, rotationAcceleration: 2 })
+		super({
+			transform,
+			target,
+			core: Core.T1(target, team),
+			team,
+			movementAcceleration: 100,
+			rotationAcceleration: 2
+		})
 
 		this.turretSlots.add(new TurretSlot(15.4, 0, new Turret.G1Dash(this.target, this.speed, this.team), {
 			leftRotationBound: -0.78,
@@ -1840,7 +1847,14 @@ Ship.W1APollen = class W1APollen extends Ship {
 
 Ship.W1BPollen = class W1BPollen extends Ship {
 	constructor(transform, target, team) {
-		super(transform, target, Core.T1(target, team), team, { movementAcceleration: 100, rotationAcceleration: 2 })
+		super({
+			transform,
+			target,
+			core: Core.T1(target, team),
+			team,
+			movementAcceleration: 100,
+			rotationAcceleration: 2
+		})
 
 		this.turretSlots.add(new TurretSlot(15.4, 0, new Turret.M1Paparazzi(this.target, this.speed, this.team), {
 			leftRotationBound: -0.78,
@@ -1871,7 +1885,14 @@ Ship.W1BPollen = class W1BPollen extends Ship {
 
 Ship.M1AMoth = class M1AMoth extends Ship {
 	constructor(transform, target, team) {
-		super(transform, target, Core.T1(target, team), team, { movementAcceleration: 120, rotationAcceleration: 1.6 })
+		super({
+			transform,
+			target,
+			core: Core.T1(target, team),
+			team,
+			movementAcceleration: 120,
+			rotationAcceleration: 1.6
+		})
 
 		this.turretSlots.add(new TurretSlot(7.5, 17.9, new Turret.G1Dash(this.target, this.speed, this.team), {
 			leftRotationBound: -0.42,
@@ -1908,7 +1929,14 @@ Ship.M1AMoth = class M1AMoth extends Ship {
 
 Ship.M1BMoth = class M1BMoth extends Ship {
 	constructor(transform, target, team) {
-		super(transform, target, Core.T1(target, team), team, { movementAcceleration: 120, rotationAcceleration: 1.6 })
+		super({
+			transform,
+			target,
+			core: Core.T1(target, team),
+			team,
+			movementAcceleration: 120,
+			rotationAcceleration: 1.6
+		})
 
 		this.turretSlots.add(new TurretSlot(7.5, 17.9, new Turret.M1Paparazzi(this.target, this.speed, this.team), {
 			leftRotationBound: -0.42,
@@ -1945,7 +1973,14 @@ Ship.M1BMoth = class M1BMoth extends Ship {
 
 Ship.X1AScarab = class X1AScarab extends Ship {
 	constructor(transform, target, team) {
-		super(transform, target, Core.T1(target, team), team, { movementAcceleration: 100, rotationAcceleration: 1.6 })
+		super({
+			transform,
+			target,
+			core: Core.T1(target, team),
+			team,
+			movementAcceleration: 100,
+			rotationAcceleration: 1.6
+		})
 
 		this.turretSlots.add(new TurretSlot(19, 18.5, new Turret.G1Dash(this.target, this.speed, this.team), {
 			leftRotationBound: 0.52,
@@ -2016,7 +2051,14 @@ Ship.X1AScarab = class X1AScarab extends Ship {
 
 Ship.X1BScarab = class X1BScarab extends Ship {
 	constructor(transform, target, team) {
-		super(transform, target, Core.T1(target, team), team, { movementAcceleration: 100, rotationAcceleration: 1.6 })
+		super({
+			transform,
+			target,
+			core: Core.T1(target, team),
+			team,
+			movementAcceleration: 100,
+			rotationAcceleration: 1.6
+		})
 
 		this.turretSlots.add(new TurretSlot(19, 18.5, new Turret.G1Dash(this.target, this.speed, this.team), {
 			leftRotationBound: 0.52,
@@ -2087,7 +2129,14 @@ Ship.X1BScarab = class X1BScarab extends Ship {
 
 Ship.A1AWasp = class A1AWasp extends Ship {
 	constructor(transform, target, team) {
-		super(transform, target, Core.T1(target, team), team, { movementAcceleration: 100, rotationAcceleration: 1.6 })
+		super({
+			transform,
+			target,
+			core: Core.T1(target, team),
+			team,
+			movementAcceleration: 100,
+			rotationAcceleration: 1.6
+		})
 
 		this.turretSlots.add(new TurretSlot(21.6, 12.2, new Turret.G1Dash(this.target, this.speed, this.team), {
 			leftRotationBound: 0.48,
@@ -2173,7 +2222,14 @@ Ship.A1AWasp = class A1AWasp extends Ship {
 
 Ship.A1BWasp = class A1BWasp extends Ship {
 	constructor(transform, target, team) {
-		super(transform, target, Core.T1(target, team), team, { movementAcceleration: 100, rotationAcceleration: 1.6 })
+		super({
+			transform,
+			target,
+			core: Core.T1(target, team),
+			team,
+			movementAcceleration: 100,
+			rotationAcceleration: 1.6
+		})
 
 		this.turretSlots.add(new TurretSlot(21.6, 12.2, new Turret.G1Dash(this.target, this.speed, this.team), {
 			leftRotationBound: 0.48,
@@ -2259,7 +2315,14 @@ Ship.A1BWasp = class A1BWasp extends Ship {
 
 Ship.A1CWasp = class A1CWasp extends Ship {
 	constructor(transform, target, team) {
-		super(transform, target, Core.T1(target, team), team, { movementAcceleration: 100, rotationAcceleration: 1.6 })
+		super({
+			transform,
+			target,
+			core: Core.T1(target, team),
+			team,
+			movementAcceleration: 100,
+			rotationAcceleration: 1.6
+		})
 
 		this.turretSlots.add(new TurretSlot(21.6, 12.2, new Turret.G1Dash(this.target, this.speed, this.team), {
 			leftRotationBound: 0.48,
@@ -2345,7 +2408,14 @@ Ship.A1CWasp = class A1CWasp extends Ship {
 
 Ship.A1DWasp = class A1DWasp extends Ship {
 	constructor(transform, target, team) {
-		super(transform, target, Core.T1(target, team), team, { movementAcceleration: 100, rotationAcceleration: 1.6 })
+		super({
+			transform,
+			target,
+			core: Core.T1(target, team),
+			team,
+			movementAcceleration: 100,
+			rotationAcceleration: 1.6
+		})
 
 		this.turretSlots.add(new TurretSlot(21.6, 12.2, new Turret.G1Dash(this.target, this.speed, this.team), {
 			leftRotationBound: 0.48,
@@ -2431,7 +2501,14 @@ Ship.A1DWasp = class A1DWasp extends Ship {
 
 Ship.Y2AScorpion = class Y2AScorpion extends Ship {
 	constructor(transform, target, team) {
-		super(transform, target, Core.T2(target, team), team, { movementAcceleration: 60, rotationAcceleration: 1.2 })
+		super({
+			transform,
+			target,
+			core: Core.T2(target, team),
+			team,
+			movementAcceleration: 60,
+			rotationAcceleration: 1.2
+		})
 
 		this.turretSlots.add(new TurretSlot(37.3, 0, new Turret.G1Dash(this.target, this.speed, this.team), {
 			leftRotationBound: -0.77,
@@ -2541,7 +2618,14 @@ Ship.Y2AScorpion = class Y2AScorpion extends Ship {
 
 Ship.Y2BScorpion = class Y2AScorpion extends Ship {
 	constructor(transform, target, team) {
-		super(transform, target, Core.T2(target, team), team, { movementAcceleration: 60, rotationAcceleration: 1.2 })
+		super({
+			transform,
+			target,
+			core: Core.T2(target, team),
+			team,
+			movementAcceleration: 60,
+			rotationAcceleration: 1.2
+		})
 
 		this.turretSlots.add(new TurretSlot(37.3, 0, new Turret.G1Dash(this.target, this.speed, this.team), {
 			leftRotationBound: -0.77,
@@ -2651,7 +2735,14 @@ Ship.Y2BScorpion = class Y2AScorpion extends Ship {
 
 Ship.M2ASkate = class M2ASkate extends Ship {
 	constructor(transform, target, team) {
-		super(transform, target, Core.T2(target, team), team, { movementAcceleration: 110, rotationAcceleration: 0.7 })
+		super({
+			transform,
+			target,
+			core: Core.T2(target, team),
+			team,
+			movementAcceleration: 110,
+			rotationAcceleration: 0.7
+		})
 
 		this.turretSlots.add(new TurretSlot(22.5, 0, new Turret.G1Dash(this.target, this.speed, this.team), {
 			leftRotationBound: -0.72,
