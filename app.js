@@ -385,11 +385,6 @@ class Transform {
  * @param {World} world
  * @return {Boolean}
  *
- * @method beforeDelete
- * @memberOf WorldObject
- * @optional
- * @param {World} world
- *
  * @method afterDelete
  * @memberOf WorldObject
  * @optional
@@ -542,8 +537,6 @@ class World {
 	 */
 	delete(object) {
 		if (this.objects.has(object)) {
-			object.beforeDelete && object.beforeDelete(this)
-
 			this.objects.delete(object)
 
 			object.afterDelete && object.afterDelete(this)
@@ -1098,7 +1091,7 @@ class Asset extends Transform {
 		return Destroyable.mustBeDeleted(this, world)
 	}
 
-	beforeDelete(world) {
+	afterDelete(world) {
 		this.explosion.x = this.x
 		this.explosion.y = this.y
 
