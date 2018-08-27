@@ -25,11 +25,15 @@ function randBetween() {
 }
 
 /**
- * @param {Function} init
+ * @param {Function|Object} init
  * @return {Object} This object.
  */
 Object.prototype.apply = function apply(init) {
-	init(this)
+	if (typeof init == "function") {
+		init(this)
+	} else {
+		Object.assign(this, init)
+	}
 
 	return this
 }
@@ -1008,8 +1012,8 @@ const Teamed = {
 class Explosion extends Transform {
 	/**
 	 * @param {Object} options
-	 * @param {Number} options.x
-	 * @param {Number} options.y
+	 * @param {Number} [options.x = 0]
+	 * @param {Number} [options.y = 0]
 	 * @param {Time} options.lifeTime
 	 * @param {Distance} options.radius
 	 * @param {Number} options.damage
@@ -2842,15 +2846,15 @@ const player = new Ship.Y2BScorpion(new Transform(200, 200, 1), world.input.mous
 world.add(player)
 world.add(new KeyboardShipController(player))
 
-world.add(new Ship.W1APollen(new Transform(1060, 280, PI), player, Team.RED).apply(pollen => pollen.mustFire = true))
-world.add(new Ship.W1BPollen(new Transform(1030, 340, PI), player, Team.RED).apply(pollen => pollen.mustFire = true))
-world.add(new Ship.M1AMoth(new Transform(1000, 400, PI), player, Team.RED).apply(pollen => pollen.mustFire = true))
-world.add(new Ship.W1BPollen(new Transform(1030, 460, PI), player, Team.RED).apply(pollen => pollen.mustFire = true))
-world.add(new Ship.W1APollen(new Transform(1060, 520, PI), player, Team.RED).apply(pollen => pollen.mustFire = true))
+world.add(new Ship.W1APollen(new Transform(1060, 280, PI), player, Team.RED).apply({ mustFire: true }))
+world.add(new Ship.W1BPollen(new Transform(1030, 340, PI), player, Team.RED).apply({ mustFire: true }))
+world.add(new Ship.M1AMoth(new Transform(1000, 400, PI), player, Team.RED).apply({ mustFire: true }))
+world.add(new Ship.W1BPollen(new Transform(1030, 460, PI), player, Team.RED).apply({ mustFire: true }))
+world.add(new Ship.W1APollen(new Transform(1060, 520, PI), player, Team.RED).apply({ mustFire: true }))
 
-world.add(Core.T3(player, Team.RED).apply(core => {
-	core.x = 1050
-	core.y = 400
+world.add(Core.T3(player, Team.RED).apply({
+	x: 1050,
+	y: 400
 }))
 
 world.add({
