@@ -1387,7 +1387,7 @@ class Turret extends Asset {
 
 		this.a += this.rotationSpeed * world.timeEnlapsed * direction
 
-		if (this.canFire) {
+		if (this.mustFire && this.hasTargetInSight) {
 			this.timeEnlapsed += world.timeEnlapsed
 
 			if (this.timeEnlapsed > this.reloadTime) {
@@ -1403,8 +1403,8 @@ class Turret extends Asset {
 	/**
 	 * @protected
 	 */
-	get canFire() {
-		return this.mustFire && abs(this.optimalAngleToward(this.target)) < 0.5
+	get hasTargetInSight() {
+		return abs(this.optimalAngleToward(this.target)) < 0.5
 	}
 }
 
@@ -1439,8 +1439,8 @@ class MissileLauncher extends Turret {
 	/**
 	 * @protected
 	 */
-	get canFire() {
-		return this.mustFire
+	get hasTargetInSight() {
+		return true
 	}
 }
 
