@@ -63,17 +63,17 @@ const Configuration = {
 const Asset = {
 	Direct: {
 		Gatling: {
-			Dash: "DG1-1H Dash",
-			Liner: "DG2-1H Liner"
+			Dash: "DG1-H1 Dash",
+			Liner: "DG2-H1 Liner"
 		},
 		Howitzer: {
-			Ravager: "DH2-3M Ravager"
+			Ravager: "DH2-M3 Ravager"
 		},
 		Sprayer: {}
 	},
 	Indirect: {
 		MissileLauncher: {
-			Paparazzi: "IM1-2M Paparazzi"
+			Paparazzi: "IM1-M2 Paparazzi"
 		}
 	},
 	Special: {

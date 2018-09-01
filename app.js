@@ -1497,7 +1497,7 @@ class TurretSlot {
 // M1 - Missile Launcher (Geyser)
 // D1 - Drone Launcher (WhiteHole)
 
-Turret.G1Dash = class G1Dash extends Turret.T1 {
+Turret.DG1H1Dash = class DG1H1Dash extends Turret.T1 {
 	constructor(target, bulletBaseSpeed, team) {
 		super(target, bulletBaseSpeed, team, 0.2)
 	}
@@ -1531,7 +1531,7 @@ Turret.G1Dash = class G1Dash extends Turret.T1 {
 	}
 }
 
-Turret.G2Liner = class G2Liner extends Turret.T2 {
+Turret.DG2H1Liner = class DG2H1Liner extends Turret.T2 {
 	constructor(target, bulletBaseSpeed, team) {
 		super(target, bulletBaseSpeed, team, 0.2)
 	}
@@ -1565,7 +1565,7 @@ Turret.G2Liner = class G2Liner extends Turret.T2 {
 	}
 }
 
-Turret.H2Ravager = class H2Ravager extends Turret.T2 {
+Turret.DH2M3Ravager = class DH2M3Ravager extends Turret.T2 {
 	constructor(target, bulletBaseSpeed, team) {
 		super(target, bulletBaseSpeed, team, 1)
 	}
@@ -1621,7 +1621,7 @@ Turret.H2Ravager = class H2Ravager extends Turret.T2 {
 	}
 }
 
-Turret.M1Paparazzi = class M1Paparazzi extends MissileLauncher.T1 {
+Turret.IM1M2Paparazzi = class IM1M2Paparazzi extends MissileLauncher.T1 {
 	constructor(target, bulletBaseSpeed, team) {
 		super(target, bulletBaseSpeed, team, 1)
 	}
@@ -1850,7 +1850,7 @@ Ship.Pollen.WG1ADG1 = class WG1ADG1 extends Ship.Pollen {
 		super({ transform, target, team })
 
 		this.turrets = {
-			front: new Turret.G1Dash(this.target, this.speed, this.team)
+			front: new Turret.DG1H1Dash(this.target, this.speed, this.team)
 		}
 	}
 }
@@ -1860,7 +1860,7 @@ Ship.Pollen.WG1BIM1 = class WG1BIM1 extends Ship.Pollen {
 		super({ transform, target, team })
 
 		this.turrets = {
-			front: new Turret.M1Paparazzi(this.target, this.speed, this.team)
+			front: new Turret.IM1M2Paparazzi(this.target, this.speed, this.team)
 		}
 	}
 }
@@ -1914,8 +1914,8 @@ Ship.Moth.MF1ADG2 = class MF1ADG2 extends Ship.Moth {
 		super({ transform, target, team })
 
 		this.turrets = {
-			left: new Turret.G1Dash(this.target, this.speed, this.team),
-			right: new Turret.G1Dash(this.target, this.speed, this.team)
+			left: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+			right: new Turret.DG1H1Dash(this.target, this.speed, this.team)
 		}
 	}
 }
@@ -1925,8 +1925,8 @@ Ship.Moth.MF1BIM2 = class MF1BIM2 extends Ship.Moth {
 		super({ transform, target, team })
 
 		this.turrets = {
-			left: new Turret.M1Paparazzi(this.target, this.speed, this.team),
-			right: new Turret.M1Paparazzi(this.target, this.speed, this.team)
+			left: new Turret.IM1M2Paparazzi(this.target, this.speed, this.team),
+			right: new Turret.IM1M2Paparazzi(this.target, this.speed, this.team)
 		}
 	}
 }
@@ -2002,12 +2002,12 @@ Ship.Scarab.XC1ADG6 = class XC1ADG6 extends Ship.Scarab {
 		super({ transform, target, team })
 		
 		this.turrets = {
-			frontRight: new Turret.G1Dash(this.target, this.speed, this.team),
-			middleRight: new Turret.G1Dash(this.target, this.speed, this.team),
-			backRight: new Turret.G1Dash(this.target, this.speed, this.team),
-			frontLeft: new Turret.G1Dash(this.target, this.speed, this.team),
-			middleLeft: new Turret.G1Dash(this.target, this.speed, this.team),
-			backLeft: new Turret.G1Dash(this.target, this.speed, this.team)
+			frontRight: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+			middleRight: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+			backRight: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+			frontLeft: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+			middleLeft: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+			backLeft: new Turret.DG1H1Dash(this.target, this.speed, this.team)
 		}
 	}
 }
@@ -2017,12 +2017,12 @@ Ship.Scarab.XC1BDG4IM2 = class XC1BDG4IM2 extends Ship.Scarab {
 		super({ transform, target, team })
 		
 		this.turrets = {
-			frontRight: new Turret.G1Dash(this.target, this.speed, this.team),
-			middleRight: new Turret.M1Paparazzi(this.target, this.speed, this.team),
-			backRight: new Turret.G1Dash(this.target, this.speed, this.team),
-			frontLeft: new Turret.G1Dash(this.target, this.speed, this.team),
-			middleLeft: new Turret.M1Paparazzi(this.target, this.speed, this.team),
-			backLeft: new Turret.G1Dash(this.target, this.speed, this.team)
+			frontRight: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+			middleRight: new Turret.IM1M2Paparazzi(this.target, this.speed, this.team),
+			backRight: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+			frontLeft: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+			middleLeft: new Turret.IM1M2Paparazzi(this.target, this.speed, this.team),
+			backLeft: new Turret.DG1H1Dash(this.target, this.speed, this.team)
 		}
 	}
 }
@@ -2107,14 +2107,14 @@ Ship.Wasp.AC1ADG8 = class AC1ADG8 extends Ship.Wasp {
 		super({ transform, target, team })
 		
 		this.turrets = {
-			eyeRight: new Turret.G1Dash(this.target, this.speed, this.team),
-			frontRight: new Turret.G1Dash(this.target, this.speed, this.team),
-			middleRight: new Turret.G1Dash(this.target, this.speed, this.team),
-			backRight: new Turret.G1Dash(this.target, this.speed, this.team),
-			eyeLeft: new Turret.G1Dash(this.target, this.speed, this.team),
-			frontLeft: new Turret.G1Dash(this.target, this.speed, this.team),
-			middleLeft: new Turret.G1Dash(this.target, this.speed, this.team),
-			backLeft: new Turret.G1Dash(this.target, this.speed, this.team)
+			eyeRight: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+			frontRight: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+			middleRight: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+			backRight: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+			eyeLeft: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+			frontLeft: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+			middleLeft: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+			backLeft: new Turret.DG1H1Dash(this.target, this.speed, this.team)
 		}
 	}
 }
@@ -2124,14 +2124,14 @@ Ship.Wasp.AC1BDG6IM2 = class AC1BDG6IM2 extends Ship.Wasp {
 		super({ transform, target, team })
 		
 		this.turrets = {
-			eyeRight: new Turret.G1Dash(this.target, this.speed, this.team),
-			frontRight: new Turret.M1Paparazzi(this.target, this.speed, this.team),
-			middleRight: new Turret.G1Dash(this.target, this.speed, this.team),
-			backRight: new Turret.G1Dash(this.target, this.speed, this.team),
-			eyeLeft: new Turret.G1Dash(this.target, this.speed, this.team),
-			frontLeft: new Turret.M1Paparazzi(this.target, this.speed, this.team),
-			middleLeft: new Turret.G1Dash(this.target, this.speed, this.team),
-			backLeft: new Turret.G1Dash(this.target, this.speed, this.team)
+			eyeRight: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+			frontRight: new Turret.IM1M2Paparazzi(this.target, this.speed, this.team),
+			middleRight: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+			backRight: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+			eyeLeft: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+			frontLeft: new Turret.IM1M2Paparazzi(this.target, this.speed, this.team),
+			middleLeft: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+			backLeft: new Turret.DG1H1Dash(this.target, this.speed, this.team)
 		}
 	}
 }
@@ -2141,14 +2141,14 @@ Ship.Wasp.AC1CDG4IM4 = class AC1CDG4IM4 extends Ship.Wasp {
 		super({ transform, target, team })
 		
 		this.turrets = {
-			eyeRight: new Turret.G1Dash(this.target, this.speed, this.team),
-			frontRight: new Turret.M1Paparazzi(this.target, this.speed, this.team),
-			middleRight: new Turret.M1Paparazzi(this.target, this.speed, this.team),
-			backRight: new Turret.G1Dash(this.target, this.speed, this.team),
-			eyeLeft: new Turret.G1Dash(this.target, this.speed, this.team),
-			frontLeft: new Turret.M1Paparazzi(this.target, this.speed, this.team),
-			middleLeft: new Turret.M1Paparazzi(this.target, this.speed, this.team),
-			backLeft: new Turret.G1Dash(this.target, this.speed, this.team)
+			eyeRight: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+			frontRight: new Turret.IM1M2Paparazzi(this.target, this.speed, this.team),
+			middleRight: new Turret.IM1M2Paparazzi(this.target, this.speed, this.team),
+			backRight: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+			eyeLeft: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+			frontLeft: new Turret.IM1M2Paparazzi(this.target, this.speed, this.team),
+			middleLeft: new Turret.IM1M2Paparazzi(this.target, this.speed, this.team),
+			backLeft: new Turret.DG1H1Dash(this.target, this.speed, this.team)
 		}
 	}
 }
@@ -2158,14 +2158,14 @@ Ship.Wasp.AC1DDG2IM6 = class AC1DDG2IM6 extends Ship.Wasp {
 		super({ transform, target, team })
 		
 		this.turrets = {
-			eyeRight: new Turret.G1Dash(this.target, this.speed, this.team),
-			frontRight: new Turret.M1Paparazzi(this.target, this.speed, this.team),
-			middleRight: new Turret.M1Paparazzi(this.target, this.speed, this.team),
-			backRight: new Turret.M1Paparazzi(this.target, this.speed, this.team),
-			eyeLeft: new Turret.G1Dash(this.target, this.speed, this.team),
-			frontLeft: new Turret.M1Paparazzi(this.target, this.speed, this.team),
-			middleLeft: new Turret.M1Paparazzi(this.target, this.speed, this.team),
-			backLeft: new Turret.M1Paparazzi(this.target, this.speed, this.team)
+			eyeRight: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+			frontRight: new Turret.IM1M2Paparazzi(this.target, this.speed, this.team),
+			middleRight: new Turret.IM1M2Paparazzi(this.target, this.speed, this.team),
+			backRight: new Turret.IM1M2Paparazzi(this.target, this.speed, this.team),
+			eyeLeft: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+			frontLeft: new Turret.IM1M2Paparazzi(this.target, this.speed, this.team),
+			middleLeft: new Turret.IM1M2Paparazzi(this.target, this.speed, this.team),
+			backLeft: new Turret.IM1M2Paparazzi(this.target, this.speed, this.team)
 		}
 	}
 }
@@ -2268,16 +2268,16 @@ Ship.Scorpion.YG2ADG10 = class YG2ADG10 extends Ship.Scorpion {
 		super({ transform, target, team })
 
 		this.turrets = {
-			front: new Turret.G1Dash(this.target, this.speed, this.team),
-			armRight: new Turret.G1Dash(this.target, this.speed, this.team),
-			flankRight: new Turret.G1Dash(this.target, this.speed, this.team),
-			backRight: new Turret.G1Dash(this.target, this.speed, this.team),
-			armLeft: new Turret.G1Dash(this.target, this.speed, this.team),
-			flankLeft: new Turret.G1Dash(this.target, this.speed, this.team),
-			backLeft: new Turret.G1Dash(this.target, this.speed, this.team),
-			tail: new Turret.G2Liner(this.target, this.speed, this.team),
-			clawRight: new Turret.G2Liner(this.target, this.speed, this.team),
-			clawLeft: new Turret.G2Liner(this.target, this.speed, this.team)
+			front: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+			armRight: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+			flankRight: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+			backRight: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+			armLeft: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+			flankLeft: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+			backLeft: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+			tail: new Turret.DG2H1Liner(this.target, this.speed, this.team),
+			clawRight: new Turret.DG2H1Liner(this.target, this.speed, this.team),
+			clawLeft: new Turret.DG2H1Liner(this.target, this.speed, this.team)
 		}
 	}
 }
@@ -2287,16 +2287,16 @@ Ship.Scorpion.YG2BDG8DH2 = class YG2BDG8DH2 extends Ship.Scorpion {
 		super({ transform, target, team })
 
 		this.turrets = {
-			front: new Turret.G1Dash(this.target, this.speed, this.team),
-			armRight: new Turret.G1Dash(this.target, this.speed, this.team),
-			flankRight: new Turret.G1Dash(this.target, this.speed, this.team),
-			backRight: new Turret.G1Dash(this.target, this.speed, this.team),
-			armLeft: new Turret.G1Dash(this.target, this.speed, this.team),
-			flankLeft: new Turret.G1Dash(this.target, this.speed, this.team),
-			backLeft: new Turret.G1Dash(this.target, this.speed, this.team),
-			tail: new Turret.G2Liner(this.target, this.speed, this.team),
-			clawRight: new Turret.H2Ravager(this.target, this.speed, this.team),
-			clawLeft: new Turret.H2Ravager(this.target, this.speed, this.team)
+			front: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+			armRight: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+			flankRight: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+			backRight: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+			armLeft: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+			flankLeft: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+			backLeft: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+			tail: new Turret.DG2H1Liner(this.target, this.speed, this.team),
+			clawRight: new Turret.DH2M3Ravager(this.target, this.speed, this.team),
+			clawLeft: new Turret.DH2M3Ravager(this.target, this.speed, this.team)
 		}
 	}
 }
@@ -2373,11 +2373,11 @@ Ship.Skate.MF2ADG5 = class MF2ADG5 extends Ship.Skate {
 		super({ transform, target, team })
 		
 		this.turrets = {
-			front: new Turret.G1Dash(this.target, this.speed, this.team),
-			eyeRight: new Turret.G1Dash(this.target, this.speed, this.team),
-			eyeLeft: new Turret.G1Dash(this.target, this.speed, this.team),
-			wingRight: new Turret.G2Liner(this.target, this.speed, this.team),
-			wingLeft: new Turret.G2Liner(this.target, this.speed, this.team)
+			front: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+			eyeRight: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+			eyeLeft: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+			wingRight: new Turret.DG2H1Liner(this.target, this.speed, this.team),
+			wingLeft: new Turret.DG2H1Liner(this.target, this.speed, this.team)
 		}
 	}
 }
