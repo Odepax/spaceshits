@@ -1062,6 +1062,9 @@ const Defaults = {
 	Shell: {
 		get T1() { return { movementSpeed: 250, lifeTime: 1.5, radius: 2, explosion: { lifeTime: 1, radius:  5, damage: 10 } } },
 		get T2() { return { movementSpeed: 200, lifeTime: 3.0, radius: 3, explosion: { lifeTime: 2, radius: 10, damage: 20 } } }
+	},
+	Missile: {
+		get T1() { return { movementAcceleration: 250, rotationAcceleration: 2.5, lifeTime: 5, radius: 2, explosion: { lifeTime: 1, radius: 5, damage: 10 } } }
 	}
 }
 
@@ -1231,6 +1234,20 @@ class Shell extends Transform {
 }
 
 /**
+ * @typedef {Object} MissileConfiguration
+ *
+ * @param {Transform} transform
+ * @param {Transform} target
+ * @param {Force} baseSpeed
+ * @param {Distance} movementAcceleration
+ * @param {Angle} rotationAcceleration
+ * @param {Time} lifeTime
+ * @param {Distance} radius
+ * @param {Team} team
+ * @param {ExplosionConfiguration} explosion
+ */
+
+/**
  * @implements {WorldObject}
  * @implements {Moving}
  * @implements {Colliding}
@@ -1239,16 +1256,7 @@ class Shell extends Transform {
  */
 class Missile extends Transform {
 	/**
-	 * @param {Object} options
-	 * @param {Transform} options.transform
-	 * @param {Transform} options.target
-	 * @param {Force} options.baseSpeed
-	 * @param {Distance} options.movementSpeed
-	 * @param {Angle} options.rotationSpeed
-	 * @param {Time} options.lifeTime
-	 * @param {Distance} options.radius
-	 * @param {Team} options.team
-	 * @param {Explosion} options.explosion
+	 * @param {MissileConfiguration} options
 	 */
 	constructor({ transform, target, baseSpeed, movementAcceleration, rotationAcceleration, lifeTime, radius, team, explosion }) {
 		super(transform.x, transform.y, transform.a)
@@ -1276,10 +1284,7 @@ class Missile extends Transform {
 	}
 
 	afterDelete(world) {
-		this.explosion.x = this.x
-		this.explosion.y = this.y
-
-		world.add(this.explosion)
+		world.add(new Explosion(this.explosion.apply({ x: this.x, y: this.y })))
 	}
 
 	update(world) {
@@ -1302,28 +1307,6 @@ class Missile extends Transform {
 		world.graphics.stroke()
 
 		world.graphics.resetTransform()
-	}
-}
-
-for (let i = 1; i <= 3; ++i) {
-	/**
-	 * @param {Transform} transform
-	 * @param {Transform} target
-	 * @param {Force} baseSpeed
-	 * @param {Team} team
-	 */
-	Missile["T" + i] = function constructor(transform, target, baseSpeed, team) {
-		return new Missile({
-			transform,
-			target,
-			baseSpeed,
-			movementAcceleration: 300 - 50 * i,
-			rotationAcceleration: 3.5 - i,
-			lifeTime: 5 * i,
-			radius: 1 + i,
-			team,
-			explosion: new Explosion({ lifeTime: i, radius: 5 * i, damage: 10 * i })
-		})
 	}
 }
 
@@ -1608,21 +1591,20 @@ Turret.IM1M2Paparazzi = class IM1M2Paparazzi extends MissileLauncher.T1 {
 	}
 
 	fire(world) {
-		world.add(Missile.T1(
-			this.clone().relativeOffset(this.collisionRadius, 0),
-			this.target,
-			this.bulletBaseSpeed,
-			this.team
-		))
+		world.add(new Missile(Defaults.Missile.T1.apply({
+			transform: this.clone().relativeOffset(this.collisionRadius, 0),
+			target: this.target,
+			baseSpeed: this.bulletBaseSpeed,
+			team: this.team
+		})))
 
 		world.add(new UniqueAction(world => {
-			world.add(Missile.T1(
-				this.clone()
-					.relativeOffset(this.collisionRadius, 0),
-				this.target,
-				this.bulletBaseSpeed,
-				this.team
-			))
+			world.add(new Missile(Defaults.Missile.T1.apply({
+				transform: this.clone().relativeOffset(this.collisionRadius, 0),
+				target: this.target,
+				baseSpeed: this.bulletBaseSpeed,
+				team: this.team
+			})))
 		}, 0.2))
 	}
 
