@@ -60,7 +60,7 @@ const Color = {
 }
 
 /**
- * @interface Team
+ * @typedef {Object} Team
  *
  * @property {Color} mainColor
  * @memberOf Team
@@ -998,18 +998,23 @@ const Teamed = {
 // -----------------------------------------------------------------
 
 /**
+ * @typedef {Object} ExplosionConfiguration
+ *
+ * @property {Number} [options.x = 0]
+ * @property {Number} [options.y = 0]
+ * @property {Time} lifeTime
+ * @property {Distance} radius
+ * @property {Number} damage
+ */
+
+/**
  * @implements {WorldObject}
  * @implements {Ephemeral}
  * @implements {Colliding}
  */
 class Explosion extends Transform {
 	/**
-	 * @param {Object} options
-	 * @param {Number} [options.x = 0]
-	 * @param {Number} [options.y = 0]
-	 * @param {Time} options.lifeTime
-	 * @param {Distance} options.radius
-	 * @param {Number} options.damage
+	 * @param {ExplosionConfiguration} options
 	 */
 	constructor({ x = 0, y = 0, lifeTime, radius, damage }) {
 		super(x, y)
@@ -1048,6 +1053,15 @@ class Explosion extends Transform {
 		world.graphics.globalAlpha = 1
 
 		world.graphics.resetTransform()
+	}
+}
+
+// -----------------------------------------------------------------
+
+const Defaults = {
+	Shell: {
+		get T1() { return { movementSpeed: 250, lifeTime: 1.5, radius: 2, explosion: { lifeTime: 1, radius:  5, damage: 10 } } },
+		get T2() { return { movementSpeed: 200, lifeTime: 3.0, radius: 3, explosion: { lifeTime: 2, radius: 10, damage: 20 } } }
 	}
 }
 
@@ -1152,6 +1166,18 @@ for (let i = 1; i <= 3; ++i) {
 }
 
 /**
+ * @typedef {Object} ShellConfiguration
+ *
+ * @property {Transform} transform
+ * @property {Force} baseSpeed
+ * @property {Distance} movementSpeed
+ * @property {Time} lifeTime
+ * @property {Distance} radius
+ * @property {Team} team
+ * @property {ExplosionConfiguration} explosion
+ */
+
+/**
  * @implements {WorldObject}
  * @implements {Moving.Linear}
  * @implements {Colliding}
@@ -1160,14 +1186,7 @@ for (let i = 1; i <= 3; ++i) {
  */
 class Shell extends Transform {
 	/**
-	 * @param {Object} options
-	 * @param {Transform} options.transform
-	 * @param {Force} options.baseSpeed
-	 * @param {Distance} options.movementSpeed
-	 * @param {Time} options.lifeTime
-	 * @param {Distance} options.radius
-	 * @param {Team} options.team
-	 * @param {Explosion} options.explosion
+	 * @param {ShellConfiguration} options
 	 */
 	constructor({ transform, baseSpeed, movementSpeed, lifeTime, radius, team, explosion }) {
 		super(transform.x, transform.y, transform.a)
@@ -1189,10 +1208,7 @@ class Shell extends Transform {
 	}
 
 	afterDelete(world) {
-		this.explosion.x = this.x
-		this.explosion.y = this.y
-
-		world.add(this.explosion)
+		world.add(new Explosion(this.explosion.apply({ x: this.x, y: this.y })))
 	}
 
 	update(world) {
@@ -1211,25 +1227,6 @@ class Shell extends Transform {
 		world.graphics.stroke()
 
 		world.graphics.resetTransform()
-	}
-}
-
-for (let i = 1; i <= 3; ++i) {
-	/**
-	 * @param {Transform} transform
-	 * @param {Force} baseSpeed
-	 * @param {Team} team
-	 */
-	Shell["T" + i] = function constructor(transform, baseSpeed, team) {
-		return new Shell({
-			transform,
-			baseSpeed,
-			movementSpeed: 300 - 50 * i,
-			lifeTime: 1.5 * i,
-			radius: 1 + i,
-			team,
-			explosion: new Explosion({ lifeTime: i, radius: 5 * i, damage: 10 * i })
-		})
 	}
 }
 
@@ -1503,13 +1500,11 @@ Turret.DG1H1Dash = class DG1H1Dash extends Turret.T1 {
 	}
 
 	fire(world) {
-		world.add(Shell.T1(
-			this.clone()
-				.relativeOffset(this.collisionRadius, 0)
-				.rotateBy(rand(-0.03, 0.03)),
-			this.bulletBaseSpeed,
-			this.team
-		))
+		world.add(new Shell(Defaults.Shell.T1.apply({
+			transform: this.clone().relativeOffset(this.collisionRadius, 0).rotateBy(rand(-0.03, 0.03)),
+			baseSpeed: this.bulletBaseSpeed,
+			team: this.team
+		})))
 	}
 
 	draw(world) {
@@ -1537,13 +1532,11 @@ Turret.DG2H1Liner = class DG2H1Liner extends Turret.T2 {
 	}
 
 	fire(world) {
-		world.add(Shell.T2(
-			this.clone()
-				.relativeOffset(this.collisionRadius, 0)
-				.rotateBy(rand(-0.03, 0.03)),
-			this.bulletBaseSpeed,
-			this.team
-		))
+		world.add(new Shell(Defaults.Shell.T2.apply({
+			transform: this.clone().relativeOffset(this.collisionRadius, 0).rotateBy(rand(-0.03, 0.03)),
+			baseSpeed: this.bulletBaseSpeed,
+			team: this.team
+		})))
 	}
 
 	draw(world) {
@@ -1571,29 +1564,17 @@ Turret.DH2M3Ravager = class DH2M3Ravager extends Turret.T2 {
 	}
 
 	fire(world) {
-		world.add(Shell.T2(
-			this.clone()
-				.relativeOffset(this.collisionRadius, 0)
-				.rotateBy(rand(-0.01, 0.01)),
-			this.bulletBaseSpeed,
-			this.team
-		))
-
-		world.add(Shell.T2(
-			this.clone()
-				.relativeOffset(this.collisionRadius, -4)
-				.rotateBy(rand(-0.03, -0.01)),
-			this.bulletBaseSpeed,
-			this.team
-		))
-
-		world.add(Shell.T2(
-			this.clone()
-				.relativeOffset(this.collisionRadius, 4)
-				.rotateBy(rand(0.01, 0.03)),
-			this.bulletBaseSpeed,
-			this.team
-		))
+		for (const [ offsetY, extraBulletRotation ] of [
+			[ -4, rand(-0.03, -0.01) ],
+			[ 0, rand(-0.01, 0.01) ],
+			[ 4, rand(0.01, 0.03) ]
+		]) {
+			world.add(new Shell(Defaults.Shell.T2.apply({
+				transform: this.clone().relativeOffset(this.collisionRadius, offsetY).rotateBy(extraBulletRotation),
+				baseSpeed: this.bulletBaseSpeed,
+				team: this.team
+			})))
+		}
 	}
 
 	draw(world) {
@@ -2283,6 +2264,7 @@ Ship.Skate = class Skate extends Ship {
 			transform,
 			target,
 			core: Core.T2(target, team),
+			// core: new Core(Defaults.Core.T1.apply({ target, team })),
 			team,
 			movementAcceleration: 110,
 			rotationAcceleration: 0.7
@@ -2469,10 +2451,10 @@ class RotatingMouseShipController {
 // -----------------------------------------------------------------
 
 const world = new World(canvas)
-const player = new Ship.Skate.MF2ADG5({ transform: new Transform(200, 200, 1), target: world.input.mouseTransform, team: Team.GREEN })
+const player = new Ship.Scorpion.YG2BDG8DH2({ transform: new Transform(200, 200, 1), target: world.input.mouseTransform, team: Team.GREEN })
 
 world.add(player)
-world.add(new RotatingMouseShipController(player))
+world.add(new KeyboardShipController(player))
 
 world.add(new Ship.Pollen.WG1ADG1({ transform: new Transform(1060, 280, PI), target: player, team: Team.RED }).apply({ mustFire: true }))
 world.add(new Ship.Pollen.WG1BIM1({ transform: new Transform(1030, 340, PI), target: player, team: Team.RED }).apply({ mustFire: true }))
