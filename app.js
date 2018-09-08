@@ -1074,6 +1074,17 @@ const Defaults = {
 		get T1() { return { collisionRadius:  5, health: 100, healthRegeneration: 1, explosion: { lifeTime: 2, radius:  50, damage: 100 } } },
 		get T2() { return { collisionRadius: 10, health: 200, healthRegeneration: 1, explosion: { lifeTime: 3, radius: 100, damage: 200 } } },
 		get T3() { return { collisionRadius: 15, health: 300, healthRegeneration: 1, explosion: { lifeTime: 4, radius: 150, damage: 300 } } }
+	},
+	Fighter: {
+		get T1() { return { movementAcceleration: 120, rotationAcceleration: 1.6 } },
+		get T2() { return { movementAcceleration: 110, rotationAcceleration: 0.7 } }
+	},
+	Gunship: {
+		get T1() { return { movementAcceleration: 100, rotationAcceleration: 2.0 } },
+		get T2() { return { movementAcceleration:  60, rotationAcceleration: 1.2 } }
+	},
+	Cruiser: {
+		get T1() { return { movementAcceleration: 100, rotationAcceleration: 1.6 } }
 	}
 }
 
@@ -1733,14 +1744,7 @@ class Ship extends Transform {
  */
 Ship.Pollen = class Pollen extends Ship {
 	constructor({ transform, target, team }) {
-		super({
-			transform,
-			target,
-			core: Defaults.Core.T1.apply({ target, team }),
-			team,
-			movementAcceleration: 100,
-			rotationAcceleration: 2
-		})
+		super(Defaults.Gunship.T1.apply({ transform, target, team, core: Defaults.Core.T1.apply({ target, team }) }))
 
 		this.turretSlots.add(new TurretSlot(15.4, 0, this.turrets.front, { leftRotationBound: -0.78, rightRotationBound: 0.78 }))
 	}
@@ -1788,14 +1792,7 @@ Ship.Pollen.WG1BIM1 = class WG1BIM1 extends Ship.Pollen {
  */
 Ship.Moth = class Moth extends Ship {
 	constructor({ transform, target, team }) {
-		super({
-			transform,
-			target,
-			core: Defaults.Core.T1.apply({ target, team }),
-			team,
-			movementAcceleration: 120,
-			rotationAcceleration: 1.6
-		})
+		super(Defaults.Fighter.T1.apply({ transform, target, team, core: Defaults.Core.T1.apply({ target, team }) }))
 		
 		const turrets = this.turrets
 		
@@ -1853,14 +1850,7 @@ Ship.Moth.MF1BIM2 = class MF1BIM2 extends Ship.Moth {
  */
 Ship.Scarab = class Scarab extends Ship {
 	constructor({ transform, target, team }) {
-		super({
-			transform,
-			target,
-			core: Defaults.Core.T1.apply({ target, team }),
-			team,
-			movementAcceleration: 100,
-			rotationAcceleration: 1.6
-		})
+		super(Defaults.Cruiser.T1.apply({ transform, target, team, core: Defaults.Core.T1.apply({ target, team }) }))
 
 		const turrets = this.turrets
 
@@ -1946,14 +1936,7 @@ Ship.Scarab.XC1BDG4IM2 = class XC1BDG4IM2 extends Ship.Scarab {
  */
 Ship.Wasp = class Wasp extends Ship {
 	constructor({ transform, target, team }) {
-		super({
-			transform,
-			target,
-			core: Defaults.Core.T1.apply({ target, team }),
-			team,
-			movementAcceleration: 100,
-			rotationAcceleration: 1.6
-		})
+		super(Defaults.Cruiser.T1.apply({ transform, target, team, core: Defaults.Core.T1.apply({ target, team }) }))
 
 		const turrets = this.turrets
 
@@ -2078,14 +2061,7 @@ Ship.Wasp.AC1DDG2IM6 = class AC1DDG2IM6 extends Ship.Wasp {
  */
 Ship.Scorpion = class Scorpion extends Ship {
 	constructor({ transform, target, team }) {
-		super({
-			transform,
-			target,
-			core: Defaults.Core.T2.apply({ target, team }),
-			team,
-			movementAcceleration: 60,
-			rotationAcceleration: 1.2
-		})
+		super(Defaults.Gunship.T2.apply({ transform, target, team, core: Defaults.Core.T2.apply({ target, team }) }))
 
 		const turrets = this.turrets
 
@@ -2199,15 +2175,7 @@ Ship.Scorpion.YG2BDG8DH2 = class YG2BDG8DH2 extends Ship.Scorpion {
  */
 Ship.Skate = class Skate extends Ship {
 	constructor({ transform, target, team }) {
-		super({
-			transform,
-			target,
-			core: Defaults.Core.T2.apply({ target, team }),
-			// core: new Core(Defaults.Core.T1.apply({ target, team })),
-			team,
-			movementAcceleration: 110,
-			rotationAcceleration: 0.7
-		})
+		super(Defaults.Fighter.T2.apply({ transform, target, team, core: Defaults.Core.T2.apply({ target, team }) }))
 
 		const turrets = this.turrets
 
