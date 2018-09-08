@@ -1069,6 +1069,11 @@ const Defaults = {
 	Turret: {
 		get T1() { return { rotationSpeed: PI,     collisionRadius:  5, health:  50, healthRegeneration: 1, explosion: { lifeTime: 2, radius: 10, damage: 20 }, reloadTime: 0.3 } },
 		get T2() { return { rotationSpeed: PI / 2, collisionRadius: 10, health: 100, healthRegeneration: 2, explosion: { lifeTime: 3, radius: 20, damage: 40 }, reloadTime: 0.6 } }
+	},
+	Core: {
+		get T1() { return { collisionRadius:  5, health: 100, healthRegeneration: 1, explosion: { lifeTime: 2, radius:  50, damage: 100 } } },
+		get T2() { return { collisionRadius: 10, health: 200, healthRegeneration: 1, explosion: { lifeTime: 3, radius: 100, damage: 200 } } },
+		get T3() { return { collisionRadius: 15, health: 300, healthRegeneration: 1, explosion: { lifeTime: 4, radius: 150, damage: 300 } } }
 	}
 }
 
@@ -1154,23 +1159,6 @@ class Core extends Asset {
 		world.graphics.lineWidth = 2
 		world.graphics.lineCap = "round"
 		world.graphics.stroke()
-	}
-}
-
-for (let i = 1; i <= 3; ++i) {
-	/**
-	 * @param {Transform} target
-	 * @param {Team} team
-	 */
-	Core["T" + i] = function constructor(target, team) {
-		return new Core({
-			target,
-			collisionRadius: 5 * i,
-			health: 100 * i,
-			healthRegeneration: 1,
-			team,
-			explosion: { lifeTime: 1 + i, radius: 50 * i, damage: 100 * i }
-		})
 	}
 }
 
@@ -1641,6 +1629,17 @@ class Shield {
 // -----------------------------------------------------------------
 
 /**
+ * @typedef {Object} ShipConfiguration
+ *
+ * @property {Tranform} transform
+ * @property {Tranform} target
+ * @property {AssetConfiguration} core
+ * @property {Team} team
+ * @property {Distance} movementAcceleration
+ * @property {Angle} rotationAcceleration
+ */
+
+/**
  * @implements {WorldObject}
  * @implements {Moving}
  * @implements {Teamed}
@@ -1658,13 +1657,7 @@ class Shield {
  */
 class Ship extends Transform {
 	/**
-	 * @param {Object} options
-	 * @param {Tranform} options.transform
-	 * @param {Tranform} options.target
-	 * @param {Core} options.core
-	 * @param {Team} options.team
-	 * @param {Distance} options.movementAcceleration
-	 * @param {Angle} options.rotationAcceleration
+	 * @param {ShipConfiguration} options
 	 */
 	constructor({ transform, target, core, team, movementAcceleration, rotationAcceleration }) {
 		super(transform.x, transform.y, transform.a)
@@ -1677,7 +1670,7 @@ class Ship extends Transform {
 		this.movementAcceleration = movementAcceleration
 		this.rotationAcceleration = rotationAcceleration
 
-		this.core = core
+		this.core = new Core(core)
 		this.turretSlots = new Set()
 		this.mustFire = false
 	}
@@ -1732,18 +1725,18 @@ class Ship extends Transform {
 }
 
 /**
- * @param {Object} turrets
+ * @property {Object} turrets
  * @protected
  * @abstract
  * @readOnly
- * @param {Turret} turrets.front
+ * @property {Turret} turrets.front
  */
 Ship.Pollen = class Pollen extends Ship {
 	constructor({ transform, target, team }) {
 		super({
 			transform,
 			target,
-			core: Core.T1(target, team),
+			core: Defaults.Core.T1.apply({ target, team }),
 			team,
 			movementAcceleration: 100,
 			rotationAcceleration: 2
@@ -1786,19 +1779,19 @@ Ship.Pollen.WG1BIM1 = class WG1BIM1 extends Ship.Pollen {
 }
 
 /**
- * @param {Object} turrets
+ * @property {Object} turrets
  * @protected
  * @abstract
  * @readOnly
- * @param {Turret} turrets.left
- * @param {Turret} turrets.right
+ * @property {Turret} turrets.left
+ * @property {Turret} turrets.right
  */
 Ship.Moth = class Moth extends Ship {
 	constructor({ transform, target, team }) {
 		super({
 			transform,
 			target,
-			core: Core.T1(target, team),
+			core: Defaults.Core.T1.apply({ target, team }),
 			team,
 			movementAcceleration: 120,
 			rotationAcceleration: 1.6
@@ -1847,23 +1840,23 @@ Ship.Moth.MF1BIM2 = class MF1BIM2 extends Ship.Moth {
 }
 
 /**
- * @param {Object} turrets
+ * @property {Object} turrets
  * @protected
  * @abstract
  * @readOnly
- * @param {Turret} turrets.frontLeft
- * @param {Turret} turrets.middleLeft
- * @param {Turret} turrets.backLeft
- * @param {Turret} turrets.frontRight
- * @param {Turret} turrets.middleRight
- * @param {Turret} turrets.backRight
+ * @property {Turret} turrets.frontLeft
+ * @property {Turret} turrets.middleLeft
+ * @property {Turret} turrets.backLeft
+ * @property {Turret} turrets.frontRight
+ * @property {Turret} turrets.middleRight
+ * @property {Turret} turrets.backRight
  */
 Ship.Scarab = class Scarab extends Ship {
 	constructor({ transform, target, team }) {
 		super({
 			transform,
 			target,
-			core: Core.T1(target, team),
+			core: Defaults.Core.T1.apply({ target, team }),
 			team,
 			movementAcceleration: 100,
 			rotationAcceleration: 1.6
@@ -1938,25 +1931,25 @@ Ship.Scarab.XC1BDG4IM2 = class XC1BDG4IM2 extends Ship.Scarab {
 }
 
 /**
- * @param {Object} turrets
+ * @property {Object} turrets
  * @protected
  * @abstract
  * @readOnly
- * @param {Turret} turrets.eyeLeft
- * @param {Turret} turrets.frontLeft
- * @param {Turret} turrets.middleLeft
- * @param {Turret} turrets.backLeft
- * @param {Turret} turrets.eyeRight
- * @param {Turret} turrets.frontRight
- * @param {Turret} turrets.middleRight
- * @param {Turret} turrets.backRight
+ * @property {Turret} turrets.eyeLeft
+ * @property {Turret} turrets.frontLeft
+ * @property {Turret} turrets.middleLeft
+ * @property {Turret} turrets.backLeft
+ * @property {Turret} turrets.eyeRight
+ * @property {Turret} turrets.frontRight
+ * @property {Turret} turrets.middleRight
+ * @property {Turret} turrets.backRight
  */
 Ship.Wasp = class Wasp extends Ship {
 	constructor({ transform, target, team }) {
 		super({
 			transform,
 			target,
-			core: Core.T1(target, team),
+			core: Defaults.Core.T1.apply({ target, team }),
 			team,
 			movementAcceleration: 100,
 			rotationAcceleration: 1.6
@@ -2068,27 +2061,27 @@ Ship.Wasp.AC1DDG2IM6 = class AC1DDG2IM6 extends Ship.Wasp {
 }
 
 /**
- * @param {Object} turrets
+ * @property {Object} turrets
  * @protected
  * @abstract
  * @readOnly
- * @param {Turret} turrets.front
- * @param {Turret} turrets.clawLeft
- * @param {Turret} turrets.clawRight
- * @param {Turret} turrets.armLeft
- * @param {Turret} turrets.armRight
- * @param {Turret} turrets.flankLeft
- * @param {Turret} turrets.flankRight
- * @param {Turret} turrets.backLeft
- * @param {Turret} turrets.backRight
- * @param {Turret} turrets.tail
+ * @property {Turret} turrets.front
+ * @property {Turret} turrets.clawLeft
+ * @property {Turret} turrets.clawRight
+ * @property {Turret} turrets.armLeft
+ * @property {Turret} turrets.armRight
+ * @property {Turret} turrets.flankLeft
+ * @property {Turret} turrets.flankRight
+ * @property {Turret} turrets.backLeft
+ * @property {Turret} turrets.backRight
+ * @property {Turret} turrets.tail
  */
 Ship.Scorpion = class Scorpion extends Ship {
 	constructor({ transform, target, team }) {
 		super({
 			transform,
 			target,
-			core: Core.T2(target, team),
+			core: Defaults.Core.T2.apply({ target, team }),
 			team,
 			movementAcceleration: 60,
 			rotationAcceleration: 1.2
@@ -2194,22 +2187,22 @@ Ship.Scorpion.YG2BDG8DH2 = class YG2BDG8DH2 extends Ship.Scorpion {
 }
 
 /**
- * @param {Object} turrets
+ * @property {Object} turrets
  * @protected
  * @abstract
  * @readOnly
- * @param {Turret} turrets.front
- * @param {Turret} turrets.eyeLeft
- * @param {Turret} turrets.eyeRight
- * @param {Turret} turrets.wingLeft
- * @param {Turret} turrets.wingRight
+ * @property {Turret} turrets.front
+ * @property {Turret} turrets.eyeLeft
+ * @property {Turret} turrets.eyeRight
+ * @property {Turret} turrets.wingLeft
+ * @property {Turret} turrets.wingRight
  */
 Ship.Skate = class Skate extends Ship {
 	constructor({ transform, target, team }) {
 		super({
 			transform,
 			target,
-			core: Core.T2(target, team),
+			core: Defaults.Core.T2.apply({ target, team }),
 			// core: new Core(Defaults.Core.T1.apply({ target, team })),
 			team,
 			movementAcceleration: 110,
@@ -2408,10 +2401,7 @@ world.add(new Ship.Moth.MF1ADG2({ transform: new Transform(1000, 400, PI), targe
 world.add(new Ship.Pollen.WG1BIM1({ transform: new Transform(1030, 460, PI), target: player, team: Team.RED }).apply({ mustFire: true }))
 world.add(new Ship.Pollen.WG1ADG1({ transform: new Transform(1060, 520, PI), target: player, team: Team.RED }).apply({ mustFire: true }))
 
-world.add(Core.T3(player, Team.RED).apply({
-	x: 1050,
-	y: 400
-}))
+world.add(new Core(Defaults.Core.T3.apply({ target: player, team: Team.RED })).apply({ x: 1050, y: 400 }))
 
 world.add({
 	transform: new Transform(800, 200),
