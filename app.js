@@ -1804,6 +1804,13 @@ class Ship extends Transform {
 	}
 }
 
+/**
+ * @param {Object} turrets
+ * @protected
+ * @abstract
+ * @readOnly
+ * @param {Turret} turrets.front
+ */
 Ship.Pollen = class Pollen extends Ship {
 	constructor({ transform, target, team }) {
 		super({
@@ -1814,14 +1821,8 @@ Ship.Pollen = class Pollen extends Ship {
 			movementAcceleration: 100,
 			rotationAcceleration: 2
 		})
-	}
 
-	/**
-	 * @param {Object} value
-	 * @param {Turret} value.front
-	 */
-	set turrets(value) {
-		this.turretSlots.add(new TurretSlot(15.4, 0, value.front, { leftRotationBound: -0.78, rightRotationBound: 0.78 }))
+		this.turretSlots.add(new TurretSlot(15.4, 0, this.turrets.front, { leftRotationBound: -0.78, rightRotationBound: 0.78 }))
 	}
 
 	draw(world) {
@@ -1846,25 +1847,25 @@ Ship.Pollen = class Pollen extends Ship {
 }
 
 Ship.Pollen.WG1ADG1 = class WG1ADG1 extends Ship.Pollen {
-	constructor({ transform, target, team }) {
-		super({ transform, target, team })
-
-		this.turrets = {
-			front: new Turret.DG1H1Dash(this.target, this.speed, this.team)
-		}
-	}
+	get turrets() { return {
+		front: new Turret.DG1H1Dash(this.target, this.speed, this.team)
+	} }
 }
 
 Ship.Pollen.WG1BIM1 = class WG1BIM1 extends Ship.Pollen {
-	constructor({ transform, target, team }) {
-		super({ transform, target, team })
-
-		this.turrets = {
-			front: new Turret.IM1M2Paparazzi(this.target, this.speed, this.team)
-		}
-	}
+	get turrets() { return {
+		front: new Turret.IM1M2Paparazzi(this.target, this.speed, this.team)
+	} }
 }
 
+/**
+ * @param {Object} turrets
+ * @protected
+ * @abstract
+ * @readOnly
+ * @param {Turret} turrets.left
+ * @param {Turret} turrets.right
+ */
 Ship.Moth = class Moth extends Ship {
 	constructor({ transform, target, team }) {
 		super({
@@ -1875,16 +1876,11 @@ Ship.Moth = class Moth extends Ship {
 			movementAcceleration: 120,
 			rotationAcceleration: 1.6
 		})
-	}
-
-	/**
-	 * @param {Object} value
-	 * @param {Turret} value.left
-	 * @param {Turret} value.right
-	 */
-	set turrets(value) {
-		this.turretSlots.add(new TurretSlot(7.5, 17.9, value.right, { leftRotationBound: -0.42, rightRotationBound: 0.95 }))
-		this.turretSlots.add(new TurretSlot(7.5, -17.9, value.left, { leftRotationBound: -0.95, rightRotationBound: 0.42 }))
+		
+		const turrets = this.turrets
+		
+		this.turretSlots.add(new TurretSlot(7.5, 17.9, turrets.right, { leftRotationBound: -0.42, rightRotationBound: 0.95 }))
+		this.turretSlots.add(new TurretSlot(7.5, -17.9, turrets.left, { leftRotationBound: -0.95, rightRotationBound: 0.42 }))
 	}
 
 	draw(world) {
@@ -1910,27 +1906,31 @@ Ship.Moth = class Moth extends Ship {
 }
 
 Ship.Moth.MF1ADG2 = class MF1ADG2 extends Ship.Moth {
-	constructor({ transform, target, team }) {
-		super({ transform, target, team })
-
-		this.turrets = {
-			left: new Turret.DG1H1Dash(this.target, this.speed, this.team),
-			right: new Turret.DG1H1Dash(this.target, this.speed, this.team)
-		}
-	}
+	get turrets() { return {
+		left: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+		right: new Turret.DG1H1Dash(this.target, this.speed, this.team)
+	} }
 }
 
 Ship.Moth.MF1BIM2 = class MF1BIM2 extends Ship.Moth {
-	constructor({ transform, target, team }) {
-		super({ transform, target, team })
-
-		this.turrets = {
-			left: new Turret.IM1M2Paparazzi(this.target, this.speed, this.team),
-			right: new Turret.IM1M2Paparazzi(this.target, this.speed, this.team)
-		}
-	}
+	get turrets() { return {
+		left: new Turret.IM1M2Paparazzi(this.target, this.speed, this.team),
+		right: new Turret.IM1M2Paparazzi(this.target, this.speed, this.team)
+	} }
 }
 
+/**
+ * @param {Object} turrets
+ * @protected
+ * @abstract
+ * @readOnly
+ * @param {Turret} turrets.frontLeft
+ * @param {Turret} turrets.middleLeft
+ * @param {Turret} turrets.backLeft
+ * @param {Turret} turrets.frontRight
+ * @param {Turret} turrets.middleRight
+ * @param {Turret} turrets.backRight
+ */
 Ship.Scarab = class Scarab extends Ship {
 	constructor({ transform, target, team }) {
 		super({
@@ -1941,24 +1941,15 @@ Ship.Scarab = class Scarab extends Ship {
 			movementAcceleration: 100,
 			rotationAcceleration: 1.6
 		})
-	}
 
-	/**
-	 * @param {Object} value
-	 * @param {Turret} value.frontLeft
-	 * @param {Turret} value.middleLeft
-	 * @param {Turret} value.backLeft
-	 * @param {Turret} value.frontRight
-	 * @param {Turret} value.middleRight
-	 * @param {Turret} value.backRight
-	 */
-	set turrets(value) {
-		this.turretSlots.add(new TurretSlot(19, 18.5, value.frontRight, { leftRotationBound: 0.52, rightRotationBound: 2.07 }))
-		this.turretSlots.add(new TurretSlot(-3.5, 22.6,value.middleRight, { leftRotationBound: 0.37, rightRotationBound: 2.60 }))
-		this.turretSlots.add(new TurretSlot(-21.2, 16, value.backRight, { leftRotationBound: 1.06, rightRotationBound: 2.60 }))
-		this.turretSlots.add(new TurretSlot(19, -18.5, value.frontLeft, { leftRotationBound: -2.07, rightRotationBound: -0.52 }))
-		this.turretSlots.add(new TurretSlot(-3.5, -22.6,value.middleLeft, { leftRotationBound: -2.60, rightRotationBound: -0.37 }))
-		this.turretSlots.add(new TurretSlot(-21.2, -16, value.backLeft, { leftRotationBound: -2.60, rightRotationBound: -1.06 }))
+		const turrets = this.turrets
+
+		this.turretSlots.add(new TurretSlot(19, 18.5, turrets.frontRight, { leftRotationBound: 0.52, rightRotationBound: 2.07 }))
+		this.turretSlots.add(new TurretSlot(-3.5, 22.6,turrets.middleRight, { leftRotationBound: 0.37, rightRotationBound: 2.60 }))
+		this.turretSlots.add(new TurretSlot(-21.2, 16, turrets.backRight, { leftRotationBound: 1.06, rightRotationBound: 2.60 }))
+		this.turretSlots.add(new TurretSlot(19, -18.5, turrets.frontLeft, { leftRotationBound: -2.07, rightRotationBound: -0.52 }))
+		this.turretSlots.add(new TurretSlot(-3.5, -22.6,turrets.middleLeft, { leftRotationBound: -2.60, rightRotationBound: -0.37 }))
+		this.turretSlots.add(new TurretSlot(-21.2, -16, turrets.backLeft, { leftRotationBound: -2.60, rightRotationBound: -1.06 }))
 	}
 
 	draw(world) {
@@ -1998,35 +1989,41 @@ Ship.Scarab = class Scarab extends Ship {
 }
 
 Ship.Scarab.XC1ADG6 = class XC1ADG6 extends Ship.Scarab {
-	constructor({ transform, target, team }) {
-		super({ transform, target, team })
-		
-		this.turrets = {
-			frontRight: new Turret.DG1H1Dash(this.target, this.speed, this.team),
-			middleRight: new Turret.DG1H1Dash(this.target, this.speed, this.team),
-			backRight: new Turret.DG1H1Dash(this.target, this.speed, this.team),
-			frontLeft: new Turret.DG1H1Dash(this.target, this.speed, this.team),
-			middleLeft: new Turret.DG1H1Dash(this.target, this.speed, this.team),
-			backLeft: new Turret.DG1H1Dash(this.target, this.speed, this.team)
-		}
-	}
+	get turrets() { return {
+		frontRight: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+		middleRight: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+		backRight: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+		frontLeft: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+		middleLeft: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+		backLeft: new Turret.DG1H1Dash(this.target, this.speed, this.team)
+	} }
 }
 
 Ship.Scarab.XC1BDG4IM2 = class XC1BDG4IM2 extends Ship.Scarab {
-	constructor({ transform, target, team }) {
-		super({ transform, target, team })
-		
-		this.turrets = {
-			frontRight: new Turret.DG1H1Dash(this.target, this.speed, this.team),
-			middleRight: new Turret.IM1M2Paparazzi(this.target, this.speed, this.team),
-			backRight: new Turret.DG1H1Dash(this.target, this.speed, this.team),
-			frontLeft: new Turret.DG1H1Dash(this.target, this.speed, this.team),
-			middleLeft: new Turret.IM1M2Paparazzi(this.target, this.speed, this.team),
-			backLeft: new Turret.DG1H1Dash(this.target, this.speed, this.team)
-		}
-	}
+	get turrets() { return {
+		frontRight: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+		middleRight: new Turret.IM1M2Paparazzi(this.target, this.speed, this.team),
+		backRight: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+		frontLeft: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+		middleLeft: new Turret.IM1M2Paparazzi(this.target, this.speed, this.team),
+		backLeft: new Turret.DG1H1Dash(this.target, this.speed, this.team)
+	} }
 }
 
+/**
+ * @param {Object} turrets
+ * @protected
+ * @abstract
+ * @readOnly
+ * @param {Turret} turrets.eyeLeft
+ * @param {Turret} turrets.frontLeft
+ * @param {Turret} turrets.middleLeft
+ * @param {Turret} turrets.backLeft
+ * @param {Turret} turrets.eyeRight
+ * @param {Turret} turrets.frontRight
+ * @param {Turret} turrets.middleRight
+ * @param {Turret} turrets.backRight
+ */
 Ship.Wasp = class Wasp extends Ship {
 	constructor({ transform, target, team }) {
 		super({
@@ -2037,28 +2034,17 @@ Ship.Wasp = class Wasp extends Ship {
 			movementAcceleration: 100,
 			rotationAcceleration: 1.6
 		})
-	}
 
-	/**
-	 * @param {Object} value
-	 * @param {Turret} value.eyeLeft
-	 * @param {Turret} value.frontLeft
-	 * @param {Turret} value.middleLeft
-	 * @param {Turret} value.backLeft
-	 * @param {Turret} value.eyeRight
-	 * @param {Turret} value.frontRight
-	 * @param {Turret} value.middleRight
-	 * @param {Turret} value.backRight
-	 */
-	set turrets(value) {
-		this.turretSlots.add(new TurretSlot(21.6, 12.2, value.eyeRight, { leftRotationBound: 0.48, rightRotationBound: 1.40 })),
-		this.turretSlots.add(new TurretSlot(-1.5, 19.6, value.frontRight, { leftRotationBound: 1.11, rightRotationBound: 1.88 })),
-		this.turretSlots.add(new TurretSlot(-16.5, 27.1, value.middleRight, { leftRotationBound: 0.32, rightRotationBound: 1.88 })),
-		this.turretSlots.add(new TurretSlot(-31.5, 34.6, value.backRight, { leftRotationBound: 0.32, rightRotationBound: 3.05 })),
-		this.turretSlots.add(new TurretSlot(21.6, -12.2, value.eyeLeft, { leftRotationBound: -1.40, rightRotationBound: -0.48 })),
-		this.turretSlots.add(new TurretSlot(-1.5, -19.6, value.frontLeft, { leftRotationBound: -1.88, rightRotationBound: -1.11 })),
-		this.turretSlots.add(new TurretSlot(-16.5, -27.1, value.middleLeft, { leftRotationBound: -1.88, rightRotationBound: -0.32 })),
-		this.turretSlots.add(new TurretSlot(-31.5, -34.6, value.backLeft, { leftRotationBound: -3.05, rightRotationBound: -0.32 }))
+		const turrets = this.turrets
+
+		this.turretSlots.add(new TurretSlot(21.6, 12.2, turrets.eyeRight, { leftRotationBound: 0.48, rightRotationBound: 1.40 })),
+		this.turretSlots.add(new TurretSlot(-1.5, 19.6, turrets.frontRight, { leftRotationBound: 1.11, rightRotationBound: 1.88 })),
+		this.turretSlots.add(new TurretSlot(-16.5, 27.1, turrets.middleRight, { leftRotationBound: 0.32, rightRotationBound: 1.88 })),
+		this.turretSlots.add(new TurretSlot(-31.5, 34.6, turrets.backRight, { leftRotationBound: 0.32, rightRotationBound: 3.05 })),
+		this.turretSlots.add(new TurretSlot(21.6, -12.2, turrets.eyeLeft, { leftRotationBound: -1.40, rightRotationBound: -0.48 })),
+		this.turretSlots.add(new TurretSlot(-1.5, -19.6, turrets.frontLeft, { leftRotationBound: -1.88, rightRotationBound: -1.11 })),
+		this.turretSlots.add(new TurretSlot(-16.5, -27.1, turrets.middleLeft, { leftRotationBound: -1.88, rightRotationBound: -0.32 })),
+		this.turretSlots.add(new TurretSlot(-31.5, -34.6, turrets.backLeft, { leftRotationBound: -3.05, rightRotationBound: -0.32 }))
 	}
 
 	draw(world) {
@@ -2103,73 +2089,73 @@ Ship.Wasp = class Wasp extends Ship {
 }
 
 Ship.Wasp.AC1ADG8 = class AC1ADG8 extends Ship.Wasp {
-	constructor({ transform, target, team }) {
-		super({ transform, target, team })
-		
-		this.turrets = {
-			eyeRight: new Turret.DG1H1Dash(this.target, this.speed, this.team),
-			frontRight: new Turret.DG1H1Dash(this.target, this.speed, this.team),
-			middleRight: new Turret.DG1H1Dash(this.target, this.speed, this.team),
-			backRight: new Turret.DG1H1Dash(this.target, this.speed, this.team),
-			eyeLeft: new Turret.DG1H1Dash(this.target, this.speed, this.team),
-			frontLeft: new Turret.DG1H1Dash(this.target, this.speed, this.team),
-			middleLeft: new Turret.DG1H1Dash(this.target, this.speed, this.team),
-			backLeft: new Turret.DG1H1Dash(this.target, this.speed, this.team)
-		}
-	}
+	get turrets() { return {
+		eyeRight: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+		frontRight: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+		middleRight: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+		backRight: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+		eyeLeft: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+		frontLeft: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+		middleLeft: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+		backLeft: new Turret.DG1H1Dash(this.target, this.speed, this.team)
+	} }
 }
 
 Ship.Wasp.AC1BDG6IM2 = class AC1BDG6IM2 extends Ship.Wasp {
-	constructor({ transform, target, team }) {
-		super({ transform, target, team })
-		
-		this.turrets = {
-			eyeRight: new Turret.DG1H1Dash(this.target, this.speed, this.team),
-			frontRight: new Turret.IM1M2Paparazzi(this.target, this.speed, this.team),
-			middleRight: new Turret.DG1H1Dash(this.target, this.speed, this.team),
-			backRight: new Turret.DG1H1Dash(this.target, this.speed, this.team),
-			eyeLeft: new Turret.DG1H1Dash(this.target, this.speed, this.team),
-			frontLeft: new Turret.IM1M2Paparazzi(this.target, this.speed, this.team),
-			middleLeft: new Turret.DG1H1Dash(this.target, this.speed, this.team),
-			backLeft: new Turret.DG1H1Dash(this.target, this.speed, this.team)
-		}
-	}
+	get turrets() { return {
+		eyeRight: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+		frontRight: new Turret.IM1M2Paparazzi(this.target, this.speed, this.team),
+		middleRight: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+		backRight: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+		eyeLeft: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+		frontLeft: new Turret.IM1M2Paparazzi(this.target, this.speed, this.team),
+		middleLeft: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+		backLeft: new Turret.DG1H1Dash(this.target, this.speed, this.team)
+	} }
 }
 
 Ship.Wasp.AC1CDG4IM4 = class AC1CDG4IM4 extends Ship.Wasp {
-	constructor({ transform, target, team }) {
-		super({ transform, target, team })
-		
-		this.turrets = {
-			eyeRight: new Turret.DG1H1Dash(this.target, this.speed, this.team),
-			frontRight: new Turret.IM1M2Paparazzi(this.target, this.speed, this.team),
-			middleRight: new Turret.IM1M2Paparazzi(this.target, this.speed, this.team),
-			backRight: new Turret.DG1H1Dash(this.target, this.speed, this.team),
-			eyeLeft: new Turret.DG1H1Dash(this.target, this.speed, this.team),
-			frontLeft: new Turret.IM1M2Paparazzi(this.target, this.speed, this.team),
-			middleLeft: new Turret.IM1M2Paparazzi(this.target, this.speed, this.team),
-			backLeft: new Turret.DG1H1Dash(this.target, this.speed, this.team)
-		}
-	}
+	get turrets() { return {
+		eyeRight: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+		frontRight: new Turret.IM1M2Paparazzi(this.target, this.speed, this.team),
+		middleRight: new Turret.IM1M2Paparazzi(this.target, this.speed, this.team),
+		backRight: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+		eyeLeft: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+		frontLeft: new Turret.IM1M2Paparazzi(this.target, this.speed, this.team),
+		middleLeft: new Turret.IM1M2Paparazzi(this.target, this.speed, this.team),
+		backLeft: new Turret.DG1H1Dash(this.target, this.speed, this.team)
+	} }
 }
 
 Ship.Wasp.AC1DDG2IM6 = class AC1DDG2IM6 extends Ship.Wasp {
-	constructor({ transform, target, team }) {
-		super({ transform, target, team })
-		
-		this.turrets = {
-			eyeRight: new Turret.DG1H1Dash(this.target, this.speed, this.team),
-			frontRight: new Turret.IM1M2Paparazzi(this.target, this.speed, this.team),
-			middleRight: new Turret.IM1M2Paparazzi(this.target, this.speed, this.team),
-			backRight: new Turret.IM1M2Paparazzi(this.target, this.speed, this.team),
-			eyeLeft: new Turret.DG1H1Dash(this.target, this.speed, this.team),
-			frontLeft: new Turret.IM1M2Paparazzi(this.target, this.speed, this.team),
-			middleLeft: new Turret.IM1M2Paparazzi(this.target, this.speed, this.team),
-			backLeft: new Turret.IM1M2Paparazzi(this.target, this.speed, this.team)
-		}
-	}
+	get turrets() { return {
+		eyeRight: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+		frontRight: new Turret.IM1M2Paparazzi(this.target, this.speed, this.team),
+		middleRight: new Turret.IM1M2Paparazzi(this.target, this.speed, this.team),
+		backRight: new Turret.IM1M2Paparazzi(this.target, this.speed, this.team),
+		eyeLeft: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+		frontLeft: new Turret.IM1M2Paparazzi(this.target, this.speed, this.team),
+		middleLeft: new Turret.IM1M2Paparazzi(this.target, this.speed, this.team),
+		backLeft: new Turret.IM1M2Paparazzi(this.target, this.speed, this.team)
+	} }
 }
 
+/**
+ * @param {Object} turrets
+ * @protected
+ * @abstract
+ * @readOnly
+ * @param {Turret} turrets.front
+ * @param {Turret} turrets.clawLeft
+ * @param {Turret} turrets.clawRight
+ * @param {Turret} turrets.armLeft
+ * @param {Turret} turrets.armRight
+ * @param {Turret} turrets.flankLeft
+ * @param {Turret} turrets.flankRight
+ * @param {Turret} turrets.backLeft
+ * @param {Turret} turrets.backRight
+ * @param {Turret} turrets.tail
+ */
 Ship.Scorpion = class Scorpion extends Ship {
 	constructor({ transform, target, team }) {
 		super({
@@ -2180,32 +2166,19 @@ Ship.Scorpion = class Scorpion extends Ship {
 			movementAcceleration: 60,
 			rotationAcceleration: 1.2
 		})
-	}
 
-	/**
-	 * @param {Object} value
-	 * @param {Turret} value.front
-	 * @param {Turret} value.clawLeft
-	 * @param {Turret} value.clawRight
-	 * @param {Turret} value.armLeft
-	 * @param {Turret} value.armRight
-	 * @param {Turret} value.flankLeft
-	 * @param {Turret} value.flankRight
-	 * @param {Turret} value.backLeft
-	 * @param {Turret} value.backRight
-	 * @param {Turret} value.tail
-	 */
-	set turrets(value) {
-		this.turretSlots.add(new TurretSlot(37.3, 0, value.front, { leftRotationBound: -0.77, rightRotationBound: 0.77 }))
-		this.turretSlots.add(new TurretSlot(13.2, 29.6, value.armRight, { leftRotationBound: 1.41, rightRotationBound: 2.52 }))
-		this.turretSlots.add(new TurretSlot(-10.9, 26.6, value.flankRight, { leftRotationBound: 1.18, rightRotationBound: 2.53 }))
-		this.turretSlots.add(new TurretSlot(-29.8, 15.2, value.backRight, { leftRotationBound: 1.33, rightRotationBound: 2.63 }))
-		this.turretSlots.add(new TurretSlot(13.2, -29.6, value.armLeft, { leftRotationBound: -2.52, rightRotationBound: -1.41 }))
-		this.turretSlots.add(new TurretSlot(-10.9, -26.6, value.flankLeft, { leftRotationBound: -2.53, rightRotationBound: -1.18 }))
-		this.turretSlots.add(new TurretSlot(-29.8, -15.2, value.backLeft, { leftRotationBound: -2.63, rightRotationBound: -1.33 }))
-		this.turretSlots.add(new TurretSlot(-68.6, 0, value.tail, { leftRotationBound: 2.55, rightRotationBound: -2.55 }))
-		this.turretSlots.add(new TurretSlot(47.5, 31.8, value.clawRight, { leftRotationBound: -1.22, rightRotationBound: 1.19 }))
-		this.turretSlots.add(new TurretSlot(47.5, -31.8, value.clawLeft, { leftRotationBound: -1.19, rightRotationBound: 1.22 }))
+		const turrets = this.turrets
+
+		this.turretSlots.add(new TurretSlot(37.3, 0, turrets.front, { leftRotationBound: -0.77, rightRotationBound: 0.77 }))
+		this.turretSlots.add(new TurretSlot(13.2, 29.6, turrets.armRight, { leftRotationBound: 1.41, rightRotationBound: 2.52 }))
+		this.turretSlots.add(new TurretSlot(-10.9, 26.6, turrets.flankRight, { leftRotationBound: 1.18, rightRotationBound: 2.53 }))
+		this.turretSlots.add(new TurretSlot(-29.8, 15.2, turrets.backRight, { leftRotationBound: 1.33, rightRotationBound: 2.63 }))
+		this.turretSlots.add(new TurretSlot(13.2, -29.6, turrets.armLeft, { leftRotationBound: -2.52, rightRotationBound: -1.41 }))
+		this.turretSlots.add(new TurretSlot(-10.9, -26.6, turrets.flankLeft, { leftRotationBound: -2.53, rightRotationBound: -1.18 }))
+		this.turretSlots.add(new TurretSlot(-29.8, -15.2, turrets.backLeft, { leftRotationBound: -2.63, rightRotationBound: -1.33 }))
+		this.turretSlots.add(new TurretSlot(-68.6, 0, turrets.tail, { leftRotationBound: 2.55, rightRotationBound: -2.55 }))
+		this.turretSlots.add(new TurretSlot(47.5, 31.8, turrets.clawRight, { leftRotationBound: -1.22, rightRotationBound: 1.19 }))
+		this.turretSlots.add(new TurretSlot(47.5, -31.8, turrets.clawLeft, { leftRotationBound: -1.19, rightRotationBound: 1.22 }))
 	}
 
 	draw(world) {
@@ -2264,43 +2237,46 @@ Ship.Scorpion = class Scorpion extends Ship {
 }
 
 Ship.Scorpion.YG2ADG10 = class YG2ADG10 extends Ship.Scorpion {
-	constructor({ transform, target, team }) {
-		super({ transform, target, team })
-
-		this.turrets = {
-			front: new Turret.DG1H1Dash(this.target, this.speed, this.team),
-			armRight: new Turret.DG1H1Dash(this.target, this.speed, this.team),
-			flankRight: new Turret.DG1H1Dash(this.target, this.speed, this.team),
-			backRight: new Turret.DG1H1Dash(this.target, this.speed, this.team),
-			armLeft: new Turret.DG1H1Dash(this.target, this.speed, this.team),
-			flankLeft: new Turret.DG1H1Dash(this.target, this.speed, this.team),
-			backLeft: new Turret.DG1H1Dash(this.target, this.speed, this.team),
-			tail: new Turret.DG2H1Liner(this.target, this.speed, this.team),
-			clawRight: new Turret.DG2H1Liner(this.target, this.speed, this.team),
-			clawLeft: new Turret.DG2H1Liner(this.target, this.speed, this.team)
-		}
-	}
+	get turrets() { return {
+		front: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+		armRight: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+		flankRight: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+		backRight: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+		armLeft: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+		flankLeft: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+		backLeft: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+		tail: new Turret.DG2H1Liner(this.target, this.speed, this.team),
+		clawRight: new Turret.DG2H1Liner(this.target, this.speed, this.team),
+		clawLeft: new Turret.DG2H1Liner(this.target, this.speed, this.team)
+	} }
 }
 
 Ship.Scorpion.YG2BDG8DH2 = class YG2BDG8DH2 extends Ship.Scorpion {
-	constructor({ transform, target, team }) {
-		super({ transform, target, team })
-
-		this.turrets = {
-			front: new Turret.DG1H1Dash(this.target, this.speed, this.team),
-			armRight: new Turret.DG1H1Dash(this.target, this.speed, this.team),
-			flankRight: new Turret.DG1H1Dash(this.target, this.speed, this.team),
-			backRight: new Turret.DG1H1Dash(this.target, this.speed, this.team),
-			armLeft: new Turret.DG1H1Dash(this.target, this.speed, this.team),
-			flankLeft: new Turret.DG1H1Dash(this.target, this.speed, this.team),
-			backLeft: new Turret.DG1H1Dash(this.target, this.speed, this.team),
-			tail: new Turret.DG2H1Liner(this.target, this.speed, this.team),
-			clawRight: new Turret.DH2M3Ravager(this.target, this.speed, this.team),
-			clawLeft: new Turret.DH2M3Ravager(this.target, this.speed, this.team)
-		}
-	}
+	get turrets() { return {
+		front: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+		armRight: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+		flankRight: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+		backRight: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+		armLeft: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+		flankLeft: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+		backLeft: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+		tail: new Turret.DG2H1Liner(this.target, this.speed, this.team),
+		clawRight: new Turret.DH2M3Ravager(this.target, this.speed, this.team),
+		clawLeft: new Turret.DH2M3Ravager(this.target, this.speed, this.team)
+	} }
 }
 
+/**
+ * @param {Object} turrets
+ * @protected
+ * @abstract
+ * @readOnly
+ * @param {Turret} turrets.front
+ * @param {Turret} turrets.eyeLeft
+ * @param {Turret} turrets.eyeRight
+ * @param {Turret} turrets.wingLeft
+ * @param {Turret} turrets.wingRight
+ */
 Ship.Skate = class Skate extends Ship {
 	constructor({ transform, target, team }) {
 		super({
@@ -2311,22 +2287,14 @@ Ship.Skate = class Skate extends Ship {
 			movementAcceleration: 110,
 			rotationAcceleration: 0.7
 		})
-	}
 
-	/**
-	 * @param {Object} value
-	 * @param {Turret} value.front
-	 * @param {Turret} value.eyeLeft
-	 * @param {Turret} value.eyeRight
-	 * @param {Turret} value.wingLeft
-	 * @param {Turret} value.wingRight
-	 */
-	set turrets(value) {
-		this.turretSlots.add(new TurretSlot(22.5, 0, value.front, { leftRotationBound: -0.72, rightRotationBound: 0.72 }))
-		this.turretSlots.add(new TurretSlot(15, 24.9, value.eyeRight, { leftRotationBound: -0.21, rightRotationBound: 1.13 }))
-		this.turretSlots.add(new TurretSlot(15, -24.9, value.eyeLeft, { leftRotationBound: -1.13, rightRotationBound: 0.21 }))
-		this.turretSlots.add(new TurretSlot(6.9, 51.3, value.wingRight, { leftRotationBound: -0.30, rightRotationBound: 1.16 }))
-		this.turretSlots.add(new TurretSlot(6.9, -51.3, value.wingLeft, { leftRotationBound: -1.16, rightRotationBound: 0.30 }))
+		const turrets = this.turrets
+
+		this.turretSlots.add(new TurretSlot(22.5, 0, turrets.front, { leftRotationBound: -0.72, rightRotationBound: 0.72 }))
+		this.turretSlots.add(new TurretSlot(15, 24.9, turrets.eyeRight, { leftRotationBound: -0.21, rightRotationBound: 1.13 }))
+		this.turretSlots.add(new TurretSlot(15, -24.9, turrets.eyeLeft, { leftRotationBound: -1.13, rightRotationBound: 0.21 }))
+		this.turretSlots.add(new TurretSlot(6.9, 51.3, turrets.wingRight, { leftRotationBound: -0.30, rightRotationBound: 1.16 }))
+		this.turretSlots.add(new TurretSlot(6.9, -51.3, turrets.wingLeft, { leftRotationBound: -1.16, rightRotationBound: 0.30 }))
 	}
 
 	draw(world) {
@@ -2369,17 +2337,13 @@ Ship.Skate = class Skate extends Ship {
 }
 
 Ship.Skate.MF2ADG5 = class MF2ADG5 extends Ship.Skate {
-	constructor({ transform, target, team }) {
-		super({ transform, target, team })
-		
-		this.turrets = {
-			front: new Turret.DG1H1Dash(this.target, this.speed, this.team),
-			eyeRight: new Turret.DG1H1Dash(this.target, this.speed, this.team),
-			eyeLeft: new Turret.DG1H1Dash(this.target, this.speed, this.team),
-			wingRight: new Turret.DG2H1Liner(this.target, this.speed, this.team),
-			wingLeft: new Turret.DG2H1Liner(this.target, this.speed, this.team)
-		}
-	}
+	get turrets() { return {
+		front: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+		eyeRight: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+		eyeLeft: new Turret.DG1H1Dash(this.target, this.speed, this.team),
+		wingRight: new Turret.DG2H1Liner(this.target, this.speed, this.team),
+		wingLeft: new Turret.DG2H1Liner(this.target, this.speed, this.team)
+	} }
 }
 
 // -----------------------------------------------------------------
