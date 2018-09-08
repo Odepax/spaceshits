@@ -1065,10 +1065,25 @@ const Defaults = {
 	},
 	Missile: {
 		get T1() { return { movementAcceleration: 250, rotationAcceleration: 2.5, lifeTime: 5, radius: 2, explosion: { lifeTime: 1, radius: 5, damage: 10 } } }
+	},
+	Turret: {
+		get T1() { return { rotationSpeed: PI,     collisionRadius:  5, health:  50, healthRegeneration: 1, explosion: { lifeTime: 2, radius: 10, damage: 20 }, reloadTime: 0.3 } },
+		get T2() { return { rotationSpeed: PI / 2, collisionRadius: 10, health: 100, healthRegeneration: 2, explosion: { lifeTime: 3, radius: 20, damage: 40 }, reloadTime: 0.6 } }
 	}
 }
 
 // -----------------------------------------------------------------
+
+/**
+ * @typedef {Object} AssetConfiguration
+ *
+ * @property {Transform} target
+ * @property {Distance} collisionRadius
+ * @property {Number} health
+ * @property {Number} healthRegeneration
+ * @property {Team} team
+ * @property {ExplosionConfiguration} explosion
+ */
 
 /**
  * @implements {WorldObject}
@@ -1084,13 +1099,7 @@ const Defaults = {
  */
 class Asset extends Transform {
 	/**
-	 * @param {Object} options
-	 * @param {Transform} options.target
-	 * @param {Distance} options.collisionRadius
-	 * @param {Number} options.health
-	 * @param {Number} options.healthRegeneration
-	 * @param {Team} options.team
-	 * @param {Explosion} options.explosion
+	 * @param {AssetConfiguration} options
 	 */
 	constructor({ target, collisionRadius, health, healthRegeneration, team, explosion }) {
 		super(0, 0)
@@ -1109,10 +1118,7 @@ class Asset extends Transform {
 	}
 
 	afterDelete(world) {
-		this.explosion.x = this.x
-		this.explosion.y = this.y
-
-		world.add(this.explosion)
+		world.add(new Explosion(this.explosion.apply({ x: this.x, y: this.y })))
 	}
 
 	update(world) {
@@ -1163,7 +1169,7 @@ for (let i = 1; i <= 3; ++i) {
 			health: 100 * i,
 			healthRegeneration: 1,
 			team,
-			explosion: new Explosion({ lifeTime: 1 + i, radius: 50 * i, damage: 100 * i })
+			explosion: { lifeTime: 1 + i, radius: 50 * i, damage: 100 * i }
 		})
 	}
 }
@@ -1311,6 +1317,20 @@ class Missile extends Transform {
 }
 
 /**
+ * @typedef {Object} TurretConfiguration
+ *
+ * @property {Transform} target
+ * @property {Force} bulletBaseSpeed
+ * @property {Angle} rotationSpeed
+ * @property {Distance} collisionRadius
+ * @property {Number} health
+ * @property {Number} healthRegeneration
+ * @property {Team} team
+ * @property {ExplosionConfiguration} explosion
+ * @property {Time} reloadTime
+ */
+
+/**
  * @abstract
  *
  * @method fire
@@ -1320,15 +1340,7 @@ class Missile extends Transform {
  */
 class Turret extends Asset {
 	/**
-	 * @param {Transform} target
-	 * @param {Force} bulletBaseSpeed
-	 * @param {Angle} rotationSpeed
-	 * @param {Distance} collisionRadius
-	 * @param {Number} health
-	 * @param {Number} healthRegeneration
-	 * @param {Team} team
-	 * @param {Explosion} explosion
-	 * @param {Time} reloadTime
+	 * @param {TurretConfiguration} options
 	 */
 	constructor({ target, bulletBaseSpeed, rotationSpeed, collisionRadius, health, healthRegeneration, team, explosion, reloadTime }) {
 		super({ target, collisionRadius, health, healthRegeneration, team, explosion })
@@ -1388,30 +1400,6 @@ class Turret extends Asset {
 	}
 }
 
-for (let i = 1; i <= 3; ++i) {
-	Turret["T" + i] = class extends Turret {
-		/**
-		 * @param {Transform} target
-		 * @param {Force} bulletBaseSpeed
-		 * @param {Team} team
-		 * @param {Time} reloadTime
-		 */
-		constructor(target, bulletBaseSpeed, team, reloadTime) {
-			super({
-				target,
-				bulletBaseSpeed,
-				rotationSpeed: PI / i,
-				collisionRadius: 5 * i,
-				health: 50 * i,
-				healthRegeneration: i,
-				team,
-				explosion: new Explosion({ lifeTime: 1 + i, radius: 10 * i, damage: 20 * i }),
-				reloadTime
-			})
-		}
-	}
-}
-
 /**
  * @abstract
  */
@@ -1421,30 +1409,6 @@ class MissileLauncher extends Turret {
 	 */
 	get hasTargetInSight() {
 		return true
-	}
-}
-
-for (let i = 1; i <= 3; ++i) {
-	MissileLauncher["T" + i] = class extends MissileLauncher {
-		/**
-		 * @param {Transform} target
-		 * @param {Force} bulletBaseSpeed
-		 * @param {Team} team
-		 * @param {Time} reloadTime
-		 */
-		constructor(target, bulletBaseSpeed, team, reloadTime) {
-			super({
-				target,
-				bulletBaseSpeed,
-				rotationSpeed: PI / i,
-				collisionRadius: 5 * i,
-				health: 50 * i,
-				healthRegeneration: i,
-				team,
-				explosion: new Explosion({ lifeTime: 1 + i, radius: 10 * i, damage: 20 * i }),
-				reloadTime
-			})
-		}
 	}
 }
 
@@ -1477,9 +1441,9 @@ class TurretSlot {
 // M1 - Missile Launcher (Geyser)
 // D1 - Drone Launcher (WhiteHole)
 
-Turret.DG1H1Dash = class DG1H1Dash extends Turret.T1 {
+Turret.DG1H1Dash = class DG1H1Dash extends Turret {
 	constructor(target, bulletBaseSpeed, team) {
-		super(target, bulletBaseSpeed, team, 0.2)
+		super(Defaults.Turret.T1.apply({ target, bulletBaseSpeed, team, reloadTime: 0.2 }))
 	}
 
 	fire(world) {
@@ -1509,9 +1473,9 @@ Turret.DG1H1Dash = class DG1H1Dash extends Turret.T1 {
 	}
 }
 
-Turret.DG2H1Liner = class DG2H1Liner extends Turret.T2 {
+Turret.DG2H1Liner = class DG2H1Liner extends Turret {
 	constructor(target, bulletBaseSpeed, team) {
-		super(target, bulletBaseSpeed, team, 0.2)
+		super(Defaults.Turret.T2.apply({ target, bulletBaseSpeed, team, reloadTime: 0.2 }))
 	}
 
 	fire(world) {
@@ -1541,9 +1505,9 @@ Turret.DG2H1Liner = class DG2H1Liner extends Turret.T2 {
 	}
 }
 
-Turret.DH2M3Ravager = class DH2M3Ravager extends Turret.T2 {
+Turret.DH2M3Ravager = class DH2M3Ravager extends Turret {
 	constructor(target, bulletBaseSpeed, team) {
-		super(target, bulletBaseSpeed, team, 1)
+		super(Defaults.Turret.T2.apply({ target, bulletBaseSpeed, team, reloadTime: 1 }))
 	}
 
 	fire(world) {
@@ -1585,9 +1549,9 @@ Turret.DH2M3Ravager = class DH2M3Ravager extends Turret.T2 {
 	}
 }
 
-Turret.IM1M2Paparazzi = class IM1M2Paparazzi extends MissileLauncher.T1 {
+Turret.IM1M2Paparazzi = class IM1M2Paparazzi extends MissileLauncher {
 	constructor(target, bulletBaseSpeed, team) {
-		super(target, bulletBaseSpeed, team, 1)
+		super(Defaults.Turret.T1.apply({ target, bulletBaseSpeed, team, reloadTime: 1 }))
 	}
 
 	fire(world) {
