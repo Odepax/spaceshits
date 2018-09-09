@@ -25,8 +25,8 @@ function randBetween() {
 }
 
 /**
- * @param {Function|Object} init
- * @return {Object} This object.
+ * @param {Function | Object} init
+ * @return {Object} `this`.
  */
 Object.prototype.apply = function apply(init) {
 	if (typeof init == "function") {
@@ -63,12 +63,7 @@ const Color = {
  * @typedef {Object} Team
  *
  * @property {Color} mainColor
- * @memberOf Team
- * @required
- *
  * @property {Color} secondaryColor
- * @memberOf Team
- * @required
  */
 const Team = {
 	RED: { mainColor: Color.RED, secondaryColor: Color.ORANGE },
@@ -91,12 +86,7 @@ const Team = {
  * @interface Position
  *
  * @property {Distance} x
- * @memberOf Position
- * @required
- *
  * @property {Distance} y
- * @memberOf Position
- * @required
  */
 
 /**
@@ -151,8 +141,6 @@ const Angle = {
  * @interface Rotation
  *
  * @property {Angle} a
- * @memberOf Rotation
- * @required
  */
 
 /**
@@ -163,7 +151,7 @@ class Transform {
 	/**
 	 * @param {Distance} x
 	 * @param {Distance} y
-	 * @param {Angle} [a]
+	 * @param {Angle} [a = 0]
 	 */
 	constructor(x, y, a = 0) {
 		this.x = x
@@ -251,7 +239,7 @@ class Transform {
 	}
 
 	/**
-	 * @return {Transform} A new object.
+	 * @return {Transform}
 	 */
 	clone() {
 		return new Transform(this.x, this.y, this.a)
@@ -261,7 +249,7 @@ class Transform {
 	 * @param {Distance} offsetX
 	 * @param {Distance} offsetY
 	 * @param {Transform} [base = this]
-	 * @return {Transform} This object.
+	 * @return {Transform} `this`.
 	 */
 	offset(offsetX, offsetY, base = this) {
 		this.x = base.x + offsetX
@@ -274,7 +262,7 @@ class Transform {
 	 * @param {Distance} offsetX
 	 * @param {Distance} offsetY
 	 * @param {Transform} [base = this]
-	 * @return {Transform} This object.
+	 * @return {Transform} `this`.
 	 */
 	relativeOffset(offsetX, offsetY, base = this) {
 		this.x = base.x + cos(base.a) * offsetX - sin(base.a) * offsetY
@@ -287,7 +275,7 @@ class Transform {
 	 * @param {Angle} angle
 	 * @param {Distance} distance
 	 * @param {Transform} [base = this]
-	 * @return {Transform} This object.
+	 * @return {Transform} `this`.
 	 */
 	angularOffset(angle, distance, base = this) {
 		this.x = base.x + cos(angle) * distance
@@ -300,7 +288,7 @@ class Transform {
 	 * @param {Angle} angle
 	 * @param {Distance} distance
 	 * @param {Transform} [base = this]
-	 * @return {Transform} This object.
+	 * @return {Transform} `this`.
 	 */
 	relativeAngularOffset(angle, distance, base = this) {
 		this.x = base.x + cos(base.a + angle) * distance
@@ -311,7 +299,7 @@ class Transform {
 
 	/**
 	 * @param {Angle} angle
-	 * @return {Transform} This object.
+	 * @return {Transform} `this`.
 	 */
 	rotateLike(angle) {
 		this.a = angle
@@ -321,7 +309,7 @@ class Transform {
 
 	/**
 	 * @param {Angle} angle
-	 * @return {Transform} This object.
+	 * @return {Transform} `this`.
 	 */
 	rotateBy(angle) {
 		this.a += angle
@@ -331,7 +319,7 @@ class Transform {
 
 	/**
 	 * @param {Position} target
-	 * @return {Transform} This object.
+	 * @return {Transform} `this`.
 	 */
 	rotateToward(target) {
 		this.a = this.angleToward(target)
@@ -342,7 +330,7 @@ class Transform {
 	/**
 	 * @param {Angle} leftBound
 	 * @param {Angle} rightBound
-	 * @param {Transform} This object.
+	 * @return {Transform} `this`.
 	 */
 	constrainAngleIn(leftBound, rightBound) {
 		const arcSize = Angle.rightAngleBetween(leftBound, rightBound)
@@ -365,28 +353,22 @@ class Transform {
  * @interface WorldObject
  *
  * @method update
- * @memberOf WorldObject
- * @required
  * @param {World} world
  *
  * @method beforeAdd
- * @memberOf WorldObject
  * @optional
  * @param {World} world
  *
  * @method afterAdd
- * @memberOf WorldObject
  * @optional
  * @param {World} world
  *
  * @method mustBeDeleted
- * @memberOf WorldObject
  * @optional
  * @param {World} world
  * @return {Boolean}
  *
  * @method afterDelete
- * @memberOf WorldObject
  * @optional
  * @param {World} world
  */
@@ -736,12 +718,7 @@ class Friction {
  * @interface Ephemeral
  *
  * @property {Time} lifeTime
- * @memberOf Ephemeral
- * @required
- *
  * @property {Time} remainingLifeTime
- * @memberOf Ephemeral
- * @required
  */
 const Ephemeral = {
 	/**
@@ -775,16 +752,8 @@ const Ephemeral = {
  * @interface Destroyable
  *
  * @property {Number} health
- * @memberOf Destroyable
- * @required
- *
  * @property {Number} maxHealth
- * @memberOf Destroyable
- * @required
- *
  * @property {Number} healthRegeneration
- * @memberOf Destroyable
- * @required
  */
 const Destroyable = {
 	/**
@@ -823,16 +792,8 @@ const Destroyable = {
  * @extends {Transform}
  *
  * @property {Force} speed
- * @memberOf Moving
- * @required
- *
  * @property {Force} acceleration
- * @memberOf Moving
- * @required
- *
  * @property {Force} friction
- * @memberOf Moving
- * @required
  */
 const Moving = {
 	/**
@@ -865,12 +826,7 @@ const Moving = {
 	 * @extends {Transform}
 	 *
 	 * @property {Distance} speedX
-	 * @memberOf Moving.Linear
-	 * @required
-	 *
 	 * @property {Distance} speedY
-	 * @memberOf Moving.Linear
-	 * @required
 	 */
 	Linear: {
 		/**
@@ -908,12 +864,7 @@ const Moving = {
  * @extends {Transform}
  *
  * @property {Distance} collisionRadius
- * @memberOf Colliding
- * @required
- *
  * @property {Number} collisionDamage
- * @memberOf Colliding
- * @required
  */
 const Colliding = {
 	/**
@@ -956,8 +907,6 @@ const Colliding = {
  * @extends {Colliding}
  *
  * @property {Team} team
- * @memberOf Teamed
- * @optional
  */
 const Teamed = {
 	/**
@@ -1109,7 +1058,6 @@ const Defaults = {
  * @abstract
  *
  * @method draw
- * @memberOf Asset
  * @protected
  * @param {World} world
  */
@@ -1241,15 +1189,15 @@ class Shell extends Transform {
 /**
  * @typedef {Object} MissileConfiguration
  *
- * @param {Transform} transform
- * @param {Transform} target
- * @param {Force} baseSpeed
- * @param {Distance} movementAcceleration
- * @param {Angle} rotationAcceleration
- * @param {Time} lifeTime
- * @param {Distance} radius
- * @param {Team} team
- * @param {ExplosionConfiguration} explosion
+ * @property {Transform} transform
+ * @property {Transform} target
+ * @property {Force} baseSpeed
+ * @property {Distance} movementAcceleration
+ * @property {Angle} rotationAcceleration
+ * @property {Time} lifeTime
+ * @property {Distance} radius
+ * @property {Team} team
+ * @property {ExplosionConfiguration} explosion
  */
 
 /**
@@ -1333,7 +1281,6 @@ class Missile extends Transform {
  * @abstract
  *
  * @method fire
- * @memberOf Turret
  * @protected
  * @param {World} world
  */
@@ -1657,12 +1604,10 @@ class Shield {
  * @abstract
  *
  * @property {Object} turrets
- * @memberOf Ship
  * @protected
- * @writeOnce
+ * @readOnly
  *
  * @method draw
- * @memberOf Ship
  * @protected
  * @param {World} world
  */
@@ -1736,9 +1681,10 @@ class Ship extends Transform {
 }
 
 /**
+ * @abstract
+ *
  * @property {Object} turrets
  * @protected
- * @abstract
  * @readOnly
  * @property {Turret} turrets.front
  */
@@ -1783,9 +1729,10 @@ Ship.Pollen.WG1BIM1 = class WG1BIM1 extends Ship.Pollen {
 }
 
 /**
+ * @abstract
+ *
  * @property {Object} turrets
  * @protected
- * @abstract
  * @readOnly
  * @property {Turret} turrets.left
  * @property {Turret} turrets.right
@@ -1837,9 +1784,10 @@ Ship.Moth.MF1BIM2 = class MF1BIM2 extends Ship.Moth {
 }
 
 /**
+ * @abstract
+ *
  * @property {Object} turrets
  * @protected
- * @abstract
  * @readOnly
  * @property {Turret} turrets.frontLeft
  * @property {Turret} turrets.middleLeft
@@ -1921,9 +1869,10 @@ Ship.Scarab.XC1BDG4IM2 = class XC1BDG4IM2 extends Ship.Scarab {
 }
 
 /**
+ * @abstract
+ *
  * @property {Object} turrets
  * @protected
- * @abstract
  * @readOnly
  * @property {Turret} turrets.eyeLeft
  * @property {Turret} turrets.frontLeft
@@ -2044,9 +1993,10 @@ Ship.Wasp.AC1DDG2IM6 = class AC1DDG2IM6 extends Ship.Wasp {
 }
 
 /**
+ * @abstract
+ *
  * @property {Object} turrets
  * @protected
- * @abstract
  * @readOnly
  * @property {Turret} turrets.front
  * @property {Turret} turrets.clawLeft
@@ -2163,9 +2113,10 @@ Ship.Scorpion.YG2BDG8DH2 = class YG2BDG8DH2 extends Ship.Scorpion {
 }
 
 /**
+ * @abstract
+ *
  * @property {Object} turrets
  * @protected
- * @abstract
  * @readOnly
  * @property {Turret} turrets.front
  * @property {Turret} turrets.eyeLeft
@@ -2387,7 +2338,6 @@ world.add({
 		return Destroyable.mustBeDeleted(this, world)
 	},
 
-	/** Blob */
 	update(world) {
 		Destroyable.update(this, world)
 
