@@ -1381,11 +1381,6 @@ class TurretSlot {
 }
 
 // -----------------------------------------------------------------
-// G1 - Machine Gun (Liner)
-// H1 - Howitzer
-// S1 - Sprayer
-// M1 - Missile Launcher (Geyser)
-// D1 - Drone Launcher (WhiteHole)
 
 Turret.DG1H1Dash = class DG1H1Dash extends Turret {
 	constructor(target, bulletBaseSpeed, team) {
@@ -2378,21 +2373,6 @@ world.add({
 })
 
 world.run()
-
-// TODO
-// ----
-// [x] Scaling bug => scale up the ship.
-// [x] Rotate turrets with ship.
-// [x] Mv force transmission from ship to bullets. => TECH DEBT
-// [x] Acceleration / max speed bug.
-// [x] Fix teams requirements.
-// [x] Fix colliders requirements.
-// [x] Turret slot redesign.
-// [x] Extract player controller to separate keyboard controller.
-// [x] Create player rotative mouse controller.
-// [ ] Create AI controllers.
-// [ ] Implement relative camera.
-// [ ] Constrain angle to arc > 180deg bug.
 
 if (DEBUG) {
 	world.add({
