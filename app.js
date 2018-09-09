@@ -1360,25 +1360,15 @@ class MissileLauncher extends Turret {
 
 // -----------------------------------------------------------------
 
-class TurretSlot {
-	/**
-	 * @param {Distance} offsetX
-	 * @param {Distance} offsetY
-	 * @param {Turret} turret
-	 * @param {Object} [options]
-	 * @param {Angle} options.leftRotationBound
-	 * @param {Angle} options.rightRotationBound
-	 */
-	constructor(offsetX, offsetY, turret, { leftRotationBound, rightRotationBound } = {}) {
-		this.offsetX = offsetX
-		this.offsetY = offsetY
-
-		this.turret = turret
-
-		this.leftRotationBound = leftRotationBound
-		this.rightRotationBound = rightRotationBound
-	}
-}
+/**
+ * @interface TurretSlot
+ *
+ * @property {Distance} x
+ * @property {Distance} y
+ * @property {Turret} turret
+ * @property {Angle} [leftRotationBound]
+ * @property {Angle} [rightRotationBound]
+ */
 
 // -----------------------------------------------------------------
 
@@ -1655,14 +1645,14 @@ class Ship extends Transform {
 			if (slot.turret.mustBeDeleted(world)) {
 				this.turretSlots.delete(slot)
 			} else {
-				slot.turret.relativeOffset(slot.offsetX, slot.offsetY, this)
+				slot.turret.relativeOffset(slot.x, slot.y, this)
 
 				if (slot.leftRotationBound != undefined) {
 					slot.turret.leftRotationBound = Angle.normalize(this.a + slot.leftRotationBound)
 					slot.turret.rightRotationBound = Angle.normalize(this.a + slot.rightRotationBound)
 				}
 
-				slot.turret.a += this.speed.a * world.timeEnlapsed
+				slot.turret.rotateBy(this.speed.a * world.timeEnlapsed)
 				slot.turret.mustFire = this.mustFire
 			}
 		}
@@ -1687,7 +1677,7 @@ Ship.Pollen = class Pollen extends Ship {
 	constructor({ transform, target, team }) {
 		super(Defaults.Gunship.T1.apply({ transform, target, team, core: Defaults.Core.T1.apply({ target, team }) }))
 
-		this.turretSlots.add(new TurretSlot(15.4, 0, this.turrets.front, { leftRotationBound: -0.78, rightRotationBound: 0.78 }))
+		this.turretSlots.add({ x: 15.4, y: 0, turret: this.turrets.front, leftRotationBound: -0.78, rightRotationBound: 0.78 })
 	}
 
 	draw(world) {
@@ -1738,8 +1728,8 @@ Ship.Moth = class Moth extends Ship {
 		
 		const turrets = this.turrets
 		
-		this.turretSlots.add(new TurretSlot(7.5, 17.9, turrets.right, { leftRotationBound: -0.42, rightRotationBound: 0.95 }))
-		this.turretSlots.add(new TurretSlot(7.5, -17.9, turrets.left, { leftRotationBound: -0.95, rightRotationBound: 0.42 }))
+		this.turretSlots.add({ x: 7.5, y: 17.9, turret: turrets.right, leftRotationBound: -0.42, rightRotationBound: 0.95 })
+		this.turretSlots.add({ x: 7.5, y: -17.9, turret: turrets.left, leftRotationBound: -0.95, rightRotationBound: 0.42 })
 	}
 
 	draw(world) {
@@ -1797,12 +1787,12 @@ Ship.Scarab = class Scarab extends Ship {
 
 		const turrets = this.turrets
 
-		this.turretSlots.add(new TurretSlot(19, 18.5, turrets.frontRight, { leftRotationBound: 0.52, rightRotationBound: 2.07 }))
-		this.turretSlots.add(new TurretSlot(-3.5, 22.6,turrets.middleRight, { leftRotationBound: 0.37, rightRotationBound: 2.60 }))
-		this.turretSlots.add(new TurretSlot(-21.2, 16, turrets.backRight, { leftRotationBound: 1.06, rightRotationBound: 2.60 }))
-		this.turretSlots.add(new TurretSlot(19, -18.5, turrets.frontLeft, { leftRotationBound: -2.07, rightRotationBound: -0.52 }))
-		this.turretSlots.add(new TurretSlot(-3.5, -22.6,turrets.middleLeft, { leftRotationBound: -2.60, rightRotationBound: -0.37 }))
-		this.turretSlots.add(new TurretSlot(-21.2, -16, turrets.backLeft, { leftRotationBound: -2.60, rightRotationBound: -1.06 }))
+		this.turretSlots.add({ x: 19, y: 18.5, turret: turrets.frontRight, leftRotationBound: 0.52, rightRotationBound: 2.07 })
+		this.turretSlots.add({ x: -3.5, y: 22.6, turret: turrets.middleRight, leftRotationBound: 0.37, rightRotationBound: 2.60 })
+		this.turretSlots.add({ x: -21.2, y: 16, turret: turrets.backRight, leftRotationBound: 1.06, rightRotationBound: 2.60 })
+		this.turretSlots.add({ x: 19, y: -18.5, turret: turrets.frontLeft, leftRotationBound: -2.07, rightRotationBound: -0.52 })
+		this.turretSlots.add({ x: -3.5, y: -22.6, turret: turrets.middleLeft, leftRotationBound: -2.60, rightRotationBound: -0.37 })
+		this.turretSlots.add({ x: -21.2, y: -16, turret: turrets.backLeft, leftRotationBound: -2.60, rightRotationBound: -1.06 })
 	}
 
 	draw(world) {
@@ -1884,14 +1874,14 @@ Ship.Wasp = class Wasp extends Ship {
 
 		const turrets = this.turrets
 
-		this.turretSlots.add(new TurretSlot(21.6, 12.2, turrets.eyeRight, { leftRotationBound: 0.48, rightRotationBound: 1.40 })),
-		this.turretSlots.add(new TurretSlot(-1.5, 19.6, turrets.frontRight, { leftRotationBound: 1.11, rightRotationBound: 1.88 })),
-		this.turretSlots.add(new TurretSlot(-16.5, 27.1, turrets.middleRight, { leftRotationBound: 0.32, rightRotationBound: 1.88 })),
-		this.turretSlots.add(new TurretSlot(-31.5, 34.6, turrets.backRight, { leftRotationBound: 0.32, rightRotationBound: 3.05 })),
-		this.turretSlots.add(new TurretSlot(21.6, -12.2, turrets.eyeLeft, { leftRotationBound: -1.40, rightRotationBound: -0.48 })),
-		this.turretSlots.add(new TurretSlot(-1.5, -19.6, turrets.frontLeft, { leftRotationBound: -1.88, rightRotationBound: -1.11 })),
-		this.turretSlots.add(new TurretSlot(-16.5, -27.1, turrets.middleLeft, { leftRotationBound: -1.88, rightRotationBound: -0.32 })),
-		this.turretSlots.add(new TurretSlot(-31.5, -34.6, turrets.backLeft, { leftRotationBound: -3.05, rightRotationBound: -0.32 }))
+		this.turretSlots.add({ x: 21.6, y: 12.2, turret: turrets.eyeRight, leftRotationBound: 0.48, rightRotationBound: 1.40 })
+		this.turretSlots.add({ x: -1.5, y: 19.6, turret: turrets.frontRight, leftRotationBound: 1.11, rightRotationBound: 1.88 })
+		this.turretSlots.add({ x: -16.5, y: 27.1, turret: turrets.middleRight, leftRotationBound: 0.32, rightRotationBound: 1.88 })
+		this.turretSlots.add({ x: -31.5, y: 34.6, turret: turrets.backRight, leftRotationBound: 0.32, rightRotationBound: 3.05 })
+		this.turretSlots.add({ x: 21.6, y: -12.2, turret: turrets.eyeLeft, leftRotationBound: -1.40, rightRotationBound: -0.48 })
+		this.turretSlots.add({ x: -1.5, y: -19.6, turret: turrets.frontLeft, leftRotationBound: -1.88, rightRotationBound: -1.11 })
+		this.turretSlots.add({ x: -16.5, y: -27.1, turret: turrets.middleLeft, leftRotationBound: -1.88, rightRotationBound: -0.32 })
+		this.turretSlots.add({ x: -31.5, y: -34.6, turret: turrets.backLeft, leftRotationBound: -3.05, rightRotationBound: -0.32 })
 	}
 
 	draw(world) {
@@ -2010,16 +2000,16 @@ Ship.Scorpion = class Scorpion extends Ship {
 
 		const turrets = this.turrets
 
-		this.turretSlots.add(new TurretSlot(37.3, 0, turrets.front, { leftRotationBound: -0.77, rightRotationBound: 0.77 }))
-		this.turretSlots.add(new TurretSlot(13.2, 29.6, turrets.armRight, { leftRotationBound: 1.41, rightRotationBound: 2.52 }))
-		this.turretSlots.add(new TurretSlot(-10.9, 26.6, turrets.flankRight, { leftRotationBound: 1.18, rightRotationBound: 2.53 }))
-		this.turretSlots.add(new TurretSlot(-29.8, 15.2, turrets.backRight, { leftRotationBound: 1.33, rightRotationBound: 2.63 }))
-		this.turretSlots.add(new TurretSlot(13.2, -29.6, turrets.armLeft, { leftRotationBound: -2.52, rightRotationBound: -1.41 }))
-		this.turretSlots.add(new TurretSlot(-10.9, -26.6, turrets.flankLeft, { leftRotationBound: -2.53, rightRotationBound: -1.18 }))
-		this.turretSlots.add(new TurretSlot(-29.8, -15.2, turrets.backLeft, { leftRotationBound: -2.63, rightRotationBound: -1.33 }))
-		this.turretSlots.add(new TurretSlot(-68.6, 0, turrets.tail, { leftRotationBound: 2.55, rightRotationBound: -2.55 }))
-		this.turretSlots.add(new TurretSlot(47.5, 31.8, turrets.clawRight, { leftRotationBound: -1.22, rightRotationBound: 1.19 }))
-		this.turretSlots.add(new TurretSlot(47.5, -31.8, turrets.clawLeft, { leftRotationBound: -1.19, rightRotationBound: 1.22 }))
+		this.turretSlots.add({ x: 37.3, y: 0, turret: turrets.front, leftRotationBound: -0.77, rightRotationBound: 0.77 })
+		this.turretSlots.add({ x: 13.2, y: 29.6, turret: turrets.armRight, leftRotationBound: 1.41, rightRotationBound: 2.52 })
+		this.turretSlots.add({ x: -10.9, y: 26.6, turret: turrets.flankRight, leftRotationBound: 1.18, rightRotationBound: 2.53 })
+		this.turretSlots.add({ x: -29.8, y: 15.2, turret: turrets.backRight, leftRotationBound: 1.33, rightRotationBound: 2.63 })
+		this.turretSlots.add({ x: 13.2, y: -29.6, turret: turrets.armLeft, leftRotationBound: -2.52, rightRotationBound: -1.41 })
+		this.turretSlots.add({ x: -10.9, y: -26.6, turret: turrets.flankLeft, leftRotationBound: -2.53, rightRotationBound: -1.18 })
+		this.turretSlots.add({ x: -29.8, y: -15.2, turret: turrets.backLeft, leftRotationBound: -2.63, rightRotationBound: -1.33 })
+		this.turretSlots.add({ x: -68.6, y: 0, turret: turrets.tail, leftRotationBound: 2.55, rightRotationBound: -2.55 })
+		this.turretSlots.add({ x: 47.5, y: 31.8, turret: turrets.clawRight, leftRotationBound: -1.22, rightRotationBound: 1.19 })
+		this.turretSlots.add({ x: 47.5, y: -31.8, turret: turrets.clawLeft, leftRotationBound: -1.19, rightRotationBound: 1.22 })
 	}
 
 	draw(world) {
@@ -2125,11 +2115,11 @@ Ship.Skate = class Skate extends Ship {
 
 		const turrets = this.turrets
 
-		this.turretSlots.add(new TurretSlot(22.5, 0, turrets.front, { leftRotationBound: -0.72, rightRotationBound: 0.72 }))
-		this.turretSlots.add(new TurretSlot(15, 24.9, turrets.eyeRight, { leftRotationBound: -0.21, rightRotationBound: 1.13 }))
-		this.turretSlots.add(new TurretSlot(15, -24.9, turrets.eyeLeft, { leftRotationBound: -1.13, rightRotationBound: 0.21 }))
-		this.turretSlots.add(new TurretSlot(6.9, 51.3, turrets.wingRight, { leftRotationBound: -0.30, rightRotationBound: 1.16 }))
-		this.turretSlots.add(new TurretSlot(6.9, -51.3, turrets.wingLeft, { leftRotationBound: -1.16, rightRotationBound: 0.30 }))
+		this.turretSlots.add({ x: 22.5, y: 0, turret: turrets.front, leftRotationBound: -0.72, rightRotationBound: 0.72 })
+		this.turretSlots.add({ x: 15, y: 24.9, turret: turrets.eyeRight, leftRotationBound: -0.21, rightRotationBound: 1.13 })
+		this.turretSlots.add({ x: 15, y: -24.9, turret: turrets.eyeLeft, leftRotationBound: -1.13, rightRotationBound: 0.21 })
+		this.turretSlots.add({ x: 6.9, y: 51.3, turret: turrets.wingRight, leftRotationBound: -0.30, rightRotationBound: 1.16 })
+		this.turretSlots.add({ x: 6.9, y: -51.3, turret: turrets.wingLeft, leftRotationBound: -1.16, rightRotationBound: 0.30 })
 	}
 
 	draw(world) {
@@ -2304,7 +2294,7 @@ class RotatingMouseShipController {
 // -----------------------------------------------------------------
 
 const world = new World(canvas)
-const player = new Ship.Scorpion.YG2BDG8DH2({ transform: new Transform(200, 200, 1), target: world.input.mouseTransform, team: Team.GREEN })
+const player = new Ship.Wasp.AC1ADG8({ transform: new Transform(200, 200, 1), target: world.input.mouseTransform, team: Team.GREEN })
 
 world.add(player)
 world.add(new KeyboardShipController(player))
