@@ -3,6 +3,7 @@ const abs = Math.abs
 const sign = Math.sign
 const sin = Math.sin
 const cos = Math.cos
+const atan = Math.atan
 const atan2 = Math.atan2
 const sqrt = Math.sqrt
 const min = Math.min
@@ -2249,7 +2250,11 @@ class RotatingMouseShipController {
 	}
 
 	update(world) {
-		this.ship.acceleration.a = sign(this.ship.optimalAngleToward(this.ship.target)) * this.ship.rotationAcceleration
+		// #magicnumber
+		// @see http://graph-plotter.cours-de-math.eu
+		// f: [ -PI ; PI ] -> [ -1.1 ; 1.1 ]
+		// f(x) = atan(x * 3) * 0.7
+		this.ship.acceleration.a = this.ship.rotationAcceleration * atan(this.ship.optimalAngleToward(this.ship.target) * 3) * 0.7
 
 		if (world.input.isPressed("KeyW") || world.input.isPressed("KeyS") || world.input.isPressed("KeyD") || world.input.isPressed("KeyA")) {
 			let a = this.ship.a
@@ -2294,10 +2299,10 @@ class RotatingMouseShipController {
 // -----------------------------------------------------------------
 
 const world = new World(canvas)
-const player = new Ship.Wasp.AC1ADG8({ transform: new Transform(200, 200, 1), target: world.input.mouseTransform, team: Team.GREEN })
+const player = new Ship.Skate.MF2ADG5({ transform: new Transform(200, 200, 1), target: world.input.mouseTransform, team: Team.GREEN })
 
 world.add(player)
-world.add(new KeyboardShipController(player))
+world.add(new RotatingMouseShipController(player))
 
 world.add(new Ship.Pollen.WG1ADG1({ transform: new Transform(1060, 280, PI), target: player, team: Team.RED }).apply({ mustFire: true }))
 world.add(new Ship.Pollen.WG1BIM1({ transform: new Transform(1030, 340, PI), target: player, team: Team.RED }).apply({ mustFire: true }))
