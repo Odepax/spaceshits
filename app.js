@@ -2296,76 +2296,54 @@ class RotatingMouseShipController {
 	}
 }
 
+/**
+ * @implements {WorldObject}
+ */
+class AutomaticShipController {
+	/**
+	 * @param {Ship} ship
+	 */
+	constructor(ship) {
+		this.ship = ship
+	}
+
+	mustBeDeleted(world) {
+		return this.ship.mustBeDeleted(world)
+	}
+
+	update(world) {
+		// #magicnumber
+		// @see http://graph-plotter.cours-de-math.eu
+		// f: [ -PI ; PI ] -> [ -1.1 ; 1.1 ]
+		// f(x) = atan(x * 3) * 0.7
+		this.ship.acceleration.a = this.ship.rotationAcceleration * atan(this.ship.optimalAngleToward(this.ship.target) * 3) * 0.7
+
+		const a = this.ship.angleToward(this.ship.target.clone().relativeOffset(-100, 0))
+
+		this.ship.acceleration.x = this.ship.movementAcceleration * cos(a)
+		this.ship.acceleration.y = this.ship.movementAcceleration * sin(a)
+
+		if (this.ship.distanceToward(this.ship.target) < 400) {
+			this.ship.mustFire = true
+		} else {
+			this.ship.mustFire = false
+		}
+	}
+}
+
 // -----------------------------------------------------------------
 
 const world = new World(canvas)
-const player = new Ship.Skate.MF2ADG5({ transform: new Transform(200, 200, 1), target: world.input.mouseTransform, team: Team.GREEN })
+
+const player = new Ship.Moth.MF1ADG2({ transform: new Transform(200, 200, 1), target: world.input.mouseTransform, team: Team.BLUE })
 
 world.add(player)
 world.add(new RotatingMouseShipController(player))
 
-world.add(new Ship.Pollen.WG1ADG1({ transform: new Transform(1060, 280, PI), target: player, team: Team.RED }).apply({ mustFire: true }))
-world.add(new Ship.Pollen.WG1BIM1({ transform: new Transform(1030, 340, PI), target: player, team: Team.RED }).apply({ mustFire: true }))
-world.add(new Ship.Moth.MF1ADG2({ transform: new Transform(1000, 400, PI), target: player, team: Team.RED}).apply({ mustFire: true }))
-world.add(new Ship.Pollen.WG1BIM1({ transform: new Transform(1030, 460, PI), target: player, team: Team.RED }).apply({ mustFire: true }))
-world.add(new Ship.Pollen.WG1ADG1({ transform: new Transform(1060, 520, PI), target: player, team: Team.RED }).apply({ mustFire: true }))
+const enemy = new Ship.Pollen.WG1ADG1({ transform: new Transform(1200, 500, -2), target: player, team: Team.RED })
 
-world.add(new Core(Defaults.Core.T3.apply({ target: player, team: Team.RED })).apply({ x: 1050, y: 400 }))
-
-world.add({
-	transform: new Transform(800, 200),
-
-	get x() { return this.transform.x },
-	get y() { return this.transform.y },
-
-	beforeAdd(world) {
-		Destroyable.init(this, 100, 2)
-		Colliding.init(this, 20, 0)
-		Teamed.init(this, Team.BLUE)
-	},
-
-	mustBeDeleted(world) {
-		return Destroyable.mustBeDeleted(this, world)
-	},
-
-	update(world) {
-		Destroyable.update(this, world)
-
-		world.graphics.applyTransform(this.transform)
-
-		this.drawBlob(world)
-		this.drawHealthBar(world)
-
-		world.graphics.resetTransform()
-	},
-
-	drawBlob(world) {
-		world.graphics.beginPath()
-		world.graphics.arc(0, 0, this.collisionRadius, 0, 2 * PI)
-
-		world.graphics.strokeStyle = Color.BLUE
-		world.graphics.lineWidth = 3
-		world.graphics.stroke()
-	},
-
-	drawHealthBar(world) {
-		world.graphics.beginPath()
-		world.graphics.moveTo(-this.maxHealth / 2, this.collisionRadius + 10)
-		world.graphics.lineTo(+this.maxHealth / 2, this.collisionRadius + 10)
-
-		world.graphics.strokeStyle = Color.RED
-		world.graphics.lineWidth = 5
-		world.graphics.stroke()
-
-		world.graphics.beginPath()
-		world.graphics.moveTo(-this.maxHealth / 2, this.collisionRadius + 10)
-		world.graphics.lineTo(this.health - this.maxHealth / 2, this.collisionRadius + 10)
-
-		world.graphics.strokeStyle = Color.GREEN
-		world.graphics.lineWidth = 5
-		world.graphics.stroke()
-	}
-})
+world.add(enemy)
+world.add(new AutomaticShipController(enemy))
 
 world.run()
 
