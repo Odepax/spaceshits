@@ -2318,25 +2318,43 @@ class AutomaticShipController {
 	 */
 	constructor(ship) {
 		this.ship = ship
+		this.attackAngle = 0
+		this.attackDistance = rand(100, 200)
+		this.rotationDirection = randBetween(-1, 1) / PI
+		this.switchRotationDirection = new IndefinitelyRepeatedAction(() => {
+			if(rand(0, 1) < 0.1) {
+				this.rotationDirection *= -1
+			}
+		}, 1)
 	}
 
 	mustBeDeleted(world) {
 		return this.ship.mustBeDeleted(world)
 	}
 
+	afterAdd(world) {
+		world.add(this.switchRotationDirection)
+	}
+
+	afterDelete(world) {
+		world.delete(this.switchRotationDirection)
+	}
+
 	update(world) {
+		this.attackAngle = Angle.normalize(this.attackAngle + this.ship.rotationAcceleration * this.rotationDirection * world.timeEnlapsed)
+
 		// #magicnumber
 		// @see http://graph-plotter.cours-de-math.eu
 		// f: [ -PI ; PI ] -> [ -1.1 ; 1.1 ]
 		// f(x) = atan(x * 3) * 0.7
 		this.ship.acceleration.a = this.ship.rotationAcceleration * atan(this.ship.optimalAngleToward(this.ship.target) * 3) * 0.7
 
-		const a = this.ship.angleToward(this.ship.target.clone().relativeOffset(-100, 0))
+		const directionAngle = this.ship.angleToward(this.ship.target.clone().angularOffset(this.attackAngle, this.attackDistance))
 
-		this.ship.acceleration.x = this.ship.movementAcceleration * cos(a)
-		this.ship.acceleration.y = this.ship.movementAcceleration * sin(a)
+		this.ship.acceleration.x = this.ship.movementAcceleration * cos(directionAngle)
+		this.ship.acceleration.y = this.ship.movementAcceleration * sin(directionAngle)
 
-		if (this.ship.distanceToward(this.ship.target) < 400) {
+		if (this.ship.distanceToward(this.ship.target) < 500) {
 			this.ship.mustFire = true
 		} else {
 			this.ship.mustFire = false
