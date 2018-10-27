@@ -2366,15 +2366,59 @@ class AutomaticShipController {
 
 const world = new World(canvas)
 
-const player = new Ship.Moth.MF1ADG2({ transform: new Transform(200, 200, 1), target: world.input.mouseTransform, team: Team.BLUE })
+world.add({
+	update(world) {
+		if (world.input.wasPressed("MouseLeft")) {
+			const team = Team.BLUE
 
-world.add(player)
-world.add(new RotatingMouseShipController(player))
+			const target = randBetween(
+				...Array.from(world.objects)
+					.filter(it => it instanceof Ship && !Teamed.test(it, { team }))
+			)
 
-const enemy = new Ship.Pollen.WG1ADG1({ transform: new Transform(1200, 500, -2), target: player, team: Team.RED })
+			const shipType = randBetween(
+				Ship.Wasp.AC1ADG8,
+				Ship.Wasp.AC1BDG6IM2,
+				Ship.Wasp.AC1CDG4IM4,
+				Ship.Wasp.AC1DDG2IM6
+			)
 
-world.add(enemy)
-world.add(new AutomaticShipController(enemy))
+			world.input.mouseTransform.apply(({ x, y }) => {
+				const ship = new shipType({ transform: new Transform(x, y, rand(-PI, PI)), target, team })
+
+				world.add(ship)
+				world.add(new AutomaticShipController(ship))
+			})
+		} else if (world.input.wasPressed("MouseRight")) {
+			world.input.mouseTransform.apply(({ x, y }) => world.add(new Explosion(Defaults.Core.T3.explosion.apply({ x, y }))))
+		}
+	}
+})
+
+function randShip() {
+	return randBetween(
+		Ship.Pollen.WG1ADG1,
+		Ship.Pollen.WG1BIM1,
+		Ship.Moth.MF1ADG2,
+		Ship.Moth.MF1BIM2,
+		Ship.Scarab.XC1ADG6,
+		Ship.Scarab.XC1BDG4IM2
+	)
+}
+
+for (let i = 0; i < 7; ++i) {
+	const enemy = new (randShip())({ transform: new Transform(rand(200, 1900), rand(100, 900), rand(-PI, PI)), target: new Transform(0, 0), team: Team.RED })
+
+	world.add(enemy)
+	world.add(new AutomaticShipController(enemy))
+
+	const ally = new (randShip())({ transform: new Transform(rand(200, 1900), rand(100, 900), rand(-PI, PI)), target: enemy, team: Team.GREEN })
+
+	world.add(ally)
+	world.add(new AutomaticShipController(ally))
+
+	enemy.target = ally
+}
 
 world.run()
 
