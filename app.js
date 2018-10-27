@@ -2424,7 +2424,7 @@ world.run()
 
 if (DEBUG) {
 	world.add({
-		timeEnlaped: 0,
+		timeEnlapsed: 0,
 		records: new Map([
 			[ player.acceleration, [] ],
 			[ player.speed, [] ],
@@ -2433,14 +2433,14 @@ if (DEBUG) {
 
 		/** Debugger. */
 		update(world) {
-			this.timeEnlaped += world.timeEnlapsed
+			this.timeEnlapsed += world.timeEnlapsed
 
 			let i = 0
 
 			world.graphics.fillStyle = Color.GREEN
 			world.graphics.font = "bold 16px monospace"
 
-			world.graphics.fillText("Time: " + this.timeEnlaped, 10, 10 + 16 * ++i)
+			world.graphics.fillText("Time: " + this.timeEnlapsed, 10, 10 + 16 * ++i)
 			world.graphics.fillText("FPS: " + world.timeDelta * 1000, 10, 10 + 16 * ++i)
 			world.graphics.fillText("Objects: " + world.objects.size, 10, 10 + 16 * ++i)
 			world.graphics.fillText("Keys: " + Array.from(world.input.currentlyPressedKeys).join(", "), 10, 10 + 16 * ++i)
