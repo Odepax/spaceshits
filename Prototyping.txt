@@ -128,3 +128,170 @@ const Ship = {
 		AC1DDG2IM6: "AC1D-DG2-IM6 Wasp"
 	}
 }
+
+// GIVEN UP :: Unity3D-like Components
+// -----------------------------------------------------------------
+
+class Trait {
+	constructor(options) {
+		this.options = options
+		this.actor = null;
+	}
+
+	initialize() {}
+
+	require(traitType) {
+		const trait = new traitType()
+
+		this.actor.attach(trait)
+
+		trait.initialize() // TODO prove that it doesn't initialize two times (i.e. here and in Actor#initialize@for)
+	}
+}
+
+class Actor {
+	constructor() {
+		this.traits = new Map()
+	}
+
+	attach(trait) {
+		if (!this.traits.has(trait.constructor)) {
+			this.traits.set(trait.constructor, trait)
+
+			trait.actor = this
+		}
+	}
+
+	initialize() {
+		for (const trait of this.traits.values()) {
+			trait.initialize()
+		}
+	}
+}
+
+class Universe {
+}
+
+// -----------------------------------------------------------------
+
+const Lifecycle = {
+	initialize: Symbol("@@initialize"),
+	add: Symbol("@@add"),
+	update: Symbol("@@update"),
+	remove: Symbol("@@remove")
+}
+
+const second = 1000
+const seconds = 1000
+
+class Explosion extends Container {
+	[Lifecycle.initialize](context, { x = 0, y = 0, radius = 0 } = {}) {
+		this.add(Transform, { x, y })
+		this.add(Collision, { radius })
+		this.add(ExplosionRender)
+	}
+}
+
+context.new(Explosion, { x: 200, y: 200, radius: 90 })
+
+class Transform extends Component {
+	[Lifecycle.initialize](context, { x = 0, y = 0, a = 0 } = {}) {
+		this.x = x
+		this.y = y
+		this.a = a
+	}
+}
+
+class Ephemeral extends Component {
+	[Lifecycle.initialize](context, { ttl = 1 * second } = {}) {
+		this.lifeTime = ttl
+		this.remainingTime = ttl
+	}
+
+	[Lifecycle.update](context) {
+		this.remainingTime -= context.timeEnlapsed
+
+		if (this.remainingTime <= 0) {
+			context.remove(this)
+		}
+	}
+}
+
+class ExplosionRender extends Component {
+	[Lifecycle.initialize](context) {
+		this.require(Transform)
+		this.require(Ephemeral)
+		this.require(Collision)
+	}
+
+	[Lifecycle.add](context) {
+		this.ephemeral = this.container.components.get(Ephemeral)
+		this.transform = this.container.components.get(Transform)
+		this.collision = this.container.components.get(Collision)
+	}
+
+	[Lifecycle.update](context) {
+		context.graphics.drawCircle({
+			x: this.transform.x,
+			y: this.transform.y,
+			r: this.collision.radius,
+			fill: Color.yellow,
+			opacity: 1 - this.ephemeral.remainingTime / this.ephemeral.lifeTime
+		})
+	}
+}
+
+class Container {
+	constructor() {
+		this.components = new Map()
+	}
+
+	add(componentType, componentConfiguration) {
+		this.components.set(componentType, componentConfiguration)
+	}
+
+	[Lifecycle.add](context) {
+		for (const [ componentType, componentConfiguration ] of this.components) {
+			this.resolve(new componentType())
+		}
+
+		for (const component of this.components) {
+			context.add(component)
+		}
+	}
+
+	resolve(component) {
+		for (const dependencyType of component.dependencies) {
+			if (!this.components.has(dependencyType)) {
+				const dependency = new dependencyType()
+
+				this.resolve(dependency)
+			}
+		}
+
+		component.container = this
+
+		this.components.set(component.constructor, component)
+	}
+}
+
+class Component {
+	constructor() {
+		this.container = null
+		this.dependencies = new Set() // Set<Type<T>>
+	}
+	require(dependencyType) {
+		this.dependencies.add(dependencyType)
+	}
+	attachToContainer(container) {
+		this.container = container
+	}
+	detachFromContainer() {
+		this.container = null
+	}
+
+	[Lifecycle.initialize](context) {}
+	[Lifecycle.add](context) {}
+	[Lifecycle.update](context) {}
+	[Lifecycle.remove](context) {}
+}
