@@ -1617,6 +1617,19 @@ class Ship extends Transform {
 		this.mustFire = false
 	}
 
+	get target() { return this._target }
+	set target(value) {
+		this._target = value
+
+		if (this.turretSlots) for (const slot of this.turretSlots) {
+			slot.turret.target = value
+		}
+
+		if (this.core) {
+			this.core.target = value
+		}
+	}
+
 	afterAdd(world) {
 		world.add(this.core)
 
