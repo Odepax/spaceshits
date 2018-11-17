@@ -129,169 +129,279 @@ const Ship = {
 	}
 }
 
-// GIVEN UP :: Unity3D-like Components
+// Unity3D-lik-ish Components
 // -----------------------------------------------------------------
 
-class Trait {
-	constructor(options) {
-		this.options = options
-		this.actor = null;
+const Hook = {
+	afterUniverseInstanciatesActor: Symbol("[Hook:Actor]: 'After a universe instanciates an actor'"),
+	beforeUniverseAddsActor: Symbol("[Hook:Actor]: 'Before a universe adds an actor'"),
+	beforeUniverseAddsTrait: Symbol("[Hook:Trait]: 'Before a universe adds a trait'"),
+	afterUniverseAddsTrait: Symbol("[Hook:Trait]: 'After a universe adds a trait'"),
+	afterUniverseAddsActor: Symbol("[Hook:Actor]: 'After a universe adds an actor'"),
+	afterActorInstantiatesTrait: Symbol("[Hook:Trait]: 'After an actor instantiates a trait'"),
+	beforeActorAddsTrait: Symbol("[Hook:Trait]: 'Before an actor adds a trait'"),
+	afterActorAddsTrait: Symbol("[Hook:Trait]: 'After an actor adds a trait'"),
+	afterUniverseUpdatesTrait: Symbol("[Hook:Trait]: 'After a universe updates a trait'"),
+	beforeUniverseRemovesActor: Symbol("[Hook:Actor]: 'Before a universe removes an actor'"),
+	beforeUniverseRemovesTrait: Symbol("[Hook:Trait]: 'Before a universe removes a trait'"),
+	afterUniverseRemovesTrait: Symbol("[Hook:Trait]: 'After a universe removes a trait'"),
+	afterUniverseRemovesActor: Symbol("[Hook:Actor]: 'After a universe removes an actor'")
+}
+
+class Universe {
+	constructor() {
+		this.actors = new Set()
+		this.traits = new Set()
 	}
-
-	initialize() {}
-
-	require(traitType) {
-		const trait = new traitType()
-
-		this.actor.attach(trait)
-
-		trait.initialize() // TODO prove that it doesn't initialize two times (i.e. here and in Actor#initialize@for)
+	add(actorConstructor, ...actorParameters) {
+		const actor = new actorConstructor(this)
+		actor[Hook.afterUniverseInstanciatesActor](...actorParameters)
+		actor[Hook.beforeUniverseAddsActor]()
+		for (const trait of actor.traits) {
+			trait[Hook.beforeUniverseAddsTrait]()
+			this.traits.add(trait)
+			trait[Hook.afterUniverseAddsTrait]()
+		}
+		this.actors.add(actor)
+		actor[Hook.afterUniverseAddsActor]()
+		return actor
+	}
+	remove(actor) {
+		if (this.actors.has(actor)) {
+			actor[Hook.beforeUniverseRemovesActor]()
+			for (const trait of actor.traits) {
+				trait[Hook.beforeUniverseRemovesTrait]()
+				this.traits.delete(trait)
+				trait[Hook.afterUniverseRemovesTrait]()
+			}
+			this.actors.delete(actor)
+			actor[Hook.afterUniverseRemovesActor]()
+		}
+	}
+	update() {
+		for (const trait of this.traits) {
+			trait[Hook.afterUniverseUpdatesTrait]
+		}
 	}
 }
 
 class Actor {
-	constructor() {
+	constructor(universe) {
+		this.universe = universe
 		this.traits = new Map()
 	}
-
-	attach(trait) {
-		if (!this.traits.has(trait.constructor)) {
-			this.traits.set(trait.constructor, trait)
-
-			trait.actor = this
+	add(traitConstructor, ...traitParameters) {
+		if (!this.traits.has(traitConstructor)) {
+			const trait = new traitConstructor(this)
+			trait[Hook.afterActorInstantiatesTrait](...traitParameters)
+			trait[Hook.beforeActorAddsTrait]()
+			this.traits.set(traitConstructor, trait)
+			trait[Hook.afterActorAddsTrait]()
+			return trait
 		}
 	}
+	get(traitConstructor) {
+		return this.traits.get(traitConstructor)
+	}
+	onInitialize() {}
+	onAdding() {}
+	onAdded() {}
+	[Hook.afterUniverseInstanciatesActor]() { this.onInitialize(...arguments) }
+	[Hook.beforeUniverseAddsActor]() { this.onAdding() }
+	[Hook.afterUniverseAddsActor]() { this.onAdded() }
+	[Hook.beforeUniverseRemovesActor]() {}
+	[Hook.afterUniverseRemovesActor]() {}
+}
 
-	initialize() {
-		for (const trait of this.traits.values()) {
-			trait.initialize()
+class Trait {
+	constructor(actor) {
+		this.actor = actor
+		this.universe = actor.universe
+	}
+	onInitialize() {}
+	onAdding() {}
+	onAdded() {}
+	onUpdate() {}
+	onRemoving() {}
+	onRemoved() {}
+	[Hook.afterActorInstantiatesTrait]() { this.onInitialize(...arguments) }
+	[Hook.beforeActorAddsTrait]() {}
+	[Hook.afterActorAddsTrait]() {}
+	[Hook.beforeUniverseAddsTrait]() { this.onAdding() }
+	[Hook.afterUniverseAddsTrait]() { this.onAdded() }
+	[Hook.beforeUniverseRemovesTrait]() {}
+	[Hook.afterUniverseRemovesTrait]() { this.onRemoved() }
+	[Hook.afterUniverseUpdatesTrait]() {
+		this.onUpdate()
+		if (this.onRemoving()) {
+			this.universe.remove(this.actor)
 		}
 	}
 }
 
-class Universe {
-}
-
-// -----------------------------------------------------------------
-
-const Lifecycle = {
-	initialize: Symbol("@@initialize"),
-	add: Symbol("@@add"),
-	update: Symbol("@@update"),
-	remove: Symbol("@@remove")
-}
-
-const second = 1000
-const seconds = 1000
-
-class Explosion extends Container {
-	[Lifecycle.initialize](context, { x = 0, y = 0, radius = 0 } = {}) {
-		this.add(Transform, { x, y })
-		this.add(Collision, { radius })
-		this.add(ExplosionRender)
-	}
-}
-
-context.new(Explosion, { x: 200, y: 200, radius: 90 })
-
-class Transform extends Component {
-	[Lifecycle.initialize](context, { x = 0, y = 0, a = 0 } = {}) {
+class Transform extends Trait {
+	onInitialize(x, y, angle) {
 		this.x = x
 		this.y = y
-		this.a = a
+		this.angle = angle
 	}
 }
 
-class Ephemeral extends Component {
-	[Lifecycle.initialize](context, { ttl = 1 * second } = {}) {
-		this.lifeTime = ttl
-		this.remainingTime = ttl
+class Ephemeral extends Trait {
+	onInitialize(lifeTime) {
+		this.lifeTime = lifeTime
+		this.remainingLifeTime = lifeTime
 	}
-
-	[Lifecycle.update](context) {
-		this.remainingTime -= context.timeEnlapsed
-
-		if (this.remainingTime <= 0) {
-			context.remove(this)
-		}
+	onUpdate() {
+		this.remainingLifeTime -= TIME_ENLAPSED
+	}
+	onRemoving() {
+		return this.remainingLifeTime < 0
 	}
 }
 
-class ExplosionRender extends Component {
-	[Lifecycle.initialize](context) {
-		this.require(Transform)
-		this.require(Ephemeral)
-		this.require(Collision)
+class Destructible extends Trait {
+	onInitialize(health, healthRegeneration = 0) {
+		this.health = health
+		this.maxHealth = health
+		this.healthRegeneration = healthRegeneration
 	}
-
-	[Lifecycle.add](context) {
-		this.ephemeral = this.container.components.get(Ephemeral)
-		this.transform = this.container.components.get(Transform)
-		this.collision = this.container.components.get(Collision)
+	onUpdate() {
+		if (this.health < this.maxHealth) {
+			this.health += this.healthRegeneration * TIME_ENLAPSED
+		}
 	}
-
-	[Lifecycle.update](context) {
-		context.graphics.drawCircle({
-			x: this.transform.x,
-			y: this.transform.y,
-			r: this.collision.radius,
-			fill: Color.yellow,
-			opacity: 1 - this.ephemeral.remainingTime / this.ephemeral.lifeTime
-		})
+	onRemoving() {
+		return this.health < 0
 	}
 }
 
-class Container {
-	constructor() {
-		this.components = new Map()
+class Movement extends Trait {
+	onInitialize(speed = new Force(0, 0), acceleration = new Force(0, 0), friction = new Friction()) {
+		this.transform = this.actor.get(Transform)
+		this.speed = speed
+		this.acceleration = acceleration
+		this.friction = friction
 	}
-
-	add(componentType, componentConfiguration) {
-		this.components.set(componentType, componentConfiguration)
+	onUpdate() {
+		this.acceleration.drive(this.speed)
+		this.friction.updateFrom(this.speed)
+		this.friction.drive(this.speed)
+		this.speed.drive(this.transform)
 	}
+}
 
-	[Lifecycle.add](context) {
-		for (const [ componentType, componentConfiguration ] of this.components) {
-			this.resolve(new componentType())
-		}
-
-		for (const component of this.components) {
-			context.add(component)
-		}
+class LinearMovement extends Trait {
+	onInitialize(speedX, speedY) {
+		this.transform = this.actor.get(Transform)
+		this.speedX = speedX
+		this.speedY = speedY
 	}
+	onUpdate() {
+		this.transform.offset(this.speedX * TIME_ENLAPSED, this.speedY * TIME_ENLAPSED)
+	}
+}
 
-	resolve(component) {
-		for (const dependencyType of component.dependencies) {
-			if (!this.components.has(dependencyType)) {
-				const dependency = new dependencyType()
+class AngularLinearMovement extends LinearMovement {
+	onInitialize(angle, speed) {
+		super.onInitialize(cos(angle) * speed, sin(angle) * speed)
+	}
+}
 
-				this.resolve(dependency)
+class Collision = {
+	onInitialize(collisionRadius, collisionDamage = 0) {
+		this.collisionRadius = collisionRadius
+		this.collisionDamage = collisionDamage
+	}
+	collidesWith(other) {
+		return this.distanceToward(other) < this.collisionRadius + other.collisionRadius
+	}
+	collidesWithAny(others) {
+		for (const other of others) {
+			if (this.collidesWith(other)) {
+				return true
 			}
 		}
-
-		component.container = this
-
-		this.components.set(component.constructor, component)
+		return false
 	}
 }
 
-class Component {
-	constructor() {
-		this.container = null
-		this.dependencies = new Set() // Set<Type<T>>
+class TeamMember extends Trait {
+	onInitialize(team = null) {
+		this.team = team
 	}
-	require(dependencyType) {
-		this.dependencies.add(dependencyType)
+	isMateWith(other) {
+		return other.team && this.team == other.team
 	}
-	attachToContainer(container) {
-		this.container = container
+	findHostilesAmongst(others) {
+		const result = new Set()
+		for (const other of others) {
+			if (!this.isMateWith(other)) {
+				result.add(other)
+			}
+		}
+		return result
 	}
-	detachFromContainer() {
-		this.container = null
-	}
-
-	[Lifecycle.initialize](context) {}
-	[Lifecycle.add](context) {}
-	[Lifecycle.update](context) {}
-	[Lifecycle.remove](context) {}
 }
+
+class Ship extends Actor {
+	onInitialize(x, y, team) {
+		this.add(Transform, x, y, PI / 3)
+		this.add(Destructible, 500)
+		this.add(Movement)
+		this.add(TeamMember, team)
+	}
+}
+const shipUniverse = new Universe()
+shipUniverse.add(Ship, 125, 240, Team.BLUE)
+// -----------------------------------------------------------------
+// hookbeforeadd() { return this.onAdding() !== false }
+// Poll.actorBehaviorTraits
+// Poll.actorAddOnlyTraits
+// Poll.actorRemoveOnlyTraits
+// Poll.traitIsBehavior
+// Poll.traitIsAddOnly
+// Poll.traitIsRemoveOnly
+// -----------------------------------------------------------------
+class Actor {
+	constructor(universe) {
+		this.traits = new WeakSet()
+	}
+	add(traitConstructor, ...traitParameters) {
+		let trait
+		if (traitConstructor === Trait || traitConstructor.prototype instanceof Trait) {
+			trait = new traitConstructor(this)
+			trait.onInitialize(...traitParameters)
+			this.traits.add(trait)
+		} else {
+			trait = new traitConstructor(...traitParameters)
+		}
+		this[traitConstructor.name] = trait
+	}
+	// Does it have a remove ? No, it doesn't.
+}
+
+class Ship extends Actor {
+	onInitialize() {
+		const rotation = rand(-PI, PI)
+		this.add(Transform, 120, 120, rotation)
+		this.add(Movement, rotation)
+	}
+}
+
+class Transform {
+	constructor(x = 0, y = 0, angle = 0) {
+		this.x = x
+		this.y = y
+		this.angle = angle
+	}
+}
+
+class Movement extends Trait {
+	onInitialize(direction = 0) {
+		const transform = this.actor.Transform
+		this.direction = direction
+		this.applyTo(transform)
+	}
+}
+
