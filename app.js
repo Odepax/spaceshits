@@ -1,6 +1,6 @@
 const Angle = {
 	normalize(angle) {
-		while (angle > +PI) angle -= 2 * PI
+		while (+PI < angle) angle -= 2 * PI
 		while (angle < -PI) angle += 2 * PI
 
 		return angle
@@ -296,7 +296,7 @@ class Destroyable extends Trait {
 	}
 }
 
-class Collider extends Trait {
+class Collision extends Trait {
 	onInitialize(collisionRadius, collisionDamage = 0) {
 		this.collisionRadius = collisionRadius
 		this.collisionDamage = collisionDamage
@@ -393,6 +393,38 @@ class CanvasErasing extends Trait {
 	}
 }
 
+class DraftShipCanvasRender extends Trait {
+	onInitialize(graphics) {
+		this.graphics = graphics
+
+		this.path = new Path2D().apply(path => {
+			path.moveTo(-13.8, 7.4)
+			path.lineTo(-4.8, 9.9)
+			path.lineTo(-10.2, 30)
+			path.lineTo(4.8, 30)
+			path.lineTo(6.2, 24.9)
+			path.bezierCurveTo(-3, 22.8, -0.3, 8.8, 9.8, 11.5)
+			path.lineTo(12.8, 0)
+			path.lineTo(9.8, -11.5)
+			path.bezierCurveTo(-0.3, -8.8, -3, -22.8, 6.2, -24.9)
+			path.lineTo(4.8, -30)
+			path.lineTo(-10.2, -30)
+			path.lineTo(-4.8, -9.9)
+			path.lineTo(-13.8, -7.4)
+			path.closePath()
+		})
+	}
+
+	onUpdate() {
+		this.graphics.applyTransform(this.link.Transform)
+
+		this.graphics.fillStyle = WHITE
+		this.graphics.fill(this.path)
+		
+		this.graphics.resetTransform()
+	}
+}
+
 // -----------------------------------------------------------------
 
 class InteractionLogging extends Trait {
@@ -411,10 +443,74 @@ class InteractionLogging extends Trait {
 		this.graphics.font = "12pt Source Code Pro"
 		
 		let i = 0
-		this.graphics.fillText(`Mouse Position ........... ( ${mousePosition.x}, ${mousePosition.y} )`, 50, 50 + ++i * 25)
+		this.graphics.fillText(`Mouse position ........... ( ${mousePosition.x}, ${mousePosition.y} )`, 50, 50 + ++i * 25)
 		this.graphics.fillText(`Currently pressed keys ... ${currentlyPressedKeys}`, 50, 50 + ++i * 25)
 		this.graphics.fillText(`Recently pressed keys .... ${pressedKeys}`, 50, 50 + ++i * 25)
 		this.graphics.fillText(`Recently released keys ... ${releasedKeys}`, 50, 50 + ++i * 25)
+		this.graphics.fillText(`Last universe tick ....... ${this.universe.tickTime}`, 50, 50 + ++i * 25)
+	}
+}
+
+class PlayerMovementController extends Trait {
+	onInitialize(userInteraction, movementAcceleration, rotationAcceleration) {
+		this.userInteraction = userInteraction
+
+		this.movementAcceleration = movementAcceleration
+		this.rotationAcceleration = rotationAcceleration
+	}
+
+	onUpdate() {
+		const targetPosition = this.userInteraction.mousePosition
+		const shipPosition = this.link.Transform
+		const shipAcceleration = this.link.ForceBasedMovement.acceleration
+
+		shipPosition.a = shipPosition.angleToward(targetPosition)
+
+		const wIsPressed = this.userInteraction.isPressed("KeyW")
+		const sIsPressed = this.userInteraction.isPressed("KeyS")
+		const dIsPressed = this.userInteraction.isPressed("KeyD")
+		const aIsPressed = this.userInteraction.isPressed("KeyA")
+
+		if (wIsPressed || sIsPressed || dIsPressed || aIsPressed) {
+			let movementAccelerationAngle = - PI / 2
+
+			if (sIsPressed) movementAccelerationAngle += PI
+
+			if (dIsPressed) {
+				     if (wIsPressed) movementAccelerationAngle += PI / 4
+				else if (sIsPressed) movementAccelerationAngle -= PI / 4
+				else                 movementAccelerationAngle += PI / 2
+			} else if (aIsPressed) {
+				     if (wIsPressed) movementAccelerationAngle -= PI / 4
+				else if (sIsPressed) movementAccelerationAngle += PI / 4
+				else                 movementAccelerationAngle -= PI / 2
+			}
+
+			shipAcceleration.x = this.movementAcceleration * cos(movementAccelerationAngle)
+			shipAcceleration.y = this.movementAcceleration * sin(movementAccelerationAngle)
+		} else {
+			shipAcceleration.x = 0
+			shipAcceleration.y = 0
+		}
+	}
+}
+
+class PlayerBounceOnScreenEdges extends Trait {
+	onInitialize(screenWidth, screenHeight, speedFactorAfterBounce = 0.5) {
+		this.screenWidth = screenWidth
+		this.screenHeight = screenHeight
+		this.speedFactorAfterBounce = speedFactorAfterBounce
+	}
+
+	onUpdate() {
+		const shipPosition = this.link.Transform
+		const shipSpeed = this.link.ForceBasedMovement.speed
+
+		     if (shipPosition.y < 0)                 { shipPosition.y = 0                 ; shipSpeed.y *= -this.speedFactorAfterBounce }
+		else if (this.screenHeight < shipPosition.y) { shipPosition.y = this.screenHeight ; shipSpeed.y *= -this.speedFactorAfterBounce }
+
+		     if (shipPosition.x < 0)                { shipPosition.x = 0                ; shipSpeed.x *= -this.speedFactorAfterBounce }
+		else if (this.screenWidth < shipPosition.x) { shipPosition.x = this.screenWidth ; shipSpeed.x *= -this.speedFactorAfterBounce }
 	}
 }
 
@@ -440,5 +536,15 @@ const userInteractor = universe.add(class UserInteractor extends Link {
 const interactionLogger = universe.add(class InteractionLogger extends Link {
 	onInitialize() {
 		this.add(InteractionLogging, userInteractor.UserInteraction, graphics)
+	}
+})
+
+const player = universe.add(class Player extends Link {
+	onInitialize() {
+		this.add(Transform, 250, 250)
+		this.add(ForceBasedMovement)
+		this.add(PlayerMovementController, userInteractor.UserInteraction, 600)
+		this.add(DraftShipCanvasRender, graphics)
+		this.add(PlayerBounceOnScreenEdges, canvas.width, canvas.height)
 	}
 })

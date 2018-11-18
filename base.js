@@ -21,12 +21,12 @@ const GREY = "gray"
 const DARK = "darkslategray"
 const BLACK = "black"
 
-const MILLI_SECOND = 1
-const MILLI_SECONDS = 1
-const SECOND = 1000
-const SECONDS = 1000
-const MINUTE = 60000
-const MINUTES = 60000
+const MILLI_SECOND = 0.001
+const MILLI_SECONDS = 0.001
+const SECOND = 1
+const SECONDS = 1
+const MINUTE = 60
+const MINUTES = 60
 
 const PI = Math.PI
 const abs = Math.abs
@@ -105,17 +105,18 @@ CanvasRenderingContext2D.prototype.resetTransform = function resetTransform() {
 // -----------------------------------------------------------------
 
 const Hook = {
-	afterClockTicks: Symbol("[Hook:Universe]: 'After a universe lives a cycle'"),
-	afterUniverseInstanciatesLink: Symbol("[Hook:Link]: 'After a universe instanciates an link'"),
-	afterLinkInstantiatesTrait: Symbol("[Hook:Trait]: 'After an link instantiates a trait'"),
-	beforeUniverseAddsTrait: Symbol("[Hook:Trait]: 'Before a universe adds a trait'"),
-	afterUniverseAddsTrait: Symbol("[Hook:Trait]: 'After a universe adds a trait'"),
-	afterUniverseUpdatesTrait: Symbol("[Hook:Trait]: 'After a universe updates a trait'"),
-	afterUniverseRemovesTrait: Symbol("[Hook:Trait]: 'After a universe removes a trait'"),
+	afterClockTicks: Symbol("Hook/Universe: After a universe lives a cycle"),
+	afterUniverseInstanciatesLink: Symbol("Hook/Link: After a universe instanciates an link"),
+	afterLinkInstantiatesTrait: Symbol("Hook/Trait: After an link instantiates a trait"),
+	beforeUniverseAddsTrait: Symbol("Hook/Trait: Before a universe adds a trait"),
+	afterUniverseAddsTrait: Symbol("Hook/Trait: After a universe adds a trait"),
+	afterUniverseUpdatesTrait: Symbol("Hook/Trait: After a universe updates a trait"),
+	afterUniverseRemovesTrait: Symbol("Hook/Trait: After a universe removes a trait"),
 }
 
 const Poll = {
-	traitHasBehavior: Symbol("[Poll:Trait]: 'Determines if a trait has update or removal hooks'")
+	traitHasBehavior: Symbol("Poll/Trait: Determines if a trait has update or removal hooks"),
+	lastUniverseTimestamp: Symbol("Poll/Universe: Gets the last timestamp in milli-seconds")
 }
 
 class Universe {
@@ -124,8 +125,9 @@ class Universe {
 		this.traits = new Set()
 
 		this.isRunning = false
-		this.timestamp = 0
 		this.tickTime = 0
+
+		this[Poll.lastUniverseTimestamp] = 0
 	}
 
 	add(linkConstructor, ...linkParameters) {
@@ -258,7 +260,7 @@ class Universe {
 		this.isRunning = true
 
 		requestAnimationFrame(timestamp => {
-			this.timestamp = timestamp
+			this[Poll.lastUniverseTimestamp] = timestamp
 
 			requestAnimationFrame(timestamp => this[Hook.afterClockTicks](timestamp))
 		})
@@ -269,8 +271,8 @@ class Universe {
 	}
 
 	[Hook.afterClockTicks](timestamp) {
-		this.tickTime = timestamp - this.timestamp
-		this.timestamp = timestamp
+		this.tickTime = (timestamp - this[Poll.lastUniverseTimestamp]) * MILLI_SECONDS
+		this[Poll.lastUniverseTimestamp] = timestamp
 
 		this.update()
 
