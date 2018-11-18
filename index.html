@@ -46,14 +46,6 @@
 	<body>
 		<canvas id="canvas" tabindex="1"></canvas>
 		<script>
-			let _logCount = 500
-			function log() {
-				if (--_logCount > 0) {
-					console.log(...arguments)
-				}
-			}
-		</script>
-		<script>
 			const DEBUG = location.search.includes("debug=true")
 			const canvas = document.getElementById("canvas")
 
@@ -62,26 +54,11 @@
 				canvas.height = window.innerHeight 
 			}, false)
 
+			canvas.focus()
+
 			window.dispatchEvent(new Event("resize"))
 		</script>
-		<script>
-			/**
-			 * @param {Object} transform
-			 * @param {Number} transform.x
-			 * @param {Number} transform.y
-			 * @param {Number} transform.a
-			 * @param {Boolean} rotate
-			 */
-			CanvasRenderingContext2D.prototype.applyTransform = function applyTransform(transform, rotate = true) {
-				this.translate(transform.x, transform.y)
-
-				rotate && this.rotate(transform.a)
-			}
-
-			CanvasRenderingContext2D.prototype.resetTransform = function resetTransform() {
-				this.setTransform(1, 0, 0, 1, 0, 0)
-			}
-		</script>
+		<script src="base.js"></script>
 		<script src="app.js"></script>
 		<script>
 			if (DEBUG) {
