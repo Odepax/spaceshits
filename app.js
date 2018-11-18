@@ -447,7 +447,7 @@ class InteractionLogging extends Trait {
 		this.graphics.fillText(`Currently pressed keys ... ${currentlyPressedKeys}`, 50, 50 + ++i * 25)
 		this.graphics.fillText(`Recently pressed keys .... ${pressedKeys}`, 50, 50 + ++i * 25)
 		this.graphics.fillText(`Recently released keys ... ${releasedKeys}`, 50, 50 + ++i * 25)
-		this.graphics.fillText(`Last universe tick ....... ${this.universe.tickTime}`, 50, 50 + ++i * 25)
+		this.graphics.fillText(`Last universe tick was ... ${this.universe.tickTime}`, 50, 50 + ++i * 25)
 	}
 }
 
@@ -495,10 +495,9 @@ class PlayerMovementController extends Trait {
 	}
 }
 
-class PlayerBounceOnScreenEdges extends Trait {
-	onInitialize(screenWidth, screenHeight, speedFactorAfterBounce = 0.5) {
-		this.screenWidth = screenWidth
-		this.screenHeight = screenHeight
+class PlayerBounceOnCanvasEdges extends Trait {
+	onInitialize(canvas, speedFactorAfterBounce = 0.5) {
+		this.canvas = canvas
 		this.speedFactorAfterBounce = speedFactorAfterBounce
 	}
 
@@ -506,11 +505,11 @@ class PlayerBounceOnScreenEdges extends Trait {
 		const shipPosition = this.link.Transform
 		const shipSpeed = this.link.ForceBasedMovement.speed
 
-		     if (shipPosition.y < 0)                 { shipPosition.y = 0                 ; shipSpeed.y *= -this.speedFactorAfterBounce }
-		else if (this.screenHeight < shipPosition.y) { shipPosition.y = this.screenHeight ; shipSpeed.y *= -this.speedFactorAfterBounce }
+		     if (shipPosition.y < 0)                  { shipPosition.y = 0                  ; shipSpeed.y *= -this.speedFactorAfterBounce }
+		else if (this.canvas.height < shipPosition.y) { shipPosition.y = this.canvas.height ; shipSpeed.y *= -this.speedFactorAfterBounce }
 
-		     if (shipPosition.x < 0)                { shipPosition.x = 0                ; shipSpeed.x *= -this.speedFactorAfterBounce }
-		else if (this.screenWidth < shipPosition.x) { shipPosition.x = this.screenWidth ; shipSpeed.x *= -this.speedFactorAfterBounce }
+		     if (shipPosition.x < 0)                 { shipPosition.x = 0                 ; shipSpeed.x *= -this.speedFactorAfterBounce }
+		else if (this.canvas.width < shipPosition.x) { shipPosition.x = this.canvas.width ; shipSpeed.x *= -this.speedFactorAfterBounce }
 	}
 }
 
@@ -545,6 +544,6 @@ const player = universe.add(class Player extends Link {
 		this.add(ForceBasedMovement)
 		this.add(PlayerMovementController, userInteractor.UserInteraction, 600)
 		this.add(DraftShipCanvasRender, graphics)
-		this.add(PlayerBounceOnScreenEdges, canvas.width, canvas.height)
+		this.add(PlayerBounceOnCanvasEdges, canvas)
 	}
 })
