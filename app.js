@@ -44,18 +44,6 @@ class Transform {
 		return atan2(target.y - this.y, target.x - this.x)
 	}
 
-	optimalAngleTo(angle) {
-		return Angle.optimalAngleBetween(this.a, angle)
-	}
-
-	leftAngleTo(angle) {
-		return Angle.leftAngleBetween(this.a, angle)
-	}
-
-	rightAngleTo(angle) {
-		return Angle.rightAngleBetween(this.a, angle)
-	}
-
 	optimalAngleToward(target) {
 		return this.optimalAngleTo(this.angleToward(target))
 	}
@@ -100,24 +88,6 @@ class Transform {
 	relativeAngularOffset(angle, distance, base = this) {
 		this.x = base.x + cos(base.a + angle) * distance
 		this.y = base.y + sin(base.a + angle) * distance
-
-		return this
-	}
-
-	rotateLike(angle) {
-		this.a = angle
-
-		return this
-	}
-
-	rotateBy(angle) {
-		this.a += angle
-
-		return this
-	}
-
-	rotateToward(target) {
-		this.a = this.angleToward(target)
 
 		return this
 	}
