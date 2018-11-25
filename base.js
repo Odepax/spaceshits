@@ -40,6 +40,7 @@ const ceil = Math.ceil
 const round = Math.round
 const min = Math.min
 const max = Math.max
+const square = x => x * x
 
 function absMin(a, b) {
 	return abs(a) < abs(b) ? a : b
@@ -92,10 +93,10 @@ Node.prototype.appendChildren = function appendChildren(htmlCollection) {
 	return htmlCollection
 }
 
-CanvasRenderingContext2D.prototype.applyTransform = function applyTransform(transform, rotate = true) {
-	this.translate(transform.x, transform.y)
+CanvasRenderingContext2D.prototype.applyTransform = function applyTransform({ x, y, a = 0 }, rotate = true) {
+	this.translate(x, y)
 
-	rotate && this.rotate(transform.a)
+	rotate && this.rotate(a)
 }
 
 CanvasRenderingContext2D.prototype.resetTransform = function resetTransform() {
@@ -149,7 +150,6 @@ class Universe {
 
 		this.links.add(link)
 
-
 		return link
 	}
 
@@ -162,7 +162,6 @@ class Universe {
 			}
 
 			this.links.delete(link)
-
 		}
 	}
 
