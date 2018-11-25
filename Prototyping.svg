@@ -87,8 +87,8 @@
  inkscape:pageopacity="0"
  inkscape:pageshadow="2"
  inkscape:zoom="1"
- inkscape:cx="822.87"
- inkscape:cy="874.23"
+ inkscape:cx="917.53"
+ inkscape:cy="924.52"
  inkscape:document-units="px"
  inkscape:current-layer="layer1"
  showgrid="false"
@@ -119,7 +119,7 @@
 <dc:format>image/svg+xml</dc:format>
 <dc:type
  rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-<dc:title></dc:title>
+<dc:title />
 </cc:Work>
 </rdf:RDF>
 </metadata>
@@ -3303,5 +3303,219 @@
  id="rect2392"
  style="fill:#dc143c;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;paint-order:fill markers stroke"
  transform="scale(-1,1)" />
+<rect
+ style="fill:#000000;stroke-width:1.99996;stroke-linecap:round;stroke-linejoin:round;paint-order:fill markers stroke"
+ id="rect1296"
+ width="41.259"
+ height="41.402"
+ x="974.11"
+ y="178.88" />
+<rect
+ y="180.26"
+ x="975.49"
+ height="38.654"
+ width="38.52"
+ id="rect1298"
+ style="fill:#2f4f4f;stroke-width:1.99998;stroke-linecap:round;stroke-linejoin:round;paint-order:fill markers stroke" />
+<text
+ xml:space="preserve"
+ style="font-size:16px;line-height:140%;font-family:'Source Sans Pro';-inkscape-font-specification:'Source Sans Pro';fill:#000000;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;paint-order:fill markers stroke"
+ x="951.43"
+ y="251.28"
+ id="text1352"><tspan
+ sodipodi:role="line"
+ id="tspan1350"
+ x="951.43"
+ y="251.28">=&gt;</tspan></text>
+<path
+ style="fill:#000000;stroke-width:1.99996;stroke-linecap:round;stroke-linejoin:round;paint-order:fill markers stroke"
+ d="m 1015.4,204.57 v 15.71 h -15.68 z"
+ id="rect1382"
+ inkscape:connector-curvature="0"
+ sodipodi:nodetypes="cccc" />
+<path
+ sodipodi:nodetypes="cccc"
+ inkscape:connector-curvature="0"
+ id="path1415"
+ d="m 1014,208.01 v 10.9 h -10.9 z"
+ style="fill:#ffd700;stroke-width:1.99998;stroke-linecap:round;stroke-linejoin:round;paint-order:fill markers stroke" />
+<path
+ style="fill:#dc143c;stroke-width:1.99995;stroke-linecap:round;stroke-linejoin:round;paint-order:fill markers stroke"
+ d="m 1012.7,211.67 v 5.9 h -5.9 z"
+ id="path1417"
+ inkscape:connector-curvature="0"
+ sodipodi:nodetypes="cccc" />
+<rect
+ y="226.33"
+ x="974.11"
+ height="41.402"
+ width="41.259"
+ id="rect1421"
+ style="fill:#000000;stroke-width:1.99996;stroke-linecap:round;stroke-linejoin:round;paint-order:fill markers stroke" />
+<rect
+ style="fill:#2f4f4f;stroke-width:1.99998;stroke-linecap:round;stroke-linejoin:round;paint-order:fill markers stroke"
+ id="rect1423"
+ width="38.52"
+ height="38.654"
+ x="975.49"
+ y="227.71" />
+<path
+ sodipodi:nodetypes="cccc"
+ inkscape:connector-curvature="0"
+ id="path1425"
+ d="m 1015.4,252.02 v 15.71 h -15.68 z"
+ style="fill:#000000;stroke-width:1.99996;stroke-linecap:round;stroke-linejoin:round;paint-order:fill markers stroke" />
+<path
+ style="fill:#ffd700;stroke-width:1.99998;stroke-linecap:round;stroke-linejoin:round;paint-order:fill markers stroke"
+ d="m 1014,255.46 v 10.9 h -10.9 z"
+ id="path1427"
+ inkscape:connector-curvature="0"
+ sodipodi:nodetypes="cccc" />
+<path
+ sodipodi:nodetypes="cccc"
+ inkscape:connector-curvature="0"
+ id="path1429"
+ d="m 1012.7,259.12 v 5.9 h -5.9 z"
+ style="fill:#dc143c;stroke-width:1.99995;stroke-linecap:round;stroke-linejoin:round;paint-order:fill markers stroke" />
+<rect
+ style="fill:#000000;stroke-width:1.99996;stroke-linecap:round;stroke-linejoin:round;paint-order:fill markers stroke"
+ id="rect1431"
+ width="41.259"
+ height="41.402"
+ x="974.11"
+ y="275.09" />
+<rect
+ y="276.47"
+ x="975.49"
+ height="38.654"
+ width="38.52"
+ id="rect1433"
+ style="fill:#2f4f4f;stroke-width:1.99998;stroke-linecap:round;stroke-linejoin:round;paint-order:fill markers stroke" />
+<path
+ style="fill:#000000;stroke-width:1.99996;stroke-linecap:round;stroke-linejoin:round;paint-order:fill markers stroke"
+ d="m 1015.4,300.78 v 15.71 h -15.68 z"
+ id="path1435"
+ inkscape:connector-curvature="0"
+ sodipodi:nodetypes="cccc" />
+<path
+ sodipodi:nodetypes="cccc"
+ inkscape:connector-curvature="0"
+ id="path1437"
+ d="m 1014,304.22 v 10.9 h -10.9 z"
+ style="fill:#ffd700;stroke-width:1.99998;stroke-linecap:round;stroke-linejoin:round;paint-order:fill markers stroke" />
+<path
+ style="fill:#dc143c;stroke-width:1.99995;stroke-linecap:round;stroke-linejoin:round;paint-order:fill markers stroke"
+ d="m 1012.7,307.88 v 5.9 h -5.9 z"
+ id="path1439"
+ inkscape:connector-curvature="0"
+ sodipodi:nodetypes="cccc" />
+<path
+ style="fill:#000000;stroke-width:1.99996;stroke-linecap:round;stroke-linejoin:round;paint-order:fill markers stroke"
+ d="m 974.11,242.05 v -15.71 h 15.68 z"
+ id="path1441"
+ inkscape:connector-curvature="0"
+ sodipodi:nodetypes="cccc" />
+<path
+ sodipodi:nodetypes="cccc"
+ inkscape:connector-curvature="0"
+ id="path1443"
+ d="m 975.49,238.61 v -10.9 h 10.9 z"
+ style="fill:#ffd700;stroke-width:1.99998;stroke-linecap:round;stroke-linejoin:round;paint-order:fill markers stroke" />
+<path
+ style="fill:#dc143c;stroke-width:1.99995;stroke-linecap:round;stroke-linejoin:round;paint-order:fill markers stroke"
+ d="m 976.79,234.95 v -5.9 h 5.9 z"
+ id="path1445"
+ inkscape:connector-curvature="0"
+ sodipodi:nodetypes="cccc" />
+<path
+ sodipodi:nodetypes="cccc"
+ inkscape:connector-curvature="0"
+ id="path1447"
+ d="M 974.11,290.81 V 275.1 h 15.68 z"
+ style="fill:#000000;stroke-width:1.99996;stroke-linecap:round;stroke-linejoin:round;paint-order:fill markers stroke" />
+<path
+ style="fill:#ffd700;stroke-width:1.99998;stroke-linecap:round;stroke-linejoin:round;paint-order:fill markers stroke"
+ d="m 975.49,287.37 v -10.9 h 10.9 z"
+ id="path1449"
+ inkscape:connector-curvature="0"
+ sodipodi:nodetypes="cccc" />
+<path
+ sodipodi:nodetypes="cccc"
+ inkscape:connector-curvature="0"
+ id="path1451"
+ d="m 976.79,283.71 v -5.9 h 5.9 z"
+ style="fill:#dc143c;stroke-width:1.99995;stroke-linecap:round;stroke-linejoin:round;paint-order:fill markers stroke" />
+<path
+ sodipodi:nodetypes="cccc"
+ inkscape:connector-curvature="0"
+ id="path1453"
+ d="M 1015.4,290.81 V 275.1 h -15.68 z"
+ style="fill:#000000;stroke-width:1.99996;stroke-linecap:round;stroke-linejoin:round;paint-order:fill markers stroke" />
+<path
+ style="fill:#ffd700;stroke-width:1.99998;stroke-linecap:round;stroke-linejoin:round;paint-order:fill markers stroke"
+ d="m 1014,287.37 v -10.9 h -10.9 z"
+ id="path1455"
+ inkscape:connector-curvature="0"
+ sodipodi:nodetypes="cccc" />
+<path
+ sodipodi:nodetypes="cccc"
+ inkscape:connector-curvature="0"
+ id="path1457"
+ d="m 1012.7,283.71 v -5.9 h -5.9 z"
+ style="fill:#dc143c;stroke-width:1.99995;stroke-linecap:round;stroke-linejoin:round;paint-order:fill markers stroke" />
+<path
+ style="fill:#000000;stroke-width:1.99996;stroke-linecap:round;stroke-linejoin:round;paint-order:fill markers stroke"
+ d="m 974.11,300.78 v 15.71 h 15.68 z"
+ id="path1459"
+ inkscape:connector-curvature="0"
+ sodipodi:nodetypes="cccc" />
+<path
+ sodipodi:nodetypes="cccc"
+ inkscape:connector-curvature="0"
+ id="path1461"
+ d="m 975.49,304.22 v 10.9 h 10.9 z"
+ style="fill:#ffd700;stroke-width:1.99998;stroke-linecap:round;stroke-linejoin:round;paint-order:fill markers stroke" />
+<path
+ style="fill:#dc143c;stroke-width:1.99995;stroke-linecap:round;stroke-linejoin:round;paint-order:fill markers stroke"
+ d="m 976.79,307.88 v 5.9 h 5.9 z"
+ id="path1463"
+ inkscape:connector-curvature="0"
+ sodipodi:nodetypes="cccc" />
+<circle
+ r="6.5548"
+ cy="246.86"
+ cx="995.49"
+ id="circle1467"
+ style="fill:#000000;stroke-width:1.99987;stroke-linecap:round;stroke-linejoin:round;paint-order:fill markers stroke" />
+<circle
+ style="fill:#20bbf3;stroke-width:1.99996;stroke-linecap:round;stroke-linejoin:round;paint-order:fill markers stroke"
+ id="path1465"
+ cx="995.54"
+ cy="246.87"
+ r="5.0678" />
+<circle
+ r="6.5548"
+ cy="199.59"
+ cx="994.75"
+ id="circle1467-9"
+ style="fill:#000000;stroke-width:1.99987;stroke-linecap:round;stroke-linejoin:round;paint-order:fill markers stroke" />
+<circle
+ style="fill:#20bbf3;stroke-width:1.99996;stroke-linecap:round;stroke-linejoin:round;paint-order:fill markers stroke"
+ id="path1465-6"
+ cx="994.75"
+ cy="199.59"
+ r="5.0678" />
+<circle
+ r="6.5548"
+ cy="295.8"
+ cx="994.75"
+ id="circle1467-92"
+ style="fill:#000000;stroke-width:1.99987;stroke-linecap:round;stroke-linejoin:round;paint-order:fill markers stroke" />
+<circle
+ style="fill:#20bbf3;stroke-width:1.99996;stroke-linecap:round;stroke-linejoin:round;paint-order:fill markers stroke"
+ id="path1465-0"
+ cx="994.75"
+ cy="295.8"
+ r="5.0678" />
 </g>
 </svg>
