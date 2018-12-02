@@ -295,13 +295,12 @@ class Link {
 				trait[Hook.afterLinkInstantiatesTrait](...traitParameters)
 				
 				this.traits.add(trait)
-				this[traitConstructor.name] = trait
+
+				return this[traitConstructor.name] = trait
 			}
 		} else {
-			this[traitConstructor.name] = new traitConstructor(...traitParameters)
+			return this[traitConstructor.name] = new traitConstructor(...traitParameters)
 		}
-
-		return this[traitConstructor.name]
 	}
 
 	onInitialize() {}

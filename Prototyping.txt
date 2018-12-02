@@ -1,27 +1,23 @@
 New Roadmap
 
-[  ] Colliders
+[OK] Colliders
 	[OK] Old list
-		[OK] Circle  with  point
-		[OK] Circle  with  circle
-		[OK] Rectangle  with  point  *
-		[OK] Rectangle  with  circle  *
-		[OK] Rectangle  with  rectangle
-		[OK] Convex polygon  with  point  *
-		[//] Convex polygon  with  circle  *
-		[//] Convex polygon  with  rectangle  *
-		[OK] Convex polygon  with  convex polygon
-	[  ] New list
+		[OK] Circle to point
+		[OK] Circle to circle
+		[OK] Rectangle to point
+		[OK] Rectangle to circle
+		[OK] Rectangle to rectangle
+		[OK] Convex polygon to point
+		[//] Convex polygon to circle
+		[//] Convex polygon to rectangle
+		[OK] Convex polygon to convex polygon
+	[OK] New list
 		[OK] Rectangle to rectangle
 		[OK] Circle to circle
 		[OK] Convex polygon to convex polygon
-		[..] Convex polygon to circle
-	[  ] Include rotation
-		[  ] Convex polygon to convex polygon
-		[  ] Convex polygon to circle
-		rotated.x = center.x + (point.x - center.x) * cos(a) - (point.y - center.y) * sin(a);
-		rotated.y = center.y + (point.x - center.x) * sin(a) + (point.y - center.y) * cos(a);
-	[  ] Quick collision, based on rectangle/rectangle, but without rotation.
+		[OK] Convex polygon to circle
+	[OK] Include rotation
+	[OK] Quick collision, based on rectangle/rectangle, but without rotation.
 [  ] Enemies
 [  ] Out-game interface
 	[  ] Screen mockups
