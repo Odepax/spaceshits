@@ -25,10 +25,6 @@ const Angle = {
 
 // TODO: const Vector ~ Angle
 function leftNormal(vectorX, vectorY) {
-	return [ vectorY, -vectorX ]
-}
-
-function rightNormal(vectorX, vectorY) {
 	return [ -vectorY, vectorX ]
 }
 
@@ -36,13 +32,55 @@ function dotProduct(vector1X, vector1Y, vector2X, vector2Y) {
 	return vector1X * vector2X + vector1Y * vector2Y
 }
 
-function projection(projectedVectorX, projectedVectorY, baseVectorX, baseVectorY) {
-	return [
-		baseVectorX * dotProduct(projectedVectorX, projectedVectorY, baseVectorX, baseVectorY) / dotProduct(baseVectorX, baseVectorY, baseVectorX, baseVectorY),
-		baseVectorY * dotProduct(projectedVectorX, projectedVectorY, baseVectorX, baseVectorY) / dotProduct(baseVectorX, baseVectorY, baseVectorX, baseVectorY)
-	]
+function getNormals(polygonPoints) {
+	const normalVectors = []
+
+	for (let i = 0, c = polygonPoints.length - 2; i < c; i += 2) {
+		const edgeX = polygonPoints[i + 2] - polygonPoints[i]
+		const edgeY = polygonPoints[i + 3] - polygonPoints[i + 1]
+
+		const [ normalX, normalY ] = leftNormal(edgeX, edgeY)
+
+		normalVectors.push(normalX, normalY)
+	}
+
+	return normalVectors
 }
 
+function polygonsProjectionHasAGap(polygon1Points, polygon2Points, projectionAxisX, projectionAxisY) {
+	const [ polygon1ProjectionMin, polygon1ProjectionMax ] = projectPolygon(polygon1Points, projectionAxisX, projectionAxisY)
+	const [ polygon2ProjectionMin, polygon2ProjectionMax ] = projectPolygon(polygon2Points, projectionAxisX, projectionAxisY)
+
+	return polygon1ProjectionMax < polygon2ProjectionMin || polygon2ProjectionMax < polygon1ProjectionMin
+}
+
+function polygonAndCircleProjectionHasAGap(polygonPoints, circleX, circleY, circleRadius, projectionAxisX, projectionAxisY) {
+	const [ polygonProjectionMin, polygonProjectionMax ] = projectPolygon(polygonPoints, projectionAxisX, projectionAxisY)
+	const [ circleProjectionMin, circleProjectionMax ] = projectCircle(circleX, circleY, circleRadius, projectionAxisX, projectionAxisY)
+
+	return polygonProjectionMax < circleProjectionMin || circleProjectionMax < polygonProjectionMin
+}
+
+function projectPolygon(polygonPoints, baseVectorX, baseVectorY) {
+	let min = dotProduct(polygonPoints[0], polygonPoints[1], baseVectorX, baseVectorY)
+	let max = min
+
+	for (let i = 2, c = polygonPoints.length; i < c; i += 2) {
+		const projection = dotProduct(polygonPoints[i], polygonPoints[i + 1], baseVectorX, baseVectorY)
+
+		     if (projection < min) min = projection
+		else if (max < projection) max = projection
+	}
+
+	return [ min, max ]
+}
+
+function projectCircle(circleX, circleY, circleRadius, baseVectorX, baseVectorY) {
+	const projection = dotProduct(circleX, circleY, baseVectorX, baseVectorY)
+	const baseVectorLength = sqrt(baseVectorX * baseVectorX + baseVectorY * baseVectorY)
+
+	return [ projection - circleRadius * baseVectorLength, projection + circleRadius * baseVectorLength ]
+}
 
 const Collision = {
 	testCircleWithPoint(circleX, circleY, circleRadius, pointX, pointY) {
@@ -111,10 +149,19 @@ const Collision = {
 		return true
 	},
 
-	testConvexPolygonWithCircle(convexPolygon, circle) {
-	},
+	testConvexPolygonWithCircle(polygonPoints, circleX, circleY, circleRadius) {
+		const polygonProjectionAxes = getNormals(polygonPoints)
 
-	testConvexPolygonWithRectangle(convexPolygon, rectangle) {
+		for (let i = 0, c = polygonProjectionAxes.length; i < c; i += 2) {
+			const projectionAxisX = polygonProjectionAxes[i]
+			const projectionAxisY = polygonProjectionAxes[i + 1]
+
+			if (polygonAndCircleProjectionHasAGap(polygonPoints, circleX, circleY, circleRadius, projectionAxisX, projectionAxisY)) {
+				return false
+			}
+		}
+
+		return true;
 	},
 
 	testConvexPolygonWithConvexPolygon(polygon1Points, polygon2Points) {
@@ -141,42 +188,6 @@ const Collision = {
 		}
 
 		return true;
-
-		function getNormals(polygonPoints) {
-			const normalVectors = []
-
-			for (let i = 0, c = polygonPoints.length; i < c; i += 2) {
-				const edgeX = polygonPoints[i] - polygonPoints[i + 2]
-				const edgeY = polygonPoints[i + 1] - polygonPoints[i + 3]
-
-				const [ normalX, normalY ] = leftNormal(edgeX, edgeY)
-
-				normalVectors.push(normalX, normalY)
-			}
-
-			return normalVectors
-		}
-
-		function polygonsProjectionHasAGap(polygon1Points, polygon2Points, projectionAxisX, projectionAxisY) {
-			const [ polygon1ProjectionMin, polygon1ProjectionMax ] = projectPolygon(polygon1Points, projectionAxisX, projectionAxisY)
-			const [ polygon2ProjectionMin, polygon2ProjectionMax ] = projectPolygon(polygon2Points, projectionAxisX, projectionAxisY)
-
-			return polygon1ProjectionMax < polygon2ProjectionMin || polygon2ProjectionMax < polygon1ProjectionMin
-		}
-
-		function projectPolygon(polygonPoints, baseVectorX, baseVectorY) {
-			let min = dotProduct(polygonPoints[0], polygonPoints[1], baseVectorX, baseVectorY)
-			let max = min
-
-			for (let i = 2, c = polygonPoints.length; i < c; i += 2) {
-				const projection = dotProduct(polygonPoints[i], polygonPoints[i + 1], baseVectorX, baseVectorY)
-
-				     if (projection < min) min = projection
-				else if (max < projection) max = projection
-			}
-
-			return [ min, max ]
-		}
 	}
 }
 
@@ -389,7 +400,17 @@ class CircleCollider extends Collider {
 
 				return Collision.testRectangleWithCircle(rectangleLeft, rectangleTop, rectangleRight, rectangleBottom, circleX, circleY, circleRadius)
 			}
-			case ConvexPolygonCollider: return false
+			case ConvexPolygonCollider: {
+				const circleX = this.link.Transform.x
+				const circleY = this.link.Transform.y
+				const circleRadius = this.radius
+
+				const polygonPoints = other.points.map((value, i) => value + (i % 2 == 0 ? other.link.Transform.x : other.link.Transform.y))
+
+				polygonPoints.push(polygonPoints[0], polygonPoints[1])
+
+				return Collision.testConvexPolygonWithCircle(polygonPoints, circleX, circleY, circleRadius)
+			}
 
 			default: throw new Error(`'${this.constructor.name}' does not support collision computation with '${other.constructor.name}'.`)
 		}
@@ -463,7 +484,17 @@ class ConvexPolygonCollider extends Collider {
 
 				return Collision.testConvexPolygonWithPoint(polygonPoints, pointX, pointY)
 			}
-			case CircleCollider: return false
+			case CircleCollider: {
+				const circleX = other.link.Transform.x
+				const circleY = other.link.Transform.y
+				const circleRadius = other.radius
+
+				const polygonPoints = this.points.map((value, i) => value + (i % 2 == 0 ? this.link.Transform.x : this.link.Transform.y))
+
+				polygonPoints.push(polygonPoints[0], polygonPoints[1])
+
+				return Collision.testConvexPolygonWithCircle(polygonPoints, circleX, circleY, circleRadius)
+			}
 			case RectangleCollider: return false
 			case ConvexPolygonCollider: {
 				const polygon1Points = this.points.map((value, i) => value + (i % 2 == 0 ? this.link.Transform.x : this.link.Transform.y))
@@ -870,27 +901,10 @@ class CircleBlobCanvasRender extends Trait {
 	onUpdate() {
 		this.graphics.applyTransform(this.link.Transform)
 
-		this.graphics.fillStyle = WHITE
+		this.graphics.strokeStyle = WHITE
 		this.graphics.beginPath()
 		this.graphics.arc(0, 0, this.radius, -PI, PI)
-		this.graphics.fill()
-
-		this.graphics.resetTransform()
-	}
-}
-
-class RectangleBlobCanvasRender extends Trait {
-	onInitialize(graphics, width, height) {
-		this.graphics = graphics
-		this.width = width
-		this.height = height
-	}
-
-	onUpdate() {
-		this.graphics.applyTransform(this.link.Transform)
-
-		this.graphics.fillStyle = WHITE
-		this.graphics.fillRect(-this.width / 2, -this.height / 2, this.width, this.height)
+		this.graphics.stroke()
 
 		this.graphics.resetTransform()
 	}
@@ -905,7 +919,7 @@ class ConvexPolygonBlobCanvasRender extends Trait {
 	onUpdate() {
 		this.graphics.applyTransform(this.link.Transform)
 
-		this.graphics.fillStyle = WHITE
+		this.graphics.strokeStyle = WHITE
 		this.graphics.beginPath()
 		this.graphics.moveTo(this.points[0], this.points[1])
 
@@ -914,56 +928,33 @@ class ConvexPolygonBlobCanvasRender extends Trait {
 		}
 
 		this.graphics.closePath()
-		this.graphics.fill()
+		this.graphics.stroke()
 
 		this.graphics.resetTransform()
 	}
 }
 
-universe.add(class PointBlob extends Link {
-	onInitialize() {
-		this.name = "P0"
-		this.Transform = userInteractor.UserInteraction.mousePosition
-		this.collider = this.add(PointCollider)
-	}
-})
-
 for (let [ name, x, y, keys ] of [
-	[ "C1", 350, 250, [ "Digit2", "KeyQ", "KeyW", "KeyE" ] ],
-	[ "C2", 350, 320, [ "KeyS", "KeyZ", "KeyX", "KeyC" ] ]
+	[ "C1", 350, 250, [ "Digit2", "KeyQ", "KeyW", "KeyE" ] ]
 ]) universe.add(class CircleBlob extends Link {
 	onInitialize() {
 		this.name = name
 		this.add(Transform, x, y)
-		this.add(DummyMovement, userInteractor.UserInteraction, keys, 15)
-		this.collider = this.add(CircleCollider, 20)
-		this.add(CircleBlobCanvasRender, graphics, 20)
+		this.add(DummyMovement, userInteractor.UserInteraction, keys, 40)
+		this.collider = this.add(CircleCollider, 100)
+		this.add(CircleBlobCanvasRender, graphics, 100)
 	}
 })
 
 for (let [ name, x, y, keys ] of [
-	[ "R1", 420, 250, [ "Digit5", "KeyR", "KeyT", "KeyY" ] ],
-	[ "R2", 420, 320, [ "KeyG", "KeyV", "KeyB", "KeyN" ] ]
-]) universe.add(class RectangleBlob extends Link {
-	onInitialize() {
-		this.name = name
-		this.add(Transform, x, y)
-		this.add(DummyMovement, userInteractor.UserInteraction, keys, 15)
-		this.collider = this.add(RectangleCollider, 50, 30)
-		this.add(RectangleBlobCanvasRender, graphics, 50, 30)
-	}
-})
-
-for (let [ name, x, y, keys ] of [
-	[ "G1", 490, 250, [ "Digit8", "KeyU", "KeyI", "KeyO" ] ],
-	[ "G2", 490, 320, [ "KeyK", "KeyM", "Comma", "Period" ] ]
+	[ "G1", 490, 250, [ "Digit8", "KeyU", "KeyI", "KeyO" ] ]
 ]) universe.add(class ConvexPolygonBlob extends Link {
 	onInitialize() {
 		this.name = name
 		this.add(Transform, x, y)
 		this.add(DummyMovement, userInteractor.UserInteraction, keys, 15)
-		this.collider = this.add(ConvexPolygonCollider, [ 20,0 , 5,15 , -10,10 , -10,-10 , 5,-15 ])
-		this.add(ConvexPolygonBlobCanvasRender, graphics, [ 20,0 , 5,15 , -10,10 , -10,-10 , 5,-15 ])
+		this.collider = this.add(ConvexPolygonCollider, [ 40,0 , 5,15 , -10,10 , -10,-10 , 5,-15 ])
+		this.add(ConvexPolygonBlobCanvasRender, graphics, [ 40,0 , 5,15 , -10,10 , -10,-10 , 5,-15 ])
 	}
 })
 
