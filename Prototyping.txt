@@ -18,7 +18,11 @@ New Roadmap
 		[OK] Convex polygon to circle
 	[OK] Include rotation
 	[OK] Quick collision, based on rectangle/rectangle, but without rotation.
-[  ] Enemies
+[OK] First graphics prototypes
+[  ] First gameplay
+[  ] In-game HUD interface
+	[  ] Player health
+	[  ] Player energy
 [  ] Out-game interface
 	[  ] Screen mockups
 		[  ] Level selection
@@ -28,16 +32,19 @@ New Roadmap
 		[  ] Keymap customization
 		[  ] Navigation
 	[  ] Graphic chart
-[  ] In-game HUD interface
-	[  ] Player health
-	[  ] Player energy
+	[  ] Characters dialogues
 [  ] Weapons
 	[  ] Gatling
 	[  ] Gatling...
 	[  ] GATLING!
-[  ] Specials
-	[  ] Missile swarm
-	[  ] Blink teleport
-	[  ] Shield
-	[  ] Berzerk
+[  ] Special capacities
 	[  ] Restauration
+	[  ] Blink teleport
+	[  ] Missile swarm
+	[  ] Berzerk
+	[  ] Shield
+	[  ] Mines
+[  ] Lore
+[  ] More enemies
+[  ] More levels
+[  ] Memory of player progress
