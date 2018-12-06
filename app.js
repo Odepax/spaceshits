@@ -556,7 +556,7 @@ class DraftShipCanvasRender extends Trait {
 
 		this.graphics.fillStyle = WHITE
 		this.graphics.fill(this.path)
-		
+
 		this.graphics.resetTransform()
 	}
 }
@@ -571,6 +571,26 @@ class DraftCubeCanvasRender extends Trait {
 
 		this.graphics.fillStyle = WHITE
 		this.graphics.fillRect(-20, -20, 40, 40)
+
+		this.graphics.resetTransform()
+	}
+}
+
+class DraftHealthBarCanvasRender extends Trait {
+	onInitialize(graphics) {
+		this.graphics = graphics
+	}
+
+	onUpdate() {
+		const { health, maxHealth } = this.link.Destroyable
+
+		this.graphics.applyTransform(this.link.Transform)
+
+		this.graphics.strokeStyle = BLACK
+		this.graphics.lineWidth = 2
+		this.graphics.beginPath()
+		this.graphics.arc(0, 0, 10, 0, 2 * PI * health / maxHealth)
+		this.graphics.stroke()
 
 		this.graphics.resetTransform()
 	}
@@ -693,6 +713,19 @@ class CubeBounceOnCanvasEdges extends Trait {
 	}
 }
 
+class RammingDamage extends Trait {
+	onInitialize(targetTag, damage) {
+		this.targetTag = targetTag
+		this.damage = damage
+	}
+
+	onUpdate() {
+		for (const target of this.universe.links) if (target[this.targetTag] && this.link.Collider.collidesWith(target.Collider)) {
+			target.Destroyable.health -= this.damage * this.universe.tickTime
+		}
+	}
+}
+
 // -----------------------------------------------------------------
 
 const graphics = canvas.getContext("2d")
@@ -720,6 +753,8 @@ const interactionLogger = universe.add(class InteractionLogger extends Link {
 
 const player = universe.add(class Player extends Link {
 	onInitialize() {
+		this[Tag.player] = true
+
 		this.add(Transform, 250, 250)
 
 		this.add(ForceBasedMovement)
@@ -727,13 +762,17 @@ const player = universe.add(class Player extends Link {
 		this.add(PlayerBounceOnCanvasEdges, canvas)
 
 		this.Collider = this.add(CircleCollider, 27)
+		this.add(Destroyable, 100)
 
 		this.add(DraftShipCanvasRender, graphics)
+		this.add(DraftHealthBarCanvasRender, graphics)
 	}
 })
 
 universe.add(class Cube extends Link {
 	onInitialize(x, y) {
+		this[Tag.enemy] = true
+
 		this.add(Transform, x, y, rand(-PI, PI))
 
 		this.add(CubeWanderingRotation)
@@ -742,6 +781,10 @@ universe.add(class Cube extends Link {
 
 		this.Collider = this.add(CircleCollider, 20)
 
+		this.add(Destroyable, 100)
+		this.add(RammingDamage, Tag.player, 40)
+
 		this.add(DraftCubeCanvasRender, graphics)
+		this.add(DraftHealthBarCanvasRender, graphics)
 	}
 }, 850, 250)
