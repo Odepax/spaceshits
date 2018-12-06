@@ -532,19 +532,21 @@ class DraftShipCanvasRender extends Trait {
 		this.graphics = graphics
 
 		this.path = new Path2D().apply(path => {
-			path.moveTo(-13.8, 7.4)
-			path.lineTo(-4.8, 9.9)
-			path.lineTo(-10.2, 30)
-			path.lineTo(4.8, 30)
-			path.lineTo(6.2, 24.9)
-			path.bezierCurveTo(-3, 22.8, -0.3, 8.8, 9.8, 11.5)
-			path.lineTo(12.8, 0)
-			path.lineTo(9.8, -11.5)
-			path.bezierCurveTo(-0.3, -8.8, -3, -22.8, 6.2, -24.9)
-			path.lineTo(4.8, -30)
-			path.lineTo(-10.2, -30)
-			path.lineTo(-4.8, -9.9)
-			path.lineTo(-13.8, -7.4)
+			path.lineTo(14, 0)
+			path.lineTo(25, 7)
+			path.lineTo(35, 9)
+			path.lineTo(35, 14)
+			path.lineTo(23, 17)
+			path.lineTo(-7, 30)
+			path.lineTo(-25, 17)
+			path.lineTo(-17, 8)
+			path.lineTo(-21, 9)
+			path.lineTo(-21, -9)
+			path.lineTo(-17, -8)
+			path.lineTo(-25, -17)
+			path.lineTo(-7, -30)
+			path.lineTo(23, -17)
+			path.lineTo(25, -7)
 			path.closePath()
 		})
 	}
@@ -589,11 +591,10 @@ class InteractionLogging extends Trait {
 }
 
 class PlayerMovementController extends Trait {
-	onInitialize(userInteraction, movementAcceleration, rotationAcceleration) {
+	onInitialize(userInteraction, movementAcceleration) {
 		this.userInteraction = userInteraction
 
 		this.movementAcceleration = movementAcceleration
-		this.rotationAcceleration = rotationAcceleration
 	}
 
 	onUpdate() {
@@ -675,136 +676,16 @@ const interactionLogger = universe.add(class InteractionLogger extends Link {
 	}
 })
 
-/*
 const player = universe.add(class Player extends Link {
 	onInitialize() {
 		this.add(Transform, 250, 250)
+
 		this.add(ForceBasedMovement)
 		this.add(PlayerMovementController, userInteractor.UserInteraction, 600)
-		this.add(DraftShipCanvasRender, graphics)
 		this.add(PlayerBounceOnCanvasEdges, canvas)
-	}
-})
-*/
 
-class DummyMovement extends Trait {
-	onInitialize(userInteraction, controlKeys, speed = 10) {
-		this.x = rand(-300, 300)
-		this.y = rand(-300, 300)
-		this.a = rand(-PI, PI) / 2
-	}
+		this.Collider = this.add(CircleCollider, 27)
 
-	onUpdate() {
-		const position = this.link.Transform
-
-	    if (position.y < 0) { position.y = 0 ; this.y *= -1 }
-		else if (canvas.height < position.y) { position.y = canvas.height ; this.y *= -1 }
-
-		if (position.x < 0)                 { position.x = 0                 ; this.x *= -1 }
-		else if (canvas.width < position.x) { position.x = canvas.width ; this.x *= -1 }
-
-		position.x += this.x * this.universe.tickTime
-		position.y += this.y * this.universe.tickTime
-		position.a += this.a * this.universe.tickTime
-	}
-}
-
-class CircleBlobCanvasRender extends Trait {
-	onInitialize(graphics, radius) {
-		this.graphics = graphics
-		this.radius = radius
-	}
-
-	onUpdate() {
-		this.graphics.applyTransform(this.link.Transform)
-
-		this.graphics.strokeStyle = WHITE
-		this.graphics.beginPath()
-		this.graphics.arc(0, 0, this.radius, -PI, PI)
-		this.graphics.stroke()
-
-		this.graphics.resetTransform()
-	}
-}
-
-class ConvexPolygonBlobCanvasRender extends Trait {
-	onInitialize(graphics, points) {
-		this.graphics = graphics
-		this.points = points
-	}
-
-	onUpdate() {
-		this.graphics.applyTransform(this.link.Transform)
-
-		this.graphics.strokeStyle = WHITE
-		this.graphics.beginPath()
-		this.graphics.moveTo(this.points[0], this.points[1])
-
-		for (let i = 2, c = this.points.length; i < c; i += 2) {
-			this.graphics.lineTo(this.points[i], this.points[i + 1])
-		}
-
-		this.graphics.closePath()
-		this.graphics.stroke()
-
-		this.graphics.resetTransform()
-	}
-}
-
-class FastColliderBoxCanvasRender extends Trait {
-	onInitialize(graphics) {
-		this.graphics = graphics
-	}
-
-	onUpdate() {
-		graphics.strokeStyle = "green"
-
-		const { x, y } = this.link.Transform
-		const { radius: r } = this.link.Collider
-
-		graphics.strokeRect(x - r, y - r, r * 2, r * 2)
-	}
-}
-
-for (let i = 0; i < 200; ++i) {
-	rand(0, 1) < 0.5 ? universe.add(class CircleBlob extends Link {
-		onInitialize() {
-			this.name = "C" + i
-			this.add(Transform, rand(0, canvas.width), rand(0, canvas.height), rand(-PI, PI))
-			this.add(DummyMovement)
-			this.Collider = this.add(CircleCollider, 15)
-			this.add(CircleBlobCanvasRender, graphics, 15)
-			this.add(FastColliderBoxCanvasRender, graphics)
-		}
-	}) : universe.add(class ConvexPolygonBlob extends Link {
-		onInitialize() {
-			this.name = "P" + i
-			this.add(Transform, rand(0, canvas.width), rand(0, canvas.height), rand(-PI, PI))
-			this.add(DummyMovement)
-			this.Collider = this.add(ConvexPolygonCollider, 40, [ 40,0 , 5,15 , -10,10 , -10,-10 , 5,-15 ])
-			this.add(ConvexPolygonBlobCanvasRender, graphics, [ 40,0 , 5,15 , -10,10 , -10,-10 , 5,-15 ])
-			this.add(FastColliderBoxCanvasRender, graphics)
-		}
-	})
-}
-
-const collisionLogger = universe.add(class CollisionLogger extends Link {
-	onInitialize() {
-		this.add(class CollisionLogging extends Trait {
-			onUpdate() {
-				const collidingObjects = Array.from(this.universe.links).filter(it => it.name)
-
-				graphics.fillStyle = WHITE
-				graphics.font = "12pt Source Code Pro"
-
-				let i = 0
-				for (const a of collidingObjects)
-				for (const b of collidingObjects) if (a != b) {
-					if (a.Collider.collidesWith(b.Collider)) {
-						graphics.fillText(`'${a.name}' collides with '${b.name}'.`, 650, 50 + ++i * 25)
-					}
-				}
-			}
-		})
+		this.add(DraftShipCanvasRender, graphics)
 	}
 })
