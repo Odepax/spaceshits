@@ -561,6 +561,21 @@ class DraftShipCanvasRender extends Trait {
 	}
 }
 
+class DraftCubeCanvasRender extends Trait {
+	onInitialize(graphics) {
+		this.graphics = graphics
+	}
+
+	onUpdate() {
+		this.graphics.applyTransform(this.link.Transform)
+
+		this.graphics.fillStyle = WHITE
+		this.graphics.fillRect(-20, -20, 40, 40)
+
+		this.graphics.resetTransform()
+	}
+}
+
 // -----------------------------------------------------------------
 
 class InteractionLogging extends Trait {
@@ -651,6 +666,33 @@ class PlayerBounceOnCanvasEdges extends Trait {
 	}
 }
 
+class CubeWanderingRotation extends Trait {
+	onInitialize() {
+		this.rotationSpeed = randBetween(-1, 1)
+	}
+
+	onUpdate() {
+		this.link.Transform.a += this.rotationSpeed * this.universe.tickTime
+	}
+}
+
+class CubeBounceOnCanvasEdges extends Trait {
+	onInitialize(canvas) {
+		this.canvas = canvas
+	}
+
+	onUpdate() {
+		const cubePosition = this.link.Transform
+		const cubeSpeed = this.link.LinearMovement
+
+		     if (cubePosition.y < 0)                  { cubePosition.y = 0                  ; cubeSpeed.speedY *= -1 }
+		else if (this.canvas.height < cubePosition.y) { cubePosition.y = this.canvas.height ; cubeSpeed.speedY *= -1 }
+
+		     if (cubePosition.x < 0)                 { cubePosition.x = 0                 ; cubeSpeed.speedX *= -1 }
+		else if (this.canvas.width < cubePosition.x) { cubePosition.x = this.canvas.width ; cubeSpeed.speedX *= -1 }
+	}
+}
+
 // -----------------------------------------------------------------
 
 const graphics = canvas.getContext("2d")
@@ -689,3 +731,17 @@ const player = universe.add(class Player extends Link {
 		this.add(DraftShipCanvasRender, graphics)
 	}
 })
+
+universe.add(class Cube extends Link {
+	onInitialize(x, y) {
+		this.add(Transform, x, y, rand(-PI, PI))
+
+		this.add(CubeWanderingRotation)
+		this.add(LinearMovement, rand(100, 400), rand(100, 400))
+		this.add(CubeBounceOnCanvasEdges, canvas)
+
+		this.Collider = this.add(CircleCollider, 20)
+
+		this.add(DraftCubeCanvasRender, graphics)
+	}
+}, 850, 250)
