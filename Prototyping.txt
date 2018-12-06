@@ -19,7 +19,7 @@ New Roadmap
 	[OK] Include rotation
 	[OK] Quick collision, based on rectangle/rectangle, but without rotation.
 [OK] First graphics prototypes
-[  ] First gameplay
+[OK] First gameplay
 [  ] In-game HUD interface
 	[  ] Player health
 	[  ] Player energy

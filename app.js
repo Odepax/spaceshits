@@ -554,7 +554,7 @@ class DraftShipCanvasRender extends Trait {
 	onUpdate() {
 		this.graphics.applyTransform(this.link.Transform)
 
-		this.graphics.fillStyle = WHITE
+		this.graphics.fillStyle = GREEN
 		this.graphics.fill(this.path)
 
 		this.graphics.resetTransform()
@@ -569,7 +569,7 @@ class DraftCubeCanvasRender extends Trait {
 	onUpdate() {
 		this.graphics.applyTransform(this.link.Transform)
 
-		this.graphics.fillStyle = WHITE
+		this.graphics.fillStyle = ORANGE
 		this.graphics.fillRect(-20, -20, 40, 40)
 
 		this.graphics.resetTransform()
@@ -584,13 +584,28 @@ class DraftHealthBarCanvasRender extends Trait {
 	onUpdate() {
 		const { health, maxHealth } = this.link.Destroyable
 
-		this.graphics.applyTransform(this.link.Transform)
+		this.graphics.applyTransform(this.link.Transform, false)
 
 		this.graphics.strokeStyle = BLACK
-		this.graphics.lineWidth = 2
+		this.graphics.lineWidth = 3
 		this.graphics.beginPath()
 		this.graphics.arc(0, 0, 10, 0, 2 * PI * health / maxHealth)
 		this.graphics.stroke()
+
+		this.graphics.resetTransform()
+	}
+}
+
+class DraftBulletCanvasRender extends Trait {
+	onInitialize(graphics) {
+		this.graphics = graphics
+	}
+
+	onUpdate() {
+		this.graphics.applyTransform(this.link.Transform)
+
+		this.graphics.fillStyle = BLUE
+		this.graphics.fillRect(-2, -2, 10, 4)
 
 		this.graphics.resetTransform()
 	}
@@ -668,6 +683,38 @@ class PlayerMovementController extends Trait {
 	}
 }
 
+class Bullet extends Link {
+	onInitialize(transform) {
+		this.Transform = transform
+
+		this.add(AngularLinearMovement, transform.a, 800)
+
+		this.Collider = this.add(CircleCollider, 2)
+
+		this.add(Ephemeral, 1)
+		this.add(RammingDamage, Tag.enemy, 200, true)
+
+		this.add(DraftBulletCanvasRender, graphics)
+	}
+}
+
+class GatlingGun extends Trait {
+	onInitialize(userInteraction, fireRate = 0.1) {
+		this.userInteraction = userInteraction
+		this.fireRate = fireRate
+		this.timeEnlapsed = 0
+	}
+
+	onUpdate() {
+		this.timeEnlapsed += this.universe.tickTime
+
+		if (this.fireRate < this.timeEnlapsed && this.userInteraction.isPressed("MouseLeft")) {
+			this.timeEnlapsed = 0
+			this.universe.add(Bullet, this.link.Transform.clone().relativeOffset(30, 12))
+		}
+	}
+}
+
 class PlayerBounceOnCanvasEdges extends Trait {
 	onInitialize(canvas, speedFactorAfterBounce = 0.5) {
 		this.canvas = canvas
@@ -714,14 +761,19 @@ class CubeBounceOnCanvasEdges extends Trait {
 }
 
 class RammingDamage extends Trait {
-	onInitialize(targetTag, damage) {
+	onInitialize(targetTag, damage, suicide = false) {
 		this.targetTag = targetTag
 		this.damage = damage
+		this.suicide = suicide
 	}
 
 	onUpdate() {
 		for (const target of this.universe.links) if (target[this.targetTag] && this.link.Collider.collidesWith(target.Collider)) {
 			target.Destroyable.health -= this.damage * this.universe.tickTime
+
+			if (this.suicide) {
+				this.universe.remove(this.link)
+			}
 		}
 	}
 }
@@ -761,6 +813,8 @@ const player = universe.add(class Player extends Link {
 		this.add(PlayerMovementController, userInteractor.UserInteraction, 600)
 		this.add(PlayerBounceOnCanvasEdges, canvas)
 
+		this.add(GatlingGun, userInteractor.UserInteraction)
+
 		this.Collider = this.add(CircleCollider, 27)
 		this.add(Destroyable, 100)
 
@@ -769,6 +823,7 @@ const player = universe.add(class Player extends Link {
 	}
 })
 
+for (let i = 0, c = ~~(new URLSearchParams(location.search).get("cubes")) || 5; i < c; ++i)
 universe.add(class Cube extends Link {
 	onInitialize(x, y) {
 		this[Tag.enemy] = true
@@ -776,7 +831,7 @@ universe.add(class Cube extends Link {
 		this.add(Transform, x, y, rand(-PI, PI))
 
 		this.add(CubeWanderingRotation)
-		this.add(LinearMovement, rand(100, 400), rand(100, 400))
+		this.add(LinearMovement, rand(-400, 400), rand(-400, 400))
 		this.add(CubeBounceOnCanvasEdges, canvas)
 
 		this.Collider = this.add(CircleCollider, 20)
@@ -787,4 +842,4 @@ universe.add(class Cube extends Link {
 		this.add(DraftCubeCanvasRender, graphics)
 		this.add(DraftHealthBarCanvasRender, graphics)
 	}
-}, 850, 250)
+}, rand(0, canvas.width), rand(0, canvas.height))
