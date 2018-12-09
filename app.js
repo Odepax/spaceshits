@@ -326,6 +326,50 @@ class ConvexPolygonCollider extends Collider {
 
 // -----------------------------------------------------------------
 
+class ForceBasedMovement extends Trait {
+	onInitialize(speed = new Force(0, 0), acceleration = new Force(0, 0), friction = new Friction()) {
+		this.speed = speed
+		this.acceleration = acceleration
+		this.friction = friction
+	}
+
+	onUpdate() {
+		this.acceleration.drive(this.speed, this.universe.tickTime)
+
+		this.friction.updateFrom(this.speed)
+		this.friction.drive(this.speed, this.universe.tickTime)
+
+		this.speed.drive(this.link.Transform, this.universe.tickTime)
+	}
+}
+
+class LinearMovement extends Trait {
+	onInitialize(speedX, speedY) {
+		this.speedX = speedX
+		this.speedY = speedY
+	}
+
+	onUpdate() {
+		this.link.Transform.offset(this.speedX * this.universe.tickTime, this.speedY * this.universe.tickTime)
+	}
+}
+
+class AngularLinearMovement extends Trait {
+	onInitialize(angle, speed) {
+		this.angle = angle
+		this.speed = speed
+	}
+
+	onUpdate() {
+		this.link.Transform.offset(
+			cos(this.angle) * this.speed * this.universe.tickTime,
+			sin(this.angle) * this.speed * this.universe.tickTime
+		)
+	}
+}
+
+// -----------------------------------------------------------------
+
 class UserInteraction extends Trait {
 	onInitialize(observedElement) {
 		this.mousePosition = new Transform(0, 0)
@@ -446,75 +490,6 @@ class Destroyable extends Trait {
 	}
 }
 
-class ForceBasedMovement extends Trait {
-	onInitialize(speed = new Force(0, 0), acceleration = new Force(0, 0), friction = new Friction()) {
-		this.speed = speed
-		this.acceleration = acceleration
-		this.friction = friction
-	}
-
-	onUpdate() {
-		this.acceleration.drive(this.speed, this.universe.tickTime)
-
-		this.friction.updateFrom(this.speed)
-		this.friction.drive(this.speed, this.universe.tickTime)
-
-		this.speed.drive(this.link.Transform, this.universe.tickTime)
-	}
-}
-
-class LinearMovement extends Trait {
-	onInitialize(speedX, speedY) {
-		this.speedX = speedX
-		this.speedY = speedY
-	}
-
-	onUpdate() {
-		this.link.Transform.offset(this.speedX * this.universe.tickTime, this.speedY * this.universe.tickTime)
-	}
-}
-
-class AngularLinearMovement extends Trait {
-	onInitialize(angle, speed) {
-		this.angle = angle
-		this.speed = speed
-	}
-
-	onUpdate() {
-		this.link.Transform.offset(
-			cos(this.angle) * this.speed * this.universe.tickTime,
-			sin(this.angle) * this.speed * this.universe.tickTime
-		)
-	}
-}
-
-class TeamMember {
-	onInitialize(team = null) {
-		this.team = team
-	}
-
-	isFriendWith(other) {
-		return other.team && this.team == other.team
-	}
-
-	findHostilesAmongst(others) {
-		const result = []
-
-		for (const other of others) {
-			if (!this.isFriendWith(other)) {
-				result.push(other)
-			}
-		}
-
-		return result
-	}
-}
-
-const Tag = {
-	player: Symbol("Tag/Link: Player"),
-	enemy: Symbol("Tag/Link: Enemy")
-}
-
 // -----------------------------------------------------------------
 
 class CanvasErasing extends Trait {
@@ -527,7 +502,7 @@ class CanvasErasing extends Trait {
 	}
 }
 
-class DraftShipCanvasRender extends Trait {
+class ShipCanvasRender extends Trait {
 	onInitialize(graphics) {
 		this.graphics = graphics
 
@@ -561,7 +536,7 @@ class DraftShipCanvasRender extends Trait {
 	}
 }
 
-class DraftCubeCanvasRender extends Trait {
+class CubeCanvasRender extends Trait {
 	onInitialize(graphics) {
 		this.graphics = graphics
 	}
@@ -576,7 +551,7 @@ class DraftCubeCanvasRender extends Trait {
 	}
 }
 
-class DraftHealthBarCanvasRender extends Trait {
+class HealthBarCanvasRender extends Trait {
 	onInitialize(graphics) {
 		this.graphics = graphics
 	}
@@ -586,17 +561,14 @@ class DraftHealthBarCanvasRender extends Trait {
 
 		this.graphics.applyTransform(this.link.Transform, false)
 
-		this.graphics.strokeStyle = BLACK
-		this.graphics.lineWidth = 3
-		this.graphics.beginPath()
-		this.graphics.arc(0, 0, 10, 0, 2 * PI * health / maxHealth)
-		this.graphics.stroke()
+		this.graphics.fillStyle = RED
+		this.graphics.fillRect(-30, 40, 60 * health / maxHealth, 8)
 
 		this.graphics.resetTransform()
 	}
 }
 
-class DraftBulletCanvasRender extends Trait {
+class PlayerBulletCanvasRender extends Trait {
 	onInitialize(graphics) {
 		this.graphics = graphics
 	}
@@ -611,34 +583,24 @@ class DraftBulletCanvasRender extends Trait {
 	}
 }
 
-// -----------------------------------------------------------------
-
-class InteractionLogging extends Trait {
-	onInitialize(userInteraction, graphics) {
-		this.userInteraction = userInteraction
+class CubeBulletCanvasRender extends Trait {
+	onInitialize(graphics) {
 		this.graphics = graphics
 	}
 
 	onUpdate() {
-		const mousePosition = this.userInteraction.mousePosition
-		const currentlyPressedKeys = Array.from(this.userInteraction.currentlyPressedKeys).join(", ")
-		const pressedKeys = Array.from(this.userInteraction.pressedKeys).join(", ")
-		const releasedKeys = Array.from(this.userInteraction.releasedKeys).join(", ")
+		this.graphics.applyTransform(this.link.Transform)
 
-		this.graphics.fillStyle = WHITE
-		this.graphics.font = "12pt Source Code Pro"
-		
-		let i = 0
-		this.graphics.fillText(`Mouse position ........... ( ${mousePosition.x}, ${mousePosition.y} )`, 50, 50 + ++i * 25)
-		this.graphics.fillText(`Currently pressed keys ... ${currentlyPressedKeys}`, 50, 50 + ++i * 25)
-		this.graphics.fillText(`Recently pressed keys .... ${pressedKeys}`, 50, 50 + ++i * 25)
-		this.graphics.fillText(`Recently released keys ... ${releasedKeys}`, 50, 50 + ++i * 25)
-		this.graphics.fillText(`Last universe tick was ... ${this.universe.tickTime}`, 50, 50 + ++i * 25)
-		this.graphics.fillText(`FPS ...................... ${~~(0.5 + 1 / this.universe.tickTime)}`, 50, 50 + ++i * 25)
-		this.graphics.fillText(`Link count ............... ${this.universe.links.size}`, 50, 50 + ++i * 25)
-		this.graphics.fillText(`Trait count .............. ${this.universe.traits.size}`, 50, 50 + ++i * 25)
+		this.graphics.fillStyle = PINK
+		this.graphics.beginPath()
+		this.graphics.arc(0, 0, 10, 0, 2 * PI)
+		this.graphics.fill()
+
+		this.graphics.resetTransform()
 	}
 }
+
+// -----------------------------------------------------------------
 
 class PlayerMovementController extends Trait {
 	onInitialize(userInteraction, movementAcceleration) {
@@ -683,7 +645,7 @@ class PlayerMovementController extends Trait {
 	}
 }
 
-class Bullet extends Link {
+class PlayerBullet extends Link {
 	onInitialize(transform) {
 		this.Transform = transform
 
@@ -694,11 +656,11 @@ class Bullet extends Link {
 		this.add(Ephemeral, 1)
 		this.add(RammingDamage, Tag.enemy, 200, true)
 
-		this.add(DraftBulletCanvasRender, graphics)
+		this.add(PlayerBulletCanvasRender, graphics)
 	}
 }
 
-class GatlingGun extends Trait {
+class PlayerGun extends Trait {
 	onInitialize(userInteraction, fireRate = 0.1) {
 		this.userInteraction = userInteraction
 		this.fireRate = fireRate
@@ -710,7 +672,7 @@ class GatlingGun extends Trait {
 
 		if (this.fireRate < this.timeEnlapsed && this.userInteraction.isPressed("MouseLeft")) {
 			this.timeEnlapsed = 0
-			this.universe.add(Bullet, this.link.Transform.clone().relativeOffset(30, 12))
+			this.universe.add(PlayerBullet, this.link.Transform.clone().relativeOffset(30, 12))
 		}
 	}
 }
@@ -732,6 +694,8 @@ class PlayerBounceOnCanvasEdges extends Trait {
 		else if (this.canvas.width < shipPosition.x) { shipPosition.x = this.canvas.width ; shipSpeed.x *= -this.speedFactorAfterBounce }
 	}
 }
+
+// -----------------------------------------------------------------
 
 class CubeWanderingRotation extends Trait {
 	onInitialize() {
@@ -768,14 +732,87 @@ class RammingDamage extends Trait {
 	}
 
 	onUpdate() {
-		for (const target of this.universe.links) if (target[this.targetTag] && this.link.Collider.collidesWith(target.Collider)) {
-			target.Destroyable.health -= this.damage * this.universe.tickTime
+		for (const target of this.universe.links) {
+			if (target[this.targetTag] && this.link.Collider.collidesWith(target.Collider)) {
+				target.Destroyable.health -= this.damage * this.universe.tickTime
 
-			if (this.suicide) {
-				this.universe.remove(this.link)
+				if (this.suicide) {
+					this.universe.remove(this.link)
+				}
 			}
 		}
 	}
+}
+
+class CubeBullet extends Link {
+	onInitialize(transform) {
+		this.Transform = transform
+
+		this.add(AngularLinearMovement, transform.a, 600)
+
+		this.Collider = this.add(CircleCollider, 5)
+
+		this.add(Ephemeral, 2)
+		this.add(RammingDamage, Tag.player, 200, true)
+
+		this.add(CubeBulletCanvasRender, graphics)
+	}
+}
+
+class CubeGun extends Trait {
+	onInitialize(fireRate) {
+		this.fireRate = fireRate
+		this.timeEnlapsed = 0
+	}
+
+	onUpdate() {
+		this.timeEnlapsed += this.universe.tickTime
+
+		if (this.fireRate < this.timeEnlapsed) {
+			this.timeEnlapsed = 0
+
+			const a = rand(-PI, PI)
+			this.universe.add(CubeBullet, this.link.Transform.clone().apply(it => it.a = a))
+			this.universe.add(CubeBullet, this.link.Transform.clone().apply(it => it.a = a + PI))
+		}
+	}
+}
+
+
+// -----------------------------------------------------------------
+
+class InteractionLogging extends Trait {
+	onInitialize(userInteraction, graphics) {
+		this.userInteraction = userInteraction
+		this.graphics = graphics
+	}
+
+	onUpdate() {
+		const mousePosition = this.userInteraction.mousePosition
+		const currentlyPressedKeys = Array.from(this.userInteraction.currentlyPressedKeys).join(", ")
+		const pressedKeys = Array.from(this.userInteraction.pressedKeys).join(", ")
+		const releasedKeys = Array.from(this.userInteraction.releasedKeys).join(", ")
+
+		this.graphics.fillStyle = WHITE
+		this.graphics.font = "12pt Source Code Pro"
+
+		let i = 0
+		this.graphics.fillText(`Mouse position ........... ( ${mousePosition.x}, ${mousePosition.y} )`, 50, 50 + ++i * 25)
+		this.graphics.fillText(`Currently pressed keys ... ${currentlyPressedKeys}`, 50, 50 + ++i * 25)
+		this.graphics.fillText(`Recently pressed keys .... ${pressedKeys}`, 50, 50 + ++i * 25)
+		this.graphics.fillText(`Recently released keys ... ${releasedKeys}`, 50, 50 + ++i * 25)
+		this.graphics.fillText(`Last universe tick was ... ${this.universe.tickTime}`, 50, 50 + ++i * 25)
+		this.graphics.fillText(`FPS ...................... ${~~(0.5 + 1 / this.universe.tickTime)}`, 50, 50 + ++i * 25)
+		this.graphics.fillText(`Link count ............... ${this.universe.links.size}`, 50, 50 + ++i * 25)
+		this.graphics.fillText(`Trait count .............. ${this.universe.traits.size}`, 50, 50 + ++i * 25)
+	}
+}
+
+// -----------------------------------------------------------------
+
+const Tag = {
+	player: Symbol("Tag/Link: Player"),
+	enemy: Symbol("Tag/Link: Enemy")
 }
 
 // -----------------------------------------------------------------
@@ -813,13 +850,13 @@ const player = universe.add(class Player extends Link {
 		this.add(PlayerMovementController, userInteractor.UserInteraction, 600)
 		this.add(PlayerBounceOnCanvasEdges, canvas)
 
-		this.add(GatlingGun, userInteractor.UserInteraction)
+		this.add(PlayerGun, userInteractor.UserInteraction)
 
 		this.Collider = this.add(CircleCollider, 27)
 		this.add(Destroyable, 100)
 
-		this.add(DraftShipCanvasRender, graphics)
-		this.add(DraftHealthBarCanvasRender, graphics)
+		this.add(ShipCanvasRender, graphics)
+		this.add(HealthBarCanvasRender, graphics)
 	}
 })
 
@@ -834,12 +871,14 @@ universe.add(class Cube extends Link {
 		this.add(LinearMovement, rand(-400, 400), rand(-400, 400))
 		this.add(CubeBounceOnCanvasEdges, canvas)
 
+		this.add(CubeGun, rand(2, 4))
+
 		this.Collider = this.add(CircleCollider, 20)
 
 		this.add(Destroyable, 100)
 		this.add(RammingDamage, Tag.player, 40)
 
-		this.add(DraftCubeCanvasRender, graphics)
-		this.add(DraftHealthBarCanvasRender, graphics)
+		this.add(CubeCanvasRender, graphics)
+		this.add(HealthBarCanvasRender, graphics)
 	}
 }, rand(0, canvas.width), rand(0, canvas.height))
