@@ -20,31 +20,48 @@ New Roadmap
 	[OK] Quick collision, based on rectangle/rectangle, but without rotation.
 [OK] First graphics prototypes
 [OK] First gameplay
-[  ] In-game HUD interface
-	[  ] Player health
-	[  ] Player energy
-[  ] Out-game interface
-	[  ] Screen mockups
-		[  ] Level selection
-		[  ] Weapon selection
-		[  ] Weapon mapping
-		[  ] Shop
-		[  ] Keymap customization
-		[  ] Navigation
-	[  ] Graphic chart
-	[  ] Characters dialogues
+[  ] More enemies
+	[  ] Zombie cube
+	[  ] Akimbo cube
+	[  ] Cross-gun cube
+	[  ] High-speed cube
+	[  ] Splitting cube
+	[  ] Carrier
+		[  ] Crab on thuster
+		[  ] Crab on thuster with gun
+	[  ] Stationnary turret
 [  ] Weapons
 	[  ] Gatling
-	[  ] Gatling...
-	[  ] GATLING!
+	[  ] Blaster
+	[  ] Shotgun
+	[  ] Charged?
+	[  ] Laser?
+	[  ] Hand-to-hand?
 [  ] Special capacities
 	[  ] Restauration
 	[  ] Blink teleport
 	[  ] Missile swarm
 	[  ] Berzerk
 	[  ] Shield
+	[  ] Shock wave
 	[  ] Mines
+[  ] In-game HUD interface
+	[  ] Enemies health
+		[  ] Don't display if full?
+		[  ] Don't display if not touched for X seconds?
+	[  ] Player health
+	[  ] Player energy
+[  ] Out-game interface
+	[  ] Screen mockups
+		[  ] Level selection
+		[  ] Garage
+			[  ] Capacity selection
+			[  ] Weapon selection
+		[  ] Shop
+		[  ] Keymap customization
+		[  ] Navigation
+	[  ] Graphic chart
+	[  ] Characters dialogues
 [  ] Lore
-[  ] More enemies
-[  ] More levels
+[  ] Levels
 [  ] Memory of player progress
