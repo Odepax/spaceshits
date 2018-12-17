@@ -42,21 +42,10 @@ const min = Math.min
 const max = Math.max
 const square = x => x * x
 
-function absMin(a, b) {
-	return abs(a) < abs(b) ? a : b
-}
-
-function absMax(a, b) {
-	return abs(a) > abs(b) ? a : b
-}
-
-function rand(min, max) {
-	return Math.random() * (max - min) + min
-}
-
-function randBetween() {
-	return arguments[parseInt(Math.random() * arguments.length)]
-}
+const absMin = (a, b) => abs(a) < abs(b) ? a : b
+const absMax = (a, b) => abs(a) > abs(b) ? a : b
+const rand = (min, max) => Math.random() * (max - min) + min
+const randBetween = (...values) => values[parseInt(Math.random() * values.length)]
 
 // -----------------------------------------------------------------
 

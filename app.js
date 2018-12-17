@@ -502,54 +502,59 @@ class CanvasErasing extends Trait {
 	}
 }
 
-class ShipCanvasRender extends Trait {
+class ZombieCubeCanvasRender extends Trait {
 	onInitialize(graphics) {
 		this.graphics = graphics
-
-		this.path = new Path2D().apply(path => {
-			path.lineTo(14, 0)
-			path.lineTo(25, 7)
-			path.lineTo(35, 9)
-			path.lineTo(35, 14)
-			path.lineTo(23, 17)
-			path.lineTo(-7, 30)
-			path.lineTo(-25, 17)
-			path.lineTo(-17, 8)
-			path.lineTo(-21, 9)
-			path.lineTo(-21, -9)
-			path.lineTo(-17, -8)
-			path.lineTo(-25, -17)
-			path.lineTo(-7, -30)
-			path.lineTo(23, -17)
-			path.lineTo(25, -7)
-			path.closePath()
-		})
+		this.image = new Image().apply(image => image.src = "./asset/cube.zombie.svg")
 	}
 
 	onUpdate() {
 		this.graphics.applyTransform(this.link.Transform)
-
-		this.graphics.fillStyle = GREEN
-		this.graphics.fill(this.path)
-
+		this.graphics.drawImage(this.image, -21, -21)
 		this.graphics.resetTransform()
 	}
 }
 
-class CubeCanvasRender extends Trait {
+class CubeShardCanvasRender extends Trait {
 	onInitialize(graphics) {
 		this.graphics = graphics
+		this.image = new Image().apply(image => image.src = "./asset/projectile.shard.svg")
 	}
 
 	onUpdate() {
 		this.graphics.applyTransform(this.link.Transform)
-
-		this.graphics.fillStyle = ORANGE
-		this.graphics.fillRect(-20, -20, 40, 40)
-
+		this.graphics.drawImage(this.image, -18.3, -7)
 		this.graphics.resetTransform()
 	}
 }
+
+class PlayerShipCanvasRender extends Trait {
+	onInitialize(graphics) {
+		this.graphics = graphics
+		this.image = new Image().apply(image => image.src = "./asset/player.ship.svg")
+	}
+
+	onUpdate() {
+		this.graphics.applyTransform(this.link.Transform)
+		this.graphics.drawImage(this.image, -29, -31.2)
+		this.graphics.resetTransform()
+	}
+}
+
+class GatlingBulletCanvasRender extends Trait {
+	onInitialize(graphics) {
+		this.graphics = graphics
+		this.image = new Image().apply(image => image.src = "./asset/projectile.gatling.svg")
+	}
+
+	onUpdate() {
+		this.graphics.applyTransform(this.link.Transform)
+		this.graphics.drawImage(this.image, -16, -4)
+		this.graphics.resetTransform()
+	}
+}
+
+// -----------------------------------------------------------------
 
 class HealthBarCanvasRender extends Trait {
 	onInitialize(graphics) {
@@ -562,39 +567,10 @@ class HealthBarCanvasRender extends Trait {
 		this.graphics.applyTransform(this.link.Transform, false)
 
 		this.graphics.fillStyle = RED
+		this.graphics.fillRect(-30, 40, 60, 8)
+
+		this.graphics.fillStyle = GREEN
 		this.graphics.fillRect(-30, 40, 60 * health / maxHealth, 8)
-
-		this.graphics.resetTransform()
-	}
-}
-
-class PlayerBulletCanvasRender extends Trait {
-	onInitialize(graphics) {
-		this.graphics = graphics
-	}
-
-	onUpdate() {
-		this.graphics.applyTransform(this.link.Transform)
-
-		this.graphics.fillStyle = BLUE
-		this.graphics.fillRect(-2, -2, 10, 4)
-
-		this.graphics.resetTransform()
-	}
-}
-
-class CubeBulletCanvasRender extends Trait {
-	onInitialize(graphics) {
-		this.graphics = graphics
-	}
-
-	onUpdate() {
-		this.graphics.applyTransform(this.link.Transform)
-
-		this.graphics.fillStyle = PINK
-		this.graphics.beginPath()
-		this.graphics.arc(0, 0, 10, 0, 2 * PI)
-		this.graphics.fill()
 
 		this.graphics.resetTransform()
 	}
@@ -645,18 +621,36 @@ class PlayerMovementController extends Trait {
 	}
 }
 
+class PlayerBounceOnCanvasEdges extends Trait {
+	onInitialize(canvas, speedFactorAfterBounce = 0.5) {
+		this.canvas = canvas
+		this.speedFactorAfterBounce = speedFactorAfterBounce
+	}
+
+	onUpdate() {
+		const shipPosition = this.link.Transform
+		const shipSpeed = this.link.ForceBasedMovement.speed
+
+		     if (shipPosition.y < 0)                  { shipPosition.y = 0                  ; shipSpeed.y *= -this.speedFactorAfterBounce }
+		else if (this.canvas.height < shipPosition.y) { shipPosition.y = this.canvas.height ; shipSpeed.y *= -this.speedFactorAfterBounce }
+
+		     if (shipPosition.x < 0)                 { shipPosition.x = 0                 ; shipSpeed.x *= -this.speedFactorAfterBounce }
+		else if (this.canvas.width < shipPosition.x) { shipPosition.x = this.canvas.width ; shipSpeed.x *= -this.speedFactorAfterBounce }
+	}
+}
+
 class PlayerBullet extends Link {
 	onInitialize(transform) {
 		this.Transform = transform
 
-		this.add(AngularLinearMovement, transform.a, 800)
+		this.add(AngularLinearMovement, transform.a, 1000)
 
-		this.Collider = this.add(CircleCollider, 2)
+		this.Collider = this.add(CircleCollider, 4)
 
 		this.add(Ephemeral, 1)
-		this.add(RammingDamage, Tag.enemy, 200, true)
+		this.add(InstantRammingDamage, Tag.enemy, 10)
 
-		this.add(PlayerBulletCanvasRender, graphics)
+		this.add(GatlingBulletCanvasRender, graphics)
 	}
 }
 
@@ -674,24 +668,6 @@ class PlayerGun extends Trait {
 			this.timeEnlapsed = 0
 			this.universe.add(PlayerBullet, this.link.Transform.clone().relativeOffset(30, 12))
 		}
-	}
-}
-
-class PlayerBounceOnCanvasEdges extends Trait {
-	onInitialize(canvas, speedFactorAfterBounce = 0.5) {
-		this.canvas = canvas
-		this.speedFactorAfterBounce = speedFactorAfterBounce
-	}
-
-	onUpdate() {
-		const shipPosition = this.link.Transform
-		const shipSpeed = this.link.ForceBasedMovement.speed
-
-		     if (shipPosition.y < 0)                  { shipPosition.y = 0                  ; shipSpeed.y *= -this.speedFactorAfterBounce }
-		else if (this.canvas.height < shipPosition.y) { shipPosition.y = this.canvas.height ; shipSpeed.y *= -this.speedFactorAfterBounce }
-
-		     if (shipPosition.x < 0)                 { shipPosition.x = 0                 ; shipSpeed.x *= -this.speedFactorAfterBounce }
-		else if (this.canvas.width < shipPosition.x) { shipPosition.x = this.canvas.width ; shipSpeed.x *= -this.speedFactorAfterBounce }
 	}
 }
 
@@ -724,27 +700,39 @@ class CubeBounceOnCanvasEdges extends Trait {
 	}
 }
 
-class RammingDamage extends Trait {
-	onInitialize(targetTag, damage, suicide = false) {
+class ContinuousRammingDamage extends Trait {
+	onInitialize(targetTag, damage) {
 		this.targetTag = targetTag
 		this.damage = damage
-		this.suicide = suicide
 	}
 
 	onUpdate() {
 		for (const target of this.universe.links) {
 			if (target[this.targetTag] && this.link.Collider.collidesWith(target.Collider)) {
 				target.Destroyable.health -= this.damage * this.universe.tickTime
-
-				if (this.suicide) {
-					this.universe.remove(this.link)
-				}
 			}
 		}
 	}
 }
 
-class CubeBullet extends Link {
+class InstantRammingDamage extends Trait {
+	onInitialize(targetTag, damage) {
+		this.targetTag = targetTag
+		this.damage = damage
+	}
+
+	onUpdate() {
+		for (const target of this.universe.links) {
+			if (target[this.targetTag] && this.link.Collider.collidesWith(target.Collider)) {
+				target.Destroyable.health -= this.damage
+
+				this.universe.remove(this.link)
+			}
+		}
+	}
+}
+
+class CubeShard extends Link {
 	onInitialize(transform) {
 		this.Transform = transform
 
@@ -753,31 +741,19 @@ class CubeBullet extends Link {
 		this.Collider = this.add(CircleCollider, 5)
 
 		this.add(Ephemeral, 2)
-		this.add(RammingDamage, Tag.player, 200, true)
+		this.add(InstantRammingDamage, Tag.player, 10)
 
-		this.add(CubeBulletCanvasRender, graphics)
+		this.add(CubeShardCanvasRender, graphics)
 	}
 }
 
-class CubeGun extends Trait {
-	onInitialize(fireRate) {
-		this.fireRate = fireRate
-		this.timeEnlapsed = 0
-	}
-
-	onUpdate() {
-		this.timeEnlapsed += this.universe.tickTime
-
-		if (this.fireRate < this.timeEnlapsed) {
-			this.timeEnlapsed = 0
-
-			const a = rand(-PI, PI)
-			this.universe.add(CubeBullet, this.link.Transform.clone().apply(it => it.a = a))
-			this.universe.add(CubeBullet, this.link.Transform.clone().apply(it => it.a = a + PI))
+class CubeExplosionOnDeath extends Trait {
+	onRemoved() {
+		for (let i = 0; i < 6; ++i) {
+			this.universe.add(CubeShard, this.link.Transform.clone().apply(it => it.a = i * PI / 3))
 		}
 	}
 }
-
 
 // -----------------------------------------------------------------
 
@@ -844,10 +820,10 @@ const player = universe.add(class Player extends Link {
 	onInitialize() {
 		this[Tag.player] = true
 
-		this.add(Transform, 250, 250)
+		this.add(Transform, canvas.width / 2, canvas.height / 2)
 
 		this.add(ForceBasedMovement)
-		this.add(PlayerMovementController, userInteractor.UserInteraction, 600)
+		this.add(PlayerMovementController, userInteractor.UserInteraction, 1000)
 		this.add(PlayerBounceOnCanvasEdges, canvas)
 
 		this.add(PlayerGun, userInteractor.UserInteraction)
@@ -855,12 +831,12 @@ const player = universe.add(class Player extends Link {
 		this.Collider = this.add(CircleCollider, 27)
 		this.add(Destroyable, 100)
 
-		this.add(ShipCanvasRender, graphics)
+		this.add(PlayerShipCanvasRender, graphics)
 		this.add(HealthBarCanvasRender, graphics)
 	}
 })
 
-for (let i = 0, c = ~~(new URLSearchParams(location.search).get("cubes")) || 5; i < c; ++i)
+for (let i = 0, c = ~~(new URLSearchParams(location.search).get("cubes")) || 10; i < c; ++i)
 universe.add(class Cube extends Link {
 	onInitialize(x, y) {
 		this[Tag.enemy] = true
@@ -870,15 +846,14 @@ universe.add(class Cube extends Link {
 		this.add(CubeWanderingRotation)
 		this.add(LinearMovement, rand(-400, 400), rand(-400, 400))
 		this.add(CubeBounceOnCanvasEdges, canvas)
-
-		this.add(CubeGun, rand(2, 4))
+		this.add(CubeExplosionOnDeath)
 
 		this.Collider = this.add(CircleCollider, 20)
 
 		this.add(Destroyable, 100)
-		this.add(RammingDamage, Tag.player, 40)
+		this.add(ContinuousRammingDamage, Tag.player, 100)
 
-		this.add(CubeCanvasRender, graphics)
+		this.add(ZombieCubeCanvasRender, graphics)
 		this.add(HealthBarCanvasRender, graphics)
 	}
 }, rand(0, canvas.width), rand(0, canvas.height))
