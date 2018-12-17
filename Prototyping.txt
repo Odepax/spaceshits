@@ -21,9 +21,9 @@ New Roadmap
 [OK] First graphics prototypes
 [OK] First gameplay
 [  ] More enemies
-	[  ] Zombie cube
-	[  ] Akimbo cube
-	[  ] Cross-gun cube
+	[OK] Zombie cube
+	[OK] Akimbo cube
+	[OK] Cross-gun cube
 	[  ] High-speed cube
 	[  ] Splitting cube
 	[  ] Carrier

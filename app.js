@@ -515,7 +515,33 @@ class ZombieCubeCanvasRender extends Trait {
 	}
 }
 
-class CubeShardCanvasRender extends Trait {
+class AkimboCubeCanvasRender extends Trait {
+	onInitialize(graphics) {
+		this.graphics = graphics
+		this.image = new Image().apply(image => image.src = "./asset/cube.dualgun.svg")
+	}
+
+	onUpdate() {
+		this.graphics.applyTransform(this.link.Transform)
+		this.graphics.drawImage(this.image, -21, -21)
+		this.graphics.resetTransform()
+	}
+}
+
+class CrossCubeCanvasRender extends Trait {
+	onInitialize(graphics) {
+		this.graphics = graphics
+		this.image = new Image().apply(image => image.src = "./asset/cube.quadgun.svg")
+	}
+
+	onUpdate() {
+		this.graphics.applyTransform(this.link.Transform)
+		this.graphics.drawImage(this.image, -21, -21)
+		this.graphics.resetTransform()
+	}
+}
+
+class CubeExplosionShardCanvasRender extends Trait {
 	onInitialize(graphics) {
 		this.graphics = graphics
 		this.image = new Image().apply(image => image.src = "./asset/projectile.shard.svg")
@@ -524,6 +550,19 @@ class CubeShardCanvasRender extends Trait {
 	onUpdate() {
 		this.graphics.applyTransform(this.link.Transform)
 		this.graphics.drawImage(this.image, -18.3, -7)
+		this.graphics.resetTransform()
+	}
+}
+
+class CubeBulletCanvasRender extends Trait {
+	onInitialize(graphics) {
+		this.graphics = graphics
+		this.image = new Image().apply(image => image.src = "./asset/projectile.cubeblaster.svg")
+	}
+
+	onUpdate() {
+		this.graphics.applyTransform(this.link.Transform, false)
+		this.graphics.drawImage(this.image, -8, -8)
 		this.graphics.resetTransform()
 	}
 }
@@ -647,7 +686,7 @@ class PlayerBullet extends Link {
 
 		this.Collider = this.add(CircleCollider, 4)
 
-		this.add(Ephemeral, 1)
+		this.add(Ephemeral, 2)
 		this.add(InstantRammingDamage, Tag.enemy, 10)
 
 		this.add(GatlingBulletCanvasRender, graphics)
@@ -732,7 +771,63 @@ class InstantRammingDamage extends Trait {
 	}
 }
 
-class CubeShard extends Link {
+class CubeBullet extends Link {
+	onInitialize(transform) {
+		this.Transform = transform
+
+		this.add(AngularLinearMovement, transform.a, 500)
+
+		this.Collider = this.add(CircleCollider, 5)
+
+		this.add(Ephemeral, 2)
+		this.add(InstantRammingDamage, Tag.player, 10)
+
+		this.add(CubeBulletCanvasRender, graphics)
+	}
+}
+
+class CubeDualGun extends Trait {
+	onInitialize(fireRate = 2) {
+		this.fireRate = fireRate
+		this.timeEnlapsed = 0
+	}
+
+	onUpdate() {
+		this.timeEnlapsed += this.universe.tickTime
+
+		if (this.fireRate < this.timeEnlapsed) {
+			this.timeEnlapsed = 0
+
+			const cubePosition = this.link.Transform
+
+			this.universe.add(CubeBullet, cubePosition.clone().apply(it => it.a += PI / 4))
+			this.universe.add(CubeBullet, cubePosition.clone().apply(it => it.a += -3 * PI / 4))
+		}
+	}
+}
+
+class CubeQuadGun extends Trait {
+	onInitialize(fireRate = 2) {
+		this.fireRate = fireRate
+		this.timeEnlapsed = 0
+	}
+
+	onUpdate() {
+		this.timeEnlapsed += this.universe.tickTime
+
+		if (this.fireRate < this.timeEnlapsed) {
+			this.timeEnlapsed = 0
+
+			const cubePosition = this.link.Transform
+
+			for (let i = 0; i < 4; ++i) {
+				this.universe.add(CubeBullet, cubePosition.clone().apply(it => it.a += i * PI / 2 + PI / 4))
+			}
+		}
+	}
+}
+
+class CubeExplosionShard extends Link {
 	onInitialize(transform) {
 		this.Transform = transform
 
@@ -743,14 +838,14 @@ class CubeShard extends Link {
 		this.add(Ephemeral, 2)
 		this.add(InstantRammingDamage, Tag.player, 10)
 
-		this.add(CubeShardCanvasRender, graphics)
+		this.add(CubeExplosionShardCanvasRender, graphics)
 	}
 }
 
 class CubeExplosionOnDeath extends Trait {
 	onRemoved() {
 		for (let i = 0; i < 6; ++i) {
-			this.universe.add(CubeShard, this.link.Transform.clone().apply(it => it.a = i * PI / 3))
+			this.universe.add(CubeExplosionShard, this.link.Transform.clone().apply(it => it.a = i * PI / 3))
 		}
 	}
 }
@@ -836,24 +931,72 @@ const player = universe.add(class Player extends Link {
 	}
 })
 
-for (let i = 0, c = ~~(new URLSearchParams(location.search).get("cubes")) || 10; i < c; ++i)
-universe.add(class Cube extends Link {
+class ZombieCube extends Link {
 	onInitialize(x, y) {
 		this[Tag.enemy] = true
 
 		this.add(Transform, x, y, rand(-PI, PI))
-
-		this.add(CubeWanderingRotation)
 		this.add(LinearMovement, rand(-400, 400), rand(-400, 400))
 		this.add(CubeBounceOnCanvasEdges, canvas)
-		this.add(CubeExplosionOnDeath)
+		this.add(CubeWanderingRotation)
 
 		this.Collider = this.add(CircleCollider, 20)
+		this.add(ContinuousRammingDamage, Tag.player, 100)
 
 		this.add(Destroyable, 100)
-		this.add(ContinuousRammingDamage, Tag.player, 100)
+		this.add(CubeExplosionOnDeath)
 
 		this.add(ZombieCubeCanvasRender, graphics)
 		this.add(HealthBarCanvasRender, graphics)
 	}
-}, rand(0, canvas.width), rand(0, canvas.height))
+}
+
+class AkimboCube extends Link {
+	onInitialize(x, y) {
+		this[Tag.enemy] = true
+
+		this.add(Transform, x, y, rand(-PI, PI))
+		this.add(LinearMovement, rand(-400, 400), rand(-400, 400))
+		this.add(CubeBounceOnCanvasEdges, canvas)
+		this.add(CubeWanderingRotation)
+
+		this.Collider = this.add(CircleCollider, 20)
+		this.add(ContinuousRammingDamage, Tag.player, 100)
+
+		this.add(Destroyable, 100)
+		this.add(CubeExplosionOnDeath)
+		this.add(CubeDualGun, rand(2, 4))
+
+		this.add(AkimboCubeCanvasRender, graphics)
+		this.add(HealthBarCanvasRender, graphics)
+	}
+}
+
+class CrossCube extends Link {
+	onInitialize(x, y) {
+		this[Tag.enemy] = true
+
+		this.add(Transform, x, y, rand(-PI, PI))
+		this.add(LinearMovement, rand(-400, 400), rand(-400, 400))
+		this.add(CubeBounceOnCanvasEdges, canvas)
+		this.add(CubeWanderingRotation)
+
+		this.Collider = this.add(CircleCollider, 20)
+		this.add(ContinuousRammingDamage, Tag.player, 100)
+
+		this.add(Destroyable, 100)
+		this.add(CubeExplosionOnDeath)
+		this.add(CubeQuadGun, rand(2, 4))
+
+		this.add(CrossCubeCanvasRender, graphics)
+		this.add(HealthBarCanvasRender, graphics)
+	}
+}
+
+for (let i = 0, c = ~~(new URLSearchParams(location.search).get("cubes")) || 10; i < c; ++i) {
+	universe.add(
+		randBetween(ZombieCube, AkimboCube, CrossCube),
+		rand(0, canvas.width),
+		rand(0, canvas.height)
+	)
+}
