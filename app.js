@@ -502,94 +502,60 @@ class CanvasErasing extends Trait {
 	}
 }
 
-class ZombieCube2dRender extends Trait {
-	onInitialize(graphics) {
+class Image2dRender extends Trait {
+	onInitialize(graphics, imagePath, centerX, centerY) {
 		this.graphics = graphics
-		this.image = new Image().apply(image => image.src = "./asset/cube.zombie.svg")
+		this.image = new Image().apply(image => image.src = imagePath)
+		this.centerX = -centerX
+		this.centerY = -centerY
 	}
 
 	onUpdate() {
 		this.graphics.applyTransform(this.link.Transform)
-		this.graphics.drawImage(this.image, -21, -21)
+		this.graphics.drawImage(this.image, this.centerX, this.centerY)
 		this.graphics.resetTransform()
 	}
 }
 
-class AkimboCube2dRender extends Trait {
+class ZombieCube2dRender extends Image2dRender {
 	onInitialize(graphics) {
-		this.graphics = graphics
-		this.image = new Image().apply(image => image.src = "./asset/cube.dualgun.svg")
-	}
-
-	onUpdate() {
-		this.graphics.applyTransform(this.link.Transform)
-		this.graphics.drawImage(this.image, -21, -21)
-		this.graphics.resetTransform()
+		super.onInitialize(graphics, "./asset/cube.zombie.svg", 21, 21)
 	}
 }
 
-class CrossCube2dRender extends Trait {
+class AkimboCube2dRender extends Image2dRender {
 	onInitialize(graphics) {
-		this.graphics = graphics
-		this.image = new Image().apply(image => image.src = "./asset/cube.quadgun.svg")
-	}
-
-	onUpdate() {
-		this.graphics.applyTransform(this.link.Transform)
-		this.graphics.drawImage(this.image, -21, -21)
-		this.graphics.resetTransform()
+		super.onInitialize(graphics, "./asset/cube.dualgun.svg", 21, 21)
 	}
 }
 
-class CubeExplosionShard2dRender extends Trait {
+class CrossCube2dRender extends Image2dRender {
 	onInitialize(graphics) {
-		this.graphics = graphics
-		this.image = new Image().apply(image => image.src = "./asset/projectile.shard.svg")
-	}
-
-	onUpdate() {
-		this.graphics.applyTransform(this.link.Transform)
-		this.graphics.drawImage(this.image, -18.3, -7)
-		this.graphics.resetTransform()
+		super.onInitialize(graphics, "./asset/cube.quadgun.svg", 21, 21)
 	}
 }
 
-class CubeBullet2dRender extends Trait {
+class CubeExplosionShard2dRender extends Image2dRender {
 	onInitialize(graphics) {
-		this.graphics = graphics
-		this.image = new Image().apply(image => image.src = "./asset/projectile.cubeblaster.svg")
-	}
-
-	onUpdate() {
-		this.graphics.applyTransform(this.link.Transform, false)
-		this.graphics.drawImage(this.image, -8, -8)
-		this.graphics.resetTransform()
+		super.onInitialize(graphics, "./asset/projectile.shard.svg", 18.3, 7)
 	}
 }
 
-class PlayerShip2dRender extends Trait {
+class CubeBullet2dRender extends Image2dRender {
 	onInitialize(graphics) {
-		this.graphics = graphics
-		this.image = new Image().apply(image => image.src = "./asset/player.ship.svg")
-	}
-
-	onUpdate() {
-		this.graphics.applyTransform(this.link.Transform)
-		this.graphics.drawImage(this.image, -29, -31.2)
-		this.graphics.resetTransform()
+		super.onInitialize(graphics, "./asset/projectile.cubeblaster.svg", 8, 8)
 	}
 }
 
-class GatlingBullet2dRender extends Trait {
+class PlayerShip2dRender extends Image2dRender {
 	onInitialize(graphics) {
-		this.graphics = graphics
-		this.image = new Image().apply(image => image.src = "./asset/projectile.gatling.svg")
+		super.onInitialize(graphics, "./asset/player.ship.svg", 29, 31.2)
 	}
+}
 
-	onUpdate() {
-		this.graphics.applyTransform(this.link.Transform)
-		this.graphics.drawImage(this.image, -16, -4)
-		this.graphics.resetTransform()
+class GatlingBullet2dRender extends Image2dRender {
+	onInitialize(graphics) {
+		super.onInitialize(graphics, "./asset/projectile.gatling.svg", 16, 4)
 	}
 }
 
