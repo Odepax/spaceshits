@@ -618,16 +618,18 @@ class HealthBarCanvasRender extends Trait {
 // -----------------------------------------------------------------
 
 class PlayerMovementController extends Trait {
-	onInitialize(userInteraction, movementAcceleration) {
+	onInitialize(userInteraction, canvas, movementAcceleration = 1000, speedFactorAfterBounce = 0.5) {
 		this.userInteraction = userInteraction
+		this.canvas = canvas
 
 		this.movementAcceleration = movementAcceleration
+		this.speedFactorAfterBounce = speedFactorAfterBounce
 	}
 
 	onUpdate() {
 		const targetPosition = this.userInteraction.mousePosition
 		const shipPosition = this.link.Transform
-		const shipAcceleration = this.link.ForceBasedMovement.acceleration
+		const { speed: shipSpeed, acceleration: shipAcceleration} = this.link.ForceBasedMovement
 
 		shipPosition.a = shipPosition.angleToward(targetPosition)
 
@@ -657,18 +659,6 @@ class PlayerMovementController extends Trait {
 			shipAcceleration.x = 0
 			shipAcceleration.y = 0
 		}
-	}
-}
-
-class PlayerBounceOnCanvasEdges extends Trait {
-	onInitialize(canvas, speedFactorAfterBounce = 0.5) {
-		this.canvas = canvas
-		this.speedFactorAfterBounce = speedFactorAfterBounce
-	}
-
-	onUpdate() {
-		const shipPosition = this.link.Transform
-		const shipSpeed = this.link.ForceBasedMovement.speed
 
 		     if (shipPosition.y < 0)                  { shipPosition.y = 0                  ; shipSpeed.y *= -this.speedFactorAfterBounce }
 		else if (this.canvas.height < shipPosition.y) { shipPosition.y = this.canvas.height ; shipSpeed.y *= -this.speedFactorAfterBounce }
@@ -712,19 +702,10 @@ class PlayerGun extends Trait {
 
 // -----------------------------------------------------------------
 
-class CubeWanderingRotation extends Trait {
-	onInitialize() {
-		this.rotationSpeed = randBetween(-1, 1)
-	}
-
-	onUpdate() {
-		this.link.Transform.a += this.rotationSpeed * this.universe.tickTime
-	}
-}
-
-class CubeBounceOnCanvasEdges extends Trait {
+class CubeMovementController extends Trait {
 	onInitialize(canvas) {
 		this.canvas = canvas
+		this.rotationSpeed = randBetween(-1, 1)
 	}
 
 	onUpdate() {
@@ -736,6 +717,8 @@ class CubeBounceOnCanvasEdges extends Trait {
 
 		     if (cubePosition.x < 0)                 { cubePosition.x = 0                 ; cubeSpeed.speedX *= -1 }
 		else if (this.canvas.width < cubePosition.x) { cubePosition.x = this.canvas.width ; cubeSpeed.speedX *= -1 }
+
+		cubePosition.a += this.rotationSpeed * this.universe.tickTime
 	}
 }
 
@@ -918,8 +901,7 @@ const player = universe.add(class Player extends Link {
 		this.add(Transform, canvas.width / 2, canvas.height / 2)
 
 		this.add(ForceBasedMovement)
-		this.add(PlayerMovementController, userInteractor.UserInteraction, 1000)
-		this.add(PlayerBounceOnCanvasEdges, canvas)
+		this.add(PlayerMovementController, userInteractor.UserInteraction, canvas)
 
 		this.add(PlayerGun, userInteractor.UserInteraction)
 
@@ -931,40 +913,35 @@ const player = universe.add(class Player extends Link {
 	}
 })
 
-class ZombieCube extends Link {
+class Cube extends Link {
 	onInitialize(x, y) {
 		this[Tag.enemy] = true
 
 		this.add(Transform, x, y, rand(-PI, PI))
 		this.add(LinearMovement, rand(-400, 400), rand(-400, 400))
-		this.add(CubeBounceOnCanvasEdges, canvas)
-		this.add(CubeWanderingRotation)
+		this.add(CubeMovementController, canvas)
 
 		this.Collider = this.add(CircleCollider, 20)
 		this.add(ContinuousRammingDamage, Tag.player, 100)
 
 		this.add(Destroyable, 100)
 		this.add(CubeExplosionOnDeath)
+	}
+}
+
+class ZombieCube extends Cube {
+	onInitialize(x, y) {
+		super.onInitialize(x, y)
 
 		this.add(ZombieCubeCanvasRender, graphics)
 		this.add(HealthBarCanvasRender, graphics)
 	}
 }
 
-class AkimboCube extends Link {
+class AkimboCube extends Cube {
 	onInitialize(x, y) {
-		this[Tag.enemy] = true
+		super.onInitialize(x, y)
 
-		this.add(Transform, x, y, rand(-PI, PI))
-		this.add(LinearMovement, rand(-400, 400), rand(-400, 400))
-		this.add(CubeBounceOnCanvasEdges, canvas)
-		this.add(CubeWanderingRotation)
-
-		this.Collider = this.add(CircleCollider, 20)
-		this.add(ContinuousRammingDamage, Tag.player, 100)
-
-		this.add(Destroyable, 100)
-		this.add(CubeExplosionOnDeath)
 		this.add(CubeDualGun, rand(2, 4))
 
 		this.add(AkimboCubeCanvasRender, graphics)
@@ -972,20 +949,10 @@ class AkimboCube extends Link {
 	}
 }
 
-class CrossCube extends Link {
+class CrossCube extends Cube {
 	onInitialize(x, y) {
-		this[Tag.enemy] = true
+		super.onInitialize(x, y)
 
-		this.add(Transform, x, y, rand(-PI, PI))
-		this.add(LinearMovement, rand(-400, 400), rand(-400, 400))
-		this.add(CubeBounceOnCanvasEdges, canvas)
-		this.add(CubeWanderingRotation)
-
-		this.Collider = this.add(CircleCollider, 20)
-		this.add(ContinuousRammingDamage, Tag.player, 100)
-
-		this.add(Destroyable, 100)
-		this.add(CubeExplosionOnDeath)
 		this.add(CubeQuadGun, rand(2, 4))
 
 		this.add(CrossCubeCanvasRender, graphics)
