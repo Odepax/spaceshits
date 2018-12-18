@@ -617,6 +617,45 @@ class HealthBar2dRender extends Trait {
 
 // -----------------------------------------------------------------
 
+class Projectile extends Link {
+	onInitialize(transform, speed, radius, targetTag, damage) {
+		this.Transform = transform
+
+		this.add(AngularLinearMovement, transform.a, speed)
+
+		this.Collider = this.add(CircleCollider, radius)
+
+		this.add(Ephemeral, 2)
+		this.add(InstantRammingDamage, targetTag, damage)
+	}
+}
+
+class PlayerBullet extends Projectile {
+	onInitialize(transform) {
+		super.onInitialize(transform, 1000, 4, Tag.enemy, 10)
+
+		this.add(GatlingBullet2dRender, graphics)
+	}
+}
+
+class CubeBullet extends Projectile {
+	onInitialize(transform) {
+		super.onInitialize(transform, 500, 5, Tag.player, 10)
+
+		this.add(CubeBullet2dRender, graphics)
+	}
+}
+
+class CubeExplosionShard extends Projectile {
+	onInitialize(transform) {
+		super.onInitialize(transform, 600, 5, Tag.player, 10)
+
+		this.add(CubeExplosionShard2dRender, graphics)
+	}
+}
+
+// -----------------------------------------------------------------
+
 class PlayerMovementController extends Trait {
 	onInitialize(userInteraction, canvas, movementAcceleration = 1000, speedFactorAfterBounce = 0.5) {
 		this.userInteraction = userInteraction
@@ -665,21 +704,6 @@ class PlayerMovementController extends Trait {
 
 		     if (shipPosition.x < 0)                 { shipPosition.x = 0                 ; shipSpeed.x *= -this.speedFactorAfterBounce }
 		else if (this.canvas.width < shipPosition.x) { shipPosition.x = this.canvas.width ; shipSpeed.x *= -this.speedFactorAfterBounce }
-	}
-}
-
-class PlayerBullet extends Link {
-	onInitialize(transform) {
-		this.Transform = transform
-
-		this.add(AngularLinearMovement, transform.a, 1000)
-
-		this.Collider = this.add(CircleCollider, 4)
-
-		this.add(Ephemeral, 2)
-		this.add(InstantRammingDamage, Tag.enemy, 10)
-
-		this.add(GatlingBullet2dRender, graphics)
 	}
 }
 
@@ -754,21 +778,6 @@ class InstantRammingDamage extends Trait {
 	}
 }
 
-class CubeBullet extends Link {
-	onInitialize(transform) {
-		this.Transform = transform
-
-		this.add(AngularLinearMovement, transform.a, 500)
-
-		this.Collider = this.add(CircleCollider, 5)
-
-		this.add(Ephemeral, 2)
-		this.add(InstantRammingDamage, Tag.player, 10)
-
-		this.add(CubeBullet2dRender, graphics)
-	}
-}
-
 class CubeDualGun extends Trait {
 	onInitialize(fireRate = 2) {
 		this.fireRate = fireRate
@@ -807,21 +816,6 @@ class CubeQuadGun extends Trait {
 				this.universe.add(CubeBullet, cubePosition.clone().apply(it => it.a += i * PI / 2 + PI / 4))
 			}
 		}
-	}
-}
-
-class CubeExplosionShard extends Link {
-	onInitialize(transform) {
-		this.Transform = transform
-
-		this.add(AngularLinearMovement, transform.a, 600)
-
-		this.Collider = this.add(CircleCollider, 5)
-
-		this.add(Ephemeral, 2)
-		this.add(InstantRammingDamage, Tag.player, 10)
-
-		this.add(CubeExplosionShard2dRender, graphics)
 	}
 }
 
