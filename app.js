@@ -502,7 +502,7 @@ class CanvasErasing extends Trait {
 	}
 }
 
-class ZombieCubeCanvasRender extends Trait {
+class ZombieCube2dRender extends Trait {
 	onInitialize(graphics) {
 		this.graphics = graphics
 		this.image = new Image().apply(image => image.src = "./asset/cube.zombie.svg")
@@ -515,7 +515,7 @@ class ZombieCubeCanvasRender extends Trait {
 	}
 }
 
-class AkimboCubeCanvasRender extends Trait {
+class AkimboCube2dRender extends Trait {
 	onInitialize(graphics) {
 		this.graphics = graphics
 		this.image = new Image().apply(image => image.src = "./asset/cube.dualgun.svg")
@@ -528,7 +528,7 @@ class AkimboCubeCanvasRender extends Trait {
 	}
 }
 
-class CrossCubeCanvasRender extends Trait {
+class CrossCube2dRender extends Trait {
 	onInitialize(graphics) {
 		this.graphics = graphics
 		this.image = new Image().apply(image => image.src = "./asset/cube.quadgun.svg")
@@ -541,7 +541,7 @@ class CrossCubeCanvasRender extends Trait {
 	}
 }
 
-class CubeExplosionShardCanvasRender extends Trait {
+class CubeExplosionShard2dRender extends Trait {
 	onInitialize(graphics) {
 		this.graphics = graphics
 		this.image = new Image().apply(image => image.src = "./asset/projectile.shard.svg")
@@ -554,7 +554,7 @@ class CubeExplosionShardCanvasRender extends Trait {
 	}
 }
 
-class CubeBulletCanvasRender extends Trait {
+class CubeBullet2dRender extends Trait {
 	onInitialize(graphics) {
 		this.graphics = graphics
 		this.image = new Image().apply(image => image.src = "./asset/projectile.cubeblaster.svg")
@@ -567,7 +567,7 @@ class CubeBulletCanvasRender extends Trait {
 	}
 }
 
-class PlayerShipCanvasRender extends Trait {
+class PlayerShip2dRender extends Trait {
 	onInitialize(graphics) {
 		this.graphics = graphics
 		this.image = new Image().apply(image => image.src = "./asset/player.ship.svg")
@@ -580,7 +580,7 @@ class PlayerShipCanvasRender extends Trait {
 	}
 }
 
-class GatlingBulletCanvasRender extends Trait {
+class GatlingBullet2dRender extends Trait {
 	onInitialize(graphics) {
 		this.graphics = graphics
 		this.image = new Image().apply(image => image.src = "./asset/projectile.gatling.svg")
@@ -595,7 +595,7 @@ class GatlingBulletCanvasRender extends Trait {
 
 // -----------------------------------------------------------------
 
-class HealthBarCanvasRender extends Trait {
+class HealthBar2dRender extends Trait {
 	onInitialize(graphics) {
 		this.graphics = graphics
 	}
@@ -679,7 +679,7 @@ class PlayerBullet extends Link {
 		this.add(Ephemeral, 2)
 		this.add(InstantRammingDamage, Tag.enemy, 10)
 
-		this.add(GatlingBulletCanvasRender, graphics)
+		this.add(GatlingBullet2dRender, graphics)
 	}
 }
 
@@ -765,7 +765,7 @@ class CubeBullet extends Link {
 		this.add(Ephemeral, 2)
 		this.add(InstantRammingDamage, Tag.player, 10)
 
-		this.add(CubeBulletCanvasRender, graphics)
+		this.add(CubeBullet2dRender, graphics)
 	}
 }
 
@@ -821,7 +821,7 @@ class CubeExplosionShard extends Link {
 		this.add(Ephemeral, 2)
 		this.add(InstantRammingDamage, Tag.player, 10)
 
-		this.add(CubeExplosionShardCanvasRender, graphics)
+		this.add(CubeExplosionShard2dRender, graphics)
 	}
 }
 
@@ -908,8 +908,8 @@ const player = universe.add(class Player extends Link {
 		this.Collider = this.add(CircleCollider, 27)
 		this.add(Destroyable, 100)
 
-		this.add(PlayerShipCanvasRender, graphics)
-		this.add(HealthBarCanvasRender, graphics)
+		this.add(PlayerShip2dRender, graphics)
+		this.add(HealthBar2dRender, graphics)
 	}
 })
 
@@ -933,8 +933,8 @@ class ZombieCube extends Cube {
 	onInitialize(x, y) {
 		super.onInitialize(x, y)
 
-		this.add(ZombieCubeCanvasRender, graphics)
-		this.add(HealthBarCanvasRender, graphics)
+		this.add(ZombieCube2dRender, graphics)
+		this.add(HealthBar2dRender, graphics)
 	}
 }
 
@@ -944,8 +944,8 @@ class AkimboCube extends Cube {
 
 		this.add(CubeDualGun, rand(2, 4))
 
-		this.add(AkimboCubeCanvasRender, graphics)
-		this.add(HealthBarCanvasRender, graphics)
+		this.add(AkimboCube2dRender, graphics)
+		this.add(HealthBar2dRender, graphics)
 	}
 }
 
@@ -955,8 +955,8 @@ class CrossCube extends Cube {
 
 		this.add(CubeQuadGun, rand(2, 4))
 
-		this.add(CrossCubeCanvasRender, graphics)
-		this.add(HealthBarCanvasRender, graphics)
+		this.add(CrossCube2dRender, graphics)
+		this.add(HealthBar2dRender, graphics)
 	}
 }
 
