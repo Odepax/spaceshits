@@ -492,19 +492,9 @@ class Destroyable extends Trait {
 
 // -----------------------------------------------------------------
 
-class CanvasErasing extends Trait {
-	onInitialize(graphics) {
-		this.graphics = graphics
-	}
-
-	onUpdate() {
-		this.graphics.clearRect(0, 0, this.graphics.canvas.width, this.graphics.canvas.height)
-	}
-}
-
 class Image2dRender extends Trait {
-	onInitialize(graphics, imagePath, centerX, centerY) {
-		this.graphics = graphics
+	onInitialize(imagePath, centerX, centerY) {
+		this.graphics = this.universe[Global.graphics]
 		this.image = new Image().apply(image => image.src = imagePath)
 		this.centerX = -centerX
 		this.centerY = -centerY
@@ -519,37 +509,37 @@ class Image2dRender extends Trait {
 
 class ZombieCube2dRender extends Image2dRender {
 	onInitialize(graphics) {
-		super.onInitialize(graphics, "./asset/cube.zombie.svg", 21, 21)
+		super.onInitialize("./asset/cube.zombie.svg", 21, 21)
 	}
 }
 
 class AkimboCube2dRender extends Image2dRender {
 	onInitialize(graphics) {
-		super.onInitialize(graphics, "./asset/cube.dualgun.svg", 21, 21)
+		super.onInitialize("./asset/cube.dualgun.svg", 21, 21)
 	}
 }
 
 class CrossCube2dRender extends Image2dRender {
 	onInitialize(graphics) {
-		super.onInitialize(graphics, "./asset/cube.quadgun.svg", 21, 21)
+		super.onInitialize("./asset/cube.quadgun.svg", 21, 21)
 	}
 }
 
 class HighSpeedCube2dRender extends Image2dRender {
 	onInitialize(graphics) {
-		super.onInitialize(graphics, "./asset/cube.highspeed.svg", 21, 21)
+		super.onInitialize("./asset/cube.highspeed.svg", 21, 21)
 	}
 }
 
 class SplittingCube2dRender extends Image2dRender {
 	onInitialize(graphics) {
-		super.onInitialize(graphics, "./asset/cube.splitting.svg", 32, 32)
+		super.onInitialize("./asset/cube.splitting.svg", 32, 32)
 	}
 }
 
 class SplitOffspringCube2dRender extends Image2dRender {
 	onInitialize(graphics) {
-		super.onInitialize(graphics, randBetween(
+		super.onInitialize(randBetween(
 			"./asset/cube.splitoffspring1.svg",
 			"./asset/cube.splitoffspring2.svg"
 		), 16, 16)
@@ -558,39 +548,39 @@ class SplitOffspringCube2dRender extends Image2dRender {
 
 class CubeExplosionShard2dRender extends Image2dRender {
 	onInitialize(graphics) {
-		super.onInitialize(graphics, "./asset/projectile.shard.svg", 18.3, 7)
+		super.onInitialize("./asset/projectile.shard.svg", 18.3, 7)
 	}
 }
 
 class CubeBullet2dRender extends Image2dRender {
 	onInitialize(graphics) {
-		super.onInitialize(graphics, "./asset/projectile.cubeblaster.svg", 8, 8)
+		super.onInitialize("./asset/projectile.cubeblaster.svg", 8, 8)
 	}
 }
 
 class CubeHighSpeedBullet2dRender extends Image2dRender {
 	onInitialize(graphics) {
-		super.onInitialize(graphics, "./asset/projectile.highspeed.svg", 8, 8)
+		super.onInitialize("./asset/projectile.highspeed.svg", 8, 8)
 	}
 }
 
 class PlayerShip2dRender extends Image2dRender {
 	onInitialize(graphics) {
-		super.onInitialize(graphics, "./asset/player.ship.svg", 29, 31.2)
+		super.onInitialize("./asset/player.ship.svg", 29, 31.2)
 	}
 }
 
 class GatlingBullet2dRender extends Image2dRender {
 	onInitialize(graphics) {
-		super.onInitialize(graphics, "./asset/projectile.gatling.svg", 16, 4)
+		super.onInitialize("./asset/projectile.gatling.svg", 16, 4)
 	}
 }
 
 // -----------------------------------------------------------------
 
 class HealthBar2dRender extends Trait {
-	onInitialize(graphics) {
-		this.graphics = graphics
+	onInitialize() {
+		this.graphics = this.universe[Global.graphics]
 	}
 
 	onUpdate() {
@@ -627,7 +617,7 @@ class PlayerBullet extends Projectile {
 	onInitialize(transform) {
 		super.onInitialize(transform, 1000, 4, Tag.enemy, 10)
 
-		this.add(GatlingBullet2dRender, graphics)
+		this.add(GatlingBullet2dRender)
 	}
 }
 
@@ -635,7 +625,7 @@ class CubeBullet extends Projectile {
 	onInitialize(transform) {
 		super.onInitialize(transform, 500, 7, Tag.player, 10)
 
-		this.add(CubeBullet2dRender, graphics)
+		this.add(CubeBullet2dRender)
 	}
 }
 
@@ -643,7 +633,7 @@ class CubeHighSpeedBullet extends Projectile {
 	onInitialize(transform) {
 		super.onInitialize(transform, 500, 7, Tag.player, 20)
 
-		this.add(CubeHighSpeedBullet2dRender, graphics)
+		this.add(CubeHighSpeedBullet2dRender)
 	}
 }
 
@@ -651,16 +641,16 @@ class CubeExplosionShard extends Projectile {
 	onInitialize(transform) {
 		super.onInitialize(transform, 600, 6, Tag.player, 10)
 
-		this.add(CubeExplosionShard2dRender, graphics)
+		this.add(CubeExplosionShard2dRender)
 	}
 }
 
 // -----------------------------------------------------------------
 
 class PlayerMovementController extends Trait {
-	onInitialize(userInteraction, canvas, movementAcceleration = 1000, speedFactorAfterBounce = 0.5) {
-		this.userInteraction = userInteraction
-		this.canvas = canvas
+	onInitialize(movementAcceleration = 1000, speedFactorAfterBounce = 0.5) {
+		this.canvas = this.universe[Global.canvas]
+		this.userInteraction = this.universe[Global.userInteraction]
 
 		this.movementAcceleration = movementAcceleration
 		this.speedFactorAfterBounce = speedFactorAfterBounce
@@ -709,8 +699,8 @@ class PlayerMovementController extends Trait {
 }
 
 class PlayerGun extends Trait {
-	onInitialize(userInteraction, fireRate = 0.1) {
-		this.userInteraction = userInteraction
+	onInitialize(fireRate = 0.1) {
+		this.userInteraction = this.universe[Global.userInteraction]
 		this.fireRate = fireRate
 		this.timeEnlapsed = 0
 	}
@@ -728,8 +718,8 @@ class PlayerGun extends Trait {
 // -----------------------------------------------------------------
 
 class CubeMovementController extends Trait {
-	onInitialize(canvas) {
-		this.canvas = canvas
+	onInitialize() {
+		this.canvas = this.universe[Global.canvas]
 		this.rotationSpeed = randBetween(-1, 1)
 	}
 
@@ -863,9 +853,9 @@ class CubeSplitOnDeath extends Trait {
 // -----------------------------------------------------------------
 
 class InteractionLogging extends Trait {
-	onInitialize(userInteraction, graphics) {
-		this.userInteraction = userInteraction
-		this.graphics = graphics
+	onInitialize() {
+		this.userInteraction = this.universe[Global.userInteraction]
+		this.graphics = this.universe[Global.graphics]
 	}
 
 	onUpdate() {
@@ -891,62 +881,13 @@ class InteractionLogging extends Trait {
 
 // -----------------------------------------------------------------
 
-const Tag = {
-	player: Symbol("Tag/Link: Player"),
-	enemy: Symbol("Tag/Link: Enemy")
-}
-
-// -----------------------------------------------------------------
-
-const graphics = canvas.getContext("2d")
-const universe = new Universe()
-
-universe.run()
-
-const canvasEraser = universe.add(class CanvasEraser extends Link {
-	onInitialize() {
-		this.add(CanvasErasing, graphics)
-	}
-})
-
-const userInteractor = universe.add(class UserInteractor extends Link {
-	onInitialize() {
-		this.add(UserInteraction, canvas)
-	}
-})
-
-const interactionLogger = universe.add(class InteractionLogger extends Link {
-	onInitialize() {
-		this.add(InteractionLogging, userInteractor.UserInteraction, graphics)
-	}
-})
-
-const player = universe.add(class Player extends Link {
-	onInitialize() {
-		this[Tag.player] = true
-
-		this.add(Transform, canvas.width / 2, canvas.height / 2)
-
-		this.add(ForceBasedMovement)
-		this.add(PlayerMovementController, userInteractor.UserInteraction, canvas)
-
-		this.add(PlayerGun, userInteractor.UserInteraction)
-
-		this.Collider = this.add(CircleCollider, 27)
-		this.add(Destroyable, 100)
-
-		this.add(PlayerShip2dRender, graphics)
-		this.add(HealthBar2dRender, graphics)
-	}
-})
-
 class Cube extends Link {
 	onInitialize(x, y, radius = 22, damage = 100, health = 100, maxSpeed = 400) {
 		this[Tag.enemy] = true
 
 		this.add(Transform, x, y, rand(-PI, PI))
 		this.add(LinearMovement, rand(-maxSpeed, maxSpeed), rand(-maxSpeed, maxSpeed))
-		this.add(CubeMovementController, canvas)
+		this.add(CubeMovementController)
 
 		this.Collider = this.add(CircleCollider, radius)
 		this.add(ContinuousRammingDamage, Tag.player, damage)
@@ -961,8 +902,8 @@ class ZombieCube extends Cube {
 
 		this.add(CubeExplosionOnDeath)
 
-		this.add(ZombieCube2dRender, graphics)
-		this.add(HealthBar2dRender, graphics)
+		this.add(ZombieCube2dRender)
+		this.add(HealthBar2dRender)
 	}
 }
 
@@ -973,8 +914,8 @@ class AkimboCube extends Cube {
 		this.add(CubeExplosionOnDeath)
 		this.add(CubeDualGun, rand(2, 4))
 
-		this.add(AkimboCube2dRender, graphics)
-		this.add(HealthBar2dRender, graphics)
+		this.add(AkimboCube2dRender)
+		this.add(HealthBar2dRender)
 	}
 }
 
@@ -985,8 +926,8 @@ class CrossCube extends Cube {
 		this.add(CubeExplosionOnDeath)
 		this.add(CubeQuadGun, rand(2, 4))
 
-		this.add(CrossCube2dRender, graphics)
-		this.add(HealthBar2dRender, graphics)
+		this.add(CrossCube2dRender)
+		this.add(HealthBar2dRender)
 	}
 }
 
@@ -996,8 +937,8 @@ class HighSpeedCube extends Cube {
 
 		this.add(CubeHighSpeedGun, rand(2, 4))
 
-		this.add(HighSpeedCube2dRender, graphics)
-		this.add(HealthBar2dRender, graphics)
+		this.add(HighSpeedCube2dRender)
+		this.add(HealthBar2dRender)
 	}
 }
 
@@ -1007,8 +948,8 @@ class SplittingCube extends Cube {
 
 		this.add(CubeSplitOnDeath)
 
-		this.add(SplittingCube2dRender, graphics)
-		this.add(HealthBar2dRender, graphics)
+		this.add(SplittingCube2dRender)
+		this.add(HealthBar2dRender)
 	}
 }
 
@@ -1016,15 +957,84 @@ class SplitOffspringCube extends Cube {
 	onInitialize(x, y) {
 		super.onInitialize(x, y, 17, 60)
 
-		this.add(SplitOffspringCube2dRender, graphics)
-		this.add(HealthBar2dRender, graphics)
+		this.add(SplitOffspringCube2dRender)
+		this.add(HealthBar2dRender)
 	}
 }
 
-for (let i = 0, c = ~~(new URLSearchParams(location.search).get("cubes")) || 10; i < c; ++i) {
-	universe.add(
-		randBetween(ZombieCube, AkimboCube, CrossCube, HighSpeedCube, SplittingCube),
-		rand(0, canvas.width),
-		rand(0, canvas.height)
-	)
+// -----------------------------------------------------------------
+
+const Tag = {
+	player: Symbol("Tag/Link: Player"),
+	enemy: Symbol("Tag/Link: Enemy")
+}
+
+const Global = {
+	canvas: Symbol("Global/Link: Universe canvas"),
+	graphics: Symbol("Global/Link: Universe canvas graphics context"),
+	userInteraction: Symbol("Global/Link: Universe user interaction")
+}
+
+// -----------------------------------------------------------------
+
+main(gameCanvas)
+
+function main(canvas) {
+	const universe = new Universe()
+
+	universe[Global.canvas] = canvas
+	universe[Global.graphics] = canvas.getContext("2d")
+	universe[Global.userInteraction] = universe.add(class UserInteractor extends Link {
+		onInitialize() {
+			this.add(UserInteraction, canvas)
+		}
+	}).UserInteraction
+
+	universe.run()
+
+	universe.add(class CanvasEraser extends Link {
+		onInitialize() {
+			const canvas = universe[Global.canvas]
+			const graphics = universe[Global.graphics]
+
+			this.add(class CanvasErasing extends Trait {
+				onUpdate() {
+					graphics.clearRect(0, 0, canvas.width, canvas.height)
+				}
+			})
+		}
+	})
+
+	universe.add(class InteractionLogger extends Link {
+		onInitialize() {
+			this.add(InteractionLogging)
+		}
+	})
+
+	universe.add(class Player extends Link {
+		onInitialize() {
+			this[Tag.player] = true
+
+			this.add(Transform, canvas.width / 2, canvas.height / 2)
+
+			this.add(ForceBasedMovement)
+			this.add(PlayerMovementController)
+
+			this.add(PlayerGun)
+
+			this.Collider = this.add(CircleCollider, 27)
+			this.add(Destroyable, 100)
+
+			this.add(PlayerShip2dRender)
+			this.add(HealthBar2dRender)
+		}
+	})
+
+	for (let i = 0, c = ~~(new URLSearchParams(location.search).get("cubes")) || 10; i < c; ++i) {
+		universe.add(
+			randBetween(ZombieCube, AkimboCube, CrossCube, HighSpeedCube, SplittingCube),
+			rand(0, canvas.width),
+			rand(0, canvas.height)
+		)
+	}
 }

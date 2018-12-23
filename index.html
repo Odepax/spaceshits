@@ -44,17 +44,17 @@
 		</style>
 	</head>
 	<body>
-		<canvas id="canvas" tabindex="1"></canvas>
+		<canvas tabindex="1"></canvas>
 		<script>
 			const DEBUG = location.search.includes("debug=true")
-			const canvas = document.getElementById("canvas")
+			const gameCanvas = document.getElementsByTagName("canvas")[0]
 
 			window.addEventListener("resize", () => {
-				canvas.width = window.innerWidth
-				canvas.height = window.innerHeight 
+				gameCanvas.width = window.innerWidth
+				gameCanvas.height = window.innerHeight
 			}, false)
 
-			canvas.focus()
+			gameCanvas.focus()
 
 			window.dispatchEvent(new Event("resize"))
 		</script>
