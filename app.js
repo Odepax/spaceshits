@@ -541,6 +541,21 @@ class HighSpeedCube2dRender extends Image2dRender {
 	}
 }
 
+class SplittingCube2dRender extends Image2dRender {
+	onInitialize(graphics) {
+		super.onInitialize(graphics, "./asset/cube.splitting.svg", 32, 32)
+	}
+}
+
+class SplitOffspringCube2dRender extends Image2dRender {
+	onInitialize(graphics) {
+		super.onInitialize(graphics, randBetween(
+			"./asset/cube.splitoffspring1.svg",
+			"./asset/cube.splitoffspring2.svg"
+		), 16, 16)
+	}
+}
+
 class CubeExplosionShard2dRender extends Image2dRender {
 	onInitialize(graphics) {
 		super.onInitialize(graphics, "./asset/projectile.shard.svg", 18.3, 7)
@@ -764,6 +779,8 @@ class InstantRammingDamage extends Trait {
 	}
 }
 
+// -----------------------------------------------------------------
+
 class CubeDualGun extends Trait {
 	onInitialize(fireRate = 2) {
 		this.fireRate = fireRate
@@ -829,6 +846,16 @@ class CubeExplosionOnDeath extends Trait {
 	onRemoved() {
 		for (let i = 0; i < 6; ++i) {
 			this.universe.add(CubeExplosionShard, this.link.Transform.clone().apply(it => it.a = i * PI / 3))
+		}
+	}
+}
+
+class CubeSplitOnDeath extends Trait {
+	onRemoved() {
+		const cubePosition = this.link.Transform
+
+		for (let i = 0; i < 4; ++i) {
+			this.universe.add(SplitOffspringCube, cubePosition.x, cubePosition.y)
 		}
 	}
 }
@@ -925,13 +952,14 @@ class Cube extends Link {
 		this.add(ContinuousRammingDamage, Tag.player, damage)
 
 		this.add(Destroyable, health)
-		this.add(CubeExplosionOnDeath)
 	}
 }
 
 class ZombieCube extends Cube {
 	onInitialize(x, y) {
 		super.onInitialize(x, y)
+
+		this.add(CubeExplosionOnDeath)
 
 		this.add(ZombieCube2dRender, graphics)
 		this.add(HealthBar2dRender, graphics)
@@ -942,6 +970,7 @@ class AkimboCube extends Cube {
 	onInitialize(x, y) {
 		super.onInitialize(x, y)
 
+		this.add(CubeExplosionOnDeath)
 		this.add(CubeDualGun, rand(2, 4))
 
 		this.add(AkimboCube2dRender, graphics)
@@ -953,6 +982,7 @@ class CrossCube extends Cube {
 	onInitialize(x, y) {
 		super.onInitialize(x, y)
 
+		this.add(CubeExplosionOnDeath)
 		this.add(CubeQuadGun, rand(2, 4))
 
 		this.add(CrossCube2dRender, graphics)
@@ -971,9 +1001,29 @@ class HighSpeedCube extends Cube {
 	}
 }
 
+class SplittingCube extends Cube {
+	onInitialize(x, y) {
+		super.onInitialize(x, y, 33, 100, 200)
+
+		this.add(CubeSplitOnDeath)
+
+		this.add(SplittingCube2dRender, graphics)
+		this.add(HealthBar2dRender, graphics)
+	}
+}
+
+class SplitOffspringCube extends Cube {
+	onInitialize(x, y) {
+		super.onInitialize(x, y, 17, 60)
+
+		this.add(SplitOffspringCube2dRender, graphics)
+		this.add(HealthBar2dRender, graphics)
+	}
+}
+
 for (let i = 0, c = ~~(new URLSearchParams(location.search).get("cubes")) || 10; i < c; ++i) {
 	universe.add(
-		randBetween(ZombieCube, AkimboCube, CrossCube, HighSpeedCube),
+		randBetween(ZombieCube, AkimboCube, CrossCube, HighSpeedCube, SplittingCube),
 		rand(0, canvas.width),
 		rand(0, canvas.height)
 	)

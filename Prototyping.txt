@@ -25,7 +25,7 @@ New Roadmap
 	[OK] Akimbo cube
 	[OK] Cross-gun cube
 	[OK] High-speed cube
-	[  ] Splitting cube
+	[OK] Splitting cube
 	[  ] Carrier
 		[  ] Crab on thuster
 		[  ] Crab on thuster with gun
@@ -45,7 +45,8 @@ New Roadmap
 	[  ] Berzerk
 	[  ] Shield
 	[  ] Shock wave
-	[  ] Mines
+	[  ] Mine field
+	[  ] Spiky hull
 [  ] In-game HUD interface
 	[  ] Enemies health
 		[  ] Don't display if full?
@@ -65,4 +66,5 @@ New Roadmap
 	[  ] Characters dialogues
 [  ] Lore
 [  ] Levels
+[  ] Upgrades
 [  ] Memory of player progress
