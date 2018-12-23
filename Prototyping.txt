@@ -24,12 +24,13 @@ New Roadmap
 	[OK] Zombie cube
 	[OK] Akimbo cube
 	[OK] Cross-gun cube
-	[  ] High-speed cube
+	[OK] High-speed cube
 	[  ] Splitting cube
 	[  ] Carrier
 		[  ] Crab on thuster
 		[  ] Crab on thuster with gun
 	[  ] Stationnary turret
+[  ] Explosions
 [  ] Weapons
 	[  ] Gatling
 	[  ] Blaster

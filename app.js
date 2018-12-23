@@ -535,6 +535,12 @@ class CrossCube2dRender extends Image2dRender {
 	}
 }
 
+class HighSpeedCube2dRender extends Image2dRender {
+	onInitialize(graphics) {
+		super.onInitialize(graphics, "./asset/cube.highspeed.svg", 21, 21)
+	}
+}
+
 class CubeExplosionShard2dRender extends Image2dRender {
 	onInitialize(graphics) {
 		super.onInitialize(graphics, "./asset/projectile.shard.svg", 18.3, 7)
@@ -544,6 +550,12 @@ class CubeExplosionShard2dRender extends Image2dRender {
 class CubeBullet2dRender extends Image2dRender {
 	onInitialize(graphics) {
 		super.onInitialize(graphics, "./asset/projectile.cubeblaster.svg", 8, 8)
+	}
+}
+
+class CubeHighSpeedBullet2dRender extends Image2dRender {
+	onInitialize(graphics) {
+		super.onInitialize(graphics, "./asset/projectile.highspeed.svg", 8, 8)
 	}
 }
 
@@ -606,15 +618,23 @@ class PlayerBullet extends Projectile {
 
 class CubeBullet extends Projectile {
 	onInitialize(transform) {
-		super.onInitialize(transform, 500, 5, Tag.player, 10)
+		super.onInitialize(transform, 500, 7, Tag.player, 10)
 
 		this.add(CubeBullet2dRender, graphics)
 	}
 }
 
+class CubeHighSpeedBullet extends Projectile {
+	onInitialize(transform) {
+		super.onInitialize(transform, 500, 7, Tag.player, 20)
+
+		this.add(CubeHighSpeedBullet2dRender, graphics)
+	}
+}
+
 class CubeExplosionShard extends Projectile {
 	onInitialize(transform) {
-		super.onInitialize(transform, 600, 5, Tag.player, 10)
+		super.onInitialize(transform, 600, 6, Tag.player, 10)
 
 		this.add(CubeExplosionShard2dRender, graphics)
 	}
@@ -764,6 +784,26 @@ class CubeDualGun extends Trait {
 	}
 }
 
+class CubeHighSpeedGun extends Trait {
+	onInitialize(fireRate = 2) {
+		this.fireRate = fireRate
+		this.timeEnlapsed = 0
+	}
+
+	onUpdate() {
+		this.timeEnlapsed += this.universe.tickTime
+
+		if (this.fireRate < this.timeEnlapsed) {
+			this.timeEnlapsed = 0
+
+			const cubePosition = this.link.Transform
+
+			this.universe.add(CubeHighSpeedBullet, cubePosition.clone().apply(it => it.a))
+			this.universe.add(CubeHighSpeedBullet, cubePosition.clone().apply(it => it.a += PI))
+		}
+	}
+}
+
 class CubeQuadGun extends Trait {
 	onInitialize(fireRate = 2) {
 		this.fireRate = fireRate
@@ -874,17 +914,17 @@ const player = universe.add(class Player extends Link {
 })
 
 class Cube extends Link {
-	onInitialize(x, y) {
+	onInitialize(x, y, radius = 22, damage = 100, health = 100, maxSpeed = 400) {
 		this[Tag.enemy] = true
 
 		this.add(Transform, x, y, rand(-PI, PI))
-		this.add(LinearMovement, rand(-400, 400), rand(-400, 400))
+		this.add(LinearMovement, rand(-maxSpeed, maxSpeed), rand(-maxSpeed, maxSpeed))
 		this.add(CubeMovementController, canvas)
 
-		this.Collider = this.add(CircleCollider, 20)
-		this.add(ContinuousRammingDamage, Tag.player, 100)
+		this.Collider = this.add(CircleCollider, radius)
+		this.add(ContinuousRammingDamage, Tag.player, damage)
 
-		this.add(Destroyable, 100)
+		this.add(Destroyable, health)
 		this.add(CubeExplosionOnDeath)
 	}
 }
@@ -920,9 +960,20 @@ class CrossCube extends Cube {
 	}
 }
 
+class HighSpeedCube extends Cube {
+	onInitialize(x, y) {
+		super.onInitialize(x, y, 22, 200, 100, 800)
+
+		this.add(CubeHighSpeedGun, rand(2, 4))
+
+		this.add(HighSpeedCube2dRender, graphics)
+		this.add(HealthBar2dRender, graphics)
+	}
+}
+
 for (let i = 0, c = ~~(new URLSearchParams(location.search).get("cubes")) || 10; i < c; ++i) {
 	universe.add(
-		randBetween(ZombieCube, AkimboCube, CrossCube),
+		randBetween(ZombieCube, AkimboCube, CrossCube, HighSpeedCube),
 		rand(0, canvas.width),
 		rand(0, canvas.height)
 	)

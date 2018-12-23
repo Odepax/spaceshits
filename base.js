@@ -35,13 +35,12 @@ const sin = Math.sin
 const cos = Math.cos
 const atan = Math.atan
 const atan2 = Math.atan2
-const sqrt = Math.sqrt
 const ceil = Math.ceil
 const round = Math.round
+const sqrt = Math.sqrt
+const square = x => x * x
 const min = Math.min
 const max = Math.max
-const square = x => x * x
-
 const absMin = (a, b) => abs(a) < abs(b) ? a : b
 const absMax = (a, b) => abs(a) > abs(b) ? a : b
 const rand = (min, max) => Math.random() * (max - min) + min
