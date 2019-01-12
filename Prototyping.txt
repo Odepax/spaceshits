@@ -1,58 +1,47 @@
 New Roadmap
 
 [OK] Colliders
-	[OK] Old list
-		[OK] Circle to point
-		[OK] Circle to circle
-		[OK] Rectangle to point
-		[OK] Rectangle to circle
-		[OK] Rectangle to rectangle
-		[OK] Convex polygon to point
-		[//] Convex polygon to circle
-		[//] Convex polygon to rectangle
-		[OK] Convex polygon to convex polygon
-	[OK] New list
-		[OK] Rectangle to rectangle
-		[OK] Circle to circle
-		[OK] Convex polygon to convex polygon
-		[OK] Convex polygon to circle
+	[OK] Rectangle to rectangle
+	[OK] Circle to circle
+	[OK] Convex polygon to convex polygon
+	[OK] Convex polygon to circle
 	[OK] Include rotation
 	[OK] Quick collision, based on rectangle/rectangle, but without rotation.
 [OK] First graphics prototypes
 [OK] First gameplay
-[  ] More enemies
+[  ] Enemies
 	[OK] Zombie cube
 	[OK] Akimbo cube
 	[OK] Cross-gun cube
 	[OK] High-speed cube
 	[OK] Splitting cube
 	[  ] Carrier
-		[  ] Crab on thuster
-		[  ] Crab on thuster with gun
+		[  ] Crash crab
+		[  ] Crash crab with gun
 	[  ] Stationnary turret
-[  ] Explosions
 [  ] Weapons
 	[  ] Gatling
 	[  ] Blaster
 	[  ] Shotgun
-	[  ] Charged?
-	[  ] Laser?
-	[  ] Hand-to-hand?
+	[  ] Charged
+	[  ] Laser
 [  ] Special capacities
 	[  ] Restauration
 	[  ] Blink teleport
 	[  ] Missile swarm
 	[  ] Berzerk
 	[  ] Shield
-	[  ] Shock wave
-	[  ] Mine field
-	[  ] Spiky hull
+	[  ] Repelling shock wave
+	[  ] Mine field drop
+	[  ] Spiky hull (passive, but still subject to energy cap?)
+	[  ] Whirlwind
 [  ] In-game HUD interface
 	[  ] Enemies health
 		[  ] Don't display if full?
 		[  ] Don't display if not touched for X seconds?
 	[  ] Player health
-	[  ] Player energy
+	[  ] Player weapon energy
+	[  ] Player capacity energy
 [  ] Out-game interface
 	[  ] Screen mockups
 		[  ] Level selection
@@ -65,6 +54,12 @@ New Roadmap
 	[  ] Graphic chart
 	[  ] Characters dialogues
 [  ] Lore
-[  ] Levels
-[  ] Upgrades
+[  ] Leveling
+	[  ] Per-level enemies builds
+	[  ] Upgrades
+		> How to introduce choice that isn't simple calculation?
+		> How to introduce choice that actually matter?
 [  ] Memory of player progress
+[  ] VFX
+	[  ] Explosions
+[  ] Math optimization
