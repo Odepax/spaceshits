@@ -16,6 +16,7 @@ New Roadmap
 	[OK] High-speed cube
 	[OK] Splitting cube
 	[  ] Carrier
+		[  ] Factory
 		[  ] Crash crab
 		[  ] Crash crab with gun
 	[  ] Stationnary turret
