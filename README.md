@@ -1,5 +1,5 @@
 ![Code License: MIT](https://img.shields.io/badge/Code%20License-MIT-green.svg?style=for-the-badge)
-![Arts License: MIT](https://img.shields.io/badge/Arts%20License-CC%20BY-orange.svg?style=for-the-badge)
+![Contents License: MIT](https://img.shields.io/badge/Contents%20License-CC%20BY-orange.svg?style=for-the-badge)
 
 Spaceshits
 ====

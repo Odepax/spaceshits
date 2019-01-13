@@ -26,4 +26,4 @@ SOFTWARE.
 ![Creative Commons Attribution 4.0 International License](https://i.creativecommons.org/l/by/4.0/88x31.png)
 ](http://creativecommons.org/licenses/by/4.0/)
 
-The artworks included in this repository are licensed under the [Creative Commons Attribution 4.0 International License](http://creativecommons.org/licenses/by/4.0/).
+The artworks and text contents included in this repository are licensed under the [Creative Commons Attribution 4.0 International License](http://creativecommons.org/licenses/by/4.0/).
