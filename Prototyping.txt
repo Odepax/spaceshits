@@ -15,7 +15,7 @@ New Roadmap
 	[OK] Cross-gun cube
 	[OK] High-speed cube
 	[OK] Splitting cube
-	[  ] Carrier
+	[  ] Factory cube
 		[  ] Factory
 		[  ] Crash crab
 		[  ] Crash crab with gun
@@ -49,7 +49,6 @@ New Roadmap
 		[  ] Garage
 			[  ] Capacity selection
 			[  ] Weapon selection
-		[  ] Shop
 		[  ] Keymap customization
 		[  ] Navigation
 	[  ] Graphic chart
@@ -63,4 +62,5 @@ New Roadmap
 [  ] Memory of player progress
 [  ] VFX
 	[  ] Explosions
+	[  ] Soundtrack
 [  ] Math optimization
