@@ -546,6 +546,18 @@ class SplitOffspringCube2dRender extends Image2dRender {
 	}
 }
 
+class CubeFactory2dRender extends Image2dRender {
+	onInitialize(graphics) {
+		super.onInitialize("./asset/cube.factory.svg", 49, 44)
+	}
+}
+
+class CrashCrab2dRender extends Image2dRender {
+	onInitialize(graphics) {
+		super.onInitialize("./asset/cube.crashcrab.svg", 13, 15)
+	}
+}
+
 class CubeExplosionShard2dRender extends Image2dRender {
 	onInitialize(graphics) {
 		super.onInitialize("./asset/projectile.shard.svg", 18.3, 7)
@@ -737,6 +749,41 @@ class CubeMovementController extends Trait {
 	}
 }
 
+class CrashCrabMovementController extends Trait {
+	onUpdate() {
+		this.updateTarget()
+		if (this.target) {
+			const crabPosition = this.link.Transform
+			const movement = this.link.AngularLinearMovement
+
+			const a = crabPosition.angleToward(this.target.Transform)
+
+			crabPosition.a = a
+			movement.angle = a
+		}
+	}
+
+	onRemoving() {
+		const { x, y } = this.link.Transform
+		const { width, height } = this.universe[Global.canvas]
+
+		return x < 0 || width < x
+		    || y < 0 || height < y
+	}
+
+	updateTarget() {
+		if (!this.target || this.target.Destroyable.health < 0) {
+			for (const link of this.universe.links) {
+				if (link[Tag.player]) {
+					return this.target = link
+				}
+			}
+
+			this.target = null
+		}
+	}
+}
+
 class ContinuousRammingDamage extends Trait {
 	onInitialize(targetTag, damage) {
 		this.targetTag = targetTag
@@ -791,26 +838,6 @@ class CubeDualGun extends Trait {
 	}
 }
 
-class CubeHighSpeedGun extends Trait {
-	onInitialize(fireRate = 2) {
-		this.fireRate = fireRate
-		this.timeEnlapsed = 0
-	}
-
-	onUpdate() {
-		this.timeEnlapsed += this.universe.tickTime
-
-		if (this.fireRate < this.timeEnlapsed) {
-			this.timeEnlapsed = 0
-
-			const cubePosition = this.link.Transform
-
-			this.universe.add(CubeHighSpeedBullet, cubePosition.clone().apply(it => it.a))
-			this.universe.add(CubeHighSpeedBullet, cubePosition.clone().apply(it => it.a += PI))
-		}
-	}
-}
-
 class CubeQuadGun extends Trait {
 	onInitialize(fireRate = 2) {
 		this.fireRate = fireRate
@@ -832,6 +859,26 @@ class CubeQuadGun extends Trait {
 	}
 }
 
+class CubeHighSpeedGun extends Trait {
+	onInitialize(fireRate = 2) {
+		this.fireRate = fireRate
+		this.timeEnlapsed = 0
+	}
+
+	onUpdate() {
+		this.timeEnlapsed += this.universe.tickTime
+
+		if (this.fireRate < this.timeEnlapsed) {
+			this.timeEnlapsed = 0
+
+			const cubePosition = this.link.Transform
+
+			this.universe.add(CubeHighSpeedBullet, cubePosition.clone().apply(it => it.a))
+			this.universe.add(CubeHighSpeedBullet, cubePosition.clone().apply(it => it.a += PI))
+		}
+	}
+}
+
 class CubeExplosionOnDeath extends Trait {
 	onRemoved() {
 		for (let i = 0; i < 6; ++i) {
@@ -846,6 +893,29 @@ class CubeSplitOnDeath extends Trait {
 
 		for (let i = 0; i < 4; ++i) {
 			this.universe.add(SplitOffspringCube, cubePosition.x, cubePosition.y)
+		}
+	}
+}
+
+class CrashCrabProductionLine extends Trait {
+	onInitialize(fireRate = 4) {
+		this.fireRate = fireRate
+		this.timeEnlapsed = 0
+	}
+
+	onUpdate() {
+		this.timeEnlapsed += this.universe.tickTime
+
+		if (this.fireRate < this.timeEnlapsed) {
+			this.timeEnlapsed = 0
+
+			const cubePosition = this.link.Transform
+
+			const firstCrabPosition = cubePosition.clone().relativeAngularOffset(0, 62)
+			const secondCrabPosition = cubePosition.clone().relativeAngularOffset(PI, 62)
+
+			this.universe.add(CrashCrab, firstCrabPosition.x, firstCrabPosition.y, cubePosition.a)
+			this.universe.add(CrashCrab, secondCrabPosition.x, secondCrabPosition.y, cubePosition.a + PI)
 		}
 	}
 }
@@ -962,6 +1032,35 @@ class SplitOffspringCube extends Cube {
 	}
 }
 
+class CubeFactory extends Cube {
+	onInitialize(x, y) {
+		super.onInitialize(x, y, 48, 150, 300, 300)
+
+		this.add(CrashCrabProductionLine, rand(4, 6))
+
+		this.add(CubeFactory2dRender)
+		this.add(HealthBar2dRender)
+	}
+}
+
+class CrashCrab extends Link {
+	onInitialize(x, y, a, radius = 14, damage = 100, health = 100, maxSpeed = 400) {
+		this[Tag.enemy] = true
+
+		this.add(Transform, x, y, a)
+		this.add(AngularLinearMovement, a, rand(0, maxSpeed))
+		this.add(CrashCrabMovementController)
+
+		this.Collider = this.add(CircleCollider, radius)
+		this.add(ContinuousRammingDamage, Tag.player, damage)
+
+		this.add(Destroyable, health)
+
+		this.add(CrashCrab2dRender)
+		this.add(HealthBar2dRender)
+	}
+}
+
 // -----------------------------------------------------------------
 
 const Tag = {
@@ -1032,7 +1131,7 @@ function main(canvas) {
 
 	for (let i = 0, c = ~~(new URLSearchParams(location.search).get("cubes")) || 10; i < c; ++i) {
 		universe.add(
-			randBetween(ZombieCube, AkimboCube, CrossCube, HighSpeedCube, SplittingCube),
+			randBetween(ZombieCube, AkimboCube, CrossCube, HighSpeedCube, SplittingCube, CubeFactory),
 			rand(0, canvas.width),
 			rand(0, canvas.height)
 		)

@@ -16,8 +16,8 @@ New Roadmap
 	[OK] High-speed cube
 	[OK] Splitting cube
 	[  ] Factory cube
-		[  ] Factory
-		[  ] Crash crab
+		[OK] Factory
+		[OK] Crash crab
 		[  ] Crash crab with gun
 	[  ] Stationnary turret
 [  ] Weapons
