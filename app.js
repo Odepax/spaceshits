@@ -818,7 +818,7 @@ class InstantRammingDamage extends Trait {
 
 // -----------------------------------------------------------------
 
-class CubeDualGun extends Trait {
+class CubeGun extends Trait {
 	onInitialize(fireRate = 2) {
 		this.fireRate = fireRate
 		this.timeEnlapsed = 0
@@ -830,52 +830,48 @@ class CubeDualGun extends Trait {
 		if (this.fireRate < this.timeEnlapsed) {
 			this.timeEnlapsed = 0
 
-			const cubePosition = this.link.Transform
-
-			this.universe.add(CubeBullet, cubePosition.clone().apply(it => it.a += PI / 4))
-			this.universe.add(CubeBullet, cubePosition.clone().apply(it => it.a += -3 * PI / 4))
+			this.fire()
 		}
 	}
 }
 
-class CubeQuadGun extends Trait {
-	onInitialize(fireRate = 2) {
-		this.fireRate = fireRate
-		this.timeEnlapsed = 0
+class CubeDualGun extends CubeGun {
+	fire() {
+		const cubePosition = this.link.Transform
+
+		this.universe.add(CubeBullet, cubePosition.clone().apply(it => it.a += PI / 4))
+		this.universe.add(CubeBullet, cubePosition.clone().apply(it => it.a += -3 * PI / 4))
 	}
+}
 
-	onUpdate() {
-		this.timeEnlapsed += this.universe.tickTime
+class CubeQuadGun extends CubeGun {
+	fire() {
+		const cubePosition = this.link.Transform
 
-		if (this.fireRate < this.timeEnlapsed) {
-			this.timeEnlapsed = 0
-
-			const cubePosition = this.link.Transform
-
-			for (let i = 0; i < 4; ++i) {
-				this.universe.add(CubeBullet, cubePosition.clone().apply(it => it.a += i * PI / 2 + PI / 4))
-			}
+		for (let i = 0; i < 4; ++i) {
+			this.universe.add(CubeBullet, cubePosition.clone().apply(it => it.a += i * PI / 2 + PI / 4))
 		}
 	}
 }
 
-class CubeHighSpeedGun extends Trait {
-	onInitialize(fireRate = 2) {
-		this.fireRate = fireRate
-		this.timeEnlapsed = 0
+class CubeHighSpeedGun extends CubeGun {
+	fire() {
+		const cubePosition = this.link.Transform
+
+		this.universe.add(CubeHighSpeedBullet, cubePosition.clone().apply(it => it.a))
+		this.universe.add(CubeHighSpeedBullet, cubePosition.clone().apply(it => it.a += PI))
 	}
+}
 
-	onUpdate() {
-		this.timeEnlapsed += this.universe.tickTime
+class CrashCrabProductionLine extends CubeGun {
+	fire() {
+		const cubePosition = this.link.Transform
 
-		if (this.fireRate < this.timeEnlapsed) {
-			this.timeEnlapsed = 0
+		const firstCrabPosition = cubePosition.clone().relativeAngularOffset(0, 62)
+		const secondCrabPosition = cubePosition.clone().relativeAngularOffset(PI, 62)
 
-			const cubePosition = this.link.Transform
-
-			this.universe.add(CubeHighSpeedBullet, cubePosition.clone().apply(it => it.a))
-			this.universe.add(CubeHighSpeedBullet, cubePosition.clone().apply(it => it.a += PI))
-		}
+		this.universe.add(CrashCrab, firstCrabPosition.x, firstCrabPosition.y, cubePosition.a)
+		this.universe.add(CrashCrab, secondCrabPosition.x, secondCrabPosition.y, cubePosition.a + PI)
 	}
 }
 
@@ -893,29 +889,6 @@ class CubeSplitOnDeath extends Trait {
 
 		for (let i = 0; i < 4; ++i) {
 			this.universe.add(SplitOffspringCube, cubePosition.x, cubePosition.y)
-		}
-	}
-}
-
-class CrashCrabProductionLine extends Trait {
-	onInitialize(fireRate = 4) {
-		this.fireRate = fireRate
-		this.timeEnlapsed = 0
-	}
-
-	onUpdate() {
-		this.timeEnlapsed += this.universe.tickTime
-
-		if (this.fireRate < this.timeEnlapsed) {
-			this.timeEnlapsed = 0
-
-			const cubePosition = this.link.Transform
-
-			const firstCrabPosition = cubePosition.clone().relativeAngularOffset(0, 62)
-			const secondCrabPosition = cubePosition.clone().relativeAngularOffset(PI, 62)
-
-			this.universe.add(CrashCrab, firstCrabPosition.x, firstCrabPosition.y, cubePosition.a)
-			this.universe.add(CrashCrab, secondCrabPosition.x, secondCrabPosition.y, cubePosition.a + PI)
 		}
 	}
 }
