@@ -757,17 +757,21 @@ class PlayerMovementController extends Trait {
 }
 
 class PlayerGun extends Trait {
-	onInitialize(fireRate = 0.5) {
+	onInitialize(fireRate = 0.5, shotEnergyConsumption = 10) {
 		this.userInteraction = this.universe[Global.userInteraction]
 		this.fireRate = fireRate
+		this.shotEnergyConsumption = shotEnergyConsumption
 		this.timeEnlapsed = 0
 	}
 
 	onUpdate() {
+		const weaponEnergy = this.link.WeaponEnergy
+
 		this.timeEnlapsed += this.universe.tickTime
 
-		if (this.fireRate < this.timeEnlapsed && this.userInteraction.isPressed("MouseLeft")) {
+		if (this.fireRate < this.timeEnlapsed && this.userInteraction.isPressed("MouseLeft") && this.shotEnergyConsumption < weaponEnergy.energy) {
 			this.timeEnlapsed = 0
+			weaponEnergy.energy -= this.shotEnergyConsumption
 
 			this.fire()
 		}
@@ -776,7 +780,7 @@ class PlayerGun extends Trait {
 
 class GatlingGun extends PlayerGun {
 	onInitialize(fireRate = 0.1) {
-		super.onInitialize(fireRate)
+		super.onInitialize(fireRate, 2)
 	}
 
 	fire() {
@@ -786,7 +790,7 @@ class GatlingGun extends PlayerGun {
 
 class BlasterGun extends PlayerGun {
 	onInitialize(fireRate = 0.3) {
-		super.onInitialize(fireRate)
+		super.onInitialize(fireRate, 4)
 	}
 
 	fire() {
@@ -796,7 +800,7 @@ class BlasterGun extends PlayerGun {
 
 class ShotgunGun extends PlayerGun {
 	onInitialize(fireRate = 0.3, spreadAngle = PI / 16) {
-		super.onInitialize(fireRate)
+		super.onInitialize(fireRate, 12)
 		this.spreadAngle = spreadAngle
 	}
 
@@ -1129,6 +1133,43 @@ const Global = {
 
 // -----------------------------------------------------------------
 
+class WeaponEnergy extends Trait {
+	onInitialize(energy, energyRegeneration = 30) {
+		this.userInteraction = this.universe[Global.userInteraction]
+		this.energy = energy
+		this.maxEnergy = energy
+		this.energyRegeneration = energyRegeneration
+	}
+
+	onUpdate() {
+		if (this.energy < this.maxEnergy && !this.userInteraction.isPressed("MouseLeft")) {
+			this.energy += this.energyRegeneration * this.universe.tickTime
+		}
+	}
+}
+
+class WeaponEnergyBar2dRender extends Trait {
+	onInitialize() {
+		this.graphics = this.universe[Global.graphics]
+	}
+
+	onUpdate() {
+		const { energy, maxEnergy } = this.link.WeaponEnergy
+
+		this.graphics.applyTransform(this.link.Transform, false)
+
+		this.graphics.fillStyle = RED
+		this.graphics.fillRect(-30, 50, 60, 8)
+
+		this.graphics.fillStyle = BLUE
+		this.graphics.fillRect(-30, 50, 60 * energy / maxEnergy, 8)
+
+		this.graphics.resetTransform()
+	}
+}
+
+// -----------------------------------------------------------------
+
 main(gameCanvas)
 
 function main(canvas) {
@@ -1194,6 +1235,9 @@ function main(canvas) {
 			}
 
 			this.add(HealthBar2dRender)
+
+			this.add(WeaponEnergy, 100)
+			this.add(WeaponEnergyBar2dRender)
 		}
 	})
 

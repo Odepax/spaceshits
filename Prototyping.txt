@@ -21,19 +21,21 @@ New Roadmap
 		[  ] Crash crab with gun
 	[  ] Stationnary turret
 [  ] Weapons
+	[OK] Energy Gauge
 	[OK] Gatling
 	[OK] Blaster
 	[OK] Shotgun
 	[  ] Charged
 	[  ] Laser
 [  ] Special capacities
-	[  ] Restauration
+	[  ] Energy Gauge
 	[  ] Blink teleport
-	[  ] Missile swarm
-	[  ] Berzerk
+	[  ] Restauration
 	[  ] Shield
+	[  ] Berzerk
+	[  ] Missile swarm
 	[  ] Repelling shock wave
-	[  ] Mine field drop
+	[  ] Minefield drop
 	[  ] Spiky hull (passive, but still subject to energy cap?)
 	[  ] Whirlwind
 [  ] In-game HUD interface
