@@ -21,9 +21,9 @@ New Roadmap
 		[  ] Crash crab with gun
 	[  ] Stationnary turret
 [  ] Weapons
-	[  ] Gatling
-	[  ] Blaster
-	[  ] Shotgun
+	[OK] Gatling
+	[OK] Blaster
+	[OK] Shotgun
 	[  ] Charged
 	[  ] Laser
 [  ] Special capacities

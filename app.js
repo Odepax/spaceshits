@@ -578,13 +578,43 @@ class CubeHighSpeedBullet2dRender extends Image2dRender {
 
 class PlayerShip2dRender extends Image2dRender {
 	onInitialize(graphics) {
-		super.onInitialize("./asset/player.ship.svg", 29, 31.2)
+		super.onInitialize("./asset/player.ship.svg", 28.1, 31.1)
+	}
+}
+
+class GatlingGun2dRender extends Image2dRender {
+	onInitialize() {
+		super.onInitialize("./asset/player.gatling.svg", 18, 3.5)
 	}
 }
 
 class GatlingBullet2dRender extends Image2dRender {
 	onInitialize(graphics) {
 		super.onInitialize("./asset/projectile.gatling.svg", 16, 4)
+	}
+}
+
+class BlasterGun2dRender extends Image2dRender {
+	onInitialize() {
+		super.onInitialize("./asset/player.blaster.svg", 12, 3)
+	}
+}
+
+class BlasterBullet2dRender extends Image2dRender {
+	onInitialize(graphics) {
+		super.onInitialize("./asset/projectile.blaster.svg", 22, 10)
+	}
+}
+
+class ShotgunGun2dRender extends Image2dRender {
+	onInitialize() {
+		super.onInitialize("./asset/player.shotgun.svg", 15, 3.3)
+	}
+}
+
+class ShotgunBullet2dRender extends Image2dRender {
+	onInitialize(graphics) {
+		super.onInitialize("./asset/projectile.shotgun.svg", 16, 10)
 	}
 }
 
@@ -625,11 +655,27 @@ class Projectile extends Link {
 	}
 }
 
-class PlayerBullet extends Projectile {
+class GatlingBullet extends Projectile {
 	onInitialize(transform) {
 		super.onInitialize(transform, 1000, 4, Tag.enemy, 10)
 
 		this.add(GatlingBullet2dRender)
+	}
+}
+
+class BlasterBullet extends Projectile {
+	onInitialize(transform) {
+		super.onInitialize(transform, 900, 8, Tag.enemy, 20)
+
+		this.add(BlasterBullet2dRender)
+	}
+}
+
+class ShotgunBullet extends Projectile {
+	onInitialize(transform) {
+		super.onInitialize(transform, 800, 4, Tag.enemy, 15)
+
+		this.add(ShotgunBullet2dRender)
 	}
 }
 
@@ -711,7 +757,7 @@ class PlayerMovementController extends Trait {
 }
 
 class PlayerGun extends Trait {
-	onInitialize(fireRate = 0.1) {
+	onInitialize(fireRate = 0.5) {
 		this.userInteraction = this.universe[Global.userInteraction]
 		this.fireRate = fireRate
 		this.timeEnlapsed = 0
@@ -722,7 +768,41 @@ class PlayerGun extends Trait {
 
 		if (this.fireRate < this.timeEnlapsed && this.userInteraction.isPressed("MouseLeft")) {
 			this.timeEnlapsed = 0
-			this.universe.add(PlayerBullet, this.link.Transform.clone().relativeOffset(30, 12))
+
+			this.fire()
+		}
+	}
+}
+
+class GatlingGun extends PlayerGun {
+	onInitialize(fireRate = 0.1) {
+		super.onInitialize(fireRate)
+	}
+
+	fire() {
+		this.universe.add(GatlingBullet, this.link.Transform.clone().relativeOffset(30, 12))
+	}
+}
+
+class BlasterGun extends PlayerGun {
+	onInitialize(fireRate = 0.3) {
+		super.onInitialize(fireRate)
+	}
+
+	fire() {
+		this.universe.add(BlasterBullet, this.link.Transform.clone().relativeOffset(30, 12))
+	}
+}
+
+class ShotgunGun extends PlayerGun {
+	onInitialize(fireRate = 0.3, spreadAngle = PI / 16) {
+		super.onInitialize(fireRate)
+		this.spreadAngle = spreadAngle
+	}
+
+	fire() {
+		for (let i = -this.spreadAngle; i < this.spreadAngle; i += this.spreadAngle * 2 / 3) {
+			this.universe.add(ShotgunBullet, this.link.Transform.clone().relativeOffset(30, 12).apply(it => it.a += i))
 		}
 	}
 }
@@ -1092,12 +1172,27 @@ function main(canvas) {
 			this.add(ForceBasedMovement)
 			this.add(PlayerMovementController)
 
-			this.add(PlayerGun)
-
 			this.Collider = this.add(CircleCollider, 27)
 			this.add(Destroyable, 100)
 
 			this.add(PlayerShip2dRender)
+
+			switch (new URLSearchParams(location.search).get("weapon")) {
+				case "blaster":
+					this.add(BlasterGun)
+					this.add(BlasterGun2dRender)
+					break
+				case "shotgun":
+					this.add(ShotgunGun)
+					this.add(ShotgunGun2dRender)
+					break
+				case "gatling":
+				default:
+					this.add(GatlingGun)
+					this.add(GatlingGun2dRender)
+					break
+			}
+
 			this.add(HealthBar2dRender)
 		}
 	})
