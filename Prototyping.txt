@@ -1,4 +1,5 @@
-New Roadmap
+Roadmap
+-- // -----------------------------------------------------------------
 
 [OK] Colliders
 	[OK] Rectangle to rectangle
@@ -46,15 +47,18 @@ New Roadmap
 	[  ] Player weapon energy
 	[  ] Player capacity energy
 [  ] Out-game interface
-	[  ] Screen mockups
-		[  ] Level selection
-		[  ] Garage
-			[  ] Capacity selection
-			[  ] Weapon selection
-		[  ] Keymap customization
-		[  ] Navigation
+	[  ] Application's screens
+		[  ] Main menu
+		[  ] Settings
+			> Key bindings (WASD, Shoot, Special, Pause)
+		[  ] In-game / level
+		[  ] Pause menu
+		[  ] Run lobby
+		[  ] Reward
+		[  ] Defeat
+		[  ] Victory
 	[  ] Graphic chart
-	[  ] Characters dialogues
+	[  ] Characters' dialogues
 [  ] Lore
 [  ] Leveling
 	[  ] Per-level enemies builds
@@ -65,20 +69,31 @@ New Roadmap
 [  ] VFX
 	[  ] Explosions
 	[  ] Soundtrack
-[  ] Math optimization
+[  ] Optimization
+	[  ] Math
+	[  ] Resource loading
 
-Quotes From a Voice in Your Head
 
-There is one god that is everywhere and part of all of us: the universe. The universe won't come nor stand to save anyone.
-The ways of your death influence the value of your life.
-One cannot posibly enjoy anything they don't have full knowledge of.
-Three. Three? Weren't there four of them?
-Paradize and Hell are not places to go, but space to fill in the memories of those who will outlive you.
-A suicide a day keeps depression away.
-In the darkness, it shines.
-Snakes appear strait under a bent ruler.
-When the conquerors come in, the mountain perspires by the tiger's ass, and the dragon fucks the weasel.
-The fact we have the luxury to to complain about inanities is an indicator that we feel safe enough otherwise to do so.
-Could they have alleviated the part of the report about undergone physical sufferings?
-I like to see their hope vanish.
-Life is not beautiful by nature, it becomes what you make of it.
+An Echo in the Space
+-- // -----------------------------------------------------------------
+
+- There exists one god that is everywhere and part of all: the universe; the universe won't come, nor stand to save anyone.
+- The circumstances of their death will influence the value of their life.
+- One cannot posibly enjoy anything they don't have full knowledge of.
+- Three. Three? Weren't there four of them?
+- Paradize and hell are not places they go, but space to fill in the memories of those who will outlive them.
+- A suicide a day keeps the pressure away!
+- Alone in the darkness, it shines...
+- Snakes appear strait under a bent ruler...
+- When the conquerors come in, the mountain perspires by the tiger's ass, and the dragon fucks the weasel.
+- The fact we have the luxury to to complain about inanities is an indicator that we feel safe enough otherwise to do so.
+- Could they have alleviated the part of the report about undergone physical sufferings?
+- It likes to see their hope vanish...
+- Life is not beautiful by nature, it becomes what they make of it.
+- Life doesn't diverge from the existence of death, but rather death arises from the concept of life.
+- Those who try to mine gold out of it, they shall receive nothing but dirt.
+- It was ridiculous, it seems dangerous, it might become obvious...
+- By the time of their disgrace, it shall awake...
+- In its long agony, its knowledge is lost.
+- It bites those who try to break its chains.
+- They will be gnawed by what they demanded; they shall simply receive what they earned.
