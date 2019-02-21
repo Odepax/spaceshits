@@ -506,7 +506,7 @@ class WeaponEnergy extends Trait {
 }
 
 class CapacityEnergy extends Trait {
-	onInitialize(energy, energyRegeneration = 30) {
+	onInitialize(energy, energyRegeneration = 20) {
 		this.userInteraction = this.universe[Global.userInteraction]
 		this.energy = 0
 		this.maxEnergy = energy
@@ -893,10 +893,34 @@ class BlinkTeleportCapacity extends Trait {
 		const capacityEnergy = this.link.CapacityEnergy
 		const mousePosition = this.userInteraction.mousePosition
 
-		if (this.userInteraction.isPressed("Space") && capacityEnergy.maxEnergy - 1 < capacityEnergy.energy) {
+		if (this.userInteraction.wasPressed("Space") && capacityEnergy.maxEnergy < capacityEnergy.energy) {
 			capacityEnergy.energy = 0
 			shipPosition.x = mousePosition.x
 			shipPosition.y = mousePosition.y
+		}
+	}
+}
+
+class RestaurationCapacity extends Trait {
+	onInitialize() {
+		this.userInteraction = this.universe[Global.userInteraction]
+		this.remainingActivationTime = 0
+	}
+
+	onUpdate() {
+		const destroyable = this.link.Destroyable
+		const capacityEnergy = this.link.CapacityEnergy
+
+		if (this.userInteraction.wasPressed("Space") && capacityEnergy.maxEnergy < capacityEnergy.energy) {
+			capacityEnergy.energy = 0
+			destroyable.healthRegeneration = 10
+			this.remainingActivationTime = 3
+		}
+
+		if (0 < this.remainingActivationTime) {
+			this.remainingActivationTime -= this.universe.tickTime
+		} else {
+			destroyable.healthRegeneration = 0
 		}
 	}
 }
@@ -1289,7 +1313,7 @@ function main(canvas) {
 					break
 			}
 
-			this.add(BlinkTeleportCapacity)
+			this.add(RestaurationCapacity)
 
 			this.add(HealthBar2dRender)
 			this.add(WeaponEnergyBar2dRender)

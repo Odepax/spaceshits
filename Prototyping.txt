@@ -31,7 +31,7 @@ Roadmap
 [  ] Special capacities
 	[OK] Energy Gauge
 	[OK] Blink teleport
-	[  ] Restauration
+	[OK] Restauration
 	[  ] Shield
 	[  ] Berzerk
 	[  ] Missile swarm
