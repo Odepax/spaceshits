@@ -490,6 +490,36 @@ class Destroyable extends Trait {
 	}
 }
 
+class WeaponEnergy extends Trait {
+	onInitialize(energy, energyRegeneration = 30) {
+		this.userInteraction = this.universe[Global.userInteraction]
+		this.energy = energy
+		this.maxEnergy = energy
+		this.energyRegeneration = energyRegeneration
+	}
+
+	onUpdate() {
+		if (this.energy < this.maxEnergy && !this.userInteraction.isPressed("MouseLeft")) {
+			this.energy += this.energyRegeneration * this.universe.tickTime
+		}
+	}
+}
+
+class CapacityEnergy extends Trait {
+	onInitialize(energy, energyRegeneration = 30) {
+		this.userInteraction = this.universe[Global.userInteraction]
+		this.energy = 0
+		this.maxEnergy = energy
+		this.energyRegeneration = energyRegeneration
+	}
+
+	onUpdate() {
+		if (this.energy < this.maxEnergy && !this.userInteraction.isPressed("Space")) {
+			this.energy += this.energyRegeneration * this.universe.tickTime
+		}
+	}
+}
+
 // -----------------------------------------------------------------
 
 class Image2dRender extends Trait {
@@ -635,6 +665,46 @@ class HealthBar2dRender extends Trait {
 
 		this.graphics.fillStyle = GREEN
 		this.graphics.fillRect(-30, 40, 60 * health / maxHealth, 8)
+
+		this.graphics.resetTransform()
+	}
+}
+
+class WeaponEnergyBar2dRender extends Trait {
+	onInitialize() {
+		this.graphics = this.universe[Global.graphics]
+	}
+
+	onUpdate() {
+		const { energy, maxEnergy } = this.link.WeaponEnergy
+
+		this.graphics.applyTransform(this.link.Transform, false)
+
+		this.graphics.fillStyle = RED
+		this.graphics.fillRect(-30, 50, 60, 8)
+
+		this.graphics.fillStyle = BLUE
+		this.graphics.fillRect(-30, 50, 60 * energy / maxEnergy, 8)
+
+		this.graphics.resetTransform()
+	}
+}
+
+class CapacityEnergyBar2dRender extends Trait {
+	onInitialize() {
+		this.graphics = this.universe[Global.graphics]
+	}
+
+	onUpdate() {
+		const { energy, maxEnergy } = this.link.CapacityEnergy
+
+		this.graphics.applyTransform(this.link.Transform, false)
+
+		this.graphics.fillStyle = RED
+		this.graphics.fillRect(-30, 60, 60, 8)
+
+		this.graphics.fillStyle = YELLOW
+		this.graphics.fillRect(-30, 60, 60 * energy / maxEnergy, 8)
 
 		this.graphics.resetTransform()
 	}
@@ -807,6 +877,26 @@ class ShotgunGun extends PlayerGun {
 	fire() {
 		for (let i = -this.spreadAngle; i < this.spreadAngle; i += this.spreadAngle * 2 / 3) {
 			this.universe.add(ShotgunBullet, this.link.Transform.clone().relativeOffset(30, 12).apply(it => it.a += i))
+		}
+	}
+}
+
+// -----------------------------------------------------------------
+
+class BlinkTeleportCapacity extends Trait {
+	onInitialize() {
+		this.userInteraction = this.universe[Global.userInteraction]
+	}
+
+	onUpdate() {
+		const shipPosition = this.link.Transform
+		const capacityEnergy = this.link.CapacityEnergy
+		const mousePosition = this.userInteraction.mousePosition
+
+		if (this.userInteraction.isPressed("Space") && capacityEnergy.maxEnergy - 1 < capacityEnergy.energy) {
+			capacityEnergy.energy = 0
+			shipPosition.x = mousePosition.x
+			shipPosition.y = mousePosition.y
 		}
 	}
 }
@@ -1133,43 +1223,6 @@ const Global = {
 
 // -----------------------------------------------------------------
 
-class WeaponEnergy extends Trait {
-	onInitialize(energy, energyRegeneration = 30) {
-		this.userInteraction = this.universe[Global.userInteraction]
-		this.energy = energy
-		this.maxEnergy = energy
-		this.energyRegeneration = energyRegeneration
-	}
-
-	onUpdate() {
-		if (this.energy < this.maxEnergy && !this.userInteraction.isPressed("MouseLeft")) {
-			this.energy += this.energyRegeneration * this.universe.tickTime
-		}
-	}
-}
-
-class WeaponEnergyBar2dRender extends Trait {
-	onInitialize() {
-		this.graphics = this.universe[Global.graphics]
-	}
-
-	onUpdate() {
-		const { energy, maxEnergy } = this.link.WeaponEnergy
-
-		this.graphics.applyTransform(this.link.Transform, false)
-
-		this.graphics.fillStyle = RED
-		this.graphics.fillRect(-30, 50, 60, 8)
-
-		this.graphics.fillStyle = BLUE
-		this.graphics.fillRect(-30, 50, 60 * energy / maxEnergy, 8)
-
-		this.graphics.resetTransform()
-	}
-}
-
-// -----------------------------------------------------------------
-
 main(gameCanvas)
 
 function main(canvas) {
@@ -1215,6 +1268,8 @@ function main(canvas) {
 
 			this.Collider = this.add(CircleCollider, 27)
 			this.add(Destroyable, 100)
+			this.add(WeaponEnergy, 100)
+			this.add(CapacityEnergy, 100)
 
 			this.add(PlayerShip2dRender)
 
@@ -1234,10 +1289,11 @@ function main(canvas) {
 					break
 			}
 
-			this.add(HealthBar2dRender)
+			this.add(BlinkTeleportCapacity)
 
-			this.add(WeaponEnergy, 100)
+			this.add(HealthBar2dRender)
 			this.add(WeaponEnergyBar2dRender)
+			this.add(CapacityEnergyBar2dRender)
 		}
 	})
 

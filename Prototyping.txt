@@ -29,8 +29,8 @@ Roadmap
 	[  ] Charged
 	[  ] Laser
 [  ] Special capacities
-	[  ] Energy Gauge
-	[  ] Blink teleport
+	[OK] Energy Gauge
+	[OK] Blink teleport
 	[  ] Restauration
 	[  ] Shield
 	[  ] Berzerk
