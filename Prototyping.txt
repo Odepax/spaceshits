@@ -32,7 +32,7 @@ Roadmap
 	[OK] Energy Gauge
 	[OK] Blink teleport
 	[OK] Restauration
-	[  ] Shield
+	[OK] Shield
 	[  ] Berzerk
 	[  ] Missile swarm
 	[  ] Repelling shock wave

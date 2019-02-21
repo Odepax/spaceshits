@@ -650,6 +650,30 @@ class ShotgunBullet2dRender extends Image2dRender {
 
 // -----------------------------------------------------------------
 
+class Shield2dRender extends Trait {
+	onInitialize(radius) {
+		this.graphics = this.universe[Global.graphics]
+		this.radius = radius
+	}
+
+	onUpdate() {
+		this.graphics.applyTransform(this.link.Transform)
+		const { health, maxHealth, } = this.link.Destroyable
+
+		this.graphics.beginPath()
+		this.graphics.arc(0, 0, this.radius, 0, 2 * PI)
+
+		this.graphics.fillStyle = BLUE
+		this.graphics.globalAlpha = 0.3 * health / maxHealth
+		this.graphics.fill()
+		this.graphics.globalAlpha = 1
+
+		this.graphics.resetTransform()
+	}
+}
+
+// -----------------------------------------------------------------
+
 class HealthBar2dRender extends Trait {
 	onInitialize() {
 		this.graphics = this.universe[Global.graphics]
@@ -922,6 +946,36 @@ class RestaurationCapacity extends Trait {
 		} else {
 			destroyable.healthRegeneration = 0
 		}
+	}
+}
+
+class ShieldCapacity extends Trait {
+	onInitialize() {
+		this.userInteraction = this.universe[Global.userInteraction]
+	}
+
+	onUpdate() {
+		const shipPosition = this.link.Transform
+		const capacityEnergy = this.link.CapacityEnergy
+
+		if (this.userInteraction.wasPressed("Space") && capacityEnergy.maxEnergy < capacityEnergy.energy) {
+			capacityEnergy.energy = 0
+			this.universe.add(PlayerShield, shipPosition)
+		}
+	}
+}
+
+class PlayerShield extends Link {
+	onInitialize(shieldedTarget) {
+		this[Tag.player] = true
+
+		this.Transform = shieldedTarget
+
+		this.Collider = this.add(CircleCollider, 100)
+		this.add(Destroyable, 100)
+		this.add(Ephemeral, 3)
+
+		this.add(Shield2dRender, 100)
 	}
 }
 
@@ -1313,7 +1367,7 @@ function main(canvas) {
 					break
 			}
 
-			this.add(RestaurationCapacity)
+			this.add(ShieldCapacity)
 
 			this.add(HealthBar2dRender)
 			this.add(WeaponEnergyBar2dRender)
