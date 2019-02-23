@@ -208,9 +208,9 @@
  borderopacity="1.0"
  inkscape:pageopacity="0"
  inkscape:pageshadow="2"
- inkscape:zoom="0.512"
- inkscape:cx="2765.4"
- inkscape:cy="-792.05"
+ inkscape:zoom="0.26214"
+ inkscape:cx="2072.1"
+ inkscape:cy="-4.8813"
  inkscape:document-units="px"
  inkscape:current-layer="layer1"
  showgrid="false"
@@ -7720,13 +7720,13 @@
  id="rect3197"
  width="62.973"
  height="10"
- x="-2564.2"
+ x="2420.4"
  y="1865.2"
- transform="rotate(-90)" />
+ transform="matrix(0,1,1,0,0,0)" />
 <rect
- transform="rotate(-90)"
+ transform="matrix(0,1,1,0,0,0)"
  y="1864"
- x="-2483.4"
+ x="2501.2"
  height="10"
  width="62.973"
  id="rect3199"
@@ -8240,9 +8240,9 @@
  id="rect2285"
  style="fill:#3cb371;stroke-width:1.99997;stroke-linecap:round;stroke-linejoin:round;paint-order:fill markers stroke" />
 <rect
- transform="rotate(-90)"
+ transform="matrix(0,1,1,0,0,0)"
  y="3429"
- x="-3355.4"
+ x="3211.6"
  height="10"
  width="62.973"
  id="rect2287"
@@ -8252,9 +8252,9 @@
  id="rect2289"
  width="62.973"
  height="10"
- x="-3274.6"
+ x="3292.4"
  y="3427.8"
- transform="rotate(-90)" />
+ transform="matrix(0,1,1,0,0,0)" />
 <rect
  style="fill:#dc143c;stroke-width:1.99997;stroke-linecap:round;stroke-linejoin:round;paint-order:fill markers stroke"
  id="rect1229-4-01-2"
