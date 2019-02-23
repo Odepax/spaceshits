@@ -37,12 +37,15 @@ Roadmap
 	[  ] Missile swarm
 	[  ] Repelling shock wave
 	[  ] Minefield drop
-	[  ] Spiky hull (passive, but still subject to energy cap?)
+	[  ] Spiky hull
+		> Passive, but still subject to energy cap?
 	[  ] Whirlwind
+		> Spiky hull's 'active' alternative.
+		> Could have longer range.
 [  ] In-game HUD interface
 	[  ] Enemies health
-		[  ] Don't display if full?
-		[  ] Don't display if not touched for X seconds?
+		> Don't display if full?
+		> Don't display if not touched for X seconds?
 	[  ] Player health
 	[  ] Player weapon energy
 	[  ] Player capacity energy
@@ -97,3 +100,23 @@ An Echo in the Space
 - In its long agony, its knowledge is lost.
 - It bites those who try to break its chains.
 - They will be gnawed by what they demanded; they shall simply receive what they earned.
+- When asked what it wanted to do once grown up, it answered that it wanted to do...
+- They deplorably still can't accept the idea of infinity, clinging to the idea that all thing begins and ends...
+
+Level System
+-- // -----------------------------------------------------------------
+
+const level = new Promise(resolve => {
+	const universe = initialize( new Universe() )
+	// ...
+	.add(class ... extends Trait {
+		onUpdate() {
+			if (playerIsDown) resolve(DEFEAT)
+			else if (count(enemies) == 0) resolve(VICTORY)
+		}
+	})
+	// ...
+	universe.run()
+})
+// There you go: a level system.
+// Now, how do we implement level "stages"... several ".then-chained" promises?

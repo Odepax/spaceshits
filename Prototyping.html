@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<title>Spaceshits — A 2D Top-Down Space Shooter</title>
+		<style>
+			:root {
+				--RED:    crimson;
+				--ORANGE: darkorange;
+				--YELLOW: gold;
+				--GREEN:  greenyellow;
+				--TEAL:   mediumseagreen;
+				--BLUE:   deepskyblue;
+				--PURPLE: mediumpurple;
+				--PINK:   hotpink;
+				--WHITE:  ghostwhite;
+				--LIGHT:  silver;
+				--GREY:   gray;
+				--DARK:   darkslategray;
+				--BLACK:  black;
+			}
+			.red    { --ACCENT: var(--RED);    }
+			.orange { --ACCENT: var(--ORANGE); }
+			.yellow { --ACCENT: var(--YELLOW); }
+			.green  { --ACCENT: var(--GREEN);  }
+			.teal   { --ACCENT: var(--TEAL);   }
+			.blue   { --ACCENT: var(--BLUE);   }
+			.purple { --ACCENT: var(--PURPLE); }
+			.pink   { --ACCENT: var(--PINK);   }
+			.white  { --ACCENT: var(--WHITE);  }
+			.light  { --ACCENT: var(--LIGHT);  }
+			.grey   { --ACCENT: var(--GREY);   }
+			.dark   { --ACCENT: var(--DARK);   }
+			.black  { --ACCENT: var(--BLACK);  }
+
+			* {
+				margin: 0;
+				padding: 0;
+				box-sizing: border-box;
+				font-family: inherit;
+				font-weight: inherit;
+				font-style: inherit;
+				font-size: inherit;
+				color: inherit;
+			}
+			html, body {
+				height: 100%;
+			}
+			body {
+				display: flex;
+				flex-direction: column;
+				font-family: "Source Code Pro", "Consolas", monospace;
+				font-weight: normal;
+				font-style: normal;
+				font-size: 16px;
+				background: var(--BLACK);
+				color: var(--WHITE);
+			}
+
+			.interactible-element {
+				border: 0.125em solid var(--DARK);
+				cursor: pointer;
+			}
+			.interactible-element:hover {
+				box-shadow: inset 0 0 0 0.125em var(--BLACK), inset 0 0 0 0.25em var(--ACCENT, var(--LIGHT));
+			}
+
+			small {
+				font-size: 0.83em;
+			}
+
+			header {
+				flex: 0;
+			}
+			header h1 {
+				padding-top: 2.5em;
+				padding-bottom: 1.25em;
+				text-align: center;
+				text-transform: uppercase;
+			}
+			header h1 small {
+				display: block;
+				color: var(--LIGHT);
+			}
+
+			main {
+				flex: 1;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
+			.action-card {
+				display: flex;
+				flex-direction: column;
+				justify-content: flex-end;
+				margin: 0.625em;
+				width: 200px; /* SIA */
+				height: 400px; /* SIA */
+				background-repeat: no-repeat;
+				background-position: center;
+			}
+			.action-card.plus { background-image: url("./asset/actioncardbackground.plusicon.svg"); }
+			.action-card.cross { background-image: url("./asset/actioncardbackground.crossicon.svg"); }
+			.action-card.right-chevron { background-image: url("./asset/actioncardbackground.rightchevronicon.svg"); }
+			.action-card.gear { background-image: url("./asset/actioncardbackground.gearicon.svg"); }
+			.action-card .text {
+				flex: 0;
+				padding-bottom: 1.25em;
+				text-align: center;
+				text-transform: uppercase;
+				color: var(--LIGHT);
+			}
+			.action-card .text small {
+				display: block;
+			}
+
+			.key-binding-grid {
+				display: grid;
+				grid-template-rows: repeat(3, 100px); /* SIA */
+				grid-template-columns: repeat(5, 100px); /* SIA */
+				grid-gap: 1.25em;
+				margin: 0.625em;
+			}
+			.key-binding-grid .ship, .key-binding-grid .bullet {
+				background-repeat: no-repeat;
+				background-position: center;
+			}
+			.key-binding-grid .ship {
+				grid-row-start: 2;
+				grid-column-start: 3;
+				background-image: url("./asset/keybindinggridbackground.shipicon.svg");
+			}
+			.key-binding-grid .bullet {
+				grid-row-start: 2;
+				grid-column-start: 5;
+				background-image: url("./asset/keybindinggridbackground.bulleticon.svg");
+			}
+
+			.key-binding-item {
+				position: relative;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
+			.key-binding-item .bind {
+				text-align: center;
+				text-transform: uppercase;
+				color: var(--LIGHT);
+			}
+			.key-binding-item .text {
+				position: absolute;
+				bottom: calc(100% + 0.125em);
+				width: 100%;
+				text-align: center;
+				font-size: 0.83em;
+				text-transform: uppercase;
+				color: var(--LIGHT);
+			}
+			.key-binding-item .text.bottom {
+				top: calc(100% + 0.125em);
+			}
+		</style>
+	</head>
+	<body>
+		<header>
+			<h1>
+				<span>Battle Arena</span>
+				<small>There is no Luck, Only Talent.</small>
+			</h1>
+			<!-- <h1>
+				<span>Settings</span>
+				<small>Hover Over the Fields and Press Keys to Edit Them.</small>
+			</h1> -->
+			<!-- <h1>
+				<span>Spaceshits</span>
+				<small>Advertizing Dirty Code in Tablets.</small>
+			</h1> -->
+		</header>
+		<main>
+			<div class="interactible-element grey" style="padding: 0.375em;">
+				<canvas tabindex="1" width="700" height="700" style="cursor: crosshair; outline: none;"></canvas>
+				<script>
+					const gameCanvas = document.getElementsByTagName("canvas")[0]
+
+					gameCanvas.addEventListener("click", _ => gameCanvas.focus(), false)
+					gameCanvas.focus()
+				</script>
+				<script src="base.js"></script>
+				<script src="app.js"></script>
+			</div>
+			<!-- <div class="interactible-element action-card cross blue">
+				<div class="text">
+					<span>Discard Changes</span>
+				</div>
+			</div>
+			<section class="key-binding-grid">
+				<div class="interactible-element key-binding-item teal" style="grid-row-start: 1; grid-column-start: 3;">
+					<div class="bind">KeyW</div>
+					<div class="text">Move Up</div>
+				</div>
+				<div class="interactible-element key-binding-item teal" style="grid-row-start: 2; grid-column-start: 2;">
+					<div class="bind">KeyA</div>
+					<div class="text">Move Left</div>
+				</div>
+				<div class="interactible-element key-binding-item teal" style="grid-row-start: 3; grid-column-start: 3;">
+					<div class="bind">KeyS</div>
+					<div class="text bottom">Move Down</div>
+				</div>
+				<div class="interactible-element key-binding-item teal" style="grid-row-start: 2; grid-column-start: 4;">
+					<div class="bind">KeyD</div>
+					<div class="text">Move Right</div>
+				</div>
+				<div class="interactible-element key-binding-item yellow" style="grid-row-start: 1; grid-column-start: 5;">
+					<div class="bind">MouseLeft</div>
+					<div class="text">Shoot</div>
+				</div>
+				<div class="interactible-element key-binding-item blue" style="grid-row-start: 3; grid-column-start: 5;">
+					<div class="bind">Space</div>
+					<div class="text bottom">Use Special</div>
+				</div>
+				<div class="interactible-element key-binding-item purple" style="grid-row-start: 1; grid-column-start: 1;">
+					<div class="bind">Escape</div>
+					<div class="text">Toggle Pause</div>
+				</div>
+				<div class="ship"></div>
+				<div class="bullet"></div>
+			</section>
+			<div class="interactible-element action-card right-chevron pink">
+				<div class="text">
+					<span>Save Changes</span>
+				</div>
+			</div> -->
+			<!-- <div class="interactible-element action-card plus red">
+				<div class="text">
+					<span>New Game</span>
+				</div>
+			</div>
+			<div class="interactible-element action-card right-chevron teal">
+				<div class="text">
+					<small>Resume</small>
+					<span>Last Game</span>
+				</div>
+			</div>
+			<div class="interactible-element action-card gear purple">
+				<div class="text">
+					<span>Edit Settings</span>
+				</div>
+			</div> -->
+		</main>
+	</body>
+</html>

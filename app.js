@@ -707,7 +707,7 @@ class WeaponEnergyBar2dRender extends Trait {
 		this.graphics.fillStyle = RED
 		this.graphics.fillRect(-30, 50, 60, 8)
 
-		this.graphics.fillStyle = BLUE
+		this.graphics.fillStyle = YELLOW
 		this.graphics.fillRect(-30, 50, 60 * energy / maxEnergy, 8)
 
 		this.graphics.resetTransform()
@@ -727,7 +727,7 @@ class CapacityEnergyBar2dRender extends Trait {
 		this.graphics.fillStyle = RED
 		this.graphics.fillRect(-30, 60, 60, 8)
 
-		this.graphics.fillStyle = YELLOW
+		this.graphics.fillStyle = BLUE
 		this.graphics.fillRect(-30, 60, 60 * energy / maxEnergy, 8)
 
 		this.graphics.resetTransform()
