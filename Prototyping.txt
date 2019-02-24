@@ -52,7 +52,6 @@ Roadmap
 [  ] Out-game interface
 	[  ] Application's screens
 		[  ] Main menu
-			> Nagivation setting "enabled" CSS class via JS.
 		[  ] Settings
 			> Key bindings (WASD, Shoot, Special, Pause)
 		[  ] In-game / level

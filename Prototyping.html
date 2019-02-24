@@ -227,11 +227,21 @@
 					this.currentScreen = screen
 				}
 			}
+
+			const SettingsCenter = {
+				moveUpBoundKey: "KeyW",
+				moveLeftBoundKey: "KeyA",
+				moveDownBoundKey: "KeyS",
+				moveRightBoundKey: "KeyD",
+				shootBoundKey: "MouseLeft",
+				useSpecialBoundKey: "Space",
+				togglePauseBoundKey: "Escape"
+			}
 		</script>
 	</head>
 	<body>
 		<div id="mainScreen" class="screen disabled">
-			<header>
+			<header class="screen-header">
 				<h1 class="screen-title">
 					<span>Spaceshits</span>
 					<small>Advertizing Dirty Code in Tablets.</small>
@@ -245,18 +255,18 @@
 					<small>Resume</small>
 					<span>Last Game</span>
 				</div> -->
-				<!-- <div id="editSettingsActionCard" class="action-card interactible-element purple iconic-element gear">
+				<div id="editSettingsActionCard" class="action-card interactible-element purple iconic-element gear">
 					<span>Edit Settings</span>
-				</div> -->
+				</div>
 			</main>
 		</div>
-		<script>
+		<script> ;(function () {
 			ScreenCenter.add(mainScreen)
 
 			newGameActionCard.addEventListener("click", _ => ScreenCenter.navigateTo(inGameScreen), false)
 			// resumeLastGameActionCard.addEventListener("click", _ => ScreenCenter.navigateTo(inGameScreen), false)
-			// editSettingsActionCard.addEventListener("click", _ => ScreenCenter.navigateTo(settingsScreen), false)
-		</script>
+			editSettingsActionCard.addEventListener("click", _ => ScreenCenter.navigateTo(settingsScreen), false)
+		})(); </script>
 
 		<!-- ================================================================= -->
 
@@ -269,57 +279,105 @@
 			</header>
 			<main class="screen-content centering-element">
 				<div class="lifting-element">
-					<div class="action-card interactible-element blue iconic-element cross">
+					<div id="discardChangesActionCard" class="action-card interactible-element blue iconic-element cross">
 						<span>Discard Changes</span>
 					</div>
 					<section class="key-binding-grid">
 						<div class="key-binding-item interactible-element teal" style="grid-row-start: 1; grid-column-start: 3;">
 							<div class="label">Move Up</div>
-							<span id="moveUpBind">KeyW</span>
+							<span id="moveUpBind">...</span>
 						</div>
 						<div class="key-binding-item interactible-element teal" style="grid-row-start: 2; grid-column-start: 2;">
 							<div class="label">Move Left</div>
-							<span id="moveLeftBind">KeyA</span>
+							<span id="moveLeftBind">...</span>
 						</div>
 						<div class="key-binding-item interactible-element teal" style="grid-row-start: 3; grid-column-start: 3;">
 							<div class="label bottom">Move Down</div>
-							<span id="moveDownBind">KeyS</span>
+							<span id="moveDownBind">...</span>
 						</div>
 						<div class="key-binding-item interactible-element teal" style="grid-row-start: 2; grid-column-start: 4;">
 							<div class="label">Move Right</div>
-							<span id="moveRightBind">KeyD</span>
+							<span id="moveRightBind">...</span>
 						</div>
 						<div class="key-binding-item interactible-element yellow" style="grid-row-start: 1; grid-column-start: 5;">
 							<div class="label">Shoot</div>
-							<span id="shootBind">MouseLeft</span>
+							<span id="shootBind">...</span>
 						</div>
 						<div class="key-binding-item interactible-element blue" style="grid-row-start: 3; grid-column-start: 5;">
 							<div class="label bottom">Use Special</div>
-							<span id="useSpecialBind">Space</span>
+							<span id="useSpecialBind">...</span>
 						</div>
 						<div class="key-binding-item interactible-element purple" style="grid-row-start: 1; grid-column-start: 1;">
 							<div class="label">Toggle Pause</div>
-							<span id="togglePauseBind">Escape</span>
+							<span id="togglePauseBind">...</span>
 						</div>
 						<div class="iconic-element ship" style="grid-row-start: 2; grid-column-start: 3;"></div>
 						<div class="iconic-element bullet" style="grid-row-start: 2; grid-column-start: 5;"></div>
 					</section>
-					<div class="action-card interactible-element pink iconic-element right-chevron">
+					<div id="saveChangesActionCard" class="action-card interactible-element pink iconic-element right-chevron">
 						<span>Save Changes</span>
 					</div>
 				</div>
 			</main>
 		</div>
-		<script>
-			const settingsScreen = document.getElementById("settingsScreen")
-			const moveUpBind = document.getElementById("moveUpBind")
-			const moveLeftBind = document.getElementById("moveLeftBind")
-			const moveDownBind = document.getElementById("moveDownBind")
-			const moveRightBind = document.getElementById("moveRightBind")
-			const shootBind = document.getElementById("shootBind")
-			const useSpecialBind = document.getElementById("useSpecialBind")
-			const togglePauseBind = document.getElementById("togglePauseBind")
-		</script>
+		<script> ;(function () {
+			let focus = null
+
+			for (const bindElement of [
+				moveUpBind,
+				moveLeftBind,
+				moveDownBind,
+				moveRightBind,
+				shootBind,
+				useSpecialBind,
+				togglePauseBind
+			]) {
+				bindElement.parentElement.addEventListener("mouseenter", _ => focus = bindElement, false)
+				bindElement.parentElement.addEventListener("mouseleave", _ => focus = null, false)
+			}
+
+			const mouseButtonLabels = [ "MouseLeft", "MouseMiddle", "MouseRight" ]
+
+			function bindToKey(event) { focus && (focus.textContent = event.code) }
+			function bindToMouseButton(event) { focus && (focus.textContent = mouseButtonLabels[event.button]) }
+
+			ScreenCenter.add(settingsScreen, _enter => {
+				loadKeyBindings()
+
+				document.addEventListener("keydown", bindToKey, false)
+				document.addEventListener("mousedown", bindToMouseButton, false)
+			}, _exit => {
+				document.removeEventListener("keydown", bindToKey, false)
+				document.removeEventListener("mousedown", bindToMouseButton, false)
+			})
+
+			discardChangesActionCard.addEventListener("click", _ => ScreenCenter.navigateTo(mainScreen), false)
+			saveChangesActionCard.addEventListener("click", _ => {
+				saveKeyBindings()
+
+				ScreenCenter.navigateTo(mainScreen)
+			}, false)
+
+			function loadKeyBindings() {
+				moveUpBind.textContent = SettingsCenter.moveUpBoundKey
+				moveLeftBind.textContent = SettingsCenter.moveLeftBoundKey
+				moveDownBind.textContent = SettingsCenter.moveDownBoundKey
+				moveRightBind.textContent = SettingsCenter.moveRightBoundKey
+				shootBind.textContent = SettingsCenter.shootBoundKey
+				useSpecialBind.textContent = SettingsCenter.useSpecialBoundKey
+				togglePauseBind.textContent = SettingsCenter.togglePauseBoundKey
+			}
+
+			function saveKeyBindings() {
+				SettingsCenter.moveUpBoundKey = moveUpBind.textContent
+				SettingsCenter.moveLeftBoundKey = moveLeftBind.textContent
+				SettingsCenter.moveDownBoundKey = moveDownBind.textContent
+				SettingsCenter.moveRightBoundKey = moveRightBind.textContent
+				SettingsCenter.shootBoundKey = shootBind.textContent
+				SettingsCenter.useSpecialBoundKey = useSpecialBind.textContent
+				SettingsCenter.togglePauseBoundKey = togglePauseBind.textContent
+			}
+		})(); </script>
 
 		<!-- ================================================================= -->
 
@@ -330,17 +388,13 @@
 				</div>
 			</main>
 		</div>
-		<script>
-			const inGameScreen = document.getElementById("inGameScreen")
-			const gameCanvas = document.getElementById("gameCanvas")
-
-			ScreenCenter.add(inGameScreen, _enter => { log('coucou') }, _exit => { log('bye') })
+		<script> ;(function () {
+			ScreenCenter.add(inGameScreen, _enter => gameCanvas.focus(), _exit => {})
 
 			gameCanvas.addEventListener("mousedown", _ => gameCanvas.focus(), false)
-			gameCanvas.focus()
-		</script>
-		<script src="base.js"></script>
-		<script src="app.js"></script>
+		})(); </script>
+		<!-- <script src="base.js"></script>
+		<script src="app.js"></script> -->
 
 		<!-- ================================================================= -->
 
@@ -352,14 +406,14 @@
 				</h1>
 			</main>
 		</div>
-		<script>
-			const pauseScreen = document.getElementById("pauseScreen")
-		</script>
+		<script> ;(function () {
+			ScreenCenter.add(pauseScreen)
+		})(); </script>
 
 		<!-- ================================================================= -->
 
 		<script>
-			ScreenCenter.navigateTo(mainScreen)
+			ScreenCenter.navigateTo(settingsScreen)
 		</script>
 	</body>
 </html>
