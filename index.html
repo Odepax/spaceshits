@@ -41,6 +41,8 @@
 				useSpecialBoundKey: "Space",
 				togglePauseBoundKey: "Escape"
 			}
+
+			const mouseButtonLabels = [ "MouseLeft", "MouseMiddle", "MouseRight" ]
 		</script>
 	</head>
 	<body>
@@ -140,8 +142,6 @@
 				bindElement.parentElement.addEventListener("mouseleave", _ => focus = null, false)
 			}
 
-			const mouseButtonLabels = [ "MouseLeft", "MouseMiddle", "MouseRight" ]
-
 			function bindToKey(event) { focus && (focus.textContent = event.code) }
 			function bindToMouseButton(event) { focus && (focus.textContent = mouseButtonLabels[event.button]) }
 
@@ -192,26 +192,62 @@
 				</div>
 			</main>
 		</div>
-		<!-- <script src="engine.js"></script>
-		<script src="game.js"></script> -->
+		<script src="engine.js"></script>
+		<script src="game.js"></script>
 		<script> ;(function () {
-			ScreenCenter.add(inGameScreen, _enter => gameCanvas.focus(), _exit => {})
+			let universe = null
 
-			gameCanvas.addEventListener("mousedown", _ => gameCanvas.focus(), false)
-		})(); </script>
+			ScreenCenter.add(inGameScreen, _enter => {
+				universe = universe || newUniverse(gameCanvas, 2)
 
-		<!-- ================================================================= -->
+				gameCanvas.focus()
 
-		<div id="pauseScreen" class="screen disabled">
-			<main class="screen-content centering-element">
-				<h1 class="screen-title">
-					<span>Pause</span>
-					<small>Sissy!</small>
-				</h1>
-			</main>
-		</div>
-		<script> ;(function () {
-			ScreenCenter.add(pauseScreen)
+				universe.run()
+			}, _exit => {
+				universe = null
+			})
+
+			gameCanvas.addEventListener("mousedown", event => {
+				gameCanvas.focus()
+
+				if (universe && mouseButtonLabels[event.button] == SettingsCenter.togglePauseBoundKey) {
+					universe.isRunning ? universe.freeze() : universe.run()
+				}
+			}, false)
+
+			gameCanvas.addEventListener("keydown", event => {
+				if (universe && event.code == SettingsCenter.togglePauseBoundKey) {
+					universe.isRunning ? universe.freeze() : universe.run()
+				}
+			}, false)
+
+			function newUniverse(canvas, coubeCount) {
+				const universe = new Universe()
+
+				universe[Global.keyMoveUp] = SettingsCenter.moveUpBoundKey
+				universe[Global.keyMoveLeft] = SettingsCenter.moveLeftBoundKey
+				universe[Global.keyMoveDown] = SettingsCenter.moveDownBoundKey
+				universe[Global.keyMoveRight] = SettingsCenter.moveRightBoundKey
+				universe[Global.keyShoot] = SettingsCenter.shootBoundKey
+				universe[Global.keySpecial] = SettingsCenter.useSpecialBoundKey
+
+				universe[Global.canvas] = canvas
+				universe[Global.graphics] = canvas.getContext("2d")
+				universe[Global.userInteraction] = universe.add(UserInteractor).UserInteraction
+				universe.add(CanvasEraser)
+				universe.add(InteractionLogger)
+				universe.add(Player, 0.5 * canvas.width, 0.7 * canvas.height)
+
+				for (let i = 0; i < coubeCount; ++i) {
+					universe.add(
+						randBetween(ZombieCube, AkimboCube, CrossCube, HighSpeedCube, SplittingCube, CubeFactory),
+						rand(0, canvas.width),
+						rand(0, canvas.height)
+					)
+				}
+
+				return universe
+			}
 		})(); </script>
 
 		<!-- ================================================================= -->

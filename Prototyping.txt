@@ -43,18 +43,18 @@ Roadmap
 		> Spiky hull's 'active' alternative.
 		> Could have longer range.
 [  ] In-game HUD interface
-	[  ] Enemies health
-		> Don't display if full?
-		> Don't display if not touched for X seconds?
 	[  ] Player health
 	[  ] Player weapon energy
 	[  ] Player capacity energy
+	[  ] Enemies health
+		> Don't display if full?
+		> Don't display if not touched for X seconds?
 [  ] Out-game interface
 	[  ] Application's screens
 		[OK] Main menu
 		[OK] Settings
-		[  ] In-game / level
-		[  ] Pause menu
+		[OK] In-game
+			[OK] Pause
 		[  ] Run lobby
 		[  ] Reward
 		[  ] Defeat

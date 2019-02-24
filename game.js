@@ -370,6 +370,12 @@ class AngularLinearMovement extends Trait {
 
 // -----------------------------------------------------------------
 
+class UserInteractor extends Link {
+	onInitialize() {
+		this.add(UserInteraction, this.universe[Global.canvas])
+	}
+}
+
 class UserInteraction extends Trait {
 	onInitialize(observedElement) {
 		this.mousePosition = new Transform(0, 0)
@@ -493,13 +499,15 @@ class Destroyable extends Trait {
 class WeaponEnergy extends Trait {
 	onInitialize(energy, energyRegeneration = 30) {
 		this.userInteraction = this.universe[Global.userInteraction]
+		this.shootKey = this.universe[Global.keyShoot]
+
 		this.energy = energy
 		this.maxEnergy = energy
 		this.energyRegeneration = energyRegeneration
 	}
 
 	onUpdate() {
-		if (this.energy < this.maxEnergy && !this.userInteraction.isPressed("MouseLeft")) {
+		if (this.energy < this.maxEnergy && !this.userInteraction.isPressed(this.shootKey)) {
 			this.energy += this.energyRegeneration * this.universe.tickTime
 		}
 	}
@@ -508,13 +516,15 @@ class WeaponEnergy extends Trait {
 class CapacityEnergy extends Trait {
 	onInitialize(energy, energyRegeneration = 20) {
 		this.userInteraction = this.universe[Global.userInteraction]
+		this.capacityKey = this.universe[Global.keySpecial]
+
 		this.energy = 0
 		this.maxEnergy = energy
 		this.energyRegeneration = energyRegeneration
 	}
 
 	onUpdate() {
-		if (this.energy < this.maxEnergy && !this.userInteraction.isPressed("Space")) {
+		if (this.energy < this.maxEnergy && !this.userInteraction.isPressed(this.capacityKey)) {
 			this.energy += this.energyRegeneration * this.universe.tickTime
 		}
 	}
@@ -803,6 +813,10 @@ class PlayerMovementController extends Trait {
 	onInitialize(movementAcceleration = 1000, speedFactorAfterBounce = 0.5) {
 		this.canvas = this.universe[Global.canvas]
 		this.userInteraction = this.universe[Global.userInteraction]
+		this.moveUpKey = this.universe[Global.keyMoveUp]
+		this.moveLeftKey = this.universe[Global.keyMoveLeft]
+		this.moveDownKey = this.universe[Global.keyMoveDown]
+		this.moveRightKey = this.universe[Global.keyMoveRight]
 
 		this.movementAcceleration = movementAcceleration
 		this.speedFactorAfterBounce = speedFactorAfterBounce
@@ -815,24 +829,24 @@ class PlayerMovementController extends Trait {
 
 		shipPosition.a = shipPosition.angleToward(targetPosition)
 
-		const wIsPressed = this.userInteraction.isPressed("KeyW")
-		const sIsPressed = this.userInteraction.isPressed("KeyS")
-		const dIsPressed = this.userInteraction.isPressed("KeyD")
-		const aIsPressed = this.userInteraction.isPressed("KeyA")
+		const moveUpKeyIsPressed = this.userInteraction.isPressed(this.moveUpKey)
+		const moveLeftKeyIsPressed = this.userInteraction.isPressed(this.moveLeftKey)
+		const moveDownKeyIsPressed = this.userInteraction.isPressed(this.moveDownKey)
+		const moveRightKeyIsPressed = this.userInteraction.isPressed(this.moveRightKey)
 
-		if (wIsPressed || sIsPressed || dIsPressed || aIsPressed) {
+		if (moveUpKeyIsPressed || moveDownKeyIsPressed || moveRightKeyIsPressed || moveLeftKeyIsPressed) {
 			let movementAccelerationAngle = - PI / 2
 
-			if (sIsPressed) movementAccelerationAngle += PI
+			if (moveDownKeyIsPressed) movementAccelerationAngle += PI
 
-			if (dIsPressed) {
-				     if (wIsPressed) movementAccelerationAngle += PI / 4
-				else if (sIsPressed) movementAccelerationAngle -= PI / 4
-				else                 movementAccelerationAngle += PI / 2
-			} else if (aIsPressed) {
-				     if (wIsPressed) movementAccelerationAngle -= PI / 4
-				else if (sIsPressed) movementAccelerationAngle += PI / 4
-				else                 movementAccelerationAngle -= PI / 2
+			if (moveRightKeyIsPressed) {
+				     if (moveUpKeyIsPressed)   movementAccelerationAngle += PI / 4
+				else if (moveDownKeyIsPressed) movementAccelerationAngle -= PI / 4
+				else                           movementAccelerationAngle += PI / 2
+			} else if (moveLeftKeyIsPressed) {
+				     if (moveUpKeyIsPressed)   movementAccelerationAngle -= PI / 4
+				else if (moveDownKeyIsPressed) movementAccelerationAngle += PI / 4
+				else                           movementAccelerationAngle -= PI / 2
 			}
 
 			shipAcceleration.x = this.movementAcceleration * cos(movementAccelerationAngle)
@@ -853,6 +867,7 @@ class PlayerMovementController extends Trait {
 class PlayerGun extends Trait {
 	onInitialize(fireRate = 0.5, shotEnergyConsumption = 10) {
 		this.userInteraction = this.universe[Global.userInteraction]
+		this.shootKey = this.universe[Global.keyShoot]
 		this.fireRate = fireRate
 		this.shotEnergyConsumption = shotEnergyConsumption
 		this.timeEnlapsed = 0
@@ -863,7 +878,7 @@ class PlayerGun extends Trait {
 
 		this.timeEnlapsed += this.universe.tickTime
 
-		if (this.fireRate < this.timeEnlapsed && this.userInteraction.isPressed("MouseLeft") && this.shotEnergyConsumption < weaponEnergy.energy) {
+		if (this.fireRate < this.timeEnlapsed && this.userInteraction.isPressed(this.shootKey) && this.shotEnergyConsumption < weaponEnergy.energy) {
 			this.timeEnlapsed = 0
 			weaponEnergy.energy -= this.shotEnergyConsumption
 
@@ -910,6 +925,7 @@ class ShotgunGun extends PlayerGun {
 class BlinkTeleportCapacity extends Trait {
 	onInitialize() {
 		this.userInteraction = this.universe[Global.userInteraction]
+		this.capacityKey = this.universe[Global.keySpecial]
 	}
 
 	onUpdate() {
@@ -917,7 +933,7 @@ class BlinkTeleportCapacity extends Trait {
 		const capacityEnergy = this.link.CapacityEnergy
 		const mousePosition = this.userInteraction.mousePosition
 
-		if (this.userInteraction.wasPressed("Space") && capacityEnergy.maxEnergy < capacityEnergy.energy) {
+		if (this.userInteraction.wasPressed(this.capacityKey) && capacityEnergy.maxEnergy < capacityEnergy.energy) {
 			capacityEnergy.energy = 0
 			shipPosition.x = mousePosition.x
 			shipPosition.y = mousePosition.y
@@ -928,6 +944,7 @@ class BlinkTeleportCapacity extends Trait {
 class RestaurationCapacity extends Trait {
 	onInitialize() {
 		this.userInteraction = this.universe[Global.userInteraction]
+		this.capacityKey = this.universe[Global.keySpecial]
 		this.remainingActivationTime = 0
 	}
 
@@ -935,7 +952,7 @@ class RestaurationCapacity extends Trait {
 		const destroyable = this.link.Destroyable
 		const capacityEnergy = this.link.CapacityEnergy
 
-		if (this.userInteraction.wasPressed("Space") && capacityEnergy.maxEnergy < capacityEnergy.energy) {
+		if (this.userInteraction.wasPressed(this.capacityKey) && capacityEnergy.maxEnergy < capacityEnergy.energy) {
 			capacityEnergy.energy = 0
 			destroyable.healthRegeneration = 10
 			this.remainingActivationTime = 3
@@ -952,13 +969,14 @@ class RestaurationCapacity extends Trait {
 class ShieldCapacity extends Trait {
 	onInitialize() {
 		this.userInteraction = this.universe[Global.userInteraction]
+		this.capacityKey = this.universe[Global.keySpecial]
 	}
 
 	onUpdate() {
 		const shipPosition = this.link.Transform
 		const capacityEnergy = this.link.CapacityEnergy
 
-		if (this.userInteraction.wasPressed("Space") && capacityEnergy.maxEnergy < capacityEnergy.energy) {
+		if (this.userInteraction.wasPressed(this.capacityKey) && capacityEnergy.maxEnergy < capacityEnergy.energy) {
 			capacityEnergy.energy = 0
 			this.universe.add(PlayerShield, shipPosition)
 		}
@@ -1147,6 +1165,12 @@ class CubeSplitOnDeath extends Trait {
 
 // -----------------------------------------------------------------
 
+class InteractionLogger extends Link {
+	onInitialize() {
+		this.add(InteractionLogging)
+	}
+}
+
 class InteractionLogging extends Trait {
 	onInitialize() {
 		this.userInteraction = this.universe[Global.userInteraction]
@@ -1296,90 +1320,53 @@ const Tag = {
 const Global = {
 	canvas: Symbol("Global/Link: Universe canvas"),
 	graphics: Symbol("Global/Link: Universe canvas graphics context"),
-	userInteraction: Symbol("Global/Link: Universe user interaction")
+	userInteraction: Symbol("Global/Link: Universe user interaction"),
+	keyMoveUp: Symbol("Global/Link: Move up key"),
+	keyMoveLeft: Symbol("Global/Link: Move left key"),
+	keyMoveDown: Symbol("Global/Link: Move down key"),
+	keyMoveRight: Symbol("Global/Link: Move right key"),
+	keyShoot: Symbol("Global/Link: Shoot key"),
+	keySpecial: Symbol("Global/Link: Use special capacity key")
 }
 
 // -----------------------------------------------------------------
 
-main(gameCanvas)
+class CanvasEraser extends Link {
+	onInitialize() {
+		this.add(CanvasErasing)
+	}
+}
 
-function main(canvas) {
-	const universe = new Universe()
+class CanvasErasing extends Trait {
+	onUpdate() {
+		const canvas = this.universe[Global.canvas]
+		const graphics = this.universe[Global.graphics]
 
-	universe[Global.canvas] = canvas
-	universe[Global.graphics] = canvas.getContext("2d")
-	universe[Global.userInteraction] = universe.add(class UserInteractor extends Link {
-		onInitialize() {
-			this.add(UserInteraction, canvas)
-		}
-	}).UserInteraction
+		graphics.clearRect(0, 0, canvas.width, canvas.height)
+	}
+}
 
-	universe.run()
+// -----------------------------------------------------------------
 
-	universe.add(class CanvasEraser extends Link {
-		onInitialize() {
-			const canvas = universe[Global.canvas]
-			const graphics = universe[Global.graphics]
+class Player extends Link {
+	onInitialize(x, y) {
+		this[Tag.player] = true
 
-			this.add(class CanvasErasing extends Trait {
-				onUpdate() {
-					graphics.clearRect(0, 0, canvas.width, canvas.height)
-				}
-			})
-		}
-	})
+		this.add(Transform, x, y)
 
-	universe.add(class InteractionLogger extends Link {
-		onInitialize() {
-			this.add(InteractionLogging)
-		}
-	})
+		this.add(ForceBasedMovement)
+		this.add(PlayerMovementController)
 
-	universe.add(class Player extends Link {
-		onInitialize() {
-			this[Tag.player] = true
+		this.Collider = this.add(CircleCollider, 27)
+		this.add(Destroyable, 100)
+		this.add(WeaponEnergy, 100)
+		this.add(CapacityEnergy, 100)
 
-			this.add(Transform, canvas.width / 2, canvas.height / 2)
+		this.add(PlayerShip2dRender)
+		this.add(HealthBar2dRender)
 
-			this.add(ForceBasedMovement)
-			this.add(PlayerMovementController)
-
-			this.Collider = this.add(CircleCollider, 27)
-			this.add(Destroyable, 100)
-			this.add(WeaponEnergy, 100)
-			this.add(CapacityEnergy, 100)
-
-			this.add(PlayerShip2dRender)
-
-			switch (new URLSearchParams(location.search).get("weapon")) {
-				case "blaster":
-					this.add(BlasterGun)
-					this.add(BlasterGun2dRender)
-					break
-				case "shotgun":
-					this.add(ShotgunGun)
-					this.add(ShotgunGun2dRender)
-					break
-				case "gatling":
-				default:
-					this.add(GatlingGun)
-					this.add(GatlingGun2dRender)
-					break
-			}
-
-			this.add(ShieldCapacity)
-
-			this.add(HealthBar2dRender)
-			this.add(WeaponEnergyBar2dRender)
-			this.add(CapacityEnergyBar2dRender)
-		}
-	})
-
-	for (let i = 0, c = ~~(new URLSearchParams(location.search).get("cubes")) || 10; i < c; ++i) {
-		universe.add(
-			randBetween(ZombieCube, AkimboCube, CrossCube, HighSpeedCube, SplittingCube, CubeFactory),
-			rand(0, canvas.width),
-			rand(0, canvas.height)
-		)
+		this.add(GatlingGun)
+		this.add(GatlingGun2dRender)
+		this.add(WeaponEnergyBar2dRender)
 	}
 }
