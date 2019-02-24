@@ -51,9 +51,8 @@ Roadmap
 	[  ] Player capacity energy
 [  ] Out-game interface
 	[  ] Application's screens
-		[  ] Main menu
-		[  ] Settings
-			> Key bindings (WASD, Shoot, Special, Pause)
+		[OK] Main menu
+		[OK] Settings
 		[  ] In-game / level
 		[  ] Pause menu
 		[  ] Run lobby
