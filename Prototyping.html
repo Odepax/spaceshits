@@ -48,7 +48,6 @@
 			}
 
 			body {
-				min-height: 100vh;
 				font-family: "Source Code Pro", "Consolas", monospace;
 				font-weight: normal;
 				font-style: normal;
@@ -63,32 +62,16 @@
 
 			/* ----------------------------------------------------------------- */
 
-			body {
+			.centering-element {
 				display: flex;
-				flex-direction: column;
-				padding: 20px;
+				justify-content: center;
+				align-items: center;
 			}
 
-			header {
-				flex: 0;
-				padding-top: 20px;
-			}
-
-			main {
-				flex: 1;
-				padding: 20px 0;
-			}
-
-			/* ----------------------------------------------------------------- */
-
-			h1 {
-				text-align: center;
-				text-transform: uppercase;
-			}
-
-			h1 small {
-				display: block;
-				color: var(--LIGHT);
+			.lifting-element {
+				display: flex;
+				justify-content: center;
+				align-items: flex-start;
 			}
 
 			/* ----------------------------------------------------------------- */
@@ -119,6 +102,36 @@
 
 			/* ----------------------------------------------------------------- */
 
+			.screen {
+				display: flex;
+				flex-direction: column;
+				padding: 20px;
+			}
+
+			.screen.disabled { display: none; }
+
+			.screen-header {
+				flex: 0;
+				padding-top: 20px;
+			}
+
+			.screen-title {
+				text-align: center;
+				text-transform: uppercase;
+			}
+
+			.screen-title small {
+				display: block;
+				color: var(--LIGHT);
+			}
+
+			.screen-content {
+				flex: 1;
+				padding: 20px 0;
+			}
+
+			/* ----------------------------------------------------------------- */
+
 			.action-card {
 				width: 200px;
 				min-width: 200px;
@@ -137,20 +150,6 @@
 
 			.action-card small {
 				display: block;
-			}
-
-			/* ----------------------------------------------------------------- */
-
-			.centering-element {
-				display: flex;
-				justify-content: center;
-				align-items: center;
-			}
-
-			.lifting-element {
-				display: flex;
-				justify-content: center;
-				align-items: flex-start;
 			}
 
 			/* ----------------------------------------------------------------- */
@@ -195,112 +194,172 @@
 			}
 		</style>
 		<style>
+			.screen {
+				min-height: 100vh;
+			}
+
 			.action-card, .key-binding-grid {
 				margin: 0 10px;
 			}
 		</style>
-	</head>
-	<body>
-
-		<!-- <header>
-			<h1>
-				<span>Spaceshits</span>
-				<small>Advertizing Dirty Code in Tablets.</small>
-			</h1>
-		</header>
-		<main class="centering-element">
-			<div class="action-card interactible-element red iconic-element plus">
-				<span>New Game</span>
-			</div>
-			<div class="action-card interactible-element teal iconic-element right-chevron">
-				<small>Resume</small>
-				<span>Last Game</span>
-			</div>
-			<div class="action-card interactible-element purple iconic-element gear">
-				<span>Edit Settings</span>
-			</div>
-		</main> -->
-
-		<header>
-			<h1>
-				<span>Settings</span>
-				<small>Hover Over the Fields and Press Keys to Edit Them.</small>
-			</h1>
-		</header>
-		<main class="centering-element">
-			<div class="lifting-element">
-				<div class="action-card interactible-element blue iconic-element cross">
-					<span>Discard Changes</span>
-				</div>
-				<section class="key-binding-grid">
-					<div class="key-binding-item interactible-element teal" style="grid-row-start: 1; grid-column-start: 3;">
-						<div class="label">Move Up</div>
-						<span id="moveUpBind">KeyW</span>
-					</div>
-					<div class="key-binding-item interactible-element teal" style="grid-row-start: 2; grid-column-start: 2;">
-						<div class="label">Move Left</div>
-						<span id="moveLeftBind">KeyA</span>
-					</div>
-					<div class="key-binding-item interactible-element teal" style="grid-row-start: 3; grid-column-start: 3;">
-						<div class="label bottom">Move Down</div>
-						<span id="moveDownBind">KeyS</span>
-					</div>
-					<div class="key-binding-item interactible-element teal" style="grid-row-start: 2; grid-column-start: 4;">
-						<div class="label">Move Right</div>
-						<span id="moveRightBind">KeyD</span>
-					</div>
-					<div class="key-binding-item interactible-element yellow" style="grid-row-start: 1; grid-column-start: 5;">
-						<div class="label">Shoot</div>
-						<span id="shootBind">MouseLeft</span>
-					</div>
-					<div class="key-binding-item interactible-element blue" style="grid-row-start: 3; grid-column-start: 5;">
-						<div class="label bottom">Use Special</div>
-						<span id="useSpecialBind">Space</span>
-					</div>
-					<div class="key-binding-item interactible-element purple" style="grid-row-start: 1; grid-column-start: 1;">
-						<div class="label">Toggle Pause</div>
-						<span id="togglePauseBind">Escape</span>
-					</div>
-					<div class="iconic-element ship" style="grid-row-start: 2; grid-column-start: 3;"></div>
-					<div class="iconic-element bullet" style="grid-row-start: 2; grid-column-start: 5;"></div>
-				</section>
-				<div class="action-card interactible-element pink iconic-element right-chevron">
-					<span>Save Changes</span>
-				</div>
-			</div>
-		</main>
 		<script>
-			const keyBindingElements = {
-				moveUp: document.getElementById("moveUpBind"),
-				moveLeft: document.getElementById("moveLeftBind"),
-				moveDown: document.getElementById("moveDownBind"),
-				moveRight: document.getElementById("moveRightBind"),
-				shoot: document.getElementById("shootBind"),
-				useSpecial: document.getElementById("useSpecialBind"),
-				togglePause: document.getElementById("togglePauseBind")
+			const ScreenCenter = {
+				screens: new Map(),
+				currentScreen: null,
+
+				add(screen, onEnter, onExit) {
+					this.screens.set(screen, { onEnter, onExit })
+				},
+
+				navigateTo(screen) {
+					if (this.currentScreen) {
+						const onExit = this.screens.get(this.currentScreen).onExit
+
+						this.currentScreen.classList.add("disabled")
+						onExit && onExit()
+					}
+
+					const onEnter = this.screens.get(screen).onEnter
+
+					screen.classList.remove("disabled")
+					onEnter && onEnter()
+
+					this.currentScreen = screen
+				}
 			}
 		</script>
-
-		<!-- <main class="centering-element">
-			<div class="game-canvas-wrapper interactible-element grey" style="height: 716px">
-				<canvas class="game-canvas" width="700" height="700" tabindex="1"></canvas>
-			</div>
-		</main>
+	</head>
+	<body>
+		<div id="mainScreen" class="screen disabled">
+			<header>
+				<h1 class="screen-title">
+					<span>Spaceshits</span>
+					<small>Advertizing Dirty Code in Tablets.</small>
+				</h1>
+			</header>
+			<main class="screen-content centering-element">
+				<div id="newGameActionCard" class="action-card interactible-element red iconic-element plus">
+					<span>New Game</span>
+				</div>
+				<!-- <div id="resumeLastGameActionCard" class="action-card interactible-element teal iconic-element right-chevron">
+					<small>Resume</small>
+					<span>Last Game</span>
+				</div> -->
+				<!-- <div id="editSettingsActionCard" class="action-card interactible-element purple iconic-element gear">
+					<span>Edit Settings</span>
+				</div> -->
+			</main>
+		</div>
 		<script>
-			const gameCanvas = document.getElementsByTagName("canvas")[0]
+			ScreenCenter.add(mainScreen)
 
-			gameCanvas.addEventListener("click", _ => gameCanvas.focus(), false)
+			newGameActionCard.addEventListener("click", _ => ScreenCenter.navigateTo(inGameScreen), false)
+			// resumeLastGameActionCard.addEventListener("click", _ => ScreenCenter.navigateTo(inGameScreen), false)
+			// editSettingsActionCard.addEventListener("click", _ => ScreenCenter.navigateTo(settingsScreen), false)
+		</script>
+
+		<!-- ================================================================= -->
+
+		<div id="settingsScreen" class="screen disabled">
+			<header class="screen-header">
+				<h1 class="screen-title">
+					<span>Settings</span>
+					<small>Hover Over the Fields and Press Keys to Edit Them.</small>
+				</h1>
+			</header>
+			<main class="screen-content centering-element">
+				<div class="lifting-element">
+					<div class="action-card interactible-element blue iconic-element cross">
+						<span>Discard Changes</span>
+					</div>
+					<section class="key-binding-grid">
+						<div class="key-binding-item interactible-element teal" style="grid-row-start: 1; grid-column-start: 3;">
+							<div class="label">Move Up</div>
+							<span id="moveUpBind">KeyW</span>
+						</div>
+						<div class="key-binding-item interactible-element teal" style="grid-row-start: 2; grid-column-start: 2;">
+							<div class="label">Move Left</div>
+							<span id="moveLeftBind">KeyA</span>
+						</div>
+						<div class="key-binding-item interactible-element teal" style="grid-row-start: 3; grid-column-start: 3;">
+							<div class="label bottom">Move Down</div>
+							<span id="moveDownBind">KeyS</span>
+						</div>
+						<div class="key-binding-item interactible-element teal" style="grid-row-start: 2; grid-column-start: 4;">
+							<div class="label">Move Right</div>
+							<span id="moveRightBind">KeyD</span>
+						</div>
+						<div class="key-binding-item interactible-element yellow" style="grid-row-start: 1; grid-column-start: 5;">
+							<div class="label">Shoot</div>
+							<span id="shootBind">MouseLeft</span>
+						</div>
+						<div class="key-binding-item interactible-element blue" style="grid-row-start: 3; grid-column-start: 5;">
+							<div class="label bottom">Use Special</div>
+							<span id="useSpecialBind">Space</span>
+						</div>
+						<div class="key-binding-item interactible-element purple" style="grid-row-start: 1; grid-column-start: 1;">
+							<div class="label">Toggle Pause</div>
+							<span id="togglePauseBind">Escape</span>
+						</div>
+						<div class="iconic-element ship" style="grid-row-start: 2; grid-column-start: 3;"></div>
+						<div class="iconic-element bullet" style="grid-row-start: 2; grid-column-start: 5;"></div>
+					</section>
+					<div class="action-card interactible-element pink iconic-element right-chevron">
+						<span>Save Changes</span>
+					</div>
+				</div>
+			</main>
+		</div>
+		<script>
+			const settingsScreen = document.getElementById("settingsScreen")
+			const moveUpBind = document.getElementById("moveUpBind")
+			const moveLeftBind = document.getElementById("moveLeftBind")
+			const moveDownBind = document.getElementById("moveDownBind")
+			const moveRightBind = document.getElementById("moveRightBind")
+			const shootBind = document.getElementById("shootBind")
+			const useSpecialBind = document.getElementById("useSpecialBind")
+			const togglePauseBind = document.getElementById("togglePauseBind")
+		</script>
+
+		<!-- ================================================================= -->
+
+		<div id="inGameScreen" class="screen disabled">
+			<main class="screen-content centering-element">
+				<div class="game-canvas-wrapper interactible-element grey" style="height: 716px">
+					<canvas id="gameCanvas" class="game-canvas" width="700" height="700" tabindex="1"></canvas>
+				</div>
+			</main>
+		</div>
+		<script>
+			const inGameScreen = document.getElementById("inGameScreen")
+			const gameCanvas = document.getElementById("gameCanvas")
+
+			ScreenCenter.add(inGameScreen, _enter => { log('coucou') }, _exit => { log('bye') })
+
+			gameCanvas.addEventListener("mousedown", _ => gameCanvas.focus(), false)
 			gameCanvas.focus()
 		</script>
 		<script src="base.js"></script>
-		<script src="app.js"></script> -->
+		<script src="app.js"></script>
 
-		<!-- <main class="centering-element">
-			<h1>
-				<span>Pause</span>
-				<small>Sissy!</small>
-			</h1>
-		</main> -->
+		<!-- ================================================================= -->
 
+		<div id="pauseScreen" class="screen disabled">
+			<main class="screen-content centering-element">
+				<h1 class="screen-title">
+					<span>Pause</span>
+					<small>Sissy!</small>
+				</h1>
+			</main>
+		</div>
+		<script>
+			const pauseScreen = document.getElementById("pauseScreen")
+		</script>
+
+		<!-- ================================================================= -->
+
+		<script>
+			ScreenCenter.navigateTo(mainScreen)
+		</script>
 	</body>
 </html>
