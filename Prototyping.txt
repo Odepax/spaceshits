@@ -55,7 +55,7 @@ Roadmap
 		[OK] Settings
 		[OK] In-game
 			[OK] Pause
-		[  ] Run lobby
+		[OK] Run lobby
 		[  ] Reward
 		[  ] Defeat
 		[  ] Victory

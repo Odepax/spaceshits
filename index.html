@@ -69,8 +69,8 @@
 		<script> ;(function () {
 			ScreenCenter.add(mainScreen)
 
-			newGameActionCard.addEventListener("click", _ => ScreenCenter.navigateTo(inGameScreen), false)
-			// resumeLastGameActionCard.addEventListener("click", _ => ScreenCenter.navigateTo(inGameScreen), false)
+			newGameActionCard.addEventListener("click", _ => ScreenCenter.navigateTo(lobbyScreen), false)
+			// resumeLastGameActionCard.addEventListener("click", _ => ScreenCenter.navigateTo(lobbyScreen), false)
 			editSettingsActionCard.addEventListener("click", _ => ScreenCenter.navigateTo(settingsScreen), false)
 		})(); </script>
 
@@ -185,6 +185,31 @@
 
 		<!-- ================================================================= -->
 
+		<div id="lobbyScreen" class="screen disabled">
+			<header class="screen-header">
+				<h1 class="screen-title">
+					<span>Spaceshits</span>
+					<small>Ready to Go Back?</small>
+				</h1>
+			</header>
+			<main class="screen-content centering-element">
+				<div id="goBackActionCard" class="action-card interactible-element teal iconic-element cross">
+					<span>Flee</span>
+				</div>
+				<div id="nextLevelActionCard" class="action-card interactible-element red iconic-element right-chevron">
+					<span>Enter Arena #1</span>
+				</div>
+			</main>
+		</div>
+		<script> ;(function () {
+			ScreenCenter.add(lobbyScreen)
+
+			nextLevelActionCard.addEventListener("click", _ => ScreenCenter.navigateTo(inGameScreen), false)
+			goBackActionCard.addEventListener("click", _ => ScreenCenter.navigateTo(mainScreen), false)
+		})(); </script>
+
+		<!-- ================================================================= -->
+
 		<div id="inGameScreen" class="screen disabled">
 			<main class="screen-content centering-element">
 				<div class="game-canvas-wrapper interactible-element grey" style="height: 716px">
@@ -221,7 +246,7 @@
 				}
 			}, false)
 
-			function newUniverse(canvas, coubeCount) {
+			function newUniverse(canvas, cubeCount) {
 				const universe = new Universe()
 
 				universe[Global.keyMoveUp] = SettingsCenter.moveUpBoundKey
@@ -238,7 +263,7 @@
 				universe.add(InteractionLogger)
 				universe.add(Player, 0.5 * canvas.width, 0.7 * canvas.height)
 
-				for (let i = 0; i < coubeCount; ++i) {
+				for (let i = 0; i < cubeCount; ++i) {
 					universe.add(
 						randBetween(ZombieCube, AkimboCube, CrossCube, HighSpeedCube, SplittingCube, CubeFactory),
 						rand(0, canvas.width),
