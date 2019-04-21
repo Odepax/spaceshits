@@ -56,9 +56,12 @@ Roadmap
 		[OK] In-game
 			[OK] Pause
 		[OK] Run lobby
+			[  ] Run progress recap
 		[  ] Reward
-		[  ] Defeat
-		[  ] Victory
+		[OK] Defeat
+			[  ] Run progress recap
+		[OK] Victory
+			[  ] Run progress recap
 	[  ] Graphic chart
 	[  ] Characters' dialogues
 [  ] Lore

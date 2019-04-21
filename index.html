@@ -225,10 +225,11 @@
 			ScreenCenter.add(inGameScreen, _enter => {
 				universe = universe || newUniverse(gameCanvas, 2)
 
-				gameCanvas.focus()
-
-				universe.run()
+				playLevel(universe)
+					.then(_ => ScreenCenter.navigateTo(victoryScreen))
+					.catch(_ => ScreenCenter.navigateTo(defeatScreen))
 			}, _exit => {
+				universe && universe.freeze()
 				universe = null
 			})
 
@@ -273,6 +274,88 @@
 
 				return universe
 			}
+
+			function playLevel(universe) {
+				return new Promise((resolve, reject) => {
+					universe.add(class _ extends Link{
+						onInitialize() {
+							const player = getFirst(universe, Tag.player)
+
+							this.add(class _ extends Trait {
+								onUpdate() {
+									if (player.Destroyable.health < 0) {
+										this.stop = true
+										reject()
+									} else if (getFirst(universe, Tag.enemy) == null) {
+										this.stop = true
+										resolve()
+									}
+								}
+
+								onRemoving() {
+									return this.stop
+								}
+							})
+						}
+					})
+
+					gameCanvas.focus()
+
+					universe.run()
+				})
+			}
+
+			function getFirst(universe, tag) {
+				for (const link of universe.links) {
+					if (link[tag]) {
+						return link
+					}
+				}
+
+				return null
+			}
+		})(); </script>
+
+		<!-- ================================================================= -->
+
+		<div id="victoryScreen" class="screen disabled">
+			<header class="screen-header">
+				<h1 class="screen-title">
+					<span>Victory</span>
+					<small>Impossible!</small>
+				</h1>
+			</header>
+			<main class="screen-content centering-element">
+				<div id="takePrideActionCard" class="action-card interactible-element yellow iconic-element right-chevron">
+					<span>Take the Pride</span>
+				</div>
+			</main>
+		</div>
+		<script> ;(function () {
+			ScreenCenter.add(victoryScreen)
+
+			takePrideActionCard.addEventListener("click", _ => ScreenCenter.navigateTo(mainScreen), false)
+		})(); </script>
+
+		<!-- ================================================================= -->
+
+		<div id="defeatScreen" class="screen disabled">
+			<header class="screen-header">
+				<h1 class="screen-title">
+					<span>Defeat</span>
+					<small>They Never Last Long Enough...</small>
+				</h1>
+			</header>
+			<main class="screen-content centering-element">
+				<div id="assumeShameActionCard" class="action-card interactible-element pink iconic-element right-chevron">
+					<span>Assume the Shame</span>
+				</div>
+			</main>
+		</div>
+		<script> ;(function () {
+			ScreenCenter.add(defeatScreen)
+
+			assumeShameActionCard.addEventListener("click", _ => ScreenCenter.navigateTo(mainScreen), false)
 		})(); </script>
 
 		<!-- ================================================================= -->

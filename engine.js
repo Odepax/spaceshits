@@ -48,7 +48,6 @@ class Universe {
 
 	remove(link) {
 		if (this.links.has(link)) {
-
 			for (const trait of link.traits) {
 				this.traits.delete(trait)
 				trait[Hook.afterUniverseRemovesTrait]()
@@ -141,6 +140,9 @@ class Trait {
 
 		if (this.onRemoving && this.onRemoving()) {
 			this.universe.remove(this.link)
+
+			this.link = null
+			this.universe = null
 		}
 	}
 }
