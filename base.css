@@ -102,7 +102,9 @@ small {
 	padding: 20px;
 }
 
-.screen.disabled { display: none; }
+.screen.disabled {
+	display: none;
+}
 
 .screen-header {
 	flex: 0;
@@ -140,6 +142,10 @@ small {
 	text-align: center;
 	text-transform: uppercase;
 	color: var(--LIGHT);
+}
+
+.action-card.disabled {
+	display: none;
 }
 
 .action-card small {

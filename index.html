@@ -17,15 +17,15 @@
 
 				navigateTo(screen) {
 					if (this.currentScreen) {
-						const onExit = this.screens.get(this.currentScreen).onExit
-
 						this.currentScreen.classList.add("disabled")
+
+						const onExit = this.screens.get(this.currentScreen).onExit
 						onExit && onExit()
 					}
 
-					const onEnter = this.screens.get(screen).onEnter
-
 					screen.classList.remove("disabled")
+
+					const onEnter = this.screens.get(screen).onEnter
 					onEnter && onEnter()
 
 					this.currentScreen = screen
@@ -43,6 +43,39 @@
 			}
 
 			const mouseButtonLabels = [ "MouseLeft", "MouseMiddle", "MouseRight" ]
+
+			const GameCenter = {
+				currentLevel: 1,
+				lastLevel: 2,
+
+				newUniverse(canvas) {
+					const universe = new Universe()
+
+					universe[Global.keyMoveUp] = SettingsCenter.moveUpBoundKey
+					universe[Global.keyMoveLeft] = SettingsCenter.moveLeftBoundKey
+					universe[Global.keyMoveDown] = SettingsCenter.moveDownBoundKey
+					universe[Global.keyMoveRight] = SettingsCenter.moveRightBoundKey
+					universe[Global.keyShoot] = SettingsCenter.shootBoundKey
+					universe[Global.keySpecial] = SettingsCenter.useSpecialBoundKey
+
+					universe[Global.canvas] = canvas
+					universe[Global.graphics] = canvas.getContext("2d")
+					universe[Global.userInteraction] = universe.add(UserInteractor).UserInteraction
+					universe.add(CanvasEraser)
+					universe.add(InteractionLogger)
+					universe.add(Player, 0.5 * canvas.width, 0.7 * canvas.height)
+
+					for (let i = 0; i < this.currentLevel * 2; ++i) {
+						universe.add(
+							randBetween(ZombieCube, AkimboCube, CrossCube, HighSpeedCube, SplittingCube, CubeFactory),
+							rand(0, canvas.width),
+							rand(0, canvas.height)
+						)
+					}
+
+					return universe
+				}
+			}
 		</script>
 	</head>
 	<body>
@@ -57,20 +90,29 @@
 				<div id="newGameActionCard" class="action-card interactible-element red iconic-element plus">
 					<span>New Game</span>
 				</div>
-				<!-- <div id="resumeLastGameActionCard" class="action-card interactible-element teal iconic-element right-chevron">
+				<div id="resumeLastGameActionCard" class="action-card interactible-element teal iconic-element right-chevron">
 					<small>Resume</small>
 					<span>Last Game</span>
-				</div> -->
+				</div>
 				<div id="editSettingsActionCard" class="action-card interactible-element purple iconic-element gear">
 					<span>Edit Settings</span>
 				</div>
 			</main>
 		</div>
 		<script> ;(function () {
-			ScreenCenter.add(mainScreen)
+			ScreenCenter.add(mainScreen, _enter => {
+				if (1 < GameCenter.currentLevel) {
+					resumeLastGameActionCard.classList.remove("disabled")
+				} else {
+					resumeLastGameActionCard.classList.add("disabled")
+				}
+			})
 
-			newGameActionCard.addEventListener("click", _ => ScreenCenter.navigateTo(lobbyScreen), false)
-			// resumeLastGameActionCard.addEventListener("click", _ => ScreenCenter.navigateTo(lobbyScreen), false)
+			newGameActionCard.addEventListener("click", _ => {
+				GameCenter.currentLevel = 1
+				ScreenCenter.navigateTo(lobbyScreen)
+			}, false)
+			resumeLastGameActionCard.addEventListener("click", _ => ScreenCenter.navigateTo(lobbyScreen), false)
 			editSettingsActionCard.addEventListener("click", _ => ScreenCenter.navigateTo(settingsScreen), false)
 		})(); </script>
 
@@ -197,12 +239,14 @@
 					<span>Flee</span>
 				</div>
 				<div id="nextLevelActionCard" class="action-card interactible-element red iconic-element right-chevron">
-					<span>Enter Arena #1</span>
+					<span>Enter Arena #<span id="arenaLevelSpan"></span></span>
 				</div>
 			</main>
 		</div>
 		<script> ;(function () {
-			ScreenCenter.add(lobbyScreen)
+			ScreenCenter.add(lobbyScreen, _enter => {
+				arenaLevelSpan.textContent = GameCenter.currentLevel
+			})
 
 			nextLevelActionCard.addEventListener("click", _ => ScreenCenter.navigateTo(inGameScreen), false)
 			goBackActionCard.addEventListener("click", _ => ScreenCenter.navigateTo(mainScreen), false)
@@ -223,10 +267,16 @@
 			let universe = null
 
 			ScreenCenter.add(inGameScreen, _enter => {
-				universe = universe || newUniverse(gameCanvas, 2)
+				universe = universe || GameCenter.newUniverse(gameCanvas)
 
 				playLevel(universe)
-					.then(_ => ScreenCenter.navigateTo(victoryScreen))
+					.then(_ => {
+						if (GameCenter.currentLevel == GameCenter.lastLevel) {
+							ScreenCenter.navigateTo(victoryScreen)
+						} else {
+							ScreenCenter.navigateTo(rewardScreen)
+						}
+					})
 					.catch(_ => ScreenCenter.navigateTo(defeatScreen))
 			}, _exit => {
 				universe && universe.freeze()
@@ -247,41 +297,13 @@
 				}
 			}, false)
 
-			function newUniverse(canvas, cubeCount) {
-				const universe = new Universe()
-
-				universe[Global.keyMoveUp] = SettingsCenter.moveUpBoundKey
-				universe[Global.keyMoveLeft] = SettingsCenter.moveLeftBoundKey
-				universe[Global.keyMoveDown] = SettingsCenter.moveDownBoundKey
-				universe[Global.keyMoveRight] = SettingsCenter.moveRightBoundKey
-				universe[Global.keyShoot] = SettingsCenter.shootBoundKey
-				universe[Global.keySpecial] = SettingsCenter.useSpecialBoundKey
-
-				universe[Global.canvas] = canvas
-				universe[Global.graphics] = canvas.getContext("2d")
-				universe[Global.userInteraction] = universe.add(UserInteractor).UserInteraction
-				universe.add(CanvasEraser)
-				universe.add(InteractionLogger)
-				universe.add(Player, 0.5 * canvas.width, 0.7 * canvas.height)
-
-				for (let i = 0; i < cubeCount; ++i) {
-					universe.add(
-						randBetween(ZombieCube, AkimboCube, CrossCube, HighSpeedCube, SplittingCube, CubeFactory),
-						rand(0, canvas.width),
-						rand(0, canvas.height)
-					)
-				}
-
-				return universe
-			}
-
 			function playLevel(universe) {
 				return new Promise((resolve, reject) => {
-					universe.add(class _ extends Link{
+					universe.add(class ArenaMonitor extends Link{
 						onInitialize() {
 							const player = getFirst(universe, Tag.player)
 
-							this.add(class _ extends Trait {
+							this.add(class ArenaMonitoring extends Trait {
 								onUpdate() {
 									if (player.Destroyable.health < 0) {
 										this.stop = true
@@ -318,6 +340,27 @@
 
 		<!-- ================================================================= -->
 
+		<div id="rewardScreen" class="screen disabled">
+			<header class="screen-header">
+				<h1 class="screen-title">
+					<span>Reward</span>
+					<small>Select Your Prise.</small>
+				</h1>
+			</header>
+			<main class="screen-content centering-element">
+				<div id="selectRewardActionCard" class="action-card interactible-element orange iconic-element right-chevron">
+					<span>Continue</span>
+				</div>
+			</main>
+		</div>
+		<script> ;(function () {
+			ScreenCenter.add(rewardScreen, _enter => ++GameCenter.currentLevel)
+
+			selectRewardActionCard.addEventListener("click", _ => ScreenCenter.navigateTo(lobbyScreen), false)
+		})(); </script>
+
+		<!-- ================================================================= -->
+
 		<div id="victoryScreen" class="screen disabled">
 			<header class="screen-header">
 				<h1 class="screen-title">
@@ -332,7 +375,7 @@
 			</main>
 		</div>
 		<script> ;(function () {
-			ScreenCenter.add(victoryScreen)
+			ScreenCenter.add(victoryScreen, _enter => GameCenter.currentLevel = 1)
 
 			takePrideActionCard.addEventListener("click", _ => ScreenCenter.navigateTo(mainScreen), false)
 		})(); </script>
@@ -353,7 +396,7 @@
 			</main>
 		</div>
 		<script> ;(function () {
-			ScreenCenter.add(defeatScreen)
+			ScreenCenter.add(defeatScreen, _enter => GameCenter.currentLevel = 1)
 
 			assumeShameActionCard.addEventListener("click", _ => ScreenCenter.navigateTo(mainScreen), false)
 		})(); </script>

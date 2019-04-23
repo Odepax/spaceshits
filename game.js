@@ -1022,6 +1022,7 @@ class CubeMovementController extends Trait {
 class CrashCrabMovementController extends Trait {
 	onUpdate() {
 		this.updateTarget()
+
 		if (this.target) {
 			const crabPosition = this.link.Transform
 			const movement = this.link.AngularLinearMovement

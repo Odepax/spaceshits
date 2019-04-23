@@ -64,12 +64,12 @@ Roadmap
 			[  ] Run progress recap
 	[  ] Graphic chart
 	[  ] Characters' dialogues
-[  ] Lore
 [  ] Leveling
 	[  ] Per-level enemies builds
 	[  ] Upgrades
 		> How to introduce choice that isn't simple calculation?
 		> How to introduce choice that actually matter?
+[  ] Lore
 [  ] Memory of player progress
 [  ] VFX
 	[  ] Explosions
@@ -77,7 +77,6 @@ Roadmap
 [  ] Optimization
 	[  ] Math
 	[  ] Resource loading
-
 
 An Echo in the Space
 -- // -----------------------------------------------------------------
