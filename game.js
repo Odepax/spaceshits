@@ -413,7 +413,7 @@ class UserInteraction extends Trait {
 			}
 		}, false)
 
-		element.addEventListener("mouseup", event => {
+		document.addEventListener("mouseup", event => {
 			event.preventDefault()
 
 			switch (event.button) {
@@ -433,7 +433,7 @@ class UserInteraction extends Trait {
 			}
 		}, false)
 
-		element.addEventListener("keyup", event => {
+		document.addEventListener("keyup", event => {
 			if (event.code != "F5" && event.code != "F11" && event.code != "F12") {
 				event.preventDefault()
 			}
