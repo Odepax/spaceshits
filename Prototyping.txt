@@ -10,29 +10,81 @@ Roadmap
 	[OK] Quick collision, based on rectangle/rectangle, but without rotation.
 [OK] First graphics prototypes
 [OK] First gameplay
-[  ] Enemies
+[OK] Enemies
 	[OK] Zombie cube
 	[OK] Akimbo cube
 	[OK] Cross-gun cube
 	[OK] High-speed cube
 	[OK] Splitting cube
-	[  ] Factory cube
+	[OK] Factory cube
 		[OK] Factory
 		[OK] Crash crab
-		[  ] Crash crab with gun
-	[  ] Stationnary turret
-[  ] Weapons
+[OK] Weapons
 	[OK] Energy Gauge
 	[OK] Gatling
 	[OK] Blaster
 	[OK] Shotgun
-	[  ] Charged
-	[  ] Laser
-[  ] Special capacities
+[OK] Special capacities
 	[OK] Energy Gauge
 	[OK] Blink teleport
 	[OK] Restauration
 	[OK] Shield
+[OK] Out-game interface
+	[OK] Graphic chart
+	[OK] Application's screens
+		[OK] Main menu
+		[OK] Settings
+		[OK] In-game
+			[OK] Pause
+		[OK] Run lobby
+		[OK] Defeat
+		[OK] Victory
+[  ] Leveling
+	[  ] Per-level enemies builds
+	[  ] Player upgrades
+		> How to introduce choice that isn't simple calculation?
+		> How to introduce choice that actually matter?
+		[  ] Damage booster       > ++ damage
+		[  ] Energy booster       > ++ energy capacity
+		[  ] Hull booster         > ++ hp
+		[  ] Auxiliary booster    > -- capacity cooldown
+		[  ] Change weapon for the ...
+		[  ] Change aux module for the ...
+	[  ] Enemies upgrades
+		[  ] Health
+		[  ] Damage
+		[  ] Speed
+		[  ] Fire rate
+		> Respond to player upgrades adequately.
+	[  ] Display current run progress recap on application screens
+		[  ] Run lobby
+		[  ] Reward
+		[  ] Defeat
+		[  ] Victory
+	[  ] Memory of player progress
+		> How to backup the universe?
+		> Case of a crash?
+[  ] Better in-game HUD interface
+	[  ] Player health
+	[  ] Player weapon energy
+	[  ] Player capacity energy
+	[  ] Enemies health
+		> Don't display if full?
+		> Don't display if not touched for X seconds?
+[  ] Lore
+	[  ] Characters' dialogues
+	[  ] Per-level scenarios
+[  ] VFX
+	[  ] Explosions
+	[  ] Soundtrack
+[  ] Optimization
+	[  ] Math is going on?
+	[  ] Resource loading
+[  ] More enemies
+	[  ] Stationnary turret
+	[  ] Crash crab with gun
+	[  ] Bosses
+[  ] More special capacities
 	[  ] Berzerk
 	[  ] Missile swarm
 	[  ] Repelling shock wave
@@ -42,41 +94,9 @@ Roadmap
 	[  ] Whirlwind
 		> Spiky hull's 'active' alternative.
 		> Could have longer range.
-[  ] In-game HUD interface
-	[  ] Player health
-	[  ] Player weapon energy
-	[  ] Player capacity energy
-	[  ] Enemies health
-		> Don't display if full?
-		> Don't display if not touched for X seconds?
-[  ] Out-game interface
-	[  ] Application's screens
-		[OK] Main menu
-		[OK] Settings
-		[OK] In-game
-			[OK] Pause
-		[OK] Run lobby
-			[  ] Run progress recap
-		[  ] Reward
-		[OK] Defeat
-			[  ] Run progress recap
-		[OK] Victory
-			[  ] Run progress recap
-	[  ] Graphic chart
-	[  ] Characters' dialogues
-[  ] Leveling
-	[  ] Per-level enemies builds
-	[  ] Upgrades
-		> How to introduce choice that isn't simple calculation?
-		> How to introduce choice that actually matter?
-[  ] Lore
-[  ] Memory of player progress
-[  ] VFX
-	[  ] Explosions
-	[  ] Soundtrack
-[  ] Optimization
-	[  ] Math
-	[  ] Resource loading
+[  ] More weapons
+	[  ] Charged
+	[  ] Laser
 
 An Echo in the Space
 -- // -----------------------------------------------------------------
