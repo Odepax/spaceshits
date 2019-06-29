@@ -6,6 +6,8 @@
 		<link rel="stylesheet" href="./base.css" />
 		<link rel="stylesheet" href="./application.css" />
 		<script src="./extensions.js"></script>
+		<script src="./engine.js"></script>
+		<script src="./game.js"></script>
 		<script>
 			const ScreenCenter = {
 				screens: new Map(),
@@ -46,7 +48,7 @@
 
 			const GameCenter = {
 				currentLevel: 1,
-				lastLevel: 2,
+				lastLevel: 25,
 
 				newUniverse(canvas) {
 					const universe = new Universe()
@@ -64,14 +66,6 @@
 					universe.add(CanvasEraser)
 					universe.add(InteractionLogger)
 					universe.add(Player, 0.5 * canvas.width, 0.7 * canvas.height)
-
-					for (let i = 0; i < this.currentLevel * 2; ++i) {
-						universe.add(
-							randBetween(ZombieCube, AkimboCube, CrossCube, HighSpeedCube, SplittingCube, CubeFactory),
-							rand(0, canvas.width),
-							rand(0, canvas.height)
-						)
-					}
 
 					return universe
 				}
@@ -261,23 +255,25 @@
 				</div>
 			</main>
 		</div>
-		<script src="./engine.js"></script>
-		<script src="./game.js"></script>
 		<script> ;(function () {
 			let universe = null
 
 			ScreenCenter.add(inGameScreen, _enter => {
 				universe = universe || GameCenter.newUniverse(gameCanvas)
 
-				playLevel(universe)
-					.then(_ => {
-						if (GameCenter.currentLevel == GameCenter.lastLevel) {
-							ScreenCenter.navigateTo(victoryScreen)
+				gameCanvas.focus()
+				universe.run()
+
+				Promise.delay(3000)
+					.then(_ => playLevel(universe, GameCenter.currentLevel))
+					.then(victory => Promise.delay(3000, victory))
+					.then(victory => {
+						if (victory) {
+							ScreenCenter.navigateTo(GameCenter.currentLevel == GameCenter.lastLevel ? victoryScreen : rewardScreen)
 						} else {
-							ScreenCenter.navigateTo(rewardScreen)
+							ScreenCenter.navigateTo(defeatScreen)
 						}
 					})
-					.catch(_ => ScreenCenter.navigateTo(defeatScreen))
 			}, _exit => {
 				universe && universe.freeze()
 				universe = null
@@ -297,8 +293,16 @@
 				}
 			}, false)
 
-			function playLevel(universe) {
-				return new Promise((resolve, reject) => {
+			function playLevel(universe, currentLevel) {
+				for (let i = 0; i < currentLevel; ++i) {
+					universe.add(
+						randBetween(ZombieCube, AkimboCube, CrossCube, HighSpeedCube, SplittingCube, CubeFactory),
+						rand(0, universe[Global.canvas].width),
+						rand(0, universe[Global.canvas].height)
+					)
+				}
+
+				return new Promise(resolve => {
 					universe.add(class ArenaMonitor extends Link{
 						onInitialize() {
 							const player = getFirst(universe, Tag.player)
@@ -307,10 +311,10 @@
 								onUpdate() {
 									if (player.Destroyable.health < 0) {
 										this.stop = true
-										reject()
+										resolve(false)
 									} else if (getFirst(universe, Tag.enemy) == null) {
 										this.stop = true
-										resolve()
+										resolve(true)
 									}
 								}
 
@@ -320,10 +324,6 @@
 							})
 						}
 					})
-
-					gameCanvas.focus()
-
-					universe.run()
 				})
 			}
 

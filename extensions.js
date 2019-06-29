@@ -49,6 +49,12 @@ const randBetween = (...values) => values[parseInt(Math.random() * values.length
 
 // -----------------------------------------------------------------
 
+Promise.delay = function delay(timeout, value) {
+	return new Promise(resolve => setTimeout(_ => resolve(value), timeout))
+}
+
+// -----------------------------------------------------------------
+
 Object.prototype.apply = function apply(init) {
 	if (typeof init == "function") {
 		init(this)
