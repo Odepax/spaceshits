@@ -80,6 +80,7 @@ Roadmap
 [  ] Optimization
 	[  ] Math is going on?
 	[  ] Resource loading
+	[  ] Application screens as web components
 [  ] More enemies
 	[  ] Stationnary turret
 	[  ] Crash crab with gun
@@ -127,20 +128,269 @@ An Echo in the Space
 - To launch the program, launch the program by following the prefered program launching method of the platform.
 - What they take for granted had once to be invented...
 
-Level System
+Levels Description
 -- // -----------------------------------------------------------------
 
-const level = new Promise(resolve => {
-	const universe = initialize( new Universe() )
-	// ...
-	.add(class ... extends Trait {
-		onUpdate() {
-			if (playerIsDown) resolve(DEFEAT)
-			else if (count(enemies) == 0) resolve(VICTORY)
+new Level([
+	new DelayStage(2000),
+
+	new DialogStage("An echo from space", "What they take for granted had once to be invented..."),
+	new DialogStage("Jerico", "Did you hear that?"),
+	new DialogStage("Alen", "Hear what?"),
+	new DialogStage("Jerico", "That... You didn't hear some kinda strange, buzzing voice ?"),
+	new DialogStage("Alen", "Mm... No... Should I?"),
+	new DialogStage("Jerico", "M'key, now I'm going crazy..."),
+
+	new DelayStage(3000),
+
+	new DialogStage("Ship system", "* Radar beeps."),
+	new DialogStage("Alen", "That, I hear! What do we have?"),
+	new DialogStage("Jerico", "I... I'm not sure... The ship doesn't know it..."),
+	new DialogStage("Alen", "Does it bite?"),
+
+	new CombatStage([ ZombieCube ]),
+
+	new DialogStage("Jerico", "The heck dude? You blew it up!"),
+	new DialogStage("Alen", "Whell, yeah! Why not?"),
+	new DialogStage("Jerico", "But we don't event know what this thing was...")
+	new DialogStage("Jerico", "Ahr! ")
+
+	new DelayStage(1000)
+])
+
+class Level {
+	constructor(stages) {
+		this.stages = stages
+	}
+
+	async execute(universe) {
+		for (const stage of this.stages) {
+			const outcome = await stage.execute()
+
+			if (outcome.victory == false)
+				return LevelOutcome.defeat()
 		}
-	})
-	// ...
-	universe.run()
-})
-// There you go: a level system.
-// Now, how do we implement level "stages"... several ".then-chained" promises?
+
+		return LevelOutcome.victory()
+	}
+}
+
+class LevelOutcome {
+	static victory() { return new LevelOutcome(true) }
+	static defeat() { return new LevelOutcome(false) }
+
+	constructor(victory) {
+		this.victory = victory
+	}
+}
+
+class DelayStage {
+	constructor(time) {
+		this.time = time
+	}
+
+	execute(universe) {
+		return Promise.resolve(LevelOutcome.victory())
+	}
+}
+
+class DialogStage {
+	constructor(speaker, message) {
+		this.speaker = speaker
+		this.message = message
+	}
+
+	execute(universe) {
+		return Promise.resolve(LevelOutcome.victory())
+	}
+}
+
+class CombatStage {
+	constructor(hostiles) {
+		this.hostiles = hostiles
+	}
+
+	execute(universe) {
+		return Promise.resolve(LevelOutcome.victory())
+	}
+}
+
+Alternative Engine Design
+-- // -----------------------------------------------------------------
+
+const Random = {
+	oneOf: (values) => values[parseInt(Math.random() * values.length)],
+	in: (min, max) => Math.random() * (max - min) + min,
+	sign: () => Random.oneOf([ -1, 1 ]),
+	angle: () => Random.in(-PI, PI)
+}
+
+/*
+traits must
+	access other traits of the same link
+	access game canvas
+	access time
+	access game settings
+	access user controls (kb & mouse)
+and so without using the universe as an old style data sharing singleton
+*/
+
+new Clock(
+	new Universe([
+		new Link([
+			// new Transform(200, 200, 0)
+		// ], [
+			new WanderingRotation(Random.sign() * Random.in(PI / 8, PI / 2)),
+			new LinearMovement(Random.in(200, 400), Random.angle()),
+			new EdgeBouncing(renderCanvas)
+		]),
+		new Link([
+			// new Transform(200, 200, 0)
+		// ], [
+			new MouseRotationController(new MouseObserver(renderCanvas, document)),
+			new KeyboardMovementController(new KeyboardObserver(renderCanvas, document)),
+			new EdgeBouncing(renderCanvas)
+		])
+	])
+)
+
+class Clock {
+	constructor(universe = null) {
+		universe && this.attach(universe)
+		this.isRunning = false
+		this.time = 0
+		this.delta = 0
+	}
+
+	attach(universe) {
+		// if (this.universe == null && universe.clock = null) {
+			this.universe = universe
+			this.universe.clock = this
+		// } else {
+			// throw [ "Clock#attach(universe) where Clock#universe or Universe#clock is already set.", this, universe ]
+		// }
+	}
+
+	detachUniverse() {
+		this.stop()
+		this.universe.clock = null
+		this.universe = null
+	}
+
+	start() {
+		this.isRunning = true
+
+		requestAnimationFrame(time => {
+			this.delta = time * MILLI_SECONDS - this.time
+			this.time = time * MILLI_SECONDS
+
+			requestAnimationFrame(time => this.step(time))
+		})
+	}
+
+	step(time) {
+		this.delta = time * MILLI_SECONDS - this.time
+		this.time = time * MILLI_SECONDS
+
+		this.universe.step()
+
+		if (this.isRunning) {
+			requestAnimationFrame(time => this.step(time))
+		}
+	}
+
+	stop() {
+		this.isRunning = false
+	}
+}
+
+class Universe {
+	constructor(links = []) {
+		this.clock = null
+		this.links = new Set()
+
+		for (const link of links) {
+			this.attach(link)
+		}
+	}
+
+	attach(link) {
+		// if (link.universe == null) {
+			link.universe = this
+			this.links.add(link)
+			link.onAttach()
+		// } else {
+			// throw [ "Universe#attach(link) where Link#universe is already set.", this, link ]
+		// }
+	}
+
+	detach(link) {
+		// if (link.universe == this && this.links.has(link)) {
+			link.onDetach()
+			this.links.delete(link)
+			link.universe = null
+		// } else {
+			// throw [ "Universe#detach(link) where Link#universe does not correspond.", this, link ]
+		// }
+	}
+
+	step() {
+		for (const link of this.links) {
+			link.onStep()
+
+			if(link.shouldDetach) {
+				this.detach(link)
+			}
+		}
+	}
+}
+
+class Link {
+	constructor(traits = []) {
+		this.universe = null
+		this.traits = new Set()
+		this.shouldDetach = false
+
+		for (const trait of traits) {
+			this.attach(trait)
+		}
+	}
+
+	get time() { return this.universe.clock.time }
+	get delta() { return this.universe.clock.delta }
+
+	attach(trait, alias = trait.constructor.name) {
+		// if (trait.link == null) {
+			trait.link = this
+			this.traits.add(trait)
+			this[alias] = trait
+		// } else {
+			// throw [ "Link#attach(trait) where Trait#link is already set.", this, trait ]
+		// }
+	}
+
+	onAttach() { for (const trait of this.traits) trait.onAttach() }
+	onDetach() { for (const trait of this.traits) trait.onDetach() }
+
+	onStep() {
+		for (const trait of this.traits) {
+			trait.onStep()
+
+			if (trait.shouldDetach) {
+				this.shouldDetach = true
+				break;
+			}
+		}
+	}
+}
+
+class Trait {
+	constructor() {
+		this.link = null
+		this.shouldDetach = false
+	}
+
+	onAttach() {}
+	onStep() {}
+	onDetach() {}
+}
