@@ -5,3 +5,8 @@
 .action-card, .key-binding-grid {
 	margin: 0 10px;
 }
+
+.gauge {
+	margin-top: 2px;
+	margin-left: 2px;
+}

@@ -12,6 +12,7 @@
 	--GREY: gray;
 	--DARK: darkslategray;
 	--BLACK: black;
+	--ACCENT: var(--LIGHT);
 }
 
 .red { --ACCENT: var(--RED); }
@@ -62,6 +63,12 @@ small {
 	align-items: center;
 }
 
+.right-aligning-element {
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+}
+
 .lifting-element {
 	display: flex;
 	justify-content: center;
@@ -76,7 +83,7 @@ small {
 }
 
 .interactible-element:hover {
-	outline: 2px solid var(--ACCENT, var(--LIGHT));
+	outline: 2px solid var(--ACCENT);
 	outline-offset: -6px;
 }
 
@@ -150,6 +157,32 @@ small {
 
 .action-card small {
 	display: block;
+}
+
+/* ----------------------------------------------------------------- */
+
+.gauge {}
+
+.gauge progress {
+	display: block;
+	padding: 2px;
+	width: 108px;
+	height: 18px;
+	background-color: var(--RED);
+	border: 2px solid var(--DARK);
+	outline: 2px solid var(--BLACK);
+	outline-offset: -4px;
+}
+
+.gauge progress::-moz-progress-bar { background: var(--ACCENT); }
+
+.gauge progress::-webkit-progress-bar { background: transparent; }
+.gauge progress::-webkit-progress-value { background: var(--ACCENT); }
+
+.gauge .title {
+	display: block;
+	text-align: center;
+	color: var(--LIGHT);
 }
 
 /* ----------------------------------------------------------------- */
