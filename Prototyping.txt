@@ -394,3 +394,22 @@ class Trait {
 	onStep() {}
 	onDetach() {}
 }
+
+...
+
+new Universe(
+	new Clock(),
+	[
+		new Player(),
+		new ZombieCube()
+	]
+)
+
+-- VS --
+
+new Clock(
+	new Universe([
+		new Player(),
+		new ZombieCube()
+	])
+)

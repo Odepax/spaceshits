@@ -208,9 +208,9 @@
  borderopacity="1.0"
  inkscape:pageopacity="0"
  inkscape:pageshadow="2"
- inkscape:zoom="1"
- inkscape:cx="5093.1"
- inkscape:cy="-1997.8"
+ inkscape:zoom="0.4096"
+ inkscape:cx="3526.8"
+ inkscape:cy="-1475.6"
  inkscape:document-units="px"
  inkscape:current-layer="layer1"
  showgrid="false"
@@ -248,7 +248,7 @@
 <dc:format>image/svg+xml</dc:format>
 <dc:type
  rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-<dc:title></dc:title>
+<dc:title />
 </cc:Work>
 </rdf:RDF>
 </metadata>
@@ -8359,7 +8359,7 @@
  sodipodi:start="0.7854"
  sodipodi:end="2.3562"
  sodipodi:open="true"
- d="m 5453.4,2914.3 a 46.999,46.999 0 0 1 -66.4,0" />
+ d="m 5453.4,2914.3 a 46.999,46.999 0 0 1 -33.2,13.8 46.999,46.999 0 0 1 -33.2,-13.8" />
 <path
  d="m 5432.4,2926.5 a 46.999,46.999 0 0 1 -24.4,0"
  sodipodi:open="true"
@@ -9324,5 +9324,50 @@
  inkscape:connector-curvature="0"
  sodipodi:nodetypes="ccccc" />
 </g>
+<rect
+ style="fill:#000000;stroke:#2f4f4f;stroke-width:3.99988;stroke-dashoffset:20.00012;paint-order:stroke markers fill"
+ id="rect5079-8"
+ width="365.98"
+ height="109.2"
+ x="3146.4"
+ y="2201.1" />
+<rect
+ y="2205.1"
+ x="3150.4"
+ height="101.2"
+ width="357.98"
+ id="rect2276"
+ style="fill:#000000;stroke:#808080;stroke-width:3.99988;stroke-dashoffset:20.00012;paint-order:stroke markers fill" />
+<flowRoot
+ xml:space="preserve"
+ id="flowRoot2268"
+ style="font-size:16px;line-height:90%;font-family:'Source Code Pro';-inkscape-font-specification:'Source Code Pro';text-decoration:none;text-decoration-color:#000000;shape-padding:0;fill:#c0c0c0;stroke-width:4;stroke-dashoffset:20.00012;paint-order:stroke markers fill"
+ transform="translate(-163.37,716.3)"><flowRegion
+ id="flowRegion2270"><rect
+ id="rect2272"
+ width="348.74"
+ height="62.399"
+ x="3326.9"
+ y="1521.3" /></flowRegion><flowPara
+ id="flowPara2274">THERE EXISTS ONE GOD THAT IS EVERYWHERE AND PART OF ALL: THE UNIVERSE; THE UNIVERSE WON'T COME, NOR STAND TO SAVE ANYONE.</flowPara></flowRoot><text
+ xml:space="preserve"
+ style="font-size:13.33331px;line-height:140%;font-family:'Source Code Pro';-inkscape-font-specification:'Source Code Pro';fill:#f8f8ff;stroke-width:1.33333;stroke-linecap:round;stroke-dashoffset:20.00012;paint-order:stroke markers fill"
+ x="3163.8"
+ y="2228"
+ id="text3078-5-9-6-2"><tspan
+ sodipodi:role="line"
+ id="tspan3076-0-9-1-1"
+ x="3163.8"
+ y="2228">AN ECHO FROM SPACE</tspan></text>
+<text
+ xml:space="preserve"
+ style="font-size:16px;line-height:90%;font-family:'Source Code Pro';-inkscape-font-specification:'Source Code Pro';text-decoration:none;text-decoration-color:#000000;shape-padding:0;fill:#dc143c;stroke-width:4;stroke-dashoffset:20.00012;paint-order:stroke markers fill"
+ x="3241.5"
+ y="2194.5"
+ id="text2280"><tspan
+ sodipodi:role="line"
+ id="tspan2278"
+ x="3241.5"
+ y="2194.5">Or in the title bar ?</tspan></text>
 </g>
 </svg>
