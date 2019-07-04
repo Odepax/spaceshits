@@ -49,9 +49,61 @@
 			const GameCenter = {
 				currentLevel: 1,
 				lastLevel: 25,
+				hullBoosts: 0,
+				damageBoosts: 0,
+				weaponEnergyBoosts: 0,
+				capacityEnergyBoosts: 0,
+
+				reset() {
+					this.currentLevel = 1
+					this.lastLevel = 25
+					this.hullBoosts = 0
+					this.damageBoosts = 0
+					this.weaponEnergyBoosts = 0
+					this.capacityEnergyBoosts = 0
+				},
+
+				bonuses: [ {
+					color: "green",
+					icon: "hull-boost",
+					label: "<small>Get a</small><span>Hull Booster</span>",
+					applyBonus: _ => ++GameCenter.hullBoosts
+				}, {
+					color: "orange",
+					icon: "damage-boost",
+					label: "<small>Get a</small><span>Damage Booster</span>",
+					applyBonus: _ => ++GameCenter.damageBoosts
+				}, {
+					color: "yellow",
+					icon: "weapon-boost",
+					label: "<small>Increase</small><span>Energy Regeneration</span>",
+					applyBonus: _ => ++GameCenter.weaponEnergyBoosts
+				/*}, {
+					color: "blue",
+					icon: "capacity-boost",
+					label: "<small>Reduce</small><span>Auxiliary Cooldown</span>",
+					applyBonus: _ => ++GameCenter.capacityEnergyBoosts*/
+				} ],
+
+				getRewards() {
+					const bonuses = Array.from(this.bonuses)
+					const optionCount = (5 < this.currentLevel && rand(0, 1) < 0.1) ? 3 : 2
+					const options = []
+
+					for (let i = 0; i < optionCount; i++) {
+						options.push(bonuses.splice(parseInt(rand(0, bonuses.length)), 1)[0])
+					}
+
+					return options
+				},
 
 				newUniverse(canvas) {
 					const universe = new Universe()
+
+					universe[Global.damageFactor] = Math.pow(11, this.damageBoosts)
+					universe[Global.healthFactor] = Math.pow(11, this.hullBoosts)
+					universe[Global.weaponEnergyRegenerationFactor] = Math.pow(11, this.weaponEnergyBoosts)
+					universe[Global.capacityEnergyRegenerationFactor] = Math.pow(11, this.capacityEnergyBoosts)
 
 					universe[Global.keyMoveUp] = SettingsCenter.moveUpBoundKey
 					universe[Global.keyMoveLeft] = SettingsCenter.moveLeftBoundKey
@@ -103,7 +155,7 @@
 			})
 
 			newGameActionCard.addEventListener("click", _ => {
-				GameCenter.currentLevel = 1
+				GameCenter.reset()
 				ScreenCenter.navigateTo(lobbyScreen)
 			}, false)
 			resumeLastGameActionCard.addEventListener("click", _ => ScreenCenter.navigateTo(lobbyScreen), false)
@@ -363,16 +415,29 @@
 					<small>Select Your Prise.</small>
 				</h1>
 			</header>
-			<main class="screen-content centering-element">
-				<div id="selectRewardActionCard" class="action-card interactible-element orange iconic-element right-chevron">
-					<span>Continue</span>
-				</div>
-			</main>
+			<main id="rewardSelector" class="screen-content centering-element"></main>
 		</div>
 		<script> ;(function () {
-			ScreenCenter.add(rewardScreen, _enter => ++GameCenter.currentLevel)
+			ScreenCenter.add(rewardScreen, _enter => {
+				++GameCenter.currentLevel
 
-			selectRewardActionCard.addEventListener("click", _ => ScreenCenter.navigateTo(lobbyScreen), false)
+				rewardSelector.innerHTML = null
+
+				for (const reward of GameCenter.getRewards()) {
+					const [ [ card ] ] = document.parseElements(`
+						<div class="action-card interactible-element ${ reward.color } iconic-element ${ reward.icon }">
+							${ reward.label }
+						</div>
+					`)
+
+					card.addEventListener("click", _ => {
+						reward.applyBonus()
+						ScreenCenter.navigateTo(lobbyScreen)
+					}, false)
+
+					rewardSelector.appendChild(card)
+				}
+			})
 		})(); </script>
 
 		<!-- ================================================================= -->
@@ -391,7 +456,7 @@
 			</main>
 		</div>
 		<script> ;(function () {
-			ScreenCenter.add(victoryScreen, _enter => GameCenter.currentLevel = 1)
+			ScreenCenter.add(victoryScreen, _enter => GameCenter.reset())
 
 			takePrideActionCard.addEventListener("click", _ => ScreenCenter.navigateTo(mainScreen), false)
 		})(); </script>
@@ -412,7 +477,7 @@
 			</main>
 		</div>
 		<script> ;(function () {
-			ScreenCenter.add(defeatScreen, _enter => GameCenter.currentLevel = 1)
+			ScreenCenter.add(defeatScreen, _enter => GameCenter.reset())
 
 			assumeShameActionCard.addEventListener("click", _ => ScreenCenter.navigateTo(mainScreen), false)
 		})(); </script>

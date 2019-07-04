@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+ xmlns:dc="http://purl.org/dc/elements/1.1/"
+ xmlns:cc="http://creativecommons.org/ns#"
+ xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+ xmlns:svg="http://www.w3.org/2000/svg"
+ xmlns="http://www.w3.org/2000/svg"
+ xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+ xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+ width="40"
+ height="40"
+ viewBox="0 0 40 40"
+ id="svg2"
+ version="1.1"
+ inkscape:version="0.92.3 (2405546, 2018-03-11)"
+ sodipodi:docname="actioncardbackground.damageboosticon.svg">
+<defs
+ id="defs4" />
+<sodipodi:namedview
+ id="base"
+ pagecolor="#202020"
+ bordercolor="#666666"
+ borderopacity="1.0"
+ inkscape:pageopacity="0"
+ inkscape:pageshadow="2"
+ inkscape:zoom="7.4506"
+ inkscape:cx="-13.711"
+ inkscape:cy="8.4839"
+ inkscape:document-units="px"
+ inkscape:current-layer="layer1"
+ showgrid="false"
+ units="px"
+ inkscape:object-nodes="true"
+ inkscape:snap-global="false"
+ inkscape:snap-bbox="true"
+ inkscape:snap-bbox-midpoints="true"
+ inkscape:snap-bbox-edge-midpoints="true"
+ inkscape:bbox-nodes="true"
+ showguides="false"
+ inkscape:guide-bbox="true"
+ inkscape:snap-center="true"
+ inkscape:object-paths="false"
+ inkscape:snap-page="true"
+ inkscape:snap-object-midpoints="false"
+ inkscape:measure-start="766.99,87.81"
+ inkscape:measure-end="767.557,86.2241"
+ inkscape:snap-midpoints="false"
+ inkscape:snap-nodes="true"
+ inkscape:snap-others="false"
+ inkscape:bbox-paths="false"
+ inkscape:snap-smooth-nodes="false"
+ inkscape:snap-intersection-paths="false"
+ inkscape:snap-grids="true"
+ fit-margin-top="0"
+ fit-margin-left="0"
+ fit-margin-right="0"
+ fit-margin-bottom="0" />
+<metadata
+ id="metadata7">
+<rdf:RDF>
+<cc:Work
+ rdf:about="">
+<dc:format>image/svg+xml</dc:format>
+<dc:type
+ rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+<dc:title></dc:title>
+</cc:Work>
+</rdf:RDF>
+</metadata>
+<g
+ inkscape:label="Layer 1"
+ inkscape:groupmode="layer"
+ id="layer1"
+ transform="translate(-410.46,-846.78)">
+<path
+ style="fill:#c0c0c0;stroke-width:1.47249;stroke-linecap:round;stroke-linejoin:round;paint-order:fill markers stroke"
+ d="m 433.96,847.51 -3,5.2 6.2,3.55 3,-5.2 z m 7.9,4.55 -3,5.2 3.5,2 3,-5.2 z m -10.1,3.41 -7.8,13.51 7.8,4.55 7.8,-13.51 z m 3.4,4.28 1.7,1 -5.8,10.05 -1.7,-1 z m -13.7,-6.97 -2.4,9.97 -5.4,2.35 3.5,16.38 1.1,-13.43 4.7,-1.69 z m 25.8,14.85 -12.7,5.43 1,4.99 -11.1,7.63 15.9,-5.18 -0.7,-5.9 z m -24.3,3.08 c 0,0 -4.6,7.88 -0.6,10.18 3.9,2.25 8.4,-5.63 8.4,-5.63 z m 3.4,4.27 1.7,1 -1.5,2.65 c -0.9,0.51 -1.8,0.81 -2.7,0.63 z"
+ id="rect2669"
+ inkscape:connector-curvature="0" />
+</g>
+</svg>

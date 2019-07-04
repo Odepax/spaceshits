@@ -96,8 +96,12 @@ small {
 
 .iconic-element.plus { background-image: url("./asset/actioncardbackground.plusicon.svg"); }
 .iconic-element.cross { background-image: url("./asset/actioncardbackground.crossicon.svg"); }
-.iconic-element.right-chevron { background-image: url("./asset/actioncardbackground.rightchevronicon.svg"); }
 .iconic-element.gear { background-image: url("./asset/actioncardbackground.gearicon.svg"); }
+.iconic-element.left-chevron { background-image: url("./asset/actioncardbackground.leftchevronicon.svg"); }
+.iconic-element.right-chevron { background-image: url("./asset/actioncardbackground.rightchevronicon.svg"); }
+.iconic-element.hull-boost { background-image: url("./asset/actioncardbackground.hullboosticon.svg"); }
+.iconic-element.damage-boost { background-image: url("./asset/actioncardbackground.damageboosticon.svg"); }
+.iconic-element.weapon-boost { background-image: url("./asset/actioncardbackground.weaponboosticon.svg"); }
 .iconic-element.ship { background-image: url("./asset/keybindinggridbackground.shipicon.svg"); }
 .iconic-element.bullet { background-image: url("./asset/keybindinggridbackground.bulleticon.svg"); }
 

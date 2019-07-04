@@ -40,13 +40,13 @@ Roadmap
 		[OK] Defeat
 		[OK] Victory
 [  ] Leveling
-	[  ] Per-level enemies builds
+	[OK] Per-level enemies builds
 	[  ] Player upgrades
 		> How to introduce choice that isn't simple calculation?
 		> How to introduce choice that actually matter?
-		[  ] Damage booster       > ++ damage
-		[  ] Energy booster       > ++ energy capacity
-		[  ] Hull booster         > ++ hp
+		[OK] Hull booster         > ++ hp
+		[OK] Damage booster       > ++ damage
+		[OK] Energy booster       > ++ energy capacity
 		[  ] Auxiliary booster    > -- capacity cooldown
 		[  ] Change weapon for the ...
 		[  ] Change aux module for the ...
