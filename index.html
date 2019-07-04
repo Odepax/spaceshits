@@ -100,10 +100,10 @@
 				newUniverse(canvas) {
 					const universe = new Universe()
 
-					universe[Global.damageFactor] = Math.pow(11, this.damageBoosts)
-					universe[Global.healthFactor] = Math.pow(11, this.hullBoosts)
-					universe[Global.weaponEnergyRegenerationFactor] = Math.pow(11, this.weaponEnergyBoosts)
-					universe[Global.capacityEnergyRegenerationFactor] = Math.pow(11, this.capacityEnergyBoosts)
+					universe[Global.damageFactor] = Math.pow(1.1, this.damageBoosts)
+					universe[Global.healthFactor] = Math.pow(1.1, this.hullBoosts)
+					universe[Global.weaponEnergyRegenerationFactor] = Math.pow(1.1, this.weaponEnergyBoosts)
+					universe[Global.capacityEnergyRegenerationFactor] = Math.pow(1.1, this.capacityEnergyBoosts)
 
 					universe[Global.keyMoveUp] = SettingsCenter.moveUpBoundKey
 					universe[Global.keyMoveLeft] = SettingsCenter.moveLeftBoundKey
