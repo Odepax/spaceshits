@@ -41,21 +41,25 @@ Roadmap
 		[OK] Victory
 [  ] Leveling
 	[OK] Per-level enemies builds
-	[  ] Player upgrades
-		> How to introduce choice that isn't simple calculation?
-		> How to introduce choice that actually matter?
-		[OK] Hull booster         > ++ hp
-		[OK] Damage booster       > ++ damage
-		[OK] Energy booster       > ++ energy capacity
-		[  ] Auxiliary booster    > -- capacity cooldown
-		[  ] Change weapon for the ...
-		[  ] Change aux module for the ...
+	[OK] Player upgrades
+		[OK] HP cap
+		[OK] Raw damage
+		[OK] Fire rate
+		[OK] Energy cap
+		[OK] Energy regen
+		[OK] Aux cap
+		[OK] Aux regen
+		[OK] Change weapon for the Gatling
+		[OK] Change weapon for the Blaster
+		[OK] Change weapon for the Shotgun
+		[OK] Change aux module for the Shield
+		[OK] Change aux module for the Blink
+		[OK] Change aux module for the Restauration
 	[  ] Enemies upgrades
 		[  ] Health
 		[  ] Damage
 		[  ] Speed
 		[  ] Fire rate
-		> Respond to player upgrades adequately.
 	[  ] Display current run progress recap on application screens
 		[  ] Run lobby
 		[  ] Reward
@@ -68,9 +72,7 @@ Roadmap
 	[  ] Player health
 	[  ] Player weapon energy
 	[  ] Player capacity energy
-	[  ] Enemies health
-		> Don't display if full?
-		> Don't display if not touched for X seconds?
+	[OK] Enemies health
 [  ] Lore
 	[  ] Characters' dialogues
 	[  ] Per-level scenarios
@@ -98,6 +100,11 @@ Roadmap
 [  ] More weapons
 	[  ] Charged
 	[  ] Laser
+[  ] Better player upgrades
+	> How to introduce choice that isn't simple calculation?
+	> How to introduce choice that actually matter?
+[  ] Better enemies upgrades
+	> Respond to player upgrades adequately.
 
 An Echo in the Space
 -- // -----------------------------------------------------------------

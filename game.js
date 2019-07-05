@@ -813,7 +813,7 @@ class Projectile extends Link {
 
 class GatlingBullet extends Projectile {
 	onInitialize(transform) {
-		super.onInitialize(transform, 1000, 4, Tag.enemy, 10 * this.universe[Global.damageFactor])
+		super.onInitialize(transform, 1000, 4, Tag.enemy, 10 * this.universe[Global.playerDamageFactor])
 
 		this.add(GatlingBullet2dRender)
 	}
@@ -821,7 +821,7 @@ class GatlingBullet extends Projectile {
 
 class BlasterBullet extends Projectile {
 	onInitialize(transform) {
-		super.onInitialize(transform, 900, 8, Tag.enemy, 20 * this.universe[Global.damageFactor])
+		super.onInitialize(transform, 900, 8, Tag.enemy, 20 * this.universe[Global.playerDamageFactor])
 
 		this.add(BlasterBullet2dRender)
 	}
@@ -829,7 +829,7 @@ class BlasterBullet extends Projectile {
 
 class ShotgunBullet extends Projectile {
 	onInitialize(transform) {
-		super.onInitialize(transform, 800, 4, Tag.enemy, 15 * this.universe[Global.damageFactor])
+		super.onInitialize(transform, 800, 4, Tag.enemy, 15 * this.universe[Global.playerDamageFactor])
 
 		this.add(ShotgunBullet2dRender)
 	}
@@ -920,7 +920,7 @@ class PlayerGun extends Trait {
 	onInitialize(fireRate = 0.5, shotEnergyConsumption = 10) {
 		this.userInteraction = this.universe[Global.userInteraction]
 		this.shootKey = this.universe[Global.keyShoot]
-		this.fireRate = fireRate
+		this.fireRate = fireRate * this.universe[Global.playerFirerateFactor]
 		this.shotEnergyConsumption = shotEnergyConsumption
 		this.timeEnlapsed = 0
 	}
@@ -1382,10 +1382,13 @@ const Global = {
 	keyShoot: Symbol("Global/Link: Shoot key"),
 	keySpecial: Symbol("Global/Link: Use special capacity key"),
 
-	damageFactor: Symbol("Global/Trait: Damage factor"),
-	healthFactor: Symbol("Global/Trait: Health factor"),
-	weaponEnergyRegenerationFactor: Symbol("Global/Trait: Weapon energy factor"),
-	capacityEnergyRegenerationFactor: Symbol("Global/Trait: Capacity energy factor")
+	playerHealthFactor: Symbol("Global/Trait: Player health factor"),
+	playerDamageFactor: Symbol("Global/Trait: Player damage factor"),
+	playerFirerateFactor: Symbol("Global/Trait: Player fire rate factor"),
+	playerAmmoCapFactor: Symbol("Global/Trait: Player ammo capacity factor"),
+	playerAmmoRegenFactor: Symbol("Global/Trait: Player ammo regeneration factor"),
+	playerAuxCapFactor: Symbol("Global/Trait: Player AUX capacity factor"),
+	playerAuxRegenFactor: Symbol("Global/Trait: Player AUX regeneration factor")
 }
 
 // -----------------------------------------------------------------
@@ -1408,7 +1411,7 @@ class CanvasErasing extends Trait {
 // -----------------------------------------------------------------
 
 class Player extends Link {
-	onInitialize(x, y) {
+	onInitialize(x, y, addGun, addCapacity) {
 		this[Tag.player] = true
 
 		this.add(Transform, x, y)
@@ -1417,18 +1420,17 @@ class Player extends Link {
 		this.add(PlayerMovementController)
 
 		this.Collider = this.add(CircleCollider, 27)
-		this.add(Destroyable, 100 * this.universe[Global.healthFactor])
-		this.add(WeaponEnergy, 100, 30 * this.universe[Global.weaponEnergyRegenerationFactor])
-		this.add(CapacityEnergy, 100, 20 * this.universe[Global.capacityEnergyRegenerationFactor])
+		this.add(Destroyable, 100 * this.universe[Global.playerHealthFactor])
+		this.add(WeaponEnergy, 100 * this.universe[Global.playerAmmoCapFactor], 30 * this.universe[Global.playerAmmoRegenFactor])
+		this.add(CapacityEnergy, 100 * this.universe[Global.playerAuxCapFactor], 20 * this.universe[Global.playerAuxRegenFactor])
 
 		this.add(PlayerShip2dRender)
 		this.add(PlayerHealthBar2dRender)
 
-		this.add(BlasterGun)
-		this.add(BlasterGun2dRender)
+		addGun(this)
 		this.add(PlayerWeaponEnergyBar2dRender)
 
-		this.add(ShieldCapacity)
+		addCapacity(this)
 		this.add(PlayerCapacityEnergyBar2dRender)
 	}
 }

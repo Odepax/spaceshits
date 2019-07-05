@@ -94,16 +94,30 @@ small {
 	background-position: center;
 }
 
+.iconic-element.ship { background-image: url("./asset/keybindinggridbackground.shipicon.svg"); }
+.iconic-element.bullet { background-image: url("./asset/keybindinggridbackground.bulleticon.svg"); }
+
 .iconic-element.plus { background-image: url("./asset/actioncardbackground.plusicon.svg"); }
 .iconic-element.cross { background-image: url("./asset/actioncardbackground.crossicon.svg"); }
 .iconic-element.gear { background-image: url("./asset/actioncardbackground.gearicon.svg"); }
 .iconic-element.left-chevron { background-image: url("./asset/actioncardbackground.leftchevronicon.svg"); }
 .iconic-element.right-chevron { background-image: url("./asset/actioncardbackground.rightchevronicon.svg"); }
-.iconic-element.hull-boost { background-image: url("./asset/actioncardbackground.hullboosticon.svg"); }
-.iconic-element.damage-boost { background-image: url("./asset/actioncardbackground.damageboosticon.svg"); }
-.iconic-element.weapon-boost { background-image: url("./asset/actioncardbackground.weaponboosticon.svg"); }
-.iconic-element.ship { background-image: url("./asset/keybindinggridbackground.shipicon.svg"); }
-.iconic-element.bullet { background-image: url("./asset/keybindinggridbackground.bulleticon.svg"); }
+
+.iconic-element.hull-boost { background-image: url("./asset/actioncardbackground.hullboosticon.svg");  }
+.iconic-element.damage-boost { background-image: url("./asset/actioncardbackground.damageboosticon.svg");  }
+.iconic-element.firerate-boost { background-image: url("./asset/actioncardbackground.firerateboosticon.svg");  }
+.iconic-element.ammo-cap-boost { background-image: url("./asset/actioncardbackground.ammocapboosticon.svg");  }
+.iconic-element.ammo-regen-boost { background-image: url("./asset/actioncardbackground.ammoregenboosticon.svg");  }
+.iconic-element.aux-cap-boost { background-image: url("./asset/actioncardbackground.auxcapboosticon.svg");  }
+.iconic-element.aux-regen-boost { background-image: url("./asset/actioncardbackground.auxregenboosticon.svg");  }
+
+.iconic-element.shield-capacity { background-image: url("./asset/actioncardbackground.abilityshieldicon.svg");  }
+.iconic-element.blink-capacity { background-image: url("./asset/actioncardbackground.abilityblinkicon.svg");  }
+.iconic-element.restauration-capacity { background-image: url("./asset/actioncardbackground.abilityrestaurationicon.svg");  }
+
+.iconic-element.gatling-gun { background-image: url("./asset/actioncardbackground.weapongatlingicon.svg");  }
+.iconic-element.blaster-gun { background-image: url("./asset/actioncardbackground.weaponblastericon.svg");  }
+.iconic-element.shotgun-gun { background-image: url("./asset/actioncardbackground.weaponshotgunicon.svg");  }
 
 /* ----------------------------------------------------------------- */
 

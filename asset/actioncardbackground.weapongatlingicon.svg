@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+ xmlns:dc="http://purl.org/dc/elements/1.1/"
+ xmlns:cc="http://creativecommons.org/ns#"
+ xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+ xmlns:svg="http://www.w3.org/2000/svg"
+ xmlns="http://www.w3.org/2000/svg"
+ xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+ xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+ width="31.5"
+ height="32.51"
+ viewBox="0 0 31.5 32.51"
+ id="svg2"
+ version="1.1"
+ inkscape:version="0.92.3 (2405546, 2018-03-11)"
+ sodipodi:docname="actioncardbackground.weapongatlingicon.svg">
+<defs
+ id="defs4" />
+<sodipodi:namedview
+ id="base"
+ pagecolor="#202020"
+ bordercolor="#666666"
+ borderopacity="1.0"
+ inkscape:pageopacity="0"
+ inkscape:pageshadow="2"
+ inkscape:zoom="1.25"
+ inkscape:cx="29.798"
+ inkscape:cy="92.491"
+ inkscape:document-units="px"
+ inkscape:current-layer="layer1"
+ showgrid="false"
+ units="px"
+ inkscape:object-nodes="true"
+ inkscape:snap-global="true"
+ inkscape:snap-bbox="true"
+ inkscape:snap-bbox-midpoints="true"
+ inkscape:snap-bbox-edge-midpoints="true"
+ inkscape:bbox-nodes="true"
+ showguides="false"
+ inkscape:guide-bbox="true"
+ inkscape:snap-center="true"
+ inkscape:object-paths="false"
+ inkscape:snap-page="true"
+ inkscape:snap-object-midpoints="false"
+ inkscape:measure-start="766.99,87.81"
+ inkscape:measure-end="767.557,86.2241"
+ inkscape:snap-midpoints="false"
+ inkscape:snap-nodes="true"
+ inkscape:snap-others="false"
+ inkscape:bbox-paths="false"
+ inkscape:snap-smooth-nodes="false"
+ inkscape:snap-intersection-paths="false"
+ inkscape:snap-grids="true"
+ fit-margin-top="0"
+ fit-margin-left="0"
+ fit-margin-right="0"
+ fit-margin-bottom="0" />
+<metadata
+ id="metadata7">
+<rdf:RDF>
+<cc:Work
+ rdf:about="">
+<dc:format>image/svg+xml</dc:format>
+<dc:type
+ rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+<dc:title></dc:title>
+</cc:Work>
+</rdf:RDF>
+</metadata>
+<g
+ inkscape:label="Layer 1"
+ inkscape:groupmode="layer"
+ id="layer1"
+ transform="translate(-950.77,-791.22)">
+<path
+ style="fill:#c0c0c0;stroke-width:3.99998;stroke-dashoffset:20.00012;paint-order:stroke markers fill"
+ d="m 955.37,791.22 -4.6,4.65 2.5,2.61 4.7,-4.67 z m 3,5.14 -2.4,2.41 2.5,2.61 2.9,-1.92 z m 0.6,7.82 3.9,3.91 7.3,-2.06 -5.5,-5.49 z m 5.6,5.6 4.3,4.3 7.3,-2.06 -4.3,-4.29 z m 6.1,5.99 4.3,4.3 7.2,-2.04 -4.3,-4.29 z m 6,6.08 1.9,1.88 c 1.4,-1 2.6,-2.18 3.7,-3.5 z"
+ id="circle3186"
+ inkscape:connector-curvature="0"
+ sodipodi:nodetypes="ccccccccccccccccccccccccccccc" />
+</g>
+</svg>
