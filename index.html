@@ -117,7 +117,7 @@
 					universe[Global.userInteraction] = universe.add(UserInteractor).UserInteraction
 					universe.add(CanvasEraser)
 					universe.add(InteractionLogger)
-					universe.add(Player, 0.5 * canvas.width, 0.7 * canvas.height)
+					universe.add(Player, 0.5 * canvas.width, 0.9 * canvas.height).ForceBasedMovement.speed.y = -300
 
 					return universe
 				}
@@ -471,7 +471,7 @@
 				</h1>
 			</header>
 			<main class="screen-content centering-element">
-				<div id="assumeShameActionCard" class="action-card interactible-element pink iconic-element right-chevron">
+				<div id="assumeShameActionCard" class="action-card interactible-element pink iconic-element left-chevron">
 					<span>Assume the Shame</span>
 				</div>
 			</main>

@@ -692,19 +692,53 @@ class HealthBar2dRender extends Trait {
 	onUpdate() {
 		const { health, maxHealth } = this.link.Destroyable
 
-		this.graphics.applyTransform(this.link.Transform, false)
+		if (health < maxHealth) {
+			this.graphics.applyTransform(this.link.Transform, false)
 
-		this.graphics.fillStyle = RED
-		this.graphics.fillRect(-30, 40, 60, 8)
+			this.graphics.fillStyle = BLACK
+			this.graphics.fillRect(-22, 34, 44, 8)
 
-		this.graphics.fillStyle = GREEN
-		this.graphics.fillRect(-30, 40, 60 * health / maxHealth, 8)
+			this.graphics.fillStyle = RED
+			this.graphics.fillRect(-20, 36, 40, 4)
 
-		this.graphics.resetTransform()
+			this.graphics.fillStyle = GREEN
+			this.graphics.fillRect(-20, 36, 40 * health / maxHealth, 4)
+
+			this.graphics.resetTransform()
+		}
 	}
 }
 
-class WeaponEnergyBar2dRender extends Trait {
+class PlayerHealthBar2dRender extends Trait {
+	onInitialize() {
+		this.graphics = this.universe[Global.graphics]
+	}
+
+	onUpdate() {
+		const { health, maxHealth } = this.link.Destroyable
+
+		if (health < maxHealth) {
+			this.graphics.applyTransform(this.link.Transform)
+
+			this.graphics.beginPath()
+			this.graphics.arc(20, -11, 12, -PI / 2, PI / 2)
+
+			this.graphics.lineWidth = 3
+			this.graphics.strokeStyle = RED
+			this.graphics.stroke()
+
+			this.graphics.beginPath()
+			this.graphics.arc(20, -11, 12, (health / maxHealth) * -PI / 2, (health / maxHealth) * PI / 2)
+
+			this.graphics.strokeStyle = GREEN
+			this.graphics.stroke()
+
+			this.graphics.resetTransform()
+		}
+	}
+}
+
+class PlayerWeaponEnergyBar2dRender extends Trait {
 	onInitialize() {
 		this.graphics = this.universe[Global.graphics]
 	}
@@ -712,19 +746,28 @@ class WeaponEnergyBar2dRender extends Trait {
 	onUpdate() {
 		const { energy, maxEnergy } = this.link.WeaponEnergy
 
-		this.graphics.applyTransform(this.link.Transform, false)
+		if (energy < maxEnergy) {
+			this.graphics.applyTransform(this.link.Transform)
 
-		this.graphics.fillStyle = RED
-		this.graphics.fillRect(-30, 50, 60, 8)
+			this.graphics.beginPath()
+			this.graphics.arc(20, -11, 17, -PI / 3, PI / 3)
 
-		this.graphics.fillStyle = YELLOW
-		this.graphics.fillRect(-30, 50, 60 * energy / maxEnergy, 8)
+			this.graphics.lineWidth = 3
+			this.graphics.strokeStyle = RED
+			this.graphics.stroke()
 
-		this.graphics.resetTransform()
+			this.graphics.beginPath()
+			this.graphics.arc(20, -11, 17, (energy / maxEnergy) * -PI / 3, (energy / maxEnergy) * PI / 3)
+
+			this.graphics.strokeStyle = YELLOW
+			this.graphics.stroke()
+
+			this.graphics.resetTransform()
+		}
 	}
 }
 
-class CapacityEnergyBar2dRender extends Trait {
+class PlayerCapacityEnergyBar2dRender extends Trait {
 	onInitialize() {
 		this.graphics = this.universe[Global.graphics]
 	}
@@ -732,15 +775,24 @@ class CapacityEnergyBar2dRender extends Trait {
 	onUpdate() {
 		const { energy, maxEnergy } = this.link.CapacityEnergy
 
-		this.graphics.applyTransform(this.link.Transform, false)
+		if (energy < maxEnergy) {
+			this.graphics.applyTransform(this.link.Transform)
 
-		this.graphics.fillStyle = RED
-		this.graphics.fillRect(-30, 60, 60, 8)
+			this.graphics.beginPath()
+			this.graphics.arc(20, -11, 22, -PI / 4, PI / 4)
 
-		this.graphics.fillStyle = BLUE
-		this.graphics.fillRect(-30, 60, 60 * energy / maxEnergy, 8)
+			this.graphics.lineWidth = 3
+			this.graphics.strokeStyle = RED
+			this.graphics.stroke()
 
-		this.graphics.resetTransform()
+			this.graphics.beginPath()
+			this.graphics.arc(20, -11, 22, (energy / maxEnergy) * -PI / 4, (energy / maxEnergy) * PI / 4)
+
+			this.graphics.strokeStyle = BLUE
+			this.graphics.stroke()
+
+			this.graphics.resetTransform()
+		}
 	}
 }
 
@@ -1370,10 +1422,13 @@ class Player extends Link {
 		this.add(CapacityEnergy, 100, 20 * this.universe[Global.capacityEnergyRegenerationFactor])
 
 		this.add(PlayerShip2dRender)
-		this.add(HealthBar2dRender)
+		this.add(PlayerHealthBar2dRender)
 
-		this.add(GatlingGun)
-		this.add(GatlingGun2dRender)
-		this.add(WeaponEnergyBar2dRender)
+		this.add(BlasterGun)
+		this.add(BlasterGun2dRender)
+		this.add(PlayerWeaponEnergyBar2dRender)
+
+		this.add(ShieldCapacity)
+		this.add(PlayerCapacityEnergyBar2dRender)
 	}
 }
