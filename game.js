@@ -710,12 +710,15 @@ class HealthBar2dRender extends Trait {
 }
 
 class PlayerHealthBar2dRender extends Trait {
-	onInitialize() {
+	onInitialize(gauge) {
 		this.graphics = this.universe[Global.graphics]
+		this.gauge = gauge
 	}
 
 	onUpdate() {
 		const { health, maxHealth } = this.link.Destroyable
+
+		this.gauge.value = health / maxHealth
 
 		if (health < maxHealth) {
 			this.graphics.applyTransform(this.link.Transform)
@@ -739,12 +742,15 @@ class PlayerHealthBar2dRender extends Trait {
 }
 
 class PlayerWeaponEnergyBar2dRender extends Trait {
-	onInitialize() {
+	onInitialize(gauge) {
 		this.graphics = this.universe[Global.graphics]
+		this.gauge = gauge
 	}
 
 	onUpdate() {
 		const { energy, maxEnergy } = this.link.WeaponEnergy
+
+		this.gauge.value = energy / maxEnergy
 
 		if (energy < maxEnergy) {
 			this.graphics.applyTransform(this.link.Transform)
@@ -768,12 +774,15 @@ class PlayerWeaponEnergyBar2dRender extends Trait {
 }
 
 class PlayerCapacityEnergyBar2dRender extends Trait {
-	onInitialize() {
+	onInitialize(gauge) {
 		this.graphics = this.universe[Global.graphics]
+		this.gauge = gauge
 	}
 
 	onUpdate() {
 		const { energy, maxEnergy } = this.link.CapacityEnergy
+
+		this.gauge.value = energy / maxEnergy
 
 		if (energy < maxEnergy) {
 			this.graphics.applyTransform(this.link.Transform)
@@ -1411,7 +1420,7 @@ class CanvasErasing extends Trait {
 // -----------------------------------------------------------------
 
 class Player extends Link {
-	onInitialize(x, y, addGun, addCapacity) {
+	onInitialize(x, y, addGun, addCapacity, playerCapacityGauge, playerWeaponGauge, playerHealthGauge) {
 		this[Tag.player] = true
 
 		this.add(Transform, x, y)
@@ -1425,12 +1434,12 @@ class Player extends Link {
 		this.add(CapacityEnergy, 100 * this.universe[Global.playerAuxCapFactor], 20 * this.universe[Global.playerAuxRegenFactor])
 
 		this.add(PlayerShip2dRender)
-		this.add(PlayerHealthBar2dRender)
+		this.add(PlayerHealthBar2dRender, playerHealthGauge)
 
 		addGun(this)
-		this.add(PlayerWeaponEnergyBar2dRender)
+		this.add(PlayerWeaponEnergyBar2dRender, playerWeaponGauge)
 
 		addCapacity(this)
-		this.add(PlayerCapacityEnergyBar2dRender)
+		this.add(PlayerCapacityEnergyBar2dRender, playerCapacityGauge)
 	}
 }

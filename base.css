@@ -200,6 +200,7 @@ small {
 .gauge .title {
 	display: block;
 	text-align: center;
+	text-transform: uppercase;
 	color: var(--LIGHT);
 }
 
