@@ -68,10 +68,10 @@ Roadmap
 	[  ] Memory of player progress
 		> How to backup the universe?
 		> Case of a crash?
-[  ] Better in-game HUD interface
-	[  ] Player health
-	[  ] Player weapon energy
-	[  ] Player capacity energy
+[OK] Better in-game HUD interface
+	[OK] Player health
+	[OK] Player weapon energy
+	[OK] Player capacity energy
 	[OK] Enemies health
 [  ] Lore
 	[  ] Characters' dialogues
