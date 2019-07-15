@@ -395,12 +395,14 @@
 				</div>
 				<div id="nextLevelActionCard" class="action-card interactible-element red iconic-element right-chevron">
 					<span>Enter Arena #<span id="arenaLevelSpan"></span></span>
+					<small>Out of <span id="arenaCountSpan"></span></small>
 				</div>
 			</main>
 		</div>
 		<script> ;(function () {
 			ScreenCenter.add(lobbyScreen, _enter => {
 				arenaLevelSpan.textContent = GameCenter.currentLevel
+				arenaCountSpan.textContent = GameCenter.lastLevel
 			})
 
 			nextLevelActionCard.addEventListener("click", _ => ScreenCenter.navigateTo(inGameScreen), false)
@@ -523,14 +525,16 @@
 		<div id="rewardScreen" class="screen disabled">
 			<header class="screen-header">
 				<h1 class="screen-title">
-					<span>Reward</span>
-					<small>Select Your Prise.</small>
+					<span>Select Your Reward</span>
+					<small>You Beat Arena #<span id="rewardScreenArenaLevel"></span></small>
 				</h1>
 			</header>
 			<main id="rewardSelector" class="screen-content centering-element"></main>
 		</div>
 		<script> ;(function () {
 			ScreenCenter.add(rewardScreen, _enter => {
+				rewardScreenArenaLevel.textContent = GameCenter.currentLevel
+
 				++GameCenter.currentLevel
 
 				rewardSelector.innerHTML = null
@@ -558,7 +562,7 @@
 			<header class="screen-header">
 				<h1 class="screen-title">
 					<span>Victory</span>
-					<small>Impossible!</small>
+					<small>You Survived the <span id="victoryScreenArenaCount"></span> Arenas? Impossible!</small>
 				</h1>
 			</header>
 			<main class="screen-content centering-element">
@@ -568,7 +572,11 @@
 			</main>
 		</div>
 		<script> ;(function () {
-			ScreenCenter.add(victoryScreen, _enter => GameCenter.reset())
+			ScreenCenter.add(victoryScreen, _enter => {
+				victoryScreenArenaCount.textContent = GameCenter.lastLevel
+
+				GameCenter.reset()
+			})
 
 			takePrideActionCard.addEventListener("click", _ => ScreenCenter.navigateTo(mainScreen), false)
 		})(); </script>
@@ -578,7 +586,7 @@
 		<div id="defeatScreen" class="screen disabled">
 			<header class="screen-header">
 				<h1 class="screen-title">
-					<span>Defeat</span>
+					<span>You Where Defeated in Arena #<span id="defeatScreenArenaLevel"></span> / <span id="defeatScreenArenaCount"></span></span>
 					<small>They Never Last Long Enough...</small>
 				</h1>
 			</header>
@@ -589,7 +597,12 @@
 			</main>
 		</div>
 		<script> ;(function () {
-			ScreenCenter.add(defeatScreen, _enter => GameCenter.reset())
+			ScreenCenter.add(defeatScreen, _enter => {
+				defeatScreenArenaLevel.textContent = GameCenter.currentLevel
+				defeatScreenArenaCount.textContent = GameCenter.lastLevel
+
+				GameCenter.reset()
+			})
 
 			assumeShameActionCard.addEventListener("click", _ => ScreenCenter.navigateTo(mainScreen), false)
 		})(); </script>

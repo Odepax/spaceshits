@@ -60,11 +60,11 @@ Roadmap
 		[  ] Damage
 		[  ] Speed
 		[  ] Fire rate
-	[  ] Display current run progress recap on application screens
-		[  ] Run lobby
-		[  ] Reward
-		[  ] Defeat
-		[  ] Victory
+	[OK] Display current run progress recap on application screens
+		[OK] Run lobby
+		[OK] Reward
+		[OK] Defeat
+		[OK] Victory
 	[  ] Memory of player progress
 		> How to backup the universe?
 		> Case of a crash?
