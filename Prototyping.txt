@@ -52,9 +52,9 @@ Roadmap
 		[OK] Change weapon for the Gatling
 		[OK] Change weapon for the Blaster
 		[OK] Change weapon for the Shotgun
-		[OK] Change aux module for the Shield
-		[OK] Change aux module for the Blink
-		[OK] Change aux module for the Restauration
+		[OK] Change aux module for Shield
+		[OK] Change aux module for Blink
+		[OK] Change aux module for Restauration
 	[  ] Enemies upgrades
 		[  ] Health
 		[  ] Damage
@@ -80,8 +80,11 @@ Roadmap
 	[  ] Explosions
 	[  ] Soundtrack
 [  ] Optimization
+	[  ] Agree on the name of aux modules/special/capacity/ability, gauges, weapons, ...
+	[  ] Escape the "universe as a local global" flaw
 	[  ] Math is going on?
 	[  ] Resource loading
+		[  ] Convert images to sprite
 	[  ] Application screens as web components
 [  ] More enemies
 	[  ] Stationnary turret
