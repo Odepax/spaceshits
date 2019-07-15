@@ -513,10 +513,10 @@ class WeaponEnergy extends Trait {
 	}
 }
 
-class CapacityEnergy extends Trait {
+class AuxModuleEnergy extends Trait {
 	onInitialize(energy, energyRegeneration = 20) {
 		this.userInteraction = this.universe[Global.userInteraction]
-		this.capacityKey = this.universe[Global.keySpecial]
+		this.auxModuleKey = this.universe[Global.keyAuxModule]
 
 		this.energy = 0
 		this.maxEnergy = energy
@@ -524,7 +524,7 @@ class CapacityEnergy extends Trait {
 	}
 
 	onUpdate() {
-		if (this.energy < this.maxEnergy && !this.userInteraction.isPressed(this.capacityKey)) {
+		if (this.energy < this.maxEnergy && !this.userInteraction.isPressed(this.auxModuleKey)) {
 			this.energy += this.energyRegeneration * this.universe.tickTime
 		}
 	}
@@ -532,7 +532,7 @@ class CapacityEnergy extends Trait {
 
 // -----------------------------------------------------------------
 
-class Image2dRender extends Trait {
+class ImageRender extends Trait {
 	onInitialize(imagePath, centerX, centerY) {
 		this.graphics = this.universe[Global.graphics]
 		this.image = new Image().apply(image => image.src = imagePath)
@@ -547,37 +547,37 @@ class Image2dRender extends Trait {
 	}
 }
 
-class ZombieCube2dRender extends Image2dRender {
+class ZombieCubeRender extends ImageRender {
 	onInitialize(graphics) {
 		super.onInitialize("./asset/cube.zombie.svg", 21, 21)
 	}
 }
 
-class AkimboCube2dRender extends Image2dRender {
+class AkimboCubeRender extends ImageRender {
 	onInitialize(graphics) {
 		super.onInitialize("./asset/cube.dualgun.svg", 21, 21)
 	}
 }
 
-class CrossCube2dRender extends Image2dRender {
+class CrossCubeRender extends ImageRender {
 	onInitialize(graphics) {
 		super.onInitialize("./asset/cube.quadgun.svg", 21, 21)
 	}
 }
 
-class HighSpeedCube2dRender extends Image2dRender {
+class HighSpeedCubeRender extends ImageRender {
 	onInitialize(graphics) {
 		super.onInitialize("./asset/cube.highspeed.svg", 21, 21)
 	}
 }
 
-class SplittingCube2dRender extends Image2dRender {
+class SplittingCubeRender extends ImageRender {
 	onInitialize(graphics) {
 		super.onInitialize("./asset/cube.splitting.svg", 32, 32)
 	}
 }
 
-class SplitOffspringCube2dRender extends Image2dRender {
+class SplitOffspringCubeRender extends ImageRender {
 	onInitialize(graphics) {
 		super.onInitialize(randBetween(
 			"./asset/cube.splitoffspring1.svg",
@@ -586,73 +586,73 @@ class SplitOffspringCube2dRender extends Image2dRender {
 	}
 }
 
-class CubeFactory2dRender extends Image2dRender {
+class CubeFactoryRender extends ImageRender {
 	onInitialize(graphics) {
 		super.onInitialize("./asset/cube.factory.svg", 49, 44)
 	}
 }
 
-class CrashCrab2dRender extends Image2dRender {
+class CrashCrabRender extends ImageRender {
 	onInitialize(graphics) {
 		super.onInitialize("./asset/cube.crashcrab.svg", 13, 15)
 	}
 }
 
-class CubeExplosionShard2dRender extends Image2dRender {
+class CubeExplosionShardRender extends ImageRender {
 	onInitialize(graphics) {
 		super.onInitialize("./asset/projectile.shard.svg", 18.3, 7)
 	}
 }
 
-class CubeBullet2dRender extends Image2dRender {
+class CubeBulletRender extends ImageRender {
 	onInitialize(graphics) {
 		super.onInitialize("./asset/projectile.cubeblaster.svg", 8, 8)
 	}
 }
 
-class CubeHighSpeedBullet2dRender extends Image2dRender {
+class CubeHighSpeedBulletRender extends ImageRender {
 	onInitialize(graphics) {
 		super.onInitialize("./asset/projectile.highspeed.svg", 8, 8)
 	}
 }
 
-class PlayerShip2dRender extends Image2dRender {
+class PlayerShipRender extends ImageRender {
 	onInitialize(graphics) {
 		super.onInitialize("./asset/player.ship.svg", 28.1, 31.1)
 	}
 }
 
-class GatlingGun2dRender extends Image2dRender {
+class PlayerGatlingRender extends ImageRender {
 	onInitialize() {
 		super.onInitialize("./asset/player.gatling.svg", 18, 3.5)
 	}
 }
 
-class GatlingBullet2dRender extends Image2dRender {
+class GatlingBulletRender extends ImageRender {
 	onInitialize(graphics) {
 		super.onInitialize("./asset/projectile.gatling.svg", 16, 4)
 	}
 }
 
-class BlasterGun2dRender extends Image2dRender {
+class PlayerBlasterRender extends ImageRender {
 	onInitialize() {
 		super.onInitialize("./asset/player.blaster.svg", 12, 3)
 	}
 }
 
-class BlasterBullet2dRender extends Image2dRender {
+class BlasterBulletRender extends ImageRender {
 	onInitialize(graphics) {
 		super.onInitialize("./asset/projectile.blaster.svg", 22, 10)
 	}
 }
 
-class ShotgunGun2dRender extends Image2dRender {
+class PlayerShotgunRender extends ImageRender {
 	onInitialize() {
 		super.onInitialize("./asset/player.shotgun.svg", 15, 3.3)
 	}
 }
 
-class ShotgunBullet2dRender extends Image2dRender {
+class ShotgunBulletRender extends ImageRender {
 	onInitialize(graphics) {
 		super.onInitialize("./asset/projectile.shotgun.svg", 16, 10)
 	}
@@ -660,7 +660,7 @@ class ShotgunBullet2dRender extends Image2dRender {
 
 // -----------------------------------------------------------------
 
-class Shield2dRender extends Trait {
+class ShieldRender extends Trait {
 	onInitialize(radius) {
 		this.graphics = this.universe[Global.graphics]
 		this.radius = radius
@@ -684,7 +684,7 @@ class Shield2dRender extends Trait {
 
 // -----------------------------------------------------------------
 
-class HealthBar2dRender extends Trait {
+class CubeHealthBarRender extends Trait {
 	onInitialize() {
 		this.graphics = this.universe[Global.graphics]
 	}
@@ -709,7 +709,7 @@ class HealthBar2dRender extends Trait {
 	}
 }
 
-class PlayerHealthBar2dRender extends Trait {
+class PlayerHealthBarRender extends Trait {
 	onInitialize(gauge) {
 		this.graphics = this.universe[Global.graphics]
 		this.gauge = gauge
@@ -741,7 +741,7 @@ class PlayerHealthBar2dRender extends Trait {
 	}
 }
 
-class PlayerWeaponEnergyBar2dRender extends Trait {
+class PlayerWeaponEnergyBarRender extends Trait {
 	onInitialize(gauge) {
 		this.graphics = this.universe[Global.graphics]
 		this.gauge = gauge
@@ -773,14 +773,14 @@ class PlayerWeaponEnergyBar2dRender extends Trait {
 	}
 }
 
-class PlayerCapacityEnergyBar2dRender extends Trait {
+class PlayerAuxModuleEnergyBarRender extends Trait {
 	onInitialize(gauge) {
 		this.graphics = this.universe[Global.graphics]
 		this.gauge = gauge
 	}
 
 	onUpdate() {
-		const { energy, maxEnergy } = this.link.CapacityEnergy
+		const { energy, maxEnergy } = this.link.AuxModuleEnergy
 
 		this.gauge.value = energy / maxEnergy
 
@@ -824,7 +824,7 @@ class GatlingBullet extends Projectile {
 	onInitialize(transform) {
 		super.onInitialize(transform, 1000, 4, Tag.enemy, 10 * this.universe[Global.playerDamageFactor])
 
-		this.add(GatlingBullet2dRender)
+		this.add(GatlingBulletRender)
 	}
 }
 
@@ -832,7 +832,7 @@ class BlasterBullet extends Projectile {
 	onInitialize(transform) {
 		super.onInitialize(transform, 900, 8, Tag.enemy, 20 * this.universe[Global.playerDamageFactor])
 
-		this.add(BlasterBullet2dRender)
+		this.add(BlasterBulletRender)
 	}
 }
 
@@ -840,7 +840,7 @@ class ShotgunBullet extends Projectile {
 	onInitialize(transform) {
 		super.onInitialize(transform, 800, 4, Tag.enemy, 15 * this.universe[Global.playerDamageFactor])
 
-		this.add(ShotgunBullet2dRender)
+		this.add(ShotgunBulletRender)
 	}
 }
 
@@ -848,7 +848,7 @@ class CubeBullet extends Projectile {
 	onInitialize(transform) {
 		super.onInitialize(transform, 500, 7, Tag.player, 10)
 
-		this.add(CubeBullet2dRender)
+		this.add(CubeBulletRender)
 	}
 }
 
@@ -856,7 +856,7 @@ class CubeHighSpeedBullet extends Projectile {
 	onInitialize(transform) {
 		super.onInitialize(transform, 500, 7, Tag.player, 20)
 
-		this.add(CubeHighSpeedBullet2dRender)
+		this.add(CubeHighSpeedBulletRender)
 	}
 }
 
@@ -864,7 +864,7 @@ class CubeExplosionShard extends Projectile {
 	onInitialize(transform) {
 		super.onInitialize(transform, 600, 6, Tag.player, 10)
 
-		this.add(CubeExplosionShard2dRender)
+		this.add(CubeExplosionShardRender)
 	}
 }
 
@@ -929,7 +929,7 @@ class PlayerGun extends Trait {
 	onInitialize(fireRate = 0.5, shotEnergyConsumption = 10) {
 		this.userInteraction = this.universe[Global.userInteraction]
 		this.shootKey = this.universe[Global.keyShoot]
-		this.fireRate = fireRate * this.universe[Global.playerFirerateFactor]
+		this.fireRate = fireRate * this.universe[Global.playerFireRateFactor]
 		this.shotEnergyConsumption = shotEnergyConsumption
 		this.timeEnlapsed = 0
 	}
@@ -948,7 +948,7 @@ class PlayerGun extends Trait {
 	}
 }
 
-class GatlingGun extends PlayerGun {
+class PlayerGatling extends PlayerGun {
 	onInitialize(fireRate = 0.1) {
 		super.onInitialize(fireRate, 2)
 	}
@@ -958,7 +958,7 @@ class GatlingGun extends PlayerGun {
 	}
 }
 
-class BlasterGun extends PlayerGun {
+class PlayerBlaster extends PlayerGun {
 	onInitialize(fireRate = 0.3) {
 		super.onInitialize(fireRate, 4)
 	}
@@ -968,7 +968,7 @@ class BlasterGun extends PlayerGun {
 	}
 }
 
-class ShotgunGun extends PlayerGun {
+class PlayerShotgun extends PlayerGun {
 	onInitialize(fireRate = 0.3, spreadAngle = PI / 16) {
 		super.onInitialize(fireRate, 12)
 		this.spreadAngle = spreadAngle
@@ -983,38 +983,38 @@ class ShotgunGun extends PlayerGun {
 
 // -----------------------------------------------------------------
 
-class BlinkTeleportCapacity extends Trait {
+class BlinkTeleportModule extends Trait {
 	onInitialize() {
 		this.userInteraction = this.universe[Global.userInteraction]
-		this.capacityKey = this.universe[Global.keySpecial]
+		this.auxModuleKey = this.universe[Global.keyAuxModule]
 	}
 
 	onUpdate() {
 		const shipPosition = this.link.Transform
-		const capacityEnergy = this.link.CapacityEnergy
+		const auxEnergy = this.link.AuxModuleEnergy
 		const mousePosition = this.userInteraction.mousePosition
 
-		if (this.userInteraction.wasPressed(this.capacityKey) && capacityEnergy.maxEnergy < capacityEnergy.energy) {
-			capacityEnergy.energy = 0
+		if (this.userInteraction.wasPressed(this.auxModuleKey) && auxEnergy.maxEnergy < auxEnergy.energy) {
+			auxEnergy.energy = 0
 			shipPosition.x = mousePosition.x
 			shipPosition.y = mousePosition.y
 		}
 	}
 }
 
-class RestaurationCapacity extends Trait {
+class RestaurationModule extends Trait {
 	onInitialize() {
 		this.userInteraction = this.universe[Global.userInteraction]
-		this.capacityKey = this.universe[Global.keySpecial]
+		this.auxModuleKey = this.universe[Global.keyAuxModule]
 		this.remainingActivationTime = 0
 	}
 
 	onUpdate() {
 		const destroyable = this.link.Destroyable
-		const capacityEnergy = this.link.CapacityEnergy
+		const auxEnergy = this.link.AuxModuleEnergy
 
-		if (this.userInteraction.wasPressed(this.capacityKey) && capacityEnergy.maxEnergy < capacityEnergy.energy) {
-			capacityEnergy.energy = 0
+		if (this.userInteraction.wasPressed(this.auxModuleKey) && auxEnergy.maxEnergy < auxEnergy.energy) {
+			auxEnergy.energy = 0
 			destroyable.healthRegeneration = 10
 			this.remainingActivationTime = 3
 		}
@@ -1027,18 +1027,18 @@ class RestaurationCapacity extends Trait {
 	}
 }
 
-class ShieldCapacity extends Trait {
+class ShieldModule extends Trait {
 	onInitialize() {
 		this.userInteraction = this.universe[Global.userInteraction]
-		this.capacityKey = this.universe[Global.keySpecial]
+		this.auxModuleKey = this.universe[Global.keyAuxModule]
 	}
 
 	onUpdate() {
 		const shipPosition = this.link.Transform
-		const capacityEnergy = this.link.CapacityEnergy
+		const auxEnergy = this.link.AuxModuleEnergy
 
-		if (this.userInteraction.wasPressed(this.capacityKey) && capacityEnergy.maxEnergy < capacityEnergy.energy) {
-			capacityEnergy.energy = 0
+		if (this.userInteraction.wasPressed(this.auxModuleKey) && auxEnergy.maxEnergy < auxEnergy.energy) {
+			auxEnergy.energy = 0
 			this.universe.add(PlayerShield, shipPosition)
 		}
 	}
@@ -1054,7 +1054,7 @@ class PlayerShield extends Link {
 		this.add(Destroyable, 100)
 		this.add(Ephemeral, 3)
 
-		this.add(Shield2dRender, 100)
+		this.add(ShieldRender, 100)
 	}
 }
 
@@ -1150,7 +1150,7 @@ class InstantRammingDamage extends Trait {
 
 // -----------------------------------------------------------------
 
-class CubeGun extends Trait {
+class CubeWeapon extends Trait {
 	onInitialize(fireRate = 2) {
 		this.fireRate = fireRate
 		this.timeEnlapsed = 0
@@ -1167,7 +1167,7 @@ class CubeGun extends Trait {
 	}
 }
 
-class CubeDualGun extends CubeGun {
+class CubeDualBlaster extends CubeWeapon {
 	fire() {
 		const cubePosition = this.link.Transform
 
@@ -1176,7 +1176,7 @@ class CubeDualGun extends CubeGun {
 	}
 }
 
-class CubeQuadGun extends CubeGun {
+class CubeQuadBlaster extends CubeWeapon {
 	fire() {
 		const cubePosition = this.link.Transform
 
@@ -1186,7 +1186,7 @@ class CubeQuadGun extends CubeGun {
 	}
 }
 
-class CubeHighSpeedGun extends CubeGun {
+class CubeHighSpeedBlaster extends CubeWeapon {
 	fire() {
 		const cubePosition = this.link.Transform
 
@@ -1195,7 +1195,7 @@ class CubeHighSpeedGun extends CubeGun {
 	}
 }
 
-class CrashCrabProductionLine extends CubeGun {
+class CrashCrabProductionLine extends CubeWeapon {
 	fire() {
 		const cubePosition = this.link.Transform
 
@@ -1283,8 +1283,8 @@ class ZombieCube extends Cube {
 
 		this.add(CubeExplosionOnDeath)
 
-		this.add(ZombieCube2dRender)
-		this.add(HealthBar2dRender)
+		this.add(ZombieCubeRender)
+		this.add(CubeHealthBarRender)
 	}
 }
 
@@ -1293,10 +1293,10 @@ class AkimboCube extends Cube {
 		super.onInitialize(x, y)
 
 		this.add(CubeExplosionOnDeath)
-		this.add(CubeDualGun, rand(2, 4))
+		this.add(CubeDualBlaster, rand(2, 4))
 
-		this.add(AkimboCube2dRender)
-		this.add(HealthBar2dRender)
+		this.add(AkimboCubeRender)
+		this.add(CubeHealthBarRender)
 	}
 }
 
@@ -1305,10 +1305,10 @@ class CrossCube extends Cube {
 		super.onInitialize(x, y)
 
 		this.add(CubeExplosionOnDeath)
-		this.add(CubeQuadGun, rand(2, 4))
+		this.add(CubeQuadBlaster, rand(2, 4))
 
-		this.add(CrossCube2dRender)
-		this.add(HealthBar2dRender)
+		this.add(CrossCubeRender)
+		this.add(CubeHealthBarRender)
 	}
 }
 
@@ -1316,10 +1316,10 @@ class HighSpeedCube extends Cube {
 	onInitialize(x, y) {
 		super.onInitialize(x, y, 22, 200, 100, 800)
 
-		this.add(CubeHighSpeedGun, rand(2, 4))
+		this.add(CubeHighSpeedBlaster, rand(2, 4))
 
-		this.add(HighSpeedCube2dRender)
-		this.add(HealthBar2dRender)
+		this.add(HighSpeedCubeRender)
+		this.add(CubeHealthBarRender)
 	}
 }
 
@@ -1329,8 +1329,8 @@ class SplittingCube extends Cube {
 
 		this.add(CubeSplitOnDeath)
 
-		this.add(SplittingCube2dRender)
-		this.add(HealthBar2dRender)
+		this.add(SplittingCubeRender)
+		this.add(CubeHealthBarRender)
 	}
 }
 
@@ -1338,8 +1338,8 @@ class SplitOffspringCube extends Cube {
 	onInitialize(x, y) {
 		super.onInitialize(x, y, 17, 60)
 
-		this.add(SplitOffspringCube2dRender)
-		this.add(HealthBar2dRender)
+		this.add(SplitOffspringCubeRender)
+		this.add(CubeHealthBarRender)
 	}
 }
 
@@ -1349,8 +1349,8 @@ class CubeFactory extends Cube {
 
 		this.add(CrashCrabProductionLine, rand(4, 6))
 
-		this.add(CubeFactory2dRender)
-		this.add(HealthBar2dRender)
+		this.add(CubeFactoryRender)
+		this.add(CubeHealthBarRender)
 	}
 }
 
@@ -1367,8 +1367,8 @@ class CrashCrab extends Link {
 
 		this.add(Destroyable, health)
 
-		this.add(CrashCrab2dRender)
-		this.add(HealthBar2dRender)
+		this.add(CrashCrabRender)
+		this.add(CubeHealthBarRender)
 	}
 }
 
@@ -1380,24 +1380,24 @@ const Tag = {
 }
 
 const Global = {
-	canvas: Symbol("Global/Link: Universe canvas"),
-	graphics: Symbol("Global/Link: Universe canvas graphics context"),
-	userInteraction: Symbol("Global/Link: Universe user interaction"),
+	canvas: Symbol("Global/Universe: 'Canvas'"),
+	graphics: Symbol("Global/Universe: 'Graphics'"),
+	userInteraction: Symbol("Global/Universe: 'UserInteraction'"),
 
-	keyMoveUp: Symbol("Global/Link: Move up key"),
-	keyMoveLeft: Symbol("Global/Link: Move left key"),
-	keyMoveDown: Symbol("Global/Link: Move down key"),
-	keyMoveRight: Symbol("Global/Link: Move right key"),
-	keyShoot: Symbol("Global/Link: Shoot key"),
-	keySpecial: Symbol("Global/Link: Use special capacity key"),
+	keyMoveUp: Symbol("Global/Universe: 'KeyMoveUp'"),
+	keyMoveLeft: Symbol("Global/Universe: 'KeyMoveLeft'"),
+	keyMoveDown: Symbol("Global/Universe: 'KeyMoveDown'"),
+	keyMoveRight: Symbol("Global/Universe: 'KeyMoveRight'"),
+	keyShoot: Symbol("Global/Universe: 'KeyShoot'"),
+	keyAuxModule: Symbol("Global/Universe: 'KeyAuxModule'"),
 
-	playerHealthFactor: Symbol("Global/Trait: Player health factor"),
-	playerDamageFactor: Symbol("Global/Trait: Player damage factor"),
-	playerFirerateFactor: Symbol("Global/Trait: Player fire rate factor"),
-	playerAmmoCapFactor: Symbol("Global/Trait: Player ammo capacity factor"),
-	playerAmmoRegenFactor: Symbol("Global/Trait: Player ammo regeneration factor"),
-	playerAuxCapFactor: Symbol("Global/Trait: Player AUX capacity factor"),
-	playerAuxRegenFactor: Symbol("Global/Trait: Player AUX regeneration factor")
+	playerHealthFactor: Symbol("Global/Universe: 'PlayerHealthFactor'"),
+	playerDamageFactor: Symbol("Global/Universe: 'PlayerDamageFactor'"),
+	playerFireRateFactor: Symbol("Global/Universe: 'PlayerFireRateFactor'"),
+	playerWeaponEnergyCapFactor: Symbol("Global/Universe: 'PlayerWeaponEnergyCapFactor'"),
+	playerWeaponEnergyRegenFactor: Symbol("Global/Universe: 'PlayerWeaponEnergyRegenFactor'"),
+	playerAuxEnergyCapFactor: Symbol("Global/Universe: 'PlayerAuxEnergyCapFactor'"),
+	playerAuxEnergyRegenFactor: Symbol("Global/Universe: 'PlayerAuxEnergyRegenFactor'")
 }
 
 // -----------------------------------------------------------------
@@ -1420,7 +1420,7 @@ class CanvasErasing extends Trait {
 // -----------------------------------------------------------------
 
 class Player extends Link {
-	onInitialize(x, y, addGun, addCapacity, playerCapacityGauge, playerWeaponGauge, playerHealthGauge) {
+	onInitialize(x, y, addGun, addCapacity, playerAuxEnergyGauge, playerWeaponEnergyGauge, playerHealthGauge) {
 		this[Tag.player] = true
 
 		this.add(Transform, x, y)
@@ -1430,16 +1430,16 @@ class Player extends Link {
 
 		this.Collider = this.add(CircleCollider, 27)
 		this.add(Destroyable, 100 * this.universe[Global.playerHealthFactor])
-		this.add(WeaponEnergy, 100 * this.universe[Global.playerAmmoCapFactor], 30 * this.universe[Global.playerAmmoRegenFactor])
-		this.add(CapacityEnergy, 100 * this.universe[Global.playerAuxCapFactor], 20 * this.universe[Global.playerAuxRegenFactor])
+		this.add(WeaponEnergy, 100 * this.universe[Global.playerWeaponEnergyCapFactor], 30 * this.universe[Global.playerWeaponEnergyRegenFactor])
+		this.add(AuxModuleEnergy, 100 * this.universe[Global.playerAuxEnergyCapFactor], 20 * this.universe[Global.playerAuxEnergyRegenFactor])
 
-		this.add(PlayerShip2dRender)
-		this.add(PlayerHealthBar2dRender, playerHealthGauge)
+		this.add(PlayerShipRender)
+		this.add(PlayerHealthBarRender, playerHealthGauge)
 
 		addGun(this)
-		this.add(PlayerWeaponEnergyBar2dRender, playerWeaponGauge)
+		this.add(PlayerWeaponEnergyBarRender, playerWeaponEnergyGauge)
 
 		addCapacity(this)
-		this.add(PlayerCapacityEnergyBar2dRender, playerCapacityGauge)
+		this.add(PlayerAuxModuleEnergyBarRender, playerAuxEnergyGauge)
 	}
 }

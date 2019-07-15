@@ -40,7 +40,7 @@
 				moveDownBoundKey: "KeyS",
 				moveRightBoundKey: "KeyD",
 				shootBoundKey: "MouseLeft",
-				useSpecialBoundKey: "Space",
+				useAuxModuleBoundKey: "Space",
 				togglePauseBoundKey: "Escape"
 			}
 
@@ -52,17 +52,17 @@
 
 				hullBoosts: 0,
 				damageBoosts: 0,
-				firerateBoosts: 0,
-				ammoCapBoosts: 0,
-				ammoRegenBoosts: 0,
-				auxCapBoosts: 0,
-				auxRegenBoosts: 0,
+				fireRateBoosts: 0,
+				weaponEnergyCapBoosts: 0,
+				weaponEnergyRegenBoosts: 0,
+				auxEnergyCapBoosts: 0,
+				auxEnergyRegenBoosts: 0,
 
 				playerWeaponName: "None",
-				playerCapacityName: "None",
+				playerAuxModuleName: "None",
 
-				addPlayerGun: _ => {},
-				addPlayerCapacity: _ => {},
+				addPlayerWeapon: _ => {},
+				addPlayerAuxModule: _ => {},
 
 				reset() {
 					this.currentLevel = 1
@@ -70,22 +70,22 @@
 
 					this.hullBoosts = 0
 					this.damageBoosts = 0
-					this.firerateBoosts = 0
-					this.ammoCapBoosts = 0
-					this.ammoRegenBoosts = 0
-					this.auxCapBoosts = 0
-					this.auxRegenBoosts = 0
+					this.fireRateBoosts = 0
+					this.weaponEnergyCapBoosts = 0
+					this.weaponEnergyRegenBoosts = 0
+					this.auxEnergyCapBoosts = 0
+					this.auxEnergyRegenBoosts = 0
 
-					this.availableGuns = Array.from(this.guns)
-					this.availableCapacities = Array.from(this.capacities)
+					this.availableWeapons = Array.from(this.weapons)
+					this.availableAuxModules = Array.from(this.auxModules)
 
-					this.randPop(this.availableGuns).applyBonus()
-					this.randPop(this.availableCapacities).applyBonus()
+					this.randPop(this.availableWeapons).applyBonus()
+					this.randPop(this.availableAuxModules).applyBonus()
 				},
 
 				randPop: values => values.splice(parseInt(rand(0, values.length)), 1)[0],
 
-				bonuses: [ {
+				boosters: [ {
 					color: "green",
 					icon: "hull-boost",
 					label: "<small>Improve</small><span>Ship Hull</span>",
@@ -99,134 +99,134 @@
 					color: "pink",
 					icon: "firerate-boost",
 					label: "<small>Increase</small><span>Fire Rate</span>",
-					applyBonus: _ => ++GameCenter.firerateBoosts
+					applyBonus: _ => ++GameCenter.fireRateBoosts
 				}, {
 					color: "yellow",
 					icon: "ammo-cap-boost",
 					label: "<small>Increase</small><span>Ammo Capacity</span>",
-					applyBonus: _ => ++GameCenter.ammoCapBoosts
+					applyBonus: _ => ++GameCenter.weaponEnergyCapBoosts
 				}, {
 					color: "orange",
 					icon: "ammo-regen-boost",
 					label: "<small>Boost</small><span>Ammo Regeneration</span>",
-					applyBonus: _ => ++GameCenter.ammoRegenBoosts
+					applyBonus: _ => ++GameCenter.weaponEnergyRegenBoosts
 				}, {
 					color: "blue",
 					icon: "aux-cap-boost",
 					label: "<small>Upgrade</small><span>AUX Battery</span>",
-					applyBonus: _ => ++GameCenter.auxCapBoosts
+					applyBonus: _ => ++GameCenter.auxEnergyCapBoosts
 				}, {
 					color: "purple",
 					icon: "aux-regen-boost",
 					label: "<small>Boost</small><span>AUX Power Generation</span>",
-					applyBonus: _ => ++GameCenter.auxRegenBoosts
+					applyBonus: _ => ++GameCenter.auxEnergyRegenBoosts
 				} ],
 
-				guns: [ {
+				weapons: [ {
 					color: "yellow",
-					icon: "gatling-gun",
+					icon: "player-gatling",
 					label: "<small>Change Weapon for</small><span>the Gatling</span>",
 					applyBonus: _ => {
 						GameCenter.playerWeaponName = "Gatling"
-						GameCenter.addPlayerGun = player => {
-							player.add(GatlingGun)
-							player.add(GatlingGun2dRender)
+						GameCenter.addPlayerWeapon = player => {
+							player.add(PlayerGatling)
+							player.add(PlayerGatlingRender)
 						}
 					}
 				}, {
 					color: "blue",
-					icon: "blaster-gun",
+					icon: "player-blaster",
 					label: "<small>Change Weapon for</small><span>the Blaster</span>",
 					applyBonus: _ => {
 						GameCenter.playerWeaponName = "Blaster"
-						GameCenter.addPlayerGun = player => {
-							player.add(BlasterGun)
-							player.add(BlasterGun2dRender)
+						GameCenter.addPlayerWeapon = player => {
+							player.add(PlayerBlaster)
+							player.add(PlayerBlasterRender)
 						}
 					}
 				}, {
 					color: "green",
-					icon: "shotgun-gun",
+					icon: "player-shotgun",
 					label: "<small>Change Weapon for</small><span>the Shotgun</span>",
 					applyBonus: _ => {
 						GameCenter.playerWeaponName = "Shotgun"
-						GameCenter.addPlayerGun = player => {
-							player.add(ShotgunGun)
-							player.add(ShotgunGun2dRender)
+						GameCenter.addPlayerWeapon = player => {
+							player.add(PlayerShotgun)
+							player.add(PlayerShotgunRender)
 						}
 					}
 				} ],
 
-				capacities: [ {
+				auxModules: [ {
 					color: "blue",
-					icon: "shield-capacity",
+					icon: "shield-module",
 					label: "<small>Change AUX Module for</small><span>the Shield</span>",
 					applyBonus: _ => {
-						GameCenter.playerCapacityName = "Shield"
-						GameCenter.addPlayerCapacity = player => player.add(ShieldCapacity)
+						GameCenter.playerAuxModuleName = "Shield"
+						GameCenter.addPlayerAuxModule = player => player.add(ShieldModule)
 					}
 				}, {
 					color: "pink",
-					icon: "blink-capacity",
+					icon: "blink-module",
 					label: "<small>Change AUX Module for</small><span>the Blink</span>",
 					applyBonus: _ => {
-						GameCenter.playerCapacityName = "Blink"
-						GameCenter.addPlayerCapacity = player => player.add(BlinkTeleportCapacity)
+						GameCenter.playerAuxModuleName = "Blink"
+						GameCenter.addPlayerAuxModule = player => player.add(BlinkTeleportModule)
 					}
 				}, {
 					color: "green",
-					icon: "restauration-capacity",
+					icon: "restauration-module",
 					label: "<small>Change AUX Module for</small><span>the Restauration</span>",
 					applyBonus: _ => {
-						GameCenter.playerCapacityName = "Restauration"
-						GameCenter.addPlayerCapacity = player => player.add(RestaurationCapacity)
+						GameCenter.playerAuxModuleName = "Restauration"
+						GameCenter.addPlayerAuxModule = player => player.add(RestaurationModule)
 					}
 				} ],
 
 				getRewards() {
-					const availableBonuses = Array.from(this.bonuses)
+					const availableBoosters = Array.from(this.boosters)
 					const optionCount = (4 < this.currentLevel && rand(0, 1) < 0.1) ? 3 : 2
 					const options = []
 
 					for (let i = 0; i < optionCount; i++) {
-						options.push(this.randPop(availableBonuses))
+						options.push(this.randPop(availableBoosters))
 					}
 
-					if (0 < this.availableGuns.length && 4 < this.currentLevel && this.currentLevel % 3 == 0 && rand(0, 1) < 0.1) {
-						options.push(this.randPop(this.availableGuns))
+					if (0 < this.availableWeapons.length && 4 < this.currentLevel && this.currentLevel % 3 == 0 && rand(0, 1) < 0.1) {
+						options.push(this.randPop(this.availableWeapons))
 					}
 
-					if (0 < this.availableCapacities.length && 4 < this.currentLevel && this.currentLevel % 3 == 1 && rand(0, 1) < 0.1) {
-						options.push(this.randPop(this.availableCapacities))
+					if (0 < this.availableAuxModules.length && 4 < this.currentLevel && this.currentLevel % 3 == 1 && rand(0, 1) < 0.1) {
+						options.push(this.randPop(this.availableAuxModules))
 					}
 
 					return options
 				},
 
-				newUniverse(canvas, playerCapacityGauge, playerWeaponGauge, playerHealthGauge) {
+				newUniverse(canvas, playerAuxModuleEnergyGauge, playerWeaponEnergyGauge, playerHealthGauge) {
 					const universe = new Universe()
 
 					universe[Global.playerHealthFactor] = Math.pow(1.2, this.hullBoosts)
 					universe[Global.playerDamageFactor] = Math.pow(1.1, this.damageBoosts)
-					universe[Global.playerFirerateFactor] = Math.pow(0.9, this.firerateBoosts)
-					universe[Global.playerAmmoCapFactor] = Math.pow(1.1, this.ammoCapBoosts)
-					universe[Global.playerAmmoRegenFactor] = Math.pow(1.1, this.ammoRegenBoosts)
-					universe[Global.playerAuxCapFactor] = Math.pow(1.1, this.auxCapBoosts)
-					universe[Global.playerAuxRegenFactor] = Math.pow(1.1, this.auxRegenBoosts)
+					universe[Global.playerFireRateFactor] = Math.pow(0.9, this.fireRateBoosts)
+					universe[Global.playerWeaponEnergyCapFactor] = Math.pow(1.1, this.weaponEnergyCapBoosts)
+					universe[Global.playerWeaponEnergyRegenFactor] = Math.pow(1.1, this.weaponEnergyRegenBoosts)
+					universe[Global.playerAuxEnergyCapFactor] = Math.pow(1.1, this.auxEnergyCapBoosts)
+					universe[Global.playerAuxEnergyRegenFactor] = Math.pow(1.1, this.auxEnergyRegenBoosts)
 
 					universe[Global.keyMoveUp] = SettingsCenter.moveUpBoundKey
 					universe[Global.keyMoveLeft] = SettingsCenter.moveLeftBoundKey
 					universe[Global.keyMoveDown] = SettingsCenter.moveDownBoundKey
 					universe[Global.keyMoveRight] = SettingsCenter.moveRightBoundKey
 					universe[Global.keyShoot] = SettingsCenter.shootBoundKey
-					universe[Global.keySpecial] = SettingsCenter.useSpecialBoundKey
+					universe[Global.keyAuxModule] = SettingsCenter.useAuxModuleBoundKey
 
 					universe[Global.canvas] = canvas
 					universe[Global.graphics] = canvas.getContext("2d")
 					universe[Global.userInteraction] = universe.add(UserInteractor).UserInteraction
 					universe.add(CanvasEraser)
 					universe.add(InteractionLogger)
-					universe.add(Player, 0.5 * canvas.width, 0.9 * canvas.height, this.addPlayerGun, this.addPlayerCapacity, playerCapacityGauge, playerWeaponGauge, playerHealthGauge).ForceBasedMovement.speed.y = -300
+					universe.add(Player, 0.5 * canvas.width, 0.9 * canvas.height, this.addPlayerWeapon, this.addPlayerAuxModule, playerAuxModuleEnergyGauge, playerWeaponEnergyGauge, playerHealthGauge).ForceBasedMovement.speed.y = -300
 
 					return universe
 				}
@@ -307,8 +307,8 @@
 							<span id="shootBind">...</span>
 						</div>
 						<div class="key-binding-item interactible-element blue" style="grid-row-start: 3; grid-column-start: 5;">
-							<div class="label bottom">Use Special</div>
-							<span id="useSpecialBind">...</span>
+							<div class="label bottom">Use Module</div>
+							<span id="auxModuleBind">...</span>
 						</div>
 						<div class="key-binding-item interactible-element purple" style="grid-row-start: 1; grid-column-start: 1;">
 							<div class="label">Toggle Pause</div>
@@ -332,7 +332,7 @@
 				moveDownBind,
 				moveRightBind,
 				shootBind,
-				useSpecialBind,
+				auxModuleBind,
 				togglePauseBind
 			]) {
 				bindElement.parentElement.addEventListener("mouseenter", _ => focus = bindElement, false)
@@ -365,7 +365,7 @@
 				moveDownBind.textContent = SettingsCenter.moveDownBoundKey
 				moveRightBind.textContent = SettingsCenter.moveRightBoundKey
 				shootBind.textContent = SettingsCenter.shootBoundKey
-				useSpecialBind.textContent = SettingsCenter.useSpecialBoundKey
+				auxModuleBind.textContent = SettingsCenter.useAuxModuleBoundKey
 				togglePauseBind.textContent = SettingsCenter.togglePauseBoundKey
 			}
 
@@ -375,7 +375,7 @@
 				SettingsCenter.moveDownBoundKey = moveDownBind.textContent
 				SettingsCenter.moveRightBoundKey = moveRightBind.textContent
 				SettingsCenter.shootBoundKey = shootBind.textContent
-				SettingsCenter.useSpecialBoundKey = useSpecialBind.textContent
+				SettingsCenter.useAuxModuleBoundKey = auxModuleBind.textContent
 				SettingsCenter.togglePauseBoundKey = togglePauseBind.textContent
 			}
 		})(); </script>
@@ -394,15 +394,15 @@
 					<span>Flee</span>
 				</div>
 				<div id="nextLevelActionCard" class="action-card interactible-element red iconic-element right-chevron">
-					<span>Enter Arena #<span id="arenaLevelSpan"></span></span>
-					<small>Out of <span id="arenaCountSpan"></span></small>
+					<span>Enter Arena #<span id="lobbyScreenArenaLevel">...</span></span>
+					<small>Out of <span id="lobbyScreenArenaCount">...</span></small>
 				</div>
 			</main>
 		</div>
 		<script> ;(function () {
 			ScreenCenter.add(lobbyScreen, _enter => {
-				arenaLevelSpan.textContent = GameCenter.currentLevel
-				arenaCountSpan.textContent = GameCenter.lastLevel
+				lobbyScreenArenaLevel.textContent = GameCenter.currentLevel
+				lobbyScreenArenaCount.textContent = GameCenter.lastLevel
 			})
 
 			nextLevelActionCard.addEventListener("click", _ => ScreenCenter.navigateTo(inGameScreen), false)
@@ -419,12 +419,12 @@
 					</div>
 					<div class="right-aligning-element">
 						<div class="gauge blue">
-							<progress id="playerCapacityGauge" value="0"></progress>
-							<small id="playerCapacityName" class="title">Special</small>
+							<progress id="playerAuxModuleEnergyGauge" value="0"></progress>
+							<small id="playerAuxModuleName" class="title">...</small>
 						</div>
 						<div class="gauge yellow">
-							<progress id="playerWeaponGauge" value="1"></progress>
-							<small id="playerWeaponName" class="title">Weapon</small>
+							<progress id="playerWeaponEnergyGauge" value="1"></progress>
+							<small id="playerWeaponName" class="title">...</small>
 						</div>
 						<div class="gauge green">
 							<progress id="playerHealthGauge" value="1"></progress>
@@ -438,9 +438,9 @@
 			let universe = null
 
 			ScreenCenter.add(inGameScreen, _enter => {
-				universe = universe || GameCenter.newUniverse(gameCanvas, playerCapacityGauge, playerWeaponGauge, playerHealthGauge)
+				universe = universe || GameCenter.newUniverse(gameCanvas, playerAuxModuleEnergyGauge, playerWeaponEnergyGauge, playerHealthGauge)
 
-				playerCapacityName.textContent = GameCenter.playerCapacityName
+				playerAuxModuleName.textContent = GameCenter.playerAuxModuleName
 				playerWeaponName.textContent = GameCenter.playerWeaponName
 
 				gameCanvas.focus()
@@ -487,14 +487,14 @@
 				return new Promise(resolve => {
 					universe.add(class ArenaMonitor extends Link{
 						onInitialize() {
-							const player = getFirst(universe, Tag.player)
+							const player = findFirstLinkWithTag(universe, Tag.player)
 
 							this.add(class ArenaMonitoring extends Trait {
 								onUpdate() {
 									if (player.Destroyable.health < 0) {
 										this.stop = true
 										resolve(false)
-									} else if (getFirst(universe, Tag.enemy) == null) {
+									} else if (findFirstLinkWithTag(universe, Tag.enemy) == null) {
 										this.stop = true
 										resolve(true)
 									}
@@ -509,7 +509,7 @@
 				})
 			}
 
-			function getFirst(universe, tag) {
+			function findFirstLinkWithTag(universe, tag) {
 				for (const link of universe.links) {
 					if (link[tag]) {
 						return link

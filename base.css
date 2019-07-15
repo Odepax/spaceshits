@@ -111,13 +111,13 @@ small {
 .iconic-element.aux-cap-boost { background-image: url("./asset/actioncardbackground.auxcapboosticon.svg");  }
 .iconic-element.aux-regen-boost { background-image: url("./asset/actioncardbackground.auxregenboosticon.svg");  }
 
-.iconic-element.shield-capacity { background-image: url("./asset/actioncardbackground.abilityshieldicon.svg");  }
-.iconic-element.blink-capacity { background-image: url("./asset/actioncardbackground.abilityblinkicon.svg");  }
-.iconic-element.restauration-capacity { background-image: url("./asset/actioncardbackground.abilityrestaurationicon.svg");  }
+.iconic-element.shield-module { background-image: url("./asset/actioncardbackground.abilityshieldicon.svg");  }
+.iconic-element.blink-module { background-image: url("./asset/actioncardbackground.abilityblinkicon.svg");  }
+.iconic-element.restauration-module { background-image: url("./asset/actioncardbackground.abilityrestaurationicon.svg");  }
 
-.iconic-element.gatling-gun { background-image: url("./asset/actioncardbackground.weapongatlingicon.svg");  }
-.iconic-element.blaster-gun { background-image: url("./asset/actioncardbackground.weaponblastericon.svg");  }
-.iconic-element.shotgun-gun { background-image: url("./asset/actioncardbackground.weaponshotgunicon.svg");  }
+.iconic-element.player-gatling { background-image: url("./asset/actioncardbackground.weapongatlingicon.svg");  }
+.iconic-element.player-blaster { background-image: url("./asset/actioncardbackground.weaponblastericon.svg");  }
+.iconic-element.player-shotgun { background-image: url("./asset/actioncardbackground.weaponshotgunicon.svg");  }
 
 /* ----------------------------------------------------------------- */
 
