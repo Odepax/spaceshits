@@ -497,34 +497,30 @@ class Destroyable extends Trait {
 }
 
 class WeaponEnergy extends Trait {
-	onInitialize(energy, energyRegeneration = 30) {
-		this.userInteraction = this.universe[Global.userInteraction]
+	onInitialize(energy, energyRegeneration = 0) {
 		this.shootKey = this.universe[Global.keyShoot]
-
 		this.energy = energy
 		this.maxEnergy = energy
 		this.energyRegeneration = energyRegeneration
 	}
 
 	onUpdate() {
-		if (this.energy < this.maxEnergy && !this.userInteraction.isPressed(this.shootKey)) {
+		if (this.energy < this.maxEnergy) {
 			this.energy += this.energyRegeneration * this.universe.tickTime
 		}
 	}
 }
 
 class AuxModuleEnergy extends Trait {
-	onInitialize(energy, energyRegeneration = 20) {
-		this.userInteraction = this.universe[Global.userInteraction]
+	onInitialize(energy, energyRegeneration = 0) {
 		this.auxModuleKey = this.universe[Global.keyAuxModule]
-
 		this.energy = 0
 		this.maxEnergy = energy
 		this.energyRegeneration = energyRegeneration
 	}
 
 	onUpdate() {
-		if (this.energy < this.maxEnergy && !this.userInteraction.isPressed(this.auxModuleKey)) {
+		if (this.energy < this.maxEnergy) {
 			this.energy += this.energyRegeneration * this.universe.tickTime
 		}
 	}
@@ -950,7 +946,7 @@ class PlayerGun extends Trait {
 
 class PlayerGatling extends PlayerGun {
 	onInitialize(fireRate = 0.1) {
-		super.onInitialize(fireRate, 2)
+		super.onInitialize(fireRate, 5)
 	}
 
 	fire() {
@@ -960,7 +956,7 @@ class PlayerGatling extends PlayerGun {
 
 class PlayerBlaster extends PlayerGun {
 	onInitialize(fireRate = 0.3) {
-		super.onInitialize(fireRate, 4)
+		super.onInitialize(fireRate, 13)
 	}
 
 	fire() {
@@ -970,7 +966,7 @@ class PlayerBlaster extends PlayerGun {
 
 class PlayerShotgun extends PlayerGun {
 	onInitialize(fireRate = 0.3, spreadAngle = PI / 16) {
-		super.onInitialize(fireRate, 12)
+		super.onInitialize(fireRate, 21)
 		this.spreadAngle = spreadAngle
 	}
 
@@ -987,6 +983,7 @@ class BlinkTeleportModule extends Trait {
 	onInitialize() {
 		this.userInteraction = this.universe[Global.userInteraction]
 		this.auxModuleKey = this.universe[Global.keyAuxModule]
+		this.activationEnergyConsumption = 60
 	}
 
 	onUpdate() {
@@ -994,8 +991,9 @@ class BlinkTeleportModule extends Trait {
 		const auxEnergy = this.link.AuxModuleEnergy
 		const mousePosition = this.userInteraction.mousePosition
 
-		if (this.userInteraction.wasPressed(this.auxModuleKey) && auxEnergy.maxEnergy < auxEnergy.energy) {
-			auxEnergy.energy = 0
+		if (this.userInteraction.wasPressed(this.auxModuleKey) && this.activationEnergyConsumption < auxEnergy.energy) {
+			auxEnergy.energy -= this.activationEnergyConsumption
+
 			shipPosition.x = mousePosition.x
 			shipPosition.y = mousePosition.y
 		}
@@ -1006,6 +1004,9 @@ class RestaurationModule extends Trait {
 	onInitialize() {
 		this.userInteraction = this.universe[Global.userInteraction]
 		this.auxModuleKey = this.universe[Global.keyAuxModule]
+		this.activationEnergyConsumption = 100
+		this.regenerationBoost = 10
+		this.activationTime = 3
 		this.remainingActivationTime = 0
 	}
 
@@ -1013,10 +1014,10 @@ class RestaurationModule extends Trait {
 		const destroyable = this.link.Destroyable
 		const auxEnergy = this.link.AuxModuleEnergy
 
-		if (this.userInteraction.wasPressed(this.auxModuleKey) && auxEnergy.maxEnergy < auxEnergy.energy) {
-			auxEnergy.energy = 0
-			destroyable.healthRegeneration = 10
-			this.remainingActivationTime = 3
+		if (this.userInteraction.wasPressed(this.auxModuleKey) && this.activationEnergyConsumption < auxEnergy.energy) {
+			auxEnergy.energy -= this.activationEnergyConsumption
+			destroyable.healthRegeneration = this.regenerationBoost
+			this.remainingActivationTime = this.activationTime
 		}
 
 		if (0 < this.remainingActivationTime) {
@@ -1031,14 +1032,15 @@ class ShieldModule extends Trait {
 	onInitialize() {
 		this.userInteraction = this.universe[Global.userInteraction]
 		this.auxModuleKey = this.universe[Global.keyAuxModule]
+		this.activationEnergyConsumption = 80
 	}
 
 	onUpdate() {
 		const shipPosition = this.link.Transform
 		const auxEnergy = this.link.AuxModuleEnergy
 
-		if (this.userInteraction.wasPressed(this.auxModuleKey) && auxEnergy.maxEnergy < auxEnergy.energy) {
-			auxEnergy.energy = 0
+		if (this.userInteraction.wasPressed(this.auxModuleKey) && this.activationEnergyConsumption < auxEnergy.energy) {
+			auxEnergy.energy -= this.activationEnergyConsumption
 			this.universe.add(PlayerShield, shipPosition)
 		}
 	}
