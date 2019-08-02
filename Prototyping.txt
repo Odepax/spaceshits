@@ -235,15 +235,42 @@ const Random = {
 	angle: () => Random.in(-PI, PI)
 }
 
-/*
-traits must
-	access other traits of the same link
-	access game canvas
-	access time
-	access game settings
-	access user controls (kb & mouse)
-and so without using the universe as an old style data sharing singleton
-*/
+const Routine = {
+	filter(routine, link) {
+		const dependencies = Routine.dependencies(routine)
+
+		// TODO
+	},
+
+	dependencies(routine) {
+		// Adapted from:
+		// https://stackoverflow.com/a/31194949
+		// https://stackoverflow.com/questions/1007981/how-to-get-function-parameter-names-values-dynamically#answer-31194949
+		const parameters = routine.toString()
+			.replace(/\/\/.*$/mg, "") // Single-line comments.
+			.replace(/\s+/g, "") // White spaces.
+			.replace(/\/\*\*?[^/*]*\*\//g, "") // Multi-line comments.
+			.split(/\)\{|\)?=>\{?/, 1)
+			[0]
+			.replace(/^[^(]*[(]/, "")
+			.replace(/=[^,]+/g, "=")
+			.split(",")
+			.filter(it => it)
+
+		const required = []
+		const optional = []
+
+		for (const parameter of parameters) {
+			if (parameter.endsWith("=")) {
+				optional.push(parameter.substring(0, parameter.length - 1))
+			} else {
+				required.push(parameter)
+			}
+		}
+
+		return { required, optional }
+	}
+}
 
 new Clock(
 	new Universe([
