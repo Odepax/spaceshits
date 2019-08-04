@@ -8,27 +8,6 @@ function log() {
 
 // -----------------------------------------------------------------
 
-const RED = "crimson"
-const ORANGE = "darkorange"
-const YELLOW = "gold"
-const GREEN = "greenyellow"
-const TEAL = "mediumseagreen"
-const BLUE = "deepskyblue"
-const PURPLE = "mediumpurple"
-const PINK = "hotpink"
-const WHITE = "ghostwhite"
-const LIGHT = "silver"
-const GREY = "gray"
-const DARK = "darkslategray"
-const BLACK = "black"
-
-const MILLI_SECOND = 0.001
-const MILLI_SECONDS = 0.001
-const SECOND = 1
-const SECONDS = 1
-const MINUTE = 60
-const MINUTES = 60
-
 const PI = Math.PI
 const abs = Math.abs
 const sign = Math.sign
