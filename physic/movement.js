@@ -1,6 +1,5 @@
-import { Clock } from "../engine/core.js";
-import { Transform, Force, Friction } from "./mecanic.js";
-import { MatchRoutine } from "../engine/routine.js";
+import { Transform, Force, Friction } from "./mechanic.js"
+import { MatchRoutine } from "../engine/routine.js"
 
 export class Velocity extends Force {
 	static linear(/** @type {number} */ speedX, /** @type {number} */ speedY) {
@@ -29,7 +28,7 @@ export class BounceOnEdges {
 }
 
 export class MovementRoutine extends MatchRoutine {
-	constructor(/** @type {Clock} */ clock, /** @type {{ width: number, height: number }} */ canvas) {
+	constructor(/** @type {import("../engine/core.js").Clock} */ clock, /** @type {{ width: number, height: number }} */ canvas) {
 		super([ Transform, Velocity ])
 
 		this.clock = clock

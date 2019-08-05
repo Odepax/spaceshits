@@ -1,5 +1,5 @@
-import { Transform } from "../physic/mecanic.js";
-import { testUnrotatedRectangles, testCircles, testRotatedConvexPolygonWithCircle, testRotatedConvexPolygons } from "../math/collision.js";
+import { Transform } from "../physic/mechanic.js"
+import { testUnrotatedRectangles, testCircles, testRotatedConvexPolygonWithCircle, testRotatedConvexPolygons } from "../math/collision.js"
 
 const { cos, sin } = Math
 

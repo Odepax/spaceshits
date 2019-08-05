@@ -1,4 +1,4 @@
-﻿import { Transform } from "../physic/mecanic.js"
+﻿import { Transform } from "../physic/mechanic.js"
 
 export class TargetSeeking {
 	constructor(/** @type {{ Transform: Transform }} */ target) {
