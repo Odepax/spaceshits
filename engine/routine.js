@@ -1,4 +1,4 @@
-﻿import { Link, Routine } from "./core"
+﻿import { Link, Routine } from "./core.js"
 
 export class SubRoutine extends Routine {
 	onStep(/** @type {Link[]} */ links) {
@@ -50,6 +50,8 @@ export class MatchRoutine extends SubRoutine {
 	}
 
 	constructor(/** @type {Function[]} */ requiredTraits = []) {
+		super()
+
 		this.requiredTraits = requiredTraits.map(it => it.name)
 	}
 

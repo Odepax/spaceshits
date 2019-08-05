@@ -1,4 +1,4 @@
-import { Force } from "./mecanic";
+import { Force } from "./mecanic.js";
 
 export class Velocity extends Force {
 	static linear(/** @type {number} */ speedX, /** @type {number} */ speedY) {

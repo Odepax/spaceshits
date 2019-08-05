@@ -1,4 +1,6 @@
-﻿export function clamp(/** @type {number} */ angle) {
+﻿const { PI } = Math
+
+export function clamp(/** @type {number} */ angle) {
 	while (+PI < angle) angle -= 2 * PI
 	while (angle < -PI) angle += 2 * PI
 

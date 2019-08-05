@@ -1,4 +1,4 @@
-import { clamp } from "../math/angle";
+import { clamp } from "../math/angle.js";
 
 export class Transform {
 	static duplicate() {
