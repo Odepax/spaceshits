@@ -102,21 +102,11 @@ export class Friction {
 	constructor(movementResistanceFactor = 0.05, rotationResistanceFactor = 2 * PI) {
 		this.movementResistanceFactor = movementResistanceFactor
 		this.rotationResistanceFactor = rotationResistanceFactor
-
-		this.x = 0
-		this.y = 0
-		this.a = 0
 	}
 
-	drive(/** @type {{ x: number, y: number, a: number }} */ subject, /** @type {number} */ secondsPerFrame) {
-		subject.x = abs(subject.x) < 0.001 ? 0 : subject.x - sign(subject.x) * min(abs(this.x), abs(subject.x)) * secondsPerFrame
-		subject.y = abs(subject.y) < 0.001 ? 0 : subject.y - sign(subject.y) * min(abs(this.y), abs(subject.y)) * secondsPerFrame
-		subject.a = abs(subject.a) < 0.001 ? 0 : subject.a - sign(subject.a) * min(abs(this.a), abs(subject.a)) * secondsPerFrame
-	}
-
-	updateFrom(/** @type {Force} */ speed) {
-		this.x = this.movementResistanceFactor * speed.x * speed.x
-		this.y = this.movementResistanceFactor * speed.y * speed.y
-		this.a = this.rotationResistanceFactor * speed.a * speed.a
+	applyTo(/** @type {Force} */ subject, /** @type {number} */ secondsPerFrame) {
+		subject.x = abs(subject.x) < 0.001 ? 0 : subject.x - sign(subject.x) * min(abs(this.movementResistanceFactor * subject.x * subject.x), abs(subject.x)) * secondsPerFrame
+		subject.y = abs(subject.y) < 0.001 ? 0 : subject.y - sign(subject.y) * min(abs(this.movementResistanceFactor * subject.y * subject.y), abs(subject.y)) * secondsPerFrame
+		subject.a = abs(subject.a) < 0.001 ? 0 : subject.a - sign(subject.a) * min(abs(this.rotationResistanceFactor * subject.a * subject.a), abs(subject.a)) * secondsPerFrame
 	}
 }

@@ -1,8 +1,15 @@
 ﻿const MILLI_SECONDS = 0.001
 
+/**
+ * @typedef {object} Clock
+ * @property {number} spf
+ * @property {number} time
+ * @property {number} timeFactor
+ **/
+
 export class Universe {
 	constructor() {
-		this.clock = {
+		/** @type {Clock} */ this.clock = {
 			spf: 0,
 			time: 0,
 			timeFactor: 1,
