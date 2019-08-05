@@ -1,75 +1,77 @@
+import { Transform } from "../physic/mecanic.js";
+import { testUnrotatedRectangles, testCircles, testRotatedConvexPolygonWithCircle, testRotatedConvexPolygons } from "../math/collision.js";
+
+const { cos, sin } = Math
+
 export class Collision {
+	constructor(/** @type {Collider} */ collider) {
+		this.collider = collider
+	}
 }
 
-export class Collider {
-	onInitialize(radius) {
+export /** @abstract */ class Collider {
+	constructor(/** @type {number} */ radius) {
 		this.radius = radius
 	}
-
-	collidesWith(other) {
-		return this.testFastCollisionWith(other) && this.testFullCollisionWith(other)
-	}
-
-	testFastCollisionWith(other) {
-		const { x: thisX, y: thisY } = this.link.Transform
-		const { x: otherX, y: otherY } = other.link.Transform
-
-		return Collision.testUnrotatedRectangles(
-			thisX - this.radius, thisY - this.radius, thisX + this.radius, thisY + this.radius,
-			otherX - other.radius, otherY - other.radius, otherX + other.radius, otherY + other.radius
-		)
-	}
-
-	// testFullCollisionWith(other) {}
 }
 
 export class CircleCollider extends Collider {
-	testFullCollisionWith(other) {
-		if (other.constructor == CircleCollider) {
-			const { x: thisX, y: thisY } = this.link.Transform
-			const { x: otherX, y: otherY } = other.link.Transform
-
-			return Collision.testCircles(thisX, thisY, this.radius, otherX, otherY, other.radius)
-		} else if (other.constructor == ConvexPolygonCollider) {
-			return other.testFullCollisionWith(this)
-		} else {
-			throw new Error(`'${this.constructor.name}' does not support collision detection against '${other.constructor.name}'.`)
-		}
-	}
 }
 
 export class ConvexPolygonCollider extends Collider {
-	onInitialize(radius, points) {
-		super.onInitialize(radius)
+	constructor(/** @type {number} */ radius, /** @type {number[]} */ points) {
+		super(radius)
 
-		this.points = points.apply(points => points.push(points[0], points[1]))
+		points.push(points[0], points[1])
+
+		this.points = points
 	}
+}
 
-	absolutePoints(x, y, a) {
-		return this.points.map((value, i, points) => i % 2 == 0
-			? x + value * cos(a) - points[i + 1] * sin(a)
-			: y + points[i - 1] * sin(a) + value * cos(a)
-		)
-	}
+export function testCollision(
+	/** @type {{ Transform: Transform, Collision: Collision }} */ left,
+	/** @type {{ Transform: Transform, Collision: Collision }} */ right
+) {
+	return testFastCollision(left, right) && testFullCollision(left, right)
+}
 
-	testFullCollisionWith(other) {
-		if (other.constructor == ConvexPolygonCollider) {
-			const { x: thisX, y: thisY, a: thisA } = this.link.Transform
-			const { x: otherX, y: otherY, a: otherA } = other.link.Transform
+function testFastCollision(
+	{ Transform: { x: x1, y: y1 }, Collision: { collider: { radius: radius1 } } },
+	{ Transform: { x: x2, y: y2 }, Collision: { collider: { radius: radius2 } } }
+) {
+	return testUnrotatedRectangles(
+		x1 - radius1, y1 - radius1, x1 + radius1, y1 + radius1,
+		x2 - radius2, y2 - radius2, x2 + radius2, y2 + radius2
+	)
+}
 
-			const thisPoints = this.absolutePoints(thisX, thisY, thisA)
-			const otherPoints = other.absolutePoints(otherX, otherY, otherA)
-
-			return Collision.testRotatedConvexPolygons(thisPoints, otherPoints)
-		} else if (other.constructor == CircleCollider) {
-			const { x: thisX, y: thisY, a } = this.link.Transform
-			const { x: otherX, y: otherY } = other.link.Transform
-
-			const thisPoints = this.absolutePoints(thisX, thisY, a)
-
-			return Collision.testRotatedConvexPolygonWithCircle(thisPoints, otherX, otherY, other.radius)
-		} else {
-			throw new Error(`'${this.constructor.name}' does not support collision detection against '${other.constructor.name}'.`)
+function testFullCollision(
+	{ Transform: { x: x1, y: y1, a: a1 }, Collision: { collider: collider1 } },
+	{ Transform: { x: x2, y: y2, a: a2 }, Collision: { collider: collider2 } }
+) {
+	if (collider1 instanceof CircleCollider) {
+		if (collider2 instanceof CircleCollider) {
+			return testCircles(x1, y1, collider1.radius, x2, y2, collider2.radius)
+		} else if (collider2 instanceof ConvexPolygonCollider) {
+			return testRotatedConvexPolygonWithCircle(absolutePoints(collider2.points, x2, y2, a2), x1, y1, collider1.radius)
+		}
+	} else if (collider1 instanceof ConvexPolygonCollider) {
+		if (collider2 instanceof CircleCollider) {
+			return testRotatedConvexPolygonWithCircle(absolutePoints(collider1.points, x1, y1, a1), x2, y2, collider2.radius)
+		} else if (collider2 instanceof ConvexPolygonCollider) {
+			return testRotatedConvexPolygons(
+				absolutePoints(collider1.points, x1, y1, a1),
+				absolutePoints(collider2.points, x2, y2, a2)
+			)
 		}
 	}
+
+	throw new Error(`'${collider1.constructor.name}' does not support collision detection against '${collider2.constructor.name}'.`)
+}
+
+function absolutePoints(points, x, y, a) {
+	return points.map((value, i, points) => i % 2 == 0
+		? x + value * cos(a) - points[i + 1] * sin(a)
+		: y + points[i - 1] * sin(a) + value * cos(a)
+	)
 }
