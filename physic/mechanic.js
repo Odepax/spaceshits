@@ -1,4 +1,6 @@
-import { clamp } from "../math/angle.js"
+import { clamp, optimalAngleBetween } from "../math/angle.js"
+
+const { PI, sqrt, abs, sign, min, cos, sin, atan2 } = Math
 
 export class Transform {
 	static duplicate() {
@@ -26,7 +28,7 @@ export class Transform {
 	}
 
 	optimalAngleToward(/** @type {Transform} */ target) {
-		return this.optimalAngleTo(this.angleToward(target))
+		return optimalAngleBetween(this.a, this.angleToward(target))
 	}
 
 	leftAngleToward(/** @type {Transform} */ target) {

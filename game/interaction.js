@@ -86,6 +86,8 @@ export class InteractionCentral {
 
 export class InteractionRoutine extends Routine {
 	constructor(/** @type {InteractionCentral} */ interactionCentral) {
+		super()
+
 		this.interactionCentral = interactionCentral
 	}
 

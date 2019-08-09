@@ -1,21 +1,15 @@
 import { Transform, Force, Friction } from "./mechanic.js"
 import { MatchRoutine } from "../engine/routine.js"
 
-export class Velocity extends Force {
-	static linear(/** @type {number} */ speedX, /** @type {number} */ speedY) {
-		return new Velocity(speedX, speedY)
-	}
+const { cos, sin } = Math
 
+export class Velocity extends Force {
 	static angular(/** @type {number} */ angle, /** @type {number} */ speed) {
 		return new Velocity(cos(angle) * speed, sin(angle) * speed)
 	}
 }
 
 export class Acceleration extends Force {
-	static linear(/** @type {number} */ speedX, /** @type {number} */ speedY) {
-		return new Acceleration(speedX, speedY)
-	}
-
 	static angular(/** @type {number} */ angle, /** @type {number} */ speed) {
 		return new Acceleration(cos(angle) * speed, sin(angle) * speed)
 	}
