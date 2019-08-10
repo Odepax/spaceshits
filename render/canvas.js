@@ -12,7 +12,7 @@ export class Render {
 Render.FOLLOW_ROTATION = true
 Render.IGNORE_ROTATION = false
 
-export /** @ebstract */ class Renderer {
+export /** @abstract */ class Renderer {
 }
 
 export class SpriteRenderer extends Renderer {
@@ -32,10 +32,20 @@ export /** @abstract */ class CustomRenderer extends Renderer {
 }
 
 export class RenderRoutine extends MatchRoutine {
-	constructor(/** @type {CanvasRenderingContext2D} */ graphics) {
-		super([ Transform, Render ])
+	constructor(/** @type {HTMLCanvasElement} */ canvas) {
+		super([Transform, Render])
 
-		this.graphics = graphics
+		/** @private */ this.devicePixelRatio = window.devicePixelRatio || 1
+
+		this.graphics = canvas.getContext("2d")
+
+		const { width: w, height: h } = canvas.getBoundingClientRect()
+
+		canvas.width = w * this.devicePixelRatio
+		canvas.height = h * this.devicePixelRatio
+
+		canvas.style.width = w + "px";
+		canvas.style.height = h + "px";
 	}
 
 	onStep(/** @type {Link[]} */ links) {
@@ -47,6 +57,7 @@ export class RenderRoutine extends MatchRoutine {
 	/** @param {{ Transform: Transform, Render: Render }} */
 	onSubStep({ Transform, Render }) {
 		this.graphics.translate(Transform.x, Transform.y)
+		this.graphics.scale(this.devicePixelRatio, this.devicePixelRatio)
 
 		if (Render.followRotation) {
 			this.graphics.rotate(Transform.a)
