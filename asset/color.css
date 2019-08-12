@@ -1,0 +1,32 @@
+﻿:root {
+	--RED: #f91340;
+	--ORANGE: darkorange;
+	--YELLOW: gold;
+	--GREEN: greenyellow;
+	--TEAL: mediumseagreen;
+	--BLUE: deepskyblue;
+	--PURPLE: mediumpurple;
+	--PINK: hotpink;
+	--WHITE: white;
+	--LIGHT: #f0f0f0;
+	--SILVER: #e0e0e0;
+	--GREY: #3d3d3d;
+	--DARK: #242424;
+	--BLACK: black;
+	--ACCENT: var(--LIGHT);
+}
+
+.red { --ACCENT: var(--RED); }
+.orange { --ACCENT: var(--ORANGE); }
+.yellow { --ACCENT: var(--YELLOW); }
+.green { --ACCENT: var(--GREEN); }
+.teal { --ACCENT: var(--TEAL); }
+.blue { --ACCENT: var(--BLUE); }
+.purple { --ACCENT: var(--PURPLE); }
+.pink { --ACCENT: var(--PINK); }
+.white { --ACCENT: var(--WHITE); }
+.light { --ACCENT: var(--LIGHT); }
+.silver { --ACCENT: var(--SILVER); }
+.grey { --ACCENT: var(--GREY); }
+.dark { --ACCENT: var(--DARK); }
+.black { --ACCENT: var(--BLACK); }
