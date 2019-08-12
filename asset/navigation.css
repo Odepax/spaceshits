@@ -1,6 +1,6 @@
 .navigation-host {
-	--TRANSITION-TIME: 0.4s;
 	overflow: hidden;
+	--TRANSITION-TIME: 0.3s;
 }
 
 .page {
