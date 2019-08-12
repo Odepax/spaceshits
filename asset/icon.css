@@ -1,0 +1,28 @@
+@font-face {
+	font-family: "Spaceshits Icon";
+	font-weight: normal;
+	font-style: normal;
+	src: url("./icon.ttf") format("truetype");
+}
+
+
+.icon {
+	--ICON-SIZE: 40px;
+
+	display: inline-block;
+	width: var(--ICON-SIZE);
+	height: var(--ICON-SIZE);
+	font-family: "Spaceshits Icon";
+	font-weight: normal;
+	font-style: normal;
+	font-size: var(--ICON-SIZE);
+	line-height: var(--ICON-SIZE);
+}
+
+.icon.plus::before { content: "+"; }
+.icon.cross::before { content: "x"; }
+.icon.gear::before { content: "*"; }
+.icon.up::before { content: "^"; }
+.icon.left::before { content: "<"; }
+.icon.right::before { content: ">"; }
+.icon.down::before { content: "v"; }
