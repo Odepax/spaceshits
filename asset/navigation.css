@@ -1,0 +1,80 @@
+.navigation-host {
+	--TRANSITION-TIME: 0.4s;
+	overflow: hidden;
+}
+
+.page {
+	position: absolute;
+	top: 100%;
+	width: 100%;
+	height: 100%;
+	overflow: auto;
+	transition-property: top;
+	transition-delay: var(--TRANSITION-TIME);
+}
+
+.page.active {
+	top: 0;
+}
+
+.page.push-in.active {
+	animation: push-in var(--TRANSITION-TIME) ease-in-out var(--TRANSITION-TIME);
+}
+
+@keyframes push-in {
+	from {
+		top: 0;
+		opacity: 0;
+		transform: scale(2);
+	}
+
+	to {
+	}
+}
+
+.page.pull-in.active {
+	animation: pull-in var(--TRANSITION-TIME) ease-in-out var(--TRANSITION-TIME);
+}
+
+@keyframes pull-in {
+	from {
+		top: 0;
+		opacity: 0;
+		transform: scale(0.5);
+	}
+
+	to {
+	}
+}
+
+.page.push-out:not(.active) {
+	animation: push-out var(--TRANSITION-TIME) ease-in-out;
+}
+
+@keyframes push-out {
+	from {
+		top: 0;
+	}
+
+	to {
+		top: 0;
+		opacity: 0;
+		transform: scale(0.5);
+	}
+}
+
+.page.pull-out:not(.active) {
+	animation: pull-out var(--TRANSITION-TIME) ease-in-out;
+}
+
+@keyframes pull-out {
+	from {
+		top: 0;
+	}
+
+	to {
+		top: 0;
+		opacity: 0;
+		transform: scale(2);
+	}
+}
