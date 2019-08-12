@@ -1,0 +1,64 @@
+.action-card {
+	position: relative;
+	width: 200px;
+	height: 380px;
+	background-color: var(--GREY);
+	background-image: url("./card-background-sprite.svg");
+	border: 2px solid var(--BLACK);
+	outline: none;
+	color: var(--WHITE);
+	cursor: pointer;
+	--TRANSITION-TIME: 0.3s;
+	transition: background-image var(--TRANSITION-TIME) ease-in-out;
+}
+
+.action-card:hover,
+.action-card:focus {
+	background-image: url("./card-background-sprite-hover.svg");
+}
+
+.action-card.triangles { background-position-y: 0; }
+.action-card.rectangles { background-position-y: -376px; }
+.action-card.circles { background-position-y: -752px; }
+
+.action-card.orange,
+.action-card.red { background-position-x: 0; }
+
+.action-card.yellow { background-position-x: -196px; }
+
+.action-card.teal,
+.action-card.green { background-position-x: -392px; }
+
+.action-card.blue { background-position-x: -588px; }
+
+.action-card.purple,
+.action-card.pink { background-position-x: -784px; }
+
+.action-card.disabled {
+	display: none;
+}
+
+.action-card > .icon {
+	transition: color var(--TRANSITION-TIME) ease-in-out;
+}
+
+.action-card:hover > .icon,
+.action-card:focus > .icon {
+	color: var(--BLACK);
+}
+
+.action-card > .label {
+	display: inline-block;
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	padding: 20px;
+	text-align: left;
+	text-transform: uppercase;
+	transition: background-color var(--TRANSITION-TIME) ease-in-out;
+}
+
+.action-card:hover > .label,
+.action-card:focus > .label {
+	background-color: black;
+}
