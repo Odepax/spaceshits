@@ -1,0 +1,175 @@
+@import "./roboto-mono.css";
+@import "./color.css";
+
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	font-family: inherit;
+	font-weight: inherit;
+	font-style: inherit;
+	font-size: inherit;
+	color: inherit;
+}
+
+html, body {
+	height: 100%;
+}
+
+body {
+	font-family: "Roboto Mono", monospace;
+	font-weight: normal;
+	font-style: normal;
+	font-size: 13px;
+	line-height: 1.4em;
+	background: var(--DARK);
+	color: var(--WHITE);
+}
+
+small {
+	font-size: 11px;
+}
+
+/* ----------------------------------------------------------------- */
+
+.centering-element {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.right-aligning-element {
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+}
+
+.lifting-element {
+	display: flex;
+	justify-content: center;
+	align-items: flex-start;
+}
+
+/* ----------------------------------------------------------------- */
+
+.interactible-element {
+	border: 2px solid var(--BLACK);
+	cursor: pointer;
+}
+
+/* ----------------------------------------------------------------- */
+
+.iconic-element {
+	background-repeat: no-repeat;
+	background-position: center;
+}
+
+.iconic-element.ship {
+	background-image: url("./asset/keybindinggridbackground.shipicon.svg");
+}
+
+.iconic-element.bullet {
+	background-image: url("./asset/keybindinggridbackground.bulleticon.svg");
+}
+
+/* ----------------------------------------------------------------- */
+
+.screen {
+	display: flex;
+	flex-direction: column;
+	padding: 20px;
+}
+
+.screen.disabled {
+	display: none;
+}
+
+.screen-header {
+	flex: 0;
+	padding-top: 20px;
+}
+
+.screen-title {
+	text-align: center;
+	text-transform: uppercase;
+}
+
+.screen-title small {
+	display: block;
+	color: var(--LIGHT);
+}
+
+.screen-content {
+	flex: 1;
+	padding: 20px 0;
+}
+
+/* ----------------------------------------------------------------- */
+
+/* ----------------------------------------------------------------- */
+
+.gauge {}
+
+.gauge progress {
+	display: block;
+	padding: 2px;
+	width: 108px;
+	height: 18px;
+	background-color: var(--RED);
+	border: 2px solid var(--DARK);
+	outline: 2px solid var(--BLACK);
+	outline-offset: -4px;
+}
+
+.gauge progress::-moz-progress-bar { background: var(--ACCENT); }
+
+.gauge progress::-webkit-progress-bar { background: transparent; }
+.gauge progress::-webkit-progress-value { background: var(--ACCENT); }
+
+.gauge .title {
+	display: block;
+	text-align: center;
+	text-transform: uppercase;
+	color: var(--LIGHT);
+}
+
+/* ----------------------------------------------------------------- */
+
+.key-binding-grid {
+	display: grid;
+	grid-template-rows: repeat(3, 100px);
+	grid-template-columns: repeat(5, 100px);
+	grid-gap: 20px;
+}
+
+.key-binding-item {
+	position: relative;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	text-align: center;
+	text-transform: uppercase;
+	color: var(--LIGHT);
+}
+
+.key-binding-item .label {
+	position: absolute;
+	bottom: calc(100% + 4px);
+	width: 100%;
+	font-size: 13px;
+}
+
+.key-binding-item .label.bottom {
+	top: calc(100% + 4px);
+}
+
+/* ----------------------------------------------------------------- */
+
+.game-canvas-wrapper {
+	padding: 6px;
+}
+
+.game-canvas {
+	cursor: crosshair;
+	outline: none;
+}
