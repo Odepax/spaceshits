@@ -77,6 +77,6 @@ export class RenderRoutine extends MatchRoutine {
 			this.graphics.drawImage(sprite, spriteX, spriteY, spriteWidth, spriteHeight, offsetX, offsetY)
 		}
 
-		this.graphics.resetTransform()
+		this.graphics.setTransform(1, 0, 0, 1, 0, 0)
 	}
 }

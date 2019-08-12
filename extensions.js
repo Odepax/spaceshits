@@ -66,13 +66,3 @@ Node.prototype.appendChildren = function appendChildren(htmlCollection) {
 
 	return htmlCollection
 }
-
-CanvasRenderingContext2D.prototype.applyTransform = function applyTransform({ x, y, a = 0 }, rotate = true) {
-	this.translate(x, y)
-
-	rotate && this.rotate(a)
-}
-
-CanvasRenderingContext2D.prototype.resetTransform = function resetTransform() {
-	this.setTransform(1, 0, 0, 1, 0, 0)
-}
