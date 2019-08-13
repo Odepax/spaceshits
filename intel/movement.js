@@ -1,7 +1,6 @@
 ﻿import { Transform } from "../physic/mechanic.js"
 import { MatchRoutine } from "../engine/routine.js"
 import { Velocity } from "../physic/movement.js"
-import { InteractionCentral } from "../game/interaction.js"
 
 const { sqrt, abs, sign, cos, sin } = Math
 
@@ -95,18 +94,5 @@ export class ForwardChasingRoutine extends MatchRoutine {
 	onSubStep({ ForwardChasing, Transform, Velocity }) {
 		Velocity.x = cos(Transform.a) * ForwardChasing.maxSpeed
 		Velocity.y = sin(Transform.a) * ForwardChasing.maxSpeed
-	}
-}
-
-export class MouseAndKeyboardControl {
-	constructor(/** @type {InteractionCentral} */ interactionCentral) {
-		this.interactionCentral = interactionCentral
-	}
-}
-
-
-export class MouseAndKeyboardControlRoutine extends MatchRoutine {
-	constructor(/** @type {{ Transform: Transform }} */ target) {
-		this.target = target
 	}
 }
