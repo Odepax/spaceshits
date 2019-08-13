@@ -8,7 +8,7 @@ export function within(/** @type{number} */ min, /** @type{number} */ max) {
 }
 
 export function sign() {
-	return oneOf([-1, 1])
+	return oneOf([ -1, 1 ])
 }
 
 export function angle() {

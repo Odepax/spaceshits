@@ -1,11 +1,12 @@
-﻿import { Transform } from "../physic/mechanic.js";
-import { Routine } from "../engine/core.js";
+﻿import { Vector } from "../math/vector.js";
+import { Routine } from "../engine.js"
 
+/** User input capture. */
 export class InteractionCentral {
 	constructor(/** @type {HTMLElement} */ observedElement) {
 		/** @private */ this.devicePixelRatio = window.devicePixelRatio || 1
 
-		this.mousePosition = new Transform()
+		this.mousePosition = new Vector()
 
 		/** @private @type {Set<string>} */ this.currentlyPressedKeys = new Set()
 		/** @private @type {Set<string>} */ this.pressedKeys = new Set()

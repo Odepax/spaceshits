@@ -1,8 +1,9 @@
-﻿import { Acceleration } from "../physic/movement.js"
-import { MatchRoutine } from "../engine/routine.js"
-import { InteractionCentral } from "./interaction.js"
-import { ParameterCentral } from "./parameter.js"
-import { angleToward } from "../math/angle.js"
+﻿import { MatchRoutine } from "./routine.js"
+import { InteractionCentral } from "./central/interaction.js"
+import { ParameterCentral } from "./central/parameter.js"
+import { Acceleration } from "./dynamic.js"
+import { direction } from "./math/angle.js"
+import { Vector } from "./math/vector.js";
 
 const { abs, cos, sin } = Math
 
@@ -23,17 +24,19 @@ export class MouseAndKeyboardControlRoutine extends MatchRoutine {
 
 	/** @param {{ MouseAndKeyboardControl: MouseAndKeyboardControl, Acceleration: Acceleration }} */
 	onSubStep({ MouseAndKeyboardControl, Acceleration }) {
-		const directionY = 0
+		const direction = new Vector(
+			  0
+			- this.interactionCentral.isPressed(this.parameterCentral.moveLeftKey)
+			+ this.interactionCentral.isPressed(this.parameterCentral.moveRightKey),
+			  0
 			- this.interactionCentral.isPressed(this.parameterCentral.moveUpKey)
 			+ this.interactionCentral.isPressed(this.parameterCentral.moveDownKey)
+		)
 
-		const directionX = 0
-			- this.interactionCentral.isPressed(this.parameterCentral.moveLeftKey)
-			+ this.interactionCentral.isPressed(this.parameterCentral.moveRightKey)
+		const directionAngle = direction.d
 
-		const directionAngle = angleToward(0, 0, directionX, directionY)
-
-		Acceleration.x = abs(directionX) * MouseAndKeyboardControl.maxAcceleration * cos(directionAngle)
-		Acceleration.y = abs(directionY) * MouseAndKeyboardControl.maxAcceleration * sin(directionAngle)
+// TODO
+		Acceleration.x = abs(direction.x) * MouseAndKeyboardControl.maxAcceleration * cos(directionAngle)
+		Acceleration.y = abs(direction.y) * MouseAndKeyboardControl.maxAcceleration * sin(directionAngle)
 	}
 }

@@ -1,6 +1,5 @@
-﻿import { Transform } from "../physic/mechanic.js"
-import { MatchRoutine } from "../engine/routine.js"
-import { Velocity } from "../physic/movement.js"
+﻿import { Transform, Velocity } from "./dynamic.js"
+import { MatchRoutine } from "./routine.js"
 
 const { sqrt, abs, sign, cos, sin } = Math
 
@@ -31,7 +30,7 @@ export class ForwardChasing {
 }
 
 export class TargetChasingRoutine extends MatchRoutine {
-	constructor(/** @type {import("../engine/core.js").Clock} */ clock) {
+	constructor(/** @type {import("../engine/engine.js/index.js").Clock} */ clock) {
 		super([ TargetChasing, Transform, Velocity ])
 
 		this.clock = clock
@@ -51,7 +50,7 @@ export class TargetChasingRoutine extends MatchRoutine {
 			Velocity.x = 0
 			Velocity.y = 0
 
-			Transform.angularOffset(Transform.angleToward(TargetChasing.target.Transform), 0.8 * targetDistance)
+			Transform.angularOffset(Transform.directionTo(TargetChasing.target.Transform), 0.8 * targetDistance)
 		} else {
 			Velocity.x *= TargetChasing.maxSpeed / targetDistance
 			Velocity.y *= TargetChasing.maxSpeed / targetDistance
@@ -60,7 +59,7 @@ export class TargetChasingRoutine extends MatchRoutine {
 }
 
 export class TargetFacingRoutine extends MatchRoutine {
-	constructor(/** @type {import("../engine/core.js").Clock} */ clock) {
+	constructor(/** @type {import("./engine.js").Clock} */ clock) {
 		super([ TargetFacing, Transform ])
 
 		this.clock = clock
@@ -69,9 +68,9 @@ export class TargetFacingRoutine extends MatchRoutine {
 	/** @param {{ TargetFacing: TargetFacing, Transform: Transform, Velocity: Velocity }} */
 	onSubStep({ TargetFacing, Transform, Velocity = null }) {
 		if (TargetFacing.instant) {
-			Transform.a = Transform.angleToward(TargetFacing.target.Transform)
+			Transform.a = Transform.directionTo(TargetFacing.target.Transform)
 		} else if (Velocity) {
-			const directionAngle = Transform.optimalAngleToward(TargetFacing.target.Transform)
+			const directionAngle = Transform.shortAngleTo(TargetFacing.target.Transform)
 
 			if (abs(directionAngle) < TargetFacing.maxSpeed * this.clock.spf) {
 				Velocity.a = 0
@@ -84,7 +83,7 @@ export class TargetFacingRoutine extends MatchRoutine {
 }
 
 export class ForwardChasingRoutine extends MatchRoutine {
-	constructor(/** @type {import("../engine/core.js").Clock} */ clock) {
+	constructor(/** @type {import("./engine.js").Clock} */ clock) {
 		super([ ForwardChasing, Transform, Velocity ])
 
 		this.clock = clock

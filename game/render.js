@@ -1,6 +1,6 @@
-import { Transform } from "../physic/mechanic.js"
-import { MatchRoutine } from "../engine/routine.js"
-import { Link } from "../engine/core.js"
+import { MatchRoutine } from "./routine.js"
+import { Transform } from "./dynamic.js"
+import { Link } from "./engine.js"
 
 export class Render {
 	constructor(/** @type {Renderer} */ renderer, followRotation = true) {
@@ -33,7 +33,7 @@ export /** @abstract */ class CustomRenderer extends Renderer {
 
 export class RenderRoutine extends MatchRoutine {
 	constructor(/** @type {HTMLCanvasElement} */ canvas) {
-		super([Transform, Render])
+		super([ Transform, Render ])
 
 		/** @private */ this.devicePixelRatio = window.devicePixelRatio || 1
 

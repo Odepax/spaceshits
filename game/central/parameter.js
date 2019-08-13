@@ -1,4 +1,5 @@
-﻿export class ParameterCentral {
+﻿/** Key bindings & other game settings. */
+export class ParameterCentral {
 	constructor() {
 		this.moveUpKey = "KeyW"
 		this.moveLeftKey = "KeyA"

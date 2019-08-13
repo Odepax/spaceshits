@@ -1,5 +1,5 @@
-import { Transform } from "../physic/mechanic.js"
-import { testUnrotatedRectangles, testCircles, testRotatedConvexPolygonWithCircle, testRotatedConvexPolygons } from "../math/collision.js"
+import { Transform } from "./dynamic.js"
+import { testUnrotatedRectangles, testCircles, testRotatedConvexPolygonWithCircle, testRotatedConvexPolygons } from "./math/collision.js"
 
 const { cos, sin } = Math
 
@@ -66,12 +66,12 @@ function testFullCollision(
 		}
 	}
 
-	throw new Error(`'${collider1.constructor.name}' does not support collision detection against '${collider2.constructor.name}'.`)
+	throw new Error(`'${ collider1.constructor.name }' does not support collision detection against '${ collider2.constructor.name }'.`)
 }
 
 function absolutePoints(points, x, y, a) {
 	return points.map((value, i, points) => i % 2 == 0
 		? x + value * cos(a) - points[i + 1] * sin(a)
-		: y + points[i - 1] * sin(a) + value * cos(a)
+		: y + value * cos(a) + points[i - 1] * sin(a)
 	)
 }
