@@ -1,0 +1,35 @@
+.game-canvas-wrapper {
+	padding: 6px;
+}
+
+.game-canvas {
+	cursor: crosshair;
+	outline: none;
+}
+
+/* ----------------------------------------------------------------- */
+
+.gauge {}
+
+.gauge progress {
+	display: block;
+	padding: 2px;
+	width: 108px;
+	height: 18px;
+	background-color: var(--RED);
+	border: 2px solid var(--DARK);
+	outline: 2px solid var(--BLACK);
+	outline-offset: -4px;
+}
+
+.gauge progress::-moz-progress-bar { background: var(--ACCENT); }
+
+.gauge progress::-webkit-progress-bar { background: transparent; }
+.gauge progress::-webkit-progress-value { background: var(--ACCENT); }
+
+.gauge .title {
+	display: block;
+	text-align: center;
+	text-transform: uppercase;
+	color: var(--LIGHT);
+}

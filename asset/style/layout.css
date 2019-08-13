@@ -1,0 +1,17 @@
+.centering-element {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.right-aligning-element {
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+}
+
+.lifting-element {
+	display: flex;
+	justify-content: center;
+	align-items: flex-start;
+}
