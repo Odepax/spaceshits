@@ -1,4 +1,6 @@
-﻿/** @template T */
+﻿const { PI } = Math
+
+/** @template T */
 export function oneOf(/** @type {T[]} */ values) {
 	return values[parseInt(Math.random() * values.length)]
 }

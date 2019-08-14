@@ -13,22 +13,49 @@ Render.FOLLOW_ROTATION = true
 Render.IGNORE_ROTATION = false
 
 export /** @abstract */ class Renderer {
+	render(/** @type {CanvasRenderingContext2D} */ graphics, /** @type {Link} */ link) {}
+}
+
+export class CompositeRenderer extends Renderer {
+	constructor(/** @type {Renderer[]} */ renderers = []) {
+		super()
+
+		this.renderers = renderers
+	}
+
+	render(/** @type {CanvasRenderingContext2D} */ graphics, /** @type {Link} */ link) {
+		for (const renderer of this.renderers) {
+			renderer.render(graphics, link)
+		}
+	}
 }
 
 export class SpriteRenderer extends Renderer {
 	constructor(spritePath, spriteX, spriteY, spriteWidth, spriteHeight, offsetX, offsetY) {
-		this.spritePath = spritePath
 		this.spriteX = spriteX
 		this.spriteY = spriteY
 		this.spriteWidth = spriteWidth
 		this.spriteHeight = spriteHeight
 		this.offsetX = offsetX
 		this.offsetY = offsetY
-	}
-}
 
-export /** @abstract */ class CustomRenderer extends Renderer {
-	render(/** @type {CanvasRenderingContext2D} */ graphics) {}
+		// TODO: Refactor with some kind of "SpriteCentral".
+		this.sprite = new Image()
+
+		sprite.src = spritePath
+	}
+
+	render(/** @type {CanvasRenderingContext2D} */ graphics, /** @type {Link} */ link) {
+		graphics.drawImage(
+			this.sprite,
+			this.spriteX,
+			this.spriteY,
+			this.spriteWidth,
+			this.spriteHeight,
+			this.offsetX,
+			this.offsetY
+		)
+	}
 }
 
 export class RenderRoutine extends MatchRoutine {
@@ -54,8 +81,9 @@ export class RenderRoutine extends MatchRoutine {
 		super.onStep(links)
 	}
 
-	/** @param {{ Transform: Transform, Render: Render }} */
-	onSubStep({ Transform, Render }) {
+	onSubStep(/** @type {{ Transform: Transform, Render: Render }} */ link) {
+		const { Transform, Render } = link
+
 		this.graphics.translate(Transform.x, Transform.y)
 		this.graphics.scale(this.devicePixelRatio, this.devicePixelRatio)
 
@@ -63,19 +91,7 @@ export class RenderRoutine extends MatchRoutine {
 			this.graphics.rotate(Transform.a)
 		}
 
-		const { renderer } = Render
-
-		if (renderer instanceof CustomRenderer) {
-			renderer.render(this.graphics)
-		} else if (renderer instanceof SpriteRenderer) {
-			const { spritePath, spriteX, spriteY, spriteWidth, spriteHeight, offsetX, offsetY } = renderer
-
-			const sprite = new Image()
-
-			sprite.src = spritePath
-
-			this.graphics.drawImage(sprite, spriteX, spriteY, spriteWidth, spriteHeight, offsetX, offsetY)
-		}
+		Render.renderer.render(this.graphics, link)
 
 		this.graphics.setTransform(1, 0, 0, 1, 0, 0)
 	}

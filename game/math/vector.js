@@ -1,4 +1,4 @@
-const { sqrt, atan2 } = Math
+const { sqrt, atan2, cos, sin } = Math
 
 export class Vector {
 	static angular(/** @type {number} */ direction, /** @type {number} */ length) {
@@ -25,7 +25,7 @@ export class Vector {
 			this.y *= value / l
 		}
 	}
-	/** Normalized direction, i.e. directed angle with (1, 0). */
+	/** Normalized direction, i.e. directed angle from Vector(1, 0). */
 	get d() { return atan2(this.y, this.x) }
 	set d(value) {
 		const l = this.l

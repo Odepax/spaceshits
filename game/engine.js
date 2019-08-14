@@ -5,7 +5,7 @@
  * @property {number} spf
  * @property {number} time
  * @property {number} timeFactor
- **/
+ */
 
 export class Universe {
 	constructor() {
