@@ -1,5 +1,7 @@
 ﻿const { sqrt } = Math
 
+const square = x => x * x
+
 export function testCircles(
 	/** @type {number} */ circle1X,
 	/** @type {number} */ circle1Y,

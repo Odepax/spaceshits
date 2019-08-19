@@ -84,8 +84,8 @@ export class RenderRoutine extends MatchRoutine {
 	onSubStep(/** @type {{ Transform: Transform, Render: Render }} */ link) {
 		const { Transform, Render } = link
 
-		this.graphics.translate(Transform.x, Transform.y)
 		this.graphics.scale(this.devicePixelRatio, this.devicePixelRatio)
+		this.graphics.translate(Transform.x, Transform.y)
 
 		if (Render.followRotation) {
 			this.graphics.rotate(Transform.a)

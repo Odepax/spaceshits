@@ -4,8 +4,6 @@ import { Routine } from "../engine.js"
 /** User input capture. */
 export class InteractionCentral {
 	constructor(/** @type {HTMLElement} */ observedElement) {
-		/** @private */ this.devicePixelRatio = window.devicePixelRatio || 1
-
 		this.mousePosition = new Transform()
 
 		/** @private @type {Set<string>} */ this.currentlyPressedKeys = new Set()
@@ -23,8 +21,8 @@ export class InteractionCentral {
 
 	observe(/** @type {HTMLElement} */ element) {
 		element.addEventListener("mousemove", event => {
-			this.mousePosition.x = event.offsetX * this.devicePixelRatio
-			this.mousePosition.y = event.offsetY * this.devicePixelRatio
+			this.mousePosition.x = event.offsetX
+			this.mousePosition.y = event.offsetY
 		}, false)
 
 		element.addEventListener("contextmenu", event => {
