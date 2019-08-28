@@ -25,6 +25,7 @@ export class Vector {
 			this.y *= value / l
 		}
 	}
+
 	/** Normalized direction, i.e. directed angle from Vector(1, 0). */
 	get d() { return atan2(this.y, this.x) }
 	set d(value) {

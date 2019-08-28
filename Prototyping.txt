@@ -112,6 +112,8 @@ Roadmap
 An Echo in the Space
 -- // -----------------------------------------------------------------
 
+Display quotes for (80 * quote.length) ms.
+
 - There exists one god that is everywhere and part of all: the universe; the universe won't come, nor stand to save anyone.
 - The circumstances of their death will influence the value of their life.
 - One cannot posibly enjoy anything they don't have full knowledge of.
