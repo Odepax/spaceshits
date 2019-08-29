@@ -29,8 +29,6 @@ export class NavigationCentral {
 	}
 
 	enter(/** @type {import("../engine").Constructor<SpaceshitsPage>} */ pageContructor) {
-		const newPage = this.factories.get(pageContructor)()
-
 		if (this.currentPage) {
 			const previousPage = this.currentPage
 
@@ -46,14 +44,18 @@ export class NavigationCentral {
 			previousPage.classList.remove("visible")
 		}
 
+		const newPage = this.factories.get(pageContructor)()
+
 		this.host.appendChild(newPage) // 4
 
 		newPage.onInstall() // 3
 
-		newPage.addEventListener("animationend", () => { // 2
+		const invokePageEnterCallback = () => {
 			newPage.onEnter() // 1
-		}, false)
+			newPage.removeEventListener("animationend", invokePageEnterCallback, false)
+		}
 
+		newPage.addEventListener("animationend", invokePageEnterCallback, false) // 2
 		newPage.classList.add("visible")
 
 		this.currentPage = newPage
