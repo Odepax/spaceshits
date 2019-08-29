@@ -1,616 +1,161 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 	<head>
-		<meta charset="UTF-8" />
+		<meta charset="utf-8" />
 		<title>Spaceshits &mdash; A 2D Top-Down Space Shooter</title>
-		<link rel="stylesheet" href="./base.css" />
-		<link rel="stylesheet" href="./application.css" />
-		<script src="./extensions.js"></script>
-		<script src="./engine.js"></script>
-		<script src="./game.js"></script>
-		<script>
-			const ScreenCenter = {
-				screens: new Map(),
-				currentScreen: null,
+		<meta name="author" content="Odepax" />
+		<meta name="description" content="Spaceshits" />
+		<meta name="keywords" content="spaceshits, odepax" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="theme-color" content="#242424" />
+		<link rel="stylesheet" type="text/css" href="./asset/style.css" />
+		<link rel="shortcut icon" type="image/x-icon" href="./asset/favicon.ico" />
+		<meta name="robots" content="index, follow" />
+		<script type="module">
+			import { ParameterCentral  } from "./game/central/parameter.js"
+			import { NavigationCentral } from "./game/central/navigation.js"
+			import { MainPage } from "./page/main.js"
+			import { NewGamePage } from "./page/lobby.js"
+			import { SettingsPage } from "./page/settings.js"
 
-				add(screen, onEnter, onExit) {
-					this.screens.set(screen, { onEnter, onExit })
-				},
+			const parameterCentral = new ParameterCentral()
+			const navigationCentral = new NavigationCentral(navigationHost)
 
-				navigateTo(screen) {
-					if (this.currentScreen) {
-						this.currentScreen.classList.add("disabled")
+			navigationCentral.register(MainPage, () => new MainPage(navigationCentral))
+			navigationCentral.register(NewGamePage, () => new NewGamePage(navigationCentral))
+			navigationCentral.register(SettingsPage, () => new SettingsPage(navigationCentral, parameterCentral))
 
-						const onExit = this.screens.get(this.currentScreen).onExit
-						onExit && onExit()
-					}
-
-					screen.classList.remove("disabled")
-
-					const onEnter = this.screens.get(screen).onEnter
-					onEnter && onEnter()
-
-					this.currentScreen = screen
-				}
-			}
-
-			const SettingsCenter = {
-				moveUpBoundKey: "KeyW",
-				moveLeftBoundKey: "KeyA",
-				moveDownBoundKey: "KeyS",
-				moveRightBoundKey: "KeyD",
-				shootBoundKey: "MouseLeft",
-				useAuxModuleBoundKey: "Space",
-				togglePauseBoundKey: "Escape"
-			}
-
-			const mouseButtonLabels = [ "MouseLeft", "MouseMiddle", "MouseRight" ]
-
-			const GameCenter = {
-				currentLevel: 1,
-				lastLevel: 25,
-
-				hullBoosts: 0,
-				damageBoosts: 0,
-				fireRateBoosts: 0,
-				weaponEnergyCapBoosts: 0,
-				weaponEnergyRegenBoosts: 0,
-				auxEnergyCapBoosts: 0,
-				auxEnergyRegenBoosts: 0,
-
-				playerWeaponName: "None",
-				playerAuxModuleName: "None",
-
-				addPlayerWeapon: _ => {},
-				addPlayerAuxModule: _ => {},
-
-				reset() {
-					this.currentLevel = 1
-					this.lastLevel = 25
-
-					this.hullBoosts = 0
-					this.damageBoosts = 0
-					this.fireRateBoosts = 0
-					this.weaponEnergyCapBoosts = 0
-					this.weaponEnergyRegenBoosts = 0
-					this.auxEnergyCapBoosts = 0
-					this.auxEnergyRegenBoosts = 0
-
-					this.availableWeapons = Array.from(this.weapons)
-					this.availableAuxModules = Array.from(this.auxModules)
-
-					this.randPop(this.availableWeapons).applyBonus()
-					this.randPop(this.availableAuxModules).applyBonus()
-				},
-
-				randPop: values => values.splice(parseInt(rand(0, values.length)), 1)[0],
-
-				boosters: [ {
-					color: "green",
-					icon: "hull-boost",
-					label: "<small>Improve</small><span>Ship Hull</span>",
-					applyBonus: _ => ++GameCenter.hullBoosts
-				}, {
-					color: "red",
-					icon: "damage-boost",
-					label: "<small>Get a</small><span>Damage Booster</span>",
-					applyBonus: _ => ++GameCenter.damageBoosts
-				}, {
-					color: "pink",
-					icon: "firerate-boost",
-					label: "<small>Increase</small><span>Fire Rate</span>",
-					applyBonus: _ => ++GameCenter.fireRateBoosts
-				}, {
-					color: "yellow",
-					icon: "ammo-cap-boost",
-					label: "<small>Increase</small><span>Ammo Capacity</span>",
-					applyBonus: _ => ++GameCenter.weaponEnergyCapBoosts
-				}, {
-					color: "orange",
-					icon: "ammo-regen-boost",
-					label: "<small>Boost</small><span>Ammo Regeneration</span>",
-					applyBonus: _ => ++GameCenter.weaponEnergyRegenBoosts
-				}, {
-					color: "blue",
-					icon: "aux-cap-boost",
-					label: "<small>Upgrade</small><span>AUX Battery</span>",
-					applyBonus: _ => ++GameCenter.auxEnergyCapBoosts
-				}, {
-					color: "purple",
-					icon: "aux-regen-boost",
-					label: "<small>Boost</small><span>AUX Power Generation</span>",
-					applyBonus: _ => ++GameCenter.auxEnergyRegenBoosts
-				} ],
-
-				weapons: [ {
-					color: "yellow",
-					icon: "player-gatling",
-					label: "<small>Change Weapon for</small><span>the Gatling</span>",
-					applyBonus: _ => {
-						GameCenter.playerWeaponName = "Gatling"
-						GameCenter.addPlayerWeapon = player => {
-							player.add(PlayerGatling)
-							player.add(PlayerGatlingRender)
-						}
-					}
-				}, {
-					color: "blue",
-					icon: "player-blaster",
-					label: "<small>Change Weapon for</small><span>the Blaster</span>",
-					applyBonus: _ => {
-						GameCenter.playerWeaponName = "Blaster"
-						GameCenter.addPlayerWeapon = player => {
-							player.add(PlayerBlaster)
-							player.add(PlayerBlasterRender)
-						}
-					}
-				}, {
-					color: "green",
-					icon: "player-shotgun",
-					label: "<small>Change Weapon for</small><span>the Shotgun</span>",
-					applyBonus: _ => {
-						GameCenter.playerWeaponName = "Shotgun"
-						GameCenter.addPlayerWeapon = player => {
-							player.add(PlayerShotgun)
-							player.add(PlayerShotgunRender)
-						}
-					}
-				} ],
-
-				auxModules: [ {
-					color: "blue",
-					icon: "shield-module",
-					label: "<small>Change AUX Module for</small><span>the Shield</span>",
-					applyBonus: _ => {
-						GameCenter.playerAuxModuleName = "Shield"
-						GameCenter.addPlayerAuxModule = player => player.add(ShieldModule)
-					}
-				}, {
-					color: "pink",
-					icon: "blink-module",
-					label: "<small>Change AUX Module for</small><span>the Blink</span>",
-					applyBonus: _ => {
-						GameCenter.playerAuxModuleName = "Blink"
-						GameCenter.addPlayerAuxModule = player => player.add(BlinkTeleportModule)
-					}
-				}, {
-					color: "green",
-					icon: "restauration-module",
-					label: "<small>Change AUX Module for</small><span>the Restauration</span>",
-					applyBonus: _ => {
-						GameCenter.playerAuxModuleName = "Restauration"
-						GameCenter.addPlayerAuxModule = player => player.add(RestaurationModule)
-					}
-				} ],
-
-				getRewards() {
-					const availableBoosters = Array.from(this.boosters)
-					const optionCount = (4 < this.currentLevel && rand(0, 1) < 0.1) ? 3 : 2
-					const options = []
-
-					for (let i = 0; i < optionCount; i++) {
-						options.push(this.randPop(availableBoosters))
-					}
-
-					if (0 < this.availableWeapons.length && 4 < this.currentLevel && this.currentLevel % 3 == 0 && rand(0, 1) < 0.1) {
-						options.push(this.randPop(this.availableWeapons))
-					}
-
-					if (0 < this.availableAuxModules.length && 4 < this.currentLevel && this.currentLevel % 3 == 1 && rand(0, 1) < 0.1) {
-						options.push(this.randPop(this.availableAuxModules))
-					}
-
-					return options
-				},
-
-				newUniverse(canvas, playerAuxModuleEnergyGauge, playerWeaponEnergyGauge, playerHealthGauge) {
-					const universe = new Universe()
-
-					universe[Global.playerHealthFactor] = Math.pow(1.2, this.hullBoosts)
-					universe[Global.playerDamageFactor] = Math.pow(1.1, this.damageBoosts)
-					universe[Global.playerFireRateFactor] = Math.pow(0.9, this.fireRateBoosts)
-					universe[Global.playerWeaponEnergyCapFactor] = Math.pow(1.1, this.weaponEnergyCapBoosts)
-					universe[Global.playerWeaponEnergyRegenFactor] = Math.pow(1.1, this.weaponEnergyRegenBoosts)
-					universe[Global.playerAuxEnergyCapFactor] = Math.pow(1.1, this.auxEnergyCapBoosts)
-					universe[Global.playerAuxEnergyRegenFactor] = Math.pow(1.1, this.auxEnergyRegenBoosts)
-
-					universe[Global.keyMoveUp] = SettingsCenter.moveUpBoundKey
-					universe[Global.keyMoveLeft] = SettingsCenter.moveLeftBoundKey
-					universe[Global.keyMoveDown] = SettingsCenter.moveDownBoundKey
-					universe[Global.keyMoveRight] = SettingsCenter.moveRightBoundKey
-					universe[Global.keyShoot] = SettingsCenter.shootBoundKey
-					universe[Global.keyAuxModule] = SettingsCenter.useAuxModuleBoundKey
-
-					universe[Global.canvas] = canvas
-					universe[Global.graphics] = canvas.getContext("2d")
-					universe[Global.userInteraction] = universe.add(UserInteractor).UserInteraction
-					universe.add(CanvasEraser)
-					universe.add(InteractionLogger)
-					universe.add(Player, 0.5 * canvas.width, 0.9 * canvas.height, this.addPlayerWeapon, this.addPlayerAuxModule, playerAuxModuleEnergyGauge, playerWeaponEnergyGauge, playerHealthGauge).ForceBasedMovement.speed.y = -300
-
-					return universe
-				}
-			}
+			navigationCentral.enter(MainPage)
 		</script>
 	</head>
 	<body>
-		<div id="mainScreen" class="screen disabled">
-			<header class="screen-header">
-				<h1 class="screen-title">
-					<span>Spaceshits</span>
-					<small>Advertizing Dirty Code in Tablets.</small>
-				</h1>
+
+		<main id="navigationHost" class="navigation-host"></main>
+
+		<template id="main-page">
+			<style>
+				@import "./asset/component/style.css";
+			</style>
+			<header role="banner">
+				<aside>
+					<a href="https://github.com/Odepax/spaceshits">GitHub</a>
+				</aside>
+				<div class="stack-horizontal">
+					<img src="./asset/logo.svg" style="width: 64px; height: 64px; margin-right: 10px;" alt="Spaceshits' logo" />
+					<h1>
+						<span>Spaceshits</span>
+						<small>Harlequin</small>
+					</h1>
+				</div>
 			</header>
-			<main class="screen-content centering-element">
-				<div id="newGameActionCard" class="action-card interactible-element red iconic-element plus">
-					<span>New Game</span>
+			<section class="horizontal-center" style="width: 620px; margin-top: 20px;">
+				<p>
+					<strong>Spaceshits</strong> is a 2D top-down space shooter.
+					Please keep in mind that it is still <strong>in development</strong>,
+					far from being <small>&mdash; and will probably never be &mdash;</small> properly optimized,
+					and doesn't have any sound effect yet <small>&mdash; what you I say about balanced weaponry...</small>
+				</p>
+				<p style="margin: 20px 0;">
+					As it uses native Js browser imports, as well as Web Components-related CSS hacks,
+					you should expect it to go heavy on the network. Expect long load times and bandwidth feasts.
+				</p>
+				<p>
+					That said, have a good death...
+				</p>
+			</section>
+			<section class="page-content vertical-stretch stack-horizontal">
+				<button data-on="click:enterNewGame" class="action-card triangles red">
+					<span class="icon plus"></span>
+					<span class="label">Start<br /> New<br /> Game</span>
+				</button>
+				<button data-on="click:enterLastGame" class="action-card rectangles teal">
+					<span class="icon right"></span>
+					<span class="label">Resume<br /> Last<br /> Game</span>
+				</button>
+				<button data-on="click:enterSettings" class="action-card circles purple">
+					<span class="icon gear"></span>
+					<span class="label">Edit<br /> Settings</span>
+				</button>
+			</section>
+		</template>
+
+		<template id="settings-page">
+			<style>
+				@import "./asset/component/style.css";
+			</style>
+			<h2 class="page-title">
+				<span>Settings</span>
+				<small>Hover Over the Fields and Press Keys to Edit Them</small>
+			</h2>
+			<section class="page-content vertical-stretch stack-horizontal">
+				<button data-on="click:discardChanges" class="action-card triangles blue">
+					<span class="icon cross"></span>
+					<span class="label">Discard<br /> Changes</span>
+				</button>
+				<div class="key-binding-grid">
+					<button id="key-up" class="action-block circles teal" style="grid-row-start: 1; grid-column-start: 3;">
+						<span class="icon up"></span>
+						<span class="label">...</span>
+					</button>
+					<button id="key-down" class="action-block circles teal" style="grid-row-start: 3; grid-column-start: 3;">
+						<span class="icon down"></span>
+						<span class="label">...</span>
+					</button>
+					<button id="key-left" class="action-block circles teal" style="grid-row-start: 2; grid-column-start: 2;">
+						<span class="icon left"></span>
+						<span class="label">...</span>
+					</button>
+					<button id="key-right" class="action-block circles teal" style="grid-row-start: 2; grid-column-start: 4;">
+						<span class="icon right"></span>
+						<span class="label">...</span>
+					</button>
+					<button id="key-shoot" class="action-block triangles yellow" style="grid-row-start: 1; grid-column-start: 5;">
+						<span class="icon cross"></span>
+						<span class="label">...</span>
+					</button>
+					<button id="key-aux" class="action-block rectangles blue" style="grid-row-start: 3; grid-column-start: 5;">
+						<span class="icon gear"></span>
+						<span class="label">...</span>
+					</button>
+					<button id="key-pause" class="action-block rectangles purple" style="grid-row-start: 1; grid-column-start: 1;">
+						<span class="icon pause"></span>
+						<span class="label">...</span>
+					</button>
 				</div>
-				<div id="resumeLastGameActionCard" class="action-card interactible-element teal iconic-element right-chevron">
-					<small>Resume</small>
-					<span>Last Game</span>
-				</div>
-				<div id="editSettingsActionCard" class="action-card interactible-element purple iconic-element gear">
-					<span>Edit Settings</span>
-				</div>
-			</main>
-		</div>
-		<script> ;(function () {
-			ScreenCenter.add(mainScreen, _enter => {
-				if (1 < GameCenter.currentLevel) {
-					resumeLastGameActionCard.classList.remove("disabled")
-				} else {
-					resumeLastGameActionCard.classList.add("disabled")
+				<button data-on="click:saveChanges" class="action-card rectangles pink">
+					<span class="icon right"></span>
+					<span class="label">Save<br /> Changes</span>
+				</button>
+			</section>
+		</template>
+
+		<template id="new-game-page">
+			<style>
+				@import "./asset/component/style.css";
+
+				canvas {
+					box-shadow: 0 0 0 2px var(--BLACK) inset;
+					margin-right: 10px;
+					cursor: crosshair;
+					outline: none;
 				}
-			})
+			</style>
+			<h2 class="page-title">
+				<span>New Game</span>
+				<small>WIP</small>
+			</h2>
+			<section class="page-content vertical-stretch stack-horizontal">
+				<button data-on="click:enterMain" class="action-card circles teal">
+					<span class="icon cross"></span>
+					<span class="label">Flee<br /> Arena</span>
+				</button>
+				<canvas id="gameCanvas" width="380" height="380" tabindex="1"></canvas>
+				<button data-on="click:enterInGame" class="action-card triangles red">
+					<span class="icon right"></span>
+					<span class="label">Enter<br /> Arena<br /> #1</span>
+				</button>
+			</section>
+		</template>
 
-			newGameActionCard.addEventListener("click", _ => {
-				GameCenter.reset()
-				ScreenCenter.navigateTo(lobbyScreen)
-			}, false)
-			resumeLastGameActionCard.addEventListener("click", _ => ScreenCenter.navigateTo(lobbyScreen), false)
-			editSettingsActionCard.addEventListener("click", _ => ScreenCenter.navigateTo(settingsScreen), false)
-		})(); </script>
-
-		<!-- ================================================================= -->
-
-		<div id="settingsScreen" class="screen disabled">
-			<header class="screen-header">
-				<h1 class="screen-title">
-					<span>Settings</span>
-					<small>Hover Over the Fields and Press Keys to Edit Them.</small>
-				</h1>
-			</header>
-			<main class="screen-content centering-element">
-				<div class="lifting-element">
-					<div id="discardChangesActionCard" class="action-card interactible-element blue iconic-element cross">
-						<span>Discard Changes</span>
-					</div>
-					<section class="key-binding-grid">
-						<div class="key-binding-item interactible-element teal" style="grid-row-start: 1; grid-column-start: 3;">
-							<div class="label">Move Up</div>
-							<span id="moveUpBind">...</span>
-						</div>
-						<div class="key-binding-item interactible-element teal" style="grid-row-start: 2; grid-column-start: 2;">
-							<div class="label">Move Left</div>
-							<span id="moveLeftBind">...</span>
-						</div>
-						<div class="key-binding-item interactible-element teal" style="grid-row-start: 3; grid-column-start: 3;">
-							<div class="label bottom">Move Down</div>
-							<span id="moveDownBind">...</span>
-						</div>
-						<div class="key-binding-item interactible-element teal" style="grid-row-start: 2; grid-column-start: 4;">
-							<div class="label">Move Right</div>
-							<span id="moveRightBind">...</span>
-						</div>
-						<div class="key-binding-item interactible-element yellow" style="grid-row-start: 1; grid-column-start: 5;">
-							<div class="label">Shoot</div>
-							<span id="shootBind">...</span>
-						</div>
-						<div class="key-binding-item interactible-element blue" style="grid-row-start: 3; grid-column-start: 5;">
-							<div class="label bottom">Use Module</div>
-							<span id="auxModuleBind">...</span>
-						</div>
-						<div class="key-binding-item interactible-element purple" style="grid-row-start: 1; grid-column-start: 1;">
-							<div class="label">Toggle Pause</div>
-							<span id="togglePauseBind">...</span>
-						</div>
-						<div class="iconic-element ship" style="grid-row-start: 2; grid-column-start: 3;"></div>
-						<div class="iconic-element bullet" style="grid-row-start: 2; grid-column-start: 5;"></div>
-					</section>
-					<div id="saveChangesActionCard" class="action-card interactible-element pink iconic-element right-chevron">
-						<span>Save Changes</span>
-					</div>
-				</div>
-			</main>
-		</div>
-		<script> ;(function () {
-			let focus = null
-
-			for (const bindElement of [
-				moveUpBind,
-				moveLeftBind,
-				moveDownBind,
-				moveRightBind,
-				shootBind,
-				auxModuleBind,
-				togglePauseBind
-			]) {
-				bindElement.parentElement.addEventListener("mouseenter", _ => focus = bindElement, false)
-				bindElement.parentElement.addEventListener("mouseleave", _ => focus = null, false)
-			}
-
-			function bindToKey(event) { focus && (focus.textContent = event.code) }
-			function bindToMouseButton(event) { focus && (focus.textContent = mouseButtonLabels[event.button]) }
-
-			ScreenCenter.add(settingsScreen, _enter => {
-				loadKeyBindings()
-
-				document.addEventListener("keydown", bindToKey, false)
-				document.addEventListener("mousedown", bindToMouseButton, false)
-			}, _exit => {
-				document.removeEventListener("keydown", bindToKey, false)
-				document.removeEventListener("mousedown", bindToMouseButton, false)
-			})
-
-			discardChangesActionCard.addEventListener("click", _ => ScreenCenter.navigateTo(mainScreen), false)
-			saveChangesActionCard.addEventListener("click", _ => {
-				saveKeyBindings()
-
-				ScreenCenter.navigateTo(mainScreen)
-			}, false)
-
-			function loadKeyBindings() {
-				moveUpBind.textContent = SettingsCenter.moveUpBoundKey
-				moveLeftBind.textContent = SettingsCenter.moveLeftBoundKey
-				moveDownBind.textContent = SettingsCenter.moveDownBoundKey
-				moveRightBind.textContent = SettingsCenter.moveRightBoundKey
-				shootBind.textContent = SettingsCenter.shootBoundKey
-				auxModuleBind.textContent = SettingsCenter.useAuxModuleBoundKey
-				togglePauseBind.textContent = SettingsCenter.togglePauseBoundKey
-			}
-
-			function saveKeyBindings() {
-				SettingsCenter.moveUpBoundKey = moveUpBind.textContent
-				SettingsCenter.moveLeftBoundKey = moveLeftBind.textContent
-				SettingsCenter.moveDownBoundKey = moveDownBind.textContent
-				SettingsCenter.moveRightBoundKey = moveRightBind.textContent
-				SettingsCenter.shootBoundKey = shootBind.textContent
-				SettingsCenter.useAuxModuleBoundKey = auxModuleBind.textContent
-				SettingsCenter.togglePauseBoundKey = togglePauseBind.textContent
-			}
-		})(); </script>
-
-		<!-- ================================================================= -->
-
-		<div id="lobbyScreen" class="screen disabled">
-			<header class="screen-header">
-				<h1 class="screen-title">
-					<span>Spaceshits</span>
-					<small>Ready to Go Back?</small>
-				</h1>
-			</header>
-			<main class="screen-content centering-element">
-				<div id="goBackActionCard" class="action-card interactible-element teal iconic-element cross">
-					<span>Flee</span>
-				</div>
-				<div id="nextLevelActionCard" class="action-card interactible-element red iconic-element right-chevron">
-					<span>Enter Arena #<span id="lobbyScreenArenaLevel">...</span></span>
-					<small>Out of <span id="lobbyScreenArenaCount">...</span></small>
-				</div>
-			</main>
-		</div>
-		<script> ;(function () {
-			ScreenCenter.add(lobbyScreen, _enter => {
-				lobbyScreenArenaLevel.textContent = GameCenter.currentLevel
-				lobbyScreenArenaCount.textContent = GameCenter.lastLevel
-			})
-
-			nextLevelActionCard.addEventListener("click", _ => ScreenCenter.navigateTo(inGameScreen), false)
-			goBackActionCard.addEventListener("click", _ => ScreenCenter.navigateTo(mainScreen), false)
-		})(); </script>
-
-		<!-- ================================================================= -->
-
-		<div id="inGameScreen" class="screen disabled">
-			<main class="screen-content centering-element">
-				<div>
-					<div class="game-canvas-wrapper interactible-element grey" style="height: 716px">
-						<canvas id="gameCanvas" class="game-canvas" width="700" height="700" tabindex="1"></canvas>
-					</div>
-					<div class="right-aligning-element">
-						<div class="gauge blue">
-							<progress id="playerAuxModuleEnergyGauge" value="0"></progress>
-							<small id="playerAuxModuleName" class="title">...</small>
-						</div>
-						<div class="gauge yellow">
-							<progress id="playerWeaponEnergyGauge" value="1"></progress>
-							<small id="playerWeaponName" class="title">...</small>
-						</div>
-						<div class="gauge green">
-							<progress id="playerHealthGauge" value="1"></progress>
-							<small class="title">Hull</small>
-						</div>
-					</div>
-				</div>
-			</main>
-		</div>
-		<script> ;(function () {
-			let universe = null
-
-			ScreenCenter.add(inGameScreen, _enter => {
-				universe = universe || GameCenter.newUniverse(gameCanvas, playerAuxModuleEnergyGauge, playerWeaponEnergyGauge, playerHealthGauge)
-
-				playerAuxModuleName.textContent = GameCenter.playerAuxModuleName
-				playerWeaponName.textContent = GameCenter.playerWeaponName
-
-				gameCanvas.focus()
-				universe.run()
-
-				Promise.delay(3000)
-					.then(_ => playLevel(universe, GameCenter.currentLevel))
-					.then(victory => Promise.delay(3000, victory))
-					.then(victory => {
-						if (victory) {
-							ScreenCenter.navigateTo(GameCenter.currentLevel == GameCenter.lastLevel ? victoryScreen : rewardScreen)
-						} else {
-							ScreenCenter.navigateTo(defeatScreen)
-						}
-					})
-			}, _exit => {
-				universe && universe.freeze()
-				universe = null
-			})
-
-			gameCanvas.addEventListener("mousedown", event => {
-				gameCanvas.focus()
-
-				if (universe && mouseButtonLabels[event.button] == SettingsCenter.togglePauseBoundKey) {
-					universe.isRunning ? universe.freeze() : universe.run()
-				}
-			}, false)
-
-			gameCanvas.addEventListener("keydown", event => {
-				if (universe && event.code == SettingsCenter.togglePauseBoundKey) {
-					universe.isRunning ? universe.freeze() : universe.run()
-				}
-			}, false)
-
-			function playLevel(universe, currentLevel) {
-				for (let i = 0; i < currentLevel; ++i) {
-					universe.add(
-						randBetween(ZombieCube, AkimboCube, CrossCube, HighSpeedCube, SplittingCube, CubeFactory),
-						rand(0, universe[Global.canvas].width),
-						rand(0, universe[Global.canvas].height)
-					)
-				}
-
-				return new Promise(resolve => {
-					universe.add(class ArenaMonitor extends Link{
-						onInitialize() {
-							const player = findFirstLinkWithTag(universe, Tag.player)
-
-							this.add(class ArenaMonitoring extends Trait {
-								onUpdate() {
-									if (player.Destroyable.health < 0) {
-										this.stop = true
-										resolve(false)
-									} else if (findFirstLinkWithTag(universe, Tag.enemy) == null) {
-										this.stop = true
-										resolve(true)
-									}
-								}
-
-								onRemoving() {
-									return this.stop
-								}
-							})
-						}
-					})
-				})
-			}
-
-			function findFirstLinkWithTag(universe, tag) {
-				for (const link of universe.links) {
-					if (link[tag]) {
-						return link
-					}
-				}
-
-				return null
-			}
-		})(); </script>
-
-		<!-- ================================================================= -->
-
-		<div id="rewardScreen" class="screen disabled">
-			<header class="screen-header">
-				<h1 class="screen-title">
-					<span>Select Your Reward</span>
-					<small>You Beat Arena #<span id="rewardScreenArenaLevel"></span></small>
-				</h1>
-			</header>
-			<main id="rewardSelector" class="screen-content centering-element"></main>
-		</div>
-		<script> ;(function () {
-			ScreenCenter.add(rewardScreen, _enter => {
-				rewardScreenArenaLevel.textContent = GameCenter.currentLevel
-
-				++GameCenter.currentLevel
-
-				rewardSelector.innerHTML = null
-
-				for (const reward of GameCenter.getRewards()) {
-					const [ [ card ] ] = document.parseElements(`
-						<div class="action-card interactible-element ${ reward.color } iconic-element ${ reward.icon }">
-							${ reward.label }
-						</div>
-					`)
-
-					card.addEventListener("click", _ => {
-						reward.applyBonus()
-						ScreenCenter.navigateTo(lobbyScreen)
-					}, false)
-
-					rewardSelector.appendChild(card)
-				}
-			})
-		})(); </script>
-
-		<!-- ================================================================= -->
-
-		<div id="victoryScreen" class="screen disabled">
-			<header class="screen-header">
-				<h1 class="screen-title">
-					<span>Victory</span>
-					<small>You Survived the <span id="victoryScreenArenaCount"></span> Arenas? Impossible!</small>
-				</h1>
-			</header>
-			<main class="screen-content centering-element">
-				<div id="takePrideActionCard" class="action-card interactible-element yellow iconic-element right-chevron">
-					<span>Take the Pride</span>
-				</div>
-			</main>
-		</div>
-		<script> ;(function () {
-			ScreenCenter.add(victoryScreen, _enter => {
-				victoryScreenArenaCount.textContent = GameCenter.lastLevel
-
-				GameCenter.reset()
-			})
-
-			takePrideActionCard.addEventListener("click", _ => ScreenCenter.navigateTo(mainScreen), false)
-		})(); </script>
-
-		<!-- ================================================================= -->
-
-		<div id="defeatScreen" class="screen disabled">
-			<header class="screen-header">
-				<h1 class="screen-title">
-					<span>You Where Defeated in Arena #<span id="defeatScreenArenaLevel"></span> / <span id="defeatScreenArenaCount"></span></span>
-					<small>They Never Last Long Enough...</small>
-				</h1>
-			</header>
-			<main class="screen-content centering-element">
-				<div id="assumeShameActionCard" class="action-card interactible-element pink iconic-element left-chevron">
-					<span>Assume the Shame</span>
-				</div>
-			</main>
-		</div>
-		<script> ;(function () {
-			ScreenCenter.add(defeatScreen, _enter => {
-				defeatScreenArenaLevel.textContent = GameCenter.currentLevel
-				defeatScreenArenaCount.textContent = GameCenter.lastLevel
-
-				GameCenter.reset()
-			})
-
-			assumeShameActionCard.addEventListener("click", _ => ScreenCenter.navigateTo(mainScreen), false)
-		})(); </script>
-
-		<!-- ================================================================= -->
-
-		<script>
-			ScreenCenter.navigateTo(mainScreen)
-		</script>
 	</body>
 </html>

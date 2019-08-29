@@ -1,0 +1,33 @@
+﻿header[role="banner"] {
+	position: relative;
+	padding: 120px 40px;
+	background: var(--BLACK);
+}
+
+header[role="banner"] aside {
+	display: inline-block;
+	position: absolute;
+	top: 40px;
+	right: 40px;
+}
+
+header[role="banner"] aside a {
+	text-decoration: none;
+}
+
+header[role="banner"] aside a:focus,
+header[role="banner"] aside a:hover {
+	text-decoration: underline;
+}
+
+header[role="banner"] h1 img {
+}
+
+header[role="banner"] h1 span {
+	display: block;
+	font-weight: bold;
+}
+
+header[role="banner"] h1 small {
+	display: block;
+}
