@@ -1,7 +1,6 @@
+.action-block,
 .action-card {
 	position: relative;
-	width: 200px;
-	height: 380px;
 	background-color: var(--GREY);
 	background-image: url("./card-background-sprite.svg");
 	border: 2px solid var(--BLACK);
@@ -12,14 +11,53 @@
 	transition: background-image var(--TRANSITION-TIME) ease-in-out;
 }
 
+.action-block:hover,
+.action-block:focus,
 .action-card:hover,
 .action-card:focus {
 	background-image: url("./card-background-sprite-hover.svg");
 }
 
+.action-block > .icon,
+.action-card > .icon {
+	transition: color var(--TRANSITION-TIME) ease-in-out;
+}
+
+.action-block:hover > .icon,
+.action-block:focus > .icon,
+.action-card:hover > .icon,
+.action-card:focus > .icon {
+	color: var(--BLACK);
+}
+
+	.action-block > .label,
+	.action-card > .label {
+		display: inline-block;
+		position: absolute;
+		left: 0;
+		bottom: 0;
+		padding: 20px;
+		text-align: left;
+		text-transform: uppercase;
+		transition: background-color var(--TRANSITION-TIME) ease-in-out;
+	}
+
+.action-block:hover > .label,
+.action-block:focus > .label,
+.action-card:hover > .label,
+.action-card:focus > .label {
+	background-color: black;
+}
+
+.action-card {
+	width: 200px;
+	height: 380px;
+}
+
 .action-card.triangles { background-position-y: 0; }
 .action-card.rectangles { background-position-y: -376px; }
 .action-card.circles { background-position-y: -752px; }
+.action-card.hexagons { background-position-y: -1128px; }
 
 .action-card.orange,
 .action-card.red { background-position-x: 0; }
@@ -34,31 +72,29 @@
 .action-card.purple,
 .action-card.pink { background-position-x: -784px; }
 
-.action-card.disabled {
-	display: none;
+.action-block {
+	width: 120px;
+	height: 120px;
 }
 
-.action-card > .icon {
-	transition: color var(--TRANSITION-TIME) ease-in-out;
-}
+.action-block.triangles { background-position-y: -1504px; }
+.action-block.rectangles { background-position-y: -1620px; }
+.action-block.circles { background-position-y: -1736px; }
+.action-block.hexagons { background-position-y: -1852px; }
 
-.action-card:hover > .icon,
-.action-card:focus > .icon {
-	color: var(--BLACK);
-}
+.action-block.orange,
+.action-block.red { background-position-x: 0; }
 
-.action-card > .label {
-	display: inline-block;
-	position: absolute;
-	left: 0;
-	bottom: 0;
-	padding: 20px;
-	text-align: left;
-	text-transform: uppercase;
-	transition: background-color var(--TRANSITION-TIME) ease-in-out;
-}
+.action-block.yellow { background-position-x: -116px; }
 
-.action-card:hover > .label,
-.action-card:focus > .label {
-	background-color: black;
+.action-block.teal,
+.action-block.green { background-position-x: -232px; }
+
+.action-block.blue { background-position-x: -348px; }
+
+.action-block.purple,
+.action-block.pink { background-position-x: -464px; }
+
+.action-block > .label {
+	padding: 10px;
 }
