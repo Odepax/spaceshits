@@ -1,9 +1,14 @@
 ﻿/** Key bindings & other game settings. */
 export class ParameterCentral {
 	constructor() {
-		this.moveUpKey = "KeyW"
-		this.moveLeftKey = "KeyA"
-		this.moveDownKey = "KeyS"
-		this.moveRightKey = "KeyD"
+		this.keys = {
+			up: "KeyW",
+			left: "KeyA",
+			down: "KeyS",
+			right: "KeyD",
+			shoot: "MouseLeft",
+			aux: "Space",
+			pause: "Escape"
+		}
 	}
 }

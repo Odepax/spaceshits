@@ -25,12 +25,17 @@ export class MouseAndKeyboardControlRoutine extends MatchRoutine {
 	onSubStep({ MouseAndKeyboardControl, Acceleration }) {
 		const direction = new Vector(
 			  0
-			- this.interactionCentral.isPressed(this.parameterCentral.moveLeftKey)
-			+ this.interactionCentral.isPressed(this.parameterCentral.moveRightKey),
+			- this.interactionCentral.isPressed(this.parameterCentral.keys.left)
+			+ this.interactionCentral.isPressed(this.parameterCentral.keys.right),
 			  0
-			- this.interactionCentral.isPressed(this.parameterCentral.moveUpKey)
-			+ this.interactionCentral.isPressed(this.parameterCentral.moveDownKey)
+			- this.interactionCentral.isPressed(this.parameterCentral.keys.up)
+			+ this.interactionCentral.isPressed(this.parameterCentral.keys.down)
 		)
+
+		// TODO: Replace following by:
+		//    Acceleration.d = direction.d
+		//    Acceleration.l = MouseAndKeyboardControl.maxAcceleration
+		// ?
 
 		const directionAngle = direction.d
 
