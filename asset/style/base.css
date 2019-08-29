@@ -3,13 +3,15 @@
 @import "../font/icon.css";
 
 * {
+	box-sizing: border-box;
 	margin: 0;
 	padding: 0;
-	box-sizing: border-box;
+	text-size-adjust: 100%;
 	font-family: inherit;
 	font-weight: inherit;
 	font-style: inherit;
 	font-size: inherit;
+	letter-spacing: inherit;
 	color: inherit;
 }
 
@@ -18,15 +20,17 @@ html, body {
 }
 
 body {
+	background: var(--DARK);
 	font-family: "Roboto Mono", monospace;
 	font-weight: normal;
 	font-style: normal;
-	font-size: 13px;
+	font-size: 12px;
 	line-height: 1.4em;
-	background: var(--DARK);
+	text-transform: uppercase;
+	letter-spacing: 1px;
 	color: var(--WHITE);
 }
 
 small {
-	font-size: 11px;
+	font-size: 10px;
 }
