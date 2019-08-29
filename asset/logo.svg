@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" width="64.000038" height="64" viewBox="0 0 64.000038 64" id="svg2" version="1.1" inkscape:version="0.92.4 (5da689c313, 2019-01-14)" sodipodi:docname="logo.svg">
+<defs id="defs4" />
+<sodipodi:namedview id="base" pagecolor="#242424" bordercolor="#666666" borderopacity="1.0" inkscape:pageopacity="0" inkscape:pageshadow="2" inkscape:zoom="2.4414062" inkscape:cx="66.013226" inkscape:cy="50.706565" inkscape:document-units="px" inkscape:current-layer="layer1" showgrid="false" units="px" inkscape:object-nodes="false" inkscape:snap-global="true" inkscape:snap-bbox="true" inkscape:snap-bbox-midpoints="false" inkscape:snap-bbox-edge-midpoints="true" inkscape:bbox-nodes="true" showguides="true" inkscape:guide-bbox="true" inkscape:snap-center="true" inkscape:object-paths="false" inkscape:snap-page="true" inkscape:snap-object-midpoints="true" inkscape:measure-start="766.99,87.81" inkscape:measure-end="767.557,86.2241" inkscape:snap-midpoints="false" inkscape:snap-nodes="true" inkscape:snap-others="true" inkscape:bbox-paths="false" inkscape:snap-smooth-nodes="false" inkscape:snap-intersection-paths="false" inkscape:snap-grids="true" fit-margin-top="0" fit-margin-left="0" fit-margin-right="0" fit-margin-bottom="0" />
+<metadata id="metadata7">
+<rdf:RDF>
+<cc:Work rdf:about="">
+<dc:format>image/svg+xml</dc:format>
+<dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+<dc:title></dc:title>
+</cc:Work>
+</rdf:RDF>
+</metadata>
+<g inkscape:label="Layer 1" inkscape:groupmode="layer" id="layer1" transform="translate(-299.05135,-600.60828)">
+<g id="g2310-6" transform="rotate(90,-413.01,514.65)" />
+<g id="g2328" transform="matrix(0.73199937,0,0,0.73199937,111.28718,94.559086)" style="stroke-width:1.36612141">
+<g id="g2309">
+<path sodipodi:nodetypes="cccc" inkscape:connector-curvature="0" id="path2268" d="m 291.93686,758.46056 23.43177,-24.71767 -4.65042,-10.45548 z" style="fill:#00bfff;stroke-width:1.36612141px" />
+<path style="fill:#ff69b4;stroke-width:1.36612141px" d="m 295.42051,720.70456 24.43946,15.71215 -21.97139,-24.15838 z" id="path2270" inkscape:connector-curvature="0" sodipodi:nodetypes="cccc" />
+<path sodipodi:nodetypes="cccc" inkscape:connector-curvature="0" id="path2272" d="m 293.38795,714.10954 27.1207,6.78184 -0.58605,-9.27094 z" style="fill:#9370db;stroke-width:1.36612141px" />
+</g>
+<g style="stroke-width:1.2171433" id="g2280" transform="matrix(1.1223998,0,0,1.1223998,-0.698579,22.18359)">
+<path style="fill:#ffd700;stroke-width:1.2171433px" d="m 235.70232,655.98458 20.87649,-22.02216 -6.77598,-7.84587 z" id="path2274" inkscape:connector-curvature="0" sodipodi:nodetypes="cccc" />
+<path sodipodi:nodetypes="cccc" inkscape:connector-curvature="0" id="path2276" d="m 230.96921,622.34595 29.61115,13.99871 -27.41223,-21.52387 z" style="fill:#ff8c00;stroke-width:1.2171433px" />
+<path style="fill:#f91340;stroke-width:1.2171433px" d="m 229.1583,616.47013 32,6.04226 -0.52214,-8.25992 z" id="path2278" inkscape:connector-curvature="0" sodipodi:nodetypes="cccc" />
+</g>
+<g id="g2314">
+<path style="fill:#e0e0e0;stroke-width:1.36612141px" d="m 315.36863,758.46056 23.8166,-26.36694 -3.12485,-10.33178 z" id="path2287" inkscape:connector-curvature="0" sodipodi:nodetypes="cccc" />
+<path sodipodi:nodetypes="cccc" inkscape:connector-curvature="0" id="path2289" d="m 323.36028,720.70456 19.93146,15.71215 -17.46339,-24.15838 z" style="fill:#adff2f;stroke-width:1.36612141px" />
+<path style="fill:#3cb371;stroke-width:1.36612141px" d="m 321.32772,714.10954 22.6127,6.78184 -0.58605,-9.27094 z" id="path2291" inkscape:connector-curvature="0" sodipodi:nodetypes="cccc" />
+</g>
+</g>
+<g id="g2945" transform="translate(456.83547,445.97063)" />
+</g>
+</svg>
