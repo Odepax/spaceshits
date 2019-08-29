@@ -15,15 +15,17 @@
 			import { ParameterCentral  } from "./game/central/parameter.js"
 			import { NavigationCentral } from "./game/central/navigation.js"
 			import { MainPage } from "./page/main.js"
-			import { NewGamePage } from "./page/lobby.js"
 			import { SettingsPage } from "./page/settings.js"
+			import { QuotationPage } from "./page/quotation.js"
+			import { LobbyPage } from "./page/lobby.js"
 
 			const parameterCentral = new ParameterCentral()
 			const navigationCentral = new NavigationCentral(navigationHost)
 
 			navigationCentral.register(MainPage, () => new MainPage(navigationCentral))
-			navigationCentral.register(NewGamePage, () => new NewGamePage(navigationCentral))
 			navigationCentral.register(SettingsPage, () => new SettingsPage(navigationCentral, parameterCentral))
+			navigationCentral.register(QuotationPage, () => new QuotationPage(navigationCentral))
+			navigationCentral.register(LobbyPage, () => new LobbyPage(navigationCentral))
 
 			navigationCentral.enter(MainPage)
 		</script>
@@ -64,15 +66,15 @@
 				</p>
 			</section>
 			<section class="page-content vertical-stretch stack-horizontal">
-				<button data-on="click:enterNewGame" class="action-card triangles red">
+				<button data-on="click:startNewGame" class="action-card triangles red">
 					<span class="icon plus"></span>
 					<span class="label">Start<br /> New<br /> Game</span>
 				</button>
-				<button data-on="click:enterLastGame" class="action-card rectangles teal">
+				<button data-on="click:resumeLastGame" class="action-card rectangles teal">
 					<span class="icon right"></span>
 					<span class="label">Resume<br /> Last<br /> Game</span>
 				</button>
-				<button data-on="click:enterSettings" class="action-card circles purple">
+				<button data-on="click:editSettings" class="action-card circles purple">
 					<span class="icon gear"></span>
 					<span class="label">Edit<br /> Settings</span>
 				</button>
@@ -88,7 +90,7 @@
 				<small>Hover Over the Fields and Press Keys to Edit Them</small>
 			</h2>
 			<section class="page-content vertical-stretch stack-horizontal">
-				<button data-on="click:discardChanges" class="action-card triangles blue">
+				<button data-on="click:discardChanges" class="action-card rectangles blue">
 					<span class="icon cross"></span>
 					<span class="label">Discard<br /> Changes</span>
 				</button>
@@ -122,14 +124,26 @@
 						<span class="label">...</span>
 					</button>
 				</div>
-				<button data-on="click:saveChanges" class="action-card rectangles pink">
+				<button data-on="click:saveChanges" class="action-card circles pink">
 					<span class="icon right"></span>
 					<span class="label">Save<br /> Changes</span>
 				</button>
 			</section>
 		</template>
 
-		<template id="new-game-page">
+		<template id="quotation-page">
+			<style>
+				@import "./asset/component/style.css";
+			</style>
+			<section class="page-content vertical-stretch stack-horizontal">
+				<blockquote class="dialogue">
+					<h2 class="source">An Echo from Space</h2>
+					<p class="message" id="quote">...</p>
+				</blockquote>
+			</section>
+		</template>
+
+		<template id="lobby-page">
 			<style>
 				@import "./asset/component/style.css";
 
@@ -145,14 +159,14 @@
 				<small>WIP</small>
 			</h2>
 			<section class="page-content vertical-stretch stack-horizontal">
-				<button data-on="click:enterMain" class="action-card circles teal">
+				<button data-on="click:fleeArena" class="action-card rectangles teal">
 					<span class="icon cross"></span>
 					<span class="label">Flee<br /> Arena</span>
 				</button>
 				<canvas id="gameCanvas" width="380" height="380" tabindex="1"></canvas>
-				<button data-on="click:enterInGame" class="action-card triangles red">
+				<button data-on="click:fightArena" class="action-card triangles red">
 					<span class="icon right"></span>
-					<span class="label">Enter<br /> Arena<br /> #1</span>
+					<span class="label">Fight<br /> Arena<br /> #1</span>
 				</button>
 			</section>
 		</template>

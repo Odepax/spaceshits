@@ -1,0 +1,11 @@
+.dialogue {
+	max-width: 500px;
+}
+
+.dialogue > .source {
+	font-weight: bold;
+	margin-bottom: 10px;
+}
+
+.dialogue > .message {
+}

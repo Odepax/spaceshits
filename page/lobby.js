@@ -22,7 +22,7 @@ class CircleRenderer extends Renderer {
 
 class Debug {}
 
-export class NewGamePage extends SpaceshitsPage {
+export class LobbyPage extends SpaceshitsPage {
 	constructor(/** @type {NavigationCentral} */ navigation) {
 		super()
 
@@ -78,6 +78,6 @@ export class NewGamePage extends SpaceshitsPage {
 		universe.start()
 	}
 
-	enterMain() { this.navigation.enter(MainPage) }
-	enterInGame() { /*this.navigation.enter(InGamePage)*/ }
+	fleeArena() { this.navigation.enter(MainPage) }
+	fightArena() { /*this.navigation.enter(InGamePage)*/ }
 }

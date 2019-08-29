@@ -1,5 +1,5 @@
 ﻿import { NavigationCentral, SpaceshitsPage } from "../game/central/navigation.js"
-import { NewGamePage } from "./lobby.js"
+import { QuotationPage } from "./quotation.js"
 import { SettingsPage } from "./settings.js"
 
 export class MainPage extends SpaceshitsPage {
@@ -9,7 +9,7 @@ export class MainPage extends SpaceshitsPage {
 		this.navigation = navigation
 	}
 
-	enterNewGame() { this.navigation.enter(NewGamePage) }
-	enterLastGame() { /*this.navigation.enter(LastGamePage)*/ }
-	enterSettings() { this.navigation.enter(SettingsPage) }
+	startNewGame() { this.navigation.enter(QuotationPage) }
+	resumeLastGame() { /*this.navigation.enter(LastGamePage)*/ }
+	editSettings() { this.navigation.enter(SettingsPage) }
 }

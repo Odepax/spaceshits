@@ -5,7 +5,7 @@
 @import "./style/banner.css";
 @import "./style/page.css";
 @import "./style/settings.css";
-/*@import "./style/dialogue.css";*/
+@import "./style/dialogue.css";
 /*@import "./style/game.css";*/
 
 .action-card:not(:last-child) {
