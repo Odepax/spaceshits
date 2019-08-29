@@ -1,3 +1,5 @@
+/* @see www.font-converter.net */
+
 @font-face {
 	font-family: "Spaceshits Icon";
 	font-weight: normal;
@@ -21,6 +23,7 @@
 .icon.plus::before { content: "+"; }
 .icon.cross::before { content: "x"; }
 .icon.gear::before { content: "*"; }
+.icon.pause::before { content: "P"; }
 .icon.up::before { content: "^"; }
 .icon.left::before { content: "<"; }
 .icon.right::before { content: ">"; }

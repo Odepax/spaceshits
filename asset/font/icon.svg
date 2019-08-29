@@ -2,7 +2,7 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" height="1000" width="1000" sodipodi:docname="icon.svg" version="1.1" id="svg1804" inkscape:version="0.92.4 (5da689c313, 2019-01-14)">
-<sodipodi:namedview id="base" pagecolor="#242424" bordercolor="#666666" borderopacity="1.0" inkscape:pageopacity="0" inkscape:pageshadow="2" inkscape:zoom="0.13421773" inkscape:cx="2565.6074" inkscape:cy="1825.7648" inkscape:document-units="px" inkscape:current-layer="layer1" showgrid="false" showguides="true" inkscape:window-width="1280" inkscape:window-height="737" inkscape:window-x="0" inkscape:window-y="0" inkscape:window-maximized="1" showborder="true" inkscape:showpageshadow="false" guidecolor="#00fff4" guideopacity="0.49803922" guidehicolor="#ffe900" guidehiopacity="0.49803922" inkscape:snap-page="true" inkscape:snap-bbox="true" inkscape:bbox-nodes="true" inkscape:snap-nodes="false">
+<sodipodi:namedview id="base" pagecolor="#242424" bordercolor="#666666" borderopacity="1.0" inkscape:pageopacity="0" inkscape:pageshadow="2" inkscape:zoom="0.10737418" inkscape:cx="952.15527" inkscape:cy="1740.5028" inkscape:document-units="px" inkscape:current-layer="layer1" showgrid="false" showguides="true" inkscape:window-width="1280" inkscape:window-height="737" inkscape:window-x="0" inkscape:window-y="0" inkscape:window-maximized="1" showborder="true" inkscape:showpageshadow="false" guidecolor="#00fff4" guideopacity="0.49803922" guidehicolor="#ffe900" guidehiopacity="0.49803922" inkscape:snap-page="true" inkscape:snap-bbox="true" inkscape:bbox-nodes="true" inkscape:snap-nodes="false">
 <sodipodi:guide id="guide_baseline" inkscape:label="baseline" position="0,253" orientation="0,1" inkscape:locked="false" />
 <sodipodi:guide id="guide_ascender" inkscape:label="ascender" position="0,945" orientation="0,1" inkscape:locked="false" />
 <sodipodi:guide id="guide_caps" inkscape:label="caps" position="0,896" orientation="0,1" inkscape:locked="false" />
@@ -21,6 +21,7 @@
 <glyph glyph-name="Left" id="glyph2383" unicode="&lt;" d="M 977.1971,1024 1000,979.5166 109.76511,524.0004 1000,68.5313 977.1971,24 0,524.0004 Z" />
 <glyph glyph-name="Right" id="glyph2385" unicode="&gt;" d="M 22.80287,1024 0,979.5167 890.23603,524.0004 0,68.5313 22.80287,24 1000,524.0004 Z" />
 <glyph glyph-name="Down" id="glyph2387" unicode="v" d="M 0,1001.1972 44.4831,1024 500,133.76499 955.4696,1024 1000,1001.1972 500,24.00005 Z" />
+<glyph glyph-name="Pause" id="glyph841" unicode="P" d="M 0,1024 V 24 h 50 v 1000 z m 950,0 V 24 h 50 v 1000 z" />
 </font>
 </defs>
 <metadata id="metadata7">
@@ -39,6 +40,7 @@
 <path style="color:#000000;fill:#ffffff;stroke-width:2" d="m 1460.3138,-2397.9149 44.4825,22.8019 455.5173,-890.2341 455.4697,890.2341 44.5304,-22.8019 -500.0001,-977.1981 z" id="path10379-9-0" inkscape:connector-curvature="0" />
 <path inkscape:connector-curvature="0" id="path2035" d="m 1364.6273,-3948.8077 22.8029,44.4834 -890.2349,455.5162 890.2349,455.4691 -22.8029,44.5313 -977.19711,-500.0004 z" style="color:#000000;fill:#ffffff;stroke-width:2" />
 <path style="color:#000000;fill:#ffffff;stroke-width:2" d="m 1527.369,-1996.3045 44.4831,-22.8028 455.5169,890.235 455.4696,-890.235 44.5304,22.8028 -500,977.1971 z" id="path10379-9-0-3" inkscape:connector-curvature="0" />
-<path style="fill:#ffffff;stroke-width:2.00000095" d="M 35.3527,0 0,35.3026 464.69832,500 0,964.6482 35.3527,1000 500.00096,535.3026 964.69738,1000 1000,964.6482 535.35183,500 1000,35.3026 964.69738,0 500.00096,464.6482 Z" id="rect846" inkscape:connector-curvature="0" />
+<path style="fill:#ffffff;stroke-width:2.00000095" d="m 1525.4688,-896 -35.3527,35.3026 L 1954.8144,-396 1490.1161,68.6482 1525.4688,104 1990.1171,-360.6974 2454.8135,104 2490.1161,68.6482 2025.4679,-396 2490.1161,-860.6974 2454.8135,-896 1990.1171,-431.3518 Z" id="rect846" inkscape:connector-curvature="0" />
+<path style="fill:#ffffff;stroke-width:2" d="M 0,0 V 1000 H 50 V 0 Z m 950,0 v 1000 h 50 V 0 Z" id="rect2094" inkscape:connector-curvature="0" />
 </g>
 </svg>
