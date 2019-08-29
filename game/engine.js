@@ -7,6 +7,16 @@
  * @property {number} timeFactor
  */
 
+/**
+ * @template T
+ * @typedef {{new(): T, prototype: T}} Constructor
+ */
+
+/**
+ * @template T
+ * @typedef {{[property: string]: T}} Bag
+ */
+
 export class Universe {
 	constructor() {
 		/** @type {Clock} */ this.clock = {

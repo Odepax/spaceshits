@@ -1,29 +1,17 @@
-.screen {
-	display: flex;
-	flex-direction: column;
-	padding: 20px;
-}
-
-.screen.disabled {
-	display: none;
-}
-
-.screen-header {
-	flex: 0;
-	padding-top: 20px;
-}
-
-.screen-title {
+.page-title {
+	padding: 20px 40px;
+	background: var(--BLACK);
 	text-align: center;
-	text-transform: uppercase;
 }
 
-.screen-title small {
+.page-title > span {
+	font-weight: bold;
+}
+
+.page-title > small {
 	display: block;
-	color: var(--LIGHT);
 }
 
-.screen-content {
-	flex: 1;
-	padding: 20px 0;
+.page-content {
+	margin: 20px 40px;
 }

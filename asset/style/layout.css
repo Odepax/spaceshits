@@ -3,7 +3,6 @@
 	flex-direction: column;
 	justify-content: flex-start;
 	align-items: stretch;
-	overflow-y: auto;
 }
 
 .stack-vertical > .horizontal-left { align-self: flex-start; }
@@ -21,7 +20,6 @@
 	flex-direction: row;
 	justify-content: center;
 	align-items: center;
-	overflow-x: auto;
 }
 
 .stack-horizontal > .horizontal-left { order: -1; }
