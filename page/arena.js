@@ -7,7 +7,6 @@ import { Render, Renderer, RenderRoutine } from "../game/render.js"
 import { InteractionCentral, InteractionRoutine } from "../game/central/interaction.js"
 import { NavigationCentral, SpaceshitsPage } from "../game/central/navigation.js"
 import { MainPage } from "./main.js"
-import { ArenaPage } from "./arena.js"
 
 const { PI } = Math
 
@@ -23,7 +22,7 @@ class CircleRenderer extends Renderer {
 
 class Debug {}
 
-export class LobbyPage extends SpaceshitsPage {
+export class ArenaPage extends SpaceshitsPage {
 	constructor(/** @type {NavigationCentral} */ navigation) {
 		super()
 
@@ -78,7 +77,4 @@ export class LobbyPage extends SpaceshitsPage {
 
 		universe.start()
 	}
-
-	fleeArena() { this.navigation.enter(MainPage) }
-	fightArena() { this.navigation.enter(ArenaPage) }
 }

@@ -1,6 +1,6 @@
 ﻿import { oneOf } from "../game/math/random.js"
 import { NavigationCentral, SpaceshitsPage } from "../game/central/navigation.js"
-import { MainPage } from "./main.js"
+import { ArenaPage } from "./arena.js"
 
 const quotations = [
 	"There exists one god that is everywhere and part of all: the universe; the universe won't come, nor stand to save anyone.",
@@ -47,6 +47,6 @@ export class QuotationPage extends SpaceshitsPage {
 	}
 
 	onEnter() {
-		setTimeout(() => this.navigation.enter(MainPage), quotationDisplayDuration(this.randomQuote))
+		setTimeout(() => this.navigation.enter(ArenaPage), quotationDisplayDuration(this.randomQuote))
 	}
 }
