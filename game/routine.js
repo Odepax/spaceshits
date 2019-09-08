@@ -1,11 +1,9 @@
 ﻿import { Routine, Link } from "./engine.js"
 
 export class SubRoutine extends Routine {
-	onStep(/** @type {Link[]} */ links) {
+	onStep(/** @type {Iterable<Link>} */ links) {
 		for (const link of links) {
-			if (this.test(link)) {
-				this.onSubStep(link)
-			}
+			this.onSubStep(link)
 		}
 	}
 

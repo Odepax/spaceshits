@@ -1,7 +1,7 @@
-﻿import { Transform } from "../dynamic.js"
+import { Transform } from "../dynamic.js"
 import { Routine } from "../engine.js"
 
-export const mouseButtonLabels = ["MouseLeft", "MouseMiddle", "MouseRight"]
+export const mouseButtonLabels = [ "MouseLeft", "MouseMiddle", "MouseRight" ]
 
 /** User input capture. */
 export class InteractionCentral {

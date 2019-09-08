@@ -1,4 +1,4 @@
-﻿const MILLI_SECONDS = 0.001
+const MILLI_SECONDS = 0.001
 
 /**
  * @typedef {object} Clock
@@ -28,12 +28,11 @@ export class Universe {
 			/** @private */ lastTimestamp: 0
 		}
 
-		/** @private @type {Set<Routine>} */ this.routines = new Set()
-		/** @private @type {Set<LinkDefinition>} */ this.links = new Set()
+		/** @private @type {Map<Routine, Set<Link>>} */ this.routines = new Map()
 	}
 
 	register(/** @type {Routine} */ routine) {
-		this.routines.add(routine)
+		this.routines.set(routine, new Set())
 	}
 
 	unregister(/** @type {Routine} */ routine) {
@@ -41,20 +40,18 @@ export class Universe {
 	}
 
 	add(/** @type {Link} */ link) {
-		this.links.add(link)
-
-		for (const routine of this.routines) {
-			if (routine.test(link)) {
+		for (const [ routine, associatedLinks ] of this.routines) {
+			if (routine.test(link) && !associatedLinks.has(link)) {
+				associatedLinks.add(link)
 				routine.onAdd(link)
 			}
 		}
 	}
 
 	remove(/** @type {Link} */ link) {
-		this.links.delete(link)
-
-		for (const routine of this.routines) {
-			if (routine.test(link)) {
+		for (const [ routine, associatedLinks ] of this.routines) {
+			if (associatedLinks.has(link)) {
+				associatedLinks.delete(link)
 				routine.onRemove(link)
 			}
 		}
@@ -81,8 +78,8 @@ export class Universe {
 		this.clock.time += this.clock.spf
 		this.clock.lastTimestamp = timestamp
 
-		for (const routine of this.routines) {
-			routine.onStep(this.links)
+		for (const [ routine, associatedLinks ] of this.routines) {
+			routine.onStep(associatedLinks)
 		}
 
 		if (this.clock.isRunning) {
@@ -107,6 +104,6 @@ export class Routine {
 	}
 
 	onAdd(/** @type {Link} */ link) {}
-	onStep(/** @type {Link[]} */ links) {}
+	onStep(/** @type {Iterable<Link>} */ links) {}
 	onRemove(/** @type {Link} */ link) {}
 }

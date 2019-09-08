@@ -75,7 +75,7 @@ export class RenderRoutine extends MatchRoutine {
 		canvas.style.height = h + "px";
 	}
 
-	onStep(/** @type {Link[]} */ links) {
+	onStep(/** @type {Iterable<Link>} */ links) {
 		this.graphics.clearRect(0, 0, this.graphics.canvas.width, this.graphics.canvas.height)
 
 		super.onStep(links)
