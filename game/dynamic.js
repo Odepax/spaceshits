@@ -119,11 +119,12 @@ export class BounceOnEdges {
 }
 
 export class DynamicRoutine extends MatchRoutine {
-	constructor(/** @type {import("./engine.js").Clock} */ clock, /** @type {{ width: number, height: number }} */ canvas) {
+	constructor(/** @type {import("./engine.js").Clock} */ clock, /** @type {number} */ canvasWidth, /** @type {number} */ canvasHeight) {
 		super([ Transform, Velocity ])
 
 		this.clock = clock
-		this.canvas = canvas
+		this.canvasWidth = canvasWidth
+		this.canvasHeight = canvasHeight
 	}
 
 	/** @param {{ Transform: Transform, Velocity: Velocity, Acceleration: Acceleration , Friction: Friction, BounceOnEdges : BounceOnEdges }} */
@@ -142,16 +143,16 @@ export class DynamicRoutine extends MatchRoutine {
 			if (Transform.y < 0) {
 				Transform.y = 0
 				Velocity.y *= -BounceOnEdges.speedFactorAfterBounce
-			} else if (this.canvas.height < Transform.y) {
-				Transform.y = this.canvas.height
+			} else if (this.canvasHeight < Transform.y) {
+				Transform.y = this.canvasHeight
 				Velocity.y *= -BounceOnEdges.speedFactorAfterBounce
 			}
 
 			if (Transform.x < 0) {
 				Transform.x = 0
 				Velocity.x *= -BounceOnEdges.speedFactorAfterBounce
-			} else if (this.canvas.width < Transform.x) {
-				Transform.x = this.canvas.width
+			} else if (this.canvasWidth < Transform.x) {
+				Transform.x = this.canvasWidth
 				Velocity.x *= -BounceOnEdges.speedFactorAfterBounce
 			}
 		}

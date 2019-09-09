@@ -27,7 +27,7 @@
 			navigationCentral.register(SettingsPage, () => new SettingsPage(navigationCentral, parameterCentral))
 			navigationCentral.register(QuotationPage, () => new QuotationPage(navigationCentral))
 			navigationCentral.register(LobbyPage, () => new LobbyPage(navigationCentral))
-			navigationCentral.register(ArenaPage, () => new ArenaPage(navigationCentral))
+			navigationCentral.register(ArenaPage, () => new ArenaPage(navigationCentral, parameterCentral))
 
 			navigationCentral.enter(MainPage)
 		</script>

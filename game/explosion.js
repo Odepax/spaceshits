@@ -10,7 +10,7 @@ const { max, log2, log10, PI } = Math
 export class Explosion extends Link {
 	constructor(
 		/** @type {Transform} */ transform,
-		/** @type {import("../asset/style/color.js").Color} */ particleColors,
+		/** @type {import("../asset/style/color.js").Color[]} */ particleColors,
 		radius = 10,
 		ttl = 0.5
 	) {
