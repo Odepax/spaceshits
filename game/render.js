@@ -30,7 +30,6 @@ export class CompositeRenderer extends Renderer {
 	}
 }
 
-// TODO: Refactor with some kind of "SpriteCentral"?
 /** @type{Map<string, ImageBitmap>} */ const bitmaps = new Map()
 
 export class SpriteRenderer extends Renderer {
@@ -44,7 +43,7 @@ export class SpriteRenderer extends Renderer {
 		this.offsetX = offsetX
 		this.offsetY = offsetY
 
-		// TODO: Refactor with some kind of "SpriteCentral"?
+		this.devicePixelRatio = 1.5 * (window.devicePixelRatio || 1)
 		this.sprite = bitmaps.get(spritePath)
 
 		if (!this.sprite) {
@@ -53,7 +52,10 @@ export class SpriteRenderer extends Renderer {
 			image.src = spritePath
 
 			image.decode()
-				.then(() => createImageBitmap(image))
+				.then(() => createImageBitmap(image, {
+					resizeWidth: image.width * this.devicePixelRatio,
+					resizeHeight: image.height * this.devicePixelRatio
+				}))
 				.then(bitmap => {
 					this.sprite = bitmap
 
@@ -66,14 +68,14 @@ export class SpriteRenderer extends Renderer {
 		if (this.sprite) {
 			graphics.drawImage(
 				this.sprite,
-				this.spriteX,
-				this.spriteY,
-				this.spriteWidth,
-				this.spriteHeight,
+				this.spriteX * this.devicePixelRatio,
+				this.spriteY * this.devicePixelRatio,
+				this.spriteWidth * this.devicePixelRatio,
+				this.spriteHeight * this.devicePixelRatio,
 				this.offsetX,
 				this.offsetY,
 				this.spriteWidth,
-				this.spriteHeight,
+				this.spriteHeight
 			)
 		}
 	}
