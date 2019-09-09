@@ -30,8 +30,13 @@ export class CompositeRenderer extends Renderer {
 	}
 }
 
+// TODO: Refactor with some kind of "SpriteCentral"?
+/** @type{Map<string, ImageBitmap>} */ const bitmaps = new Map()
+
 export class SpriteRenderer extends Renderer {
 	constructor(spritePath, spriteX, spriteY, spriteWidth, spriteHeight, offsetX, offsetY) {
+		super()
+
 		this.spriteX = spriteX
 		this.spriteY = spriteY
 		this.spriteWidth = spriteWidth
@@ -39,22 +44,38 @@ export class SpriteRenderer extends Renderer {
 		this.offsetX = offsetX
 		this.offsetY = offsetY
 
-		// TODO: Refactor with some kind of "SpriteCentral".
-		this.sprite = new Image()
+		// TODO: Refactor with some kind of "SpriteCentral"?
+		this.sprite = bitmaps.get(spritePath)
 
-		sprite.src = spritePath
+		if (!this.sprite) {
+			const image = new Image()
+
+			image.src = spritePath
+
+			image.decode()
+				.then(() => createImageBitmap(image))
+				.then(bitmap => {
+					this.sprite = bitmap
+
+					bitmaps.set(spritePath, this.sprite)
+				})
+		}
 	}
 
 	render(/** @type {CanvasRenderingContext2D} */ graphics, /** @type {Link} */ link) {
-		graphics.drawImage(
-			this.sprite,
-			this.spriteX,
-			this.spriteY,
-			this.spriteWidth,
-			this.spriteHeight,
-			this.offsetX,
-			this.offsetY
-		)
+		if (this.sprite) {
+			graphics.drawImage(
+				this.sprite,
+				this.spriteX,
+				this.spriteY,
+				this.spriteWidth,
+				this.spriteHeight,
+				this.offsetX,
+				this.offsetY,
+				this.spriteWidth,
+				this.spriteHeight,
+			)
+		}
 	}
 }
 
