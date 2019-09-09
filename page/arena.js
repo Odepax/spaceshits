@@ -94,7 +94,7 @@ export class ArenaPage extends SpaceshitsPage {
 			),
 
 			new Render(
-				new SpriteRenderer("../asset/sprite.svg", 10, 10, 57, 63, -29, -32)
+				new SpriteRenderer(new URL("../asset/sprite.svg", import.meta.url).href, 10, 10, 57, 63, -29, -32)
 			),
 
 			new Gatling()
@@ -152,7 +152,7 @@ class GatlingRoutine extends MatchRoutine {
 				),
 
 				new Render(
-					new SpriteRenderer("../asset/sprite.svg", 10, 96, 15.3, 14, -8.6, -7)
+					new SpriteRenderer(new URL("../asset/sprite.svg", import.meta.url).href, 10, 96, 15.3, 14, -8.6, -7)
 				)
 			]))
 		}
