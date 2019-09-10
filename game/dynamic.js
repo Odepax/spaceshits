@@ -1,5 +1,5 @@
 import { Vector } from "./math/vector.js"
-import { MatchRoutine } from "./routine.js"
+import { MatchSubRoutine } from "./routine.js"
 import { normalize, shortAngle, longAngle, leftAngle, rightAngle } from "./math/angle.js"
 import { Universe } from "./engine.js"
 
@@ -121,7 +121,7 @@ export class BounceOnEdges {
 
 export class RemoveOnEdges {}
 
-export class DynamicRoutine extends MatchRoutine {
+export class DynamicRoutine extends MatchSubRoutine {
 	constructor(/** @type {Universe} */ universe, /** @type {number} */ canvasWidth, /** @type {number} */ canvasHeight) {
 		super([ Transform, Velocity ])
 

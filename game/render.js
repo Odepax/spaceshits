@@ -1,4 +1,4 @@
-import { MatchRoutine } from "./routine.js"
+import { MatchSubRoutine } from "./routine.js"
 import { Transform } from "./dynamic.js"
 import { Link } from "./engine.js"
 
@@ -81,7 +81,7 @@ export class SpriteRenderer extends Renderer {
 	}
 }
 
-export class RenderRoutine extends MatchRoutine {
+export class RenderRoutine extends MatchSubRoutine {
 	constructor(/** @type {HTMLCanvasElement} */ canvas) {
 		super([ Transform, Render ])
 

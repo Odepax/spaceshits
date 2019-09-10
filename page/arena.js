@@ -1,6 +1,6 @@
 ﻿import { black, white, red, grey, green, blue, teal, pink, purple, orange, silver, yellow } from "../asset/style/color.js"
 import { Universe, Link } from "../game/engine.js"
-import { MatchRoutine } from "../game/routine.js"
+import { MatchSubRoutine } from "../game/routine.js"
 import { Transform, Velocity, Acceleration, Friction, BounceOnEdges, DynamicRoutine } from "../game/dynamic.js"
 import { Collision, CircleCollider, testCollision } from "../game/collision.js"
 import { Render, Renderer, RenderRoutine, SpriteRenderer, CompositeRenderer } from "../game/render.js"
@@ -62,7 +62,7 @@ export class ArenaPage extends SpaceshitsPage {
 		this.universe.register(new RenderRoutine(gameCanvas))
 
 		// FPS counter.
-		this.universe.register(MatchRoutine.infer(({ Debug }) => {
+		this.universe.register(MatchSubRoutine.infer(({ Debug }) => {
 			/** @type {CanvasRenderingContext2D} */ const graphics = gameCanvas.getContext("2d")
 
 			graphics.font = "16px Roboto Mono"

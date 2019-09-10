@@ -9,7 +9,7 @@ const MILLI_SECONDS = 0.001
 
 /**
  * @template T
- * @typedef {{new(): T, prototype: T}} Constructor
+ * @typedef {{new(...parameters: any[]): T, prototype: T, name: string}} Constructor
  */
 
 /**

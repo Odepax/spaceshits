@@ -1,7 +1,7 @@
 ﻿import { Vector } from "./math/vector.js"
 import { angle, within, oneOf } from "./math/random.js"
 import { Ephemeral } from "./ephemeral.js"
-import { MatchRoutine } from "./routine.js"
+import { MatchSubRoutine } from "./routine.js"
 import { Renderer } from "./render.js"
 import { light, silver } from "../asset/style/color.js"
 
@@ -49,7 +49,7 @@ export class ParticleCloudRenderer extends Renderer {
 	}
 }
 
-export class ParticleCloudRoutine extends MatchRoutine {
+export class ParticleCloudRoutine extends MatchSubRoutine {
 	constructor(/** @type {import("./game/engine.js").Clock} */ clock) {
 		super([ ParticleCloud ])
 

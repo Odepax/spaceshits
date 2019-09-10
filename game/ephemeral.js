@@ -1,4 +1,4 @@
-﻿import { MatchRoutine } from "./routine.js"
+﻿import { MatchSubRoutine } from "./routine.js"
 import { Universe } from "./engine.js"
 
 export class Ephemeral {
@@ -11,7 +11,7 @@ export class Ephemeral {
 	get progress() { return 1 - this.remainingTimeToLive / this.timeToLive }
 }
 
-export class EphemeralRoutine extends MatchRoutine {
+export class EphemeralRoutine extends MatchSubRoutine {
 	constructor(/** @type {Universe} */ universe) {
 		super([ Ephemeral ])
 

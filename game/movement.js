@@ -1,5 +1,5 @@
 ﻿import { Transform, Velocity } from "./dynamic.js"
-import { MatchRoutine } from "./routine.js"
+import { MatchSubRoutine } from "./routine.js"
 
 const { sqrt, abs, sign, cos, sin } = Math
 
@@ -29,7 +29,7 @@ export class ForwardChasing {
 	}
 }
 
-export class TargetChasingRoutine extends MatchRoutine {
+export class TargetChasingRoutine extends MatchSubRoutine {
 	constructor(/** @type {import("../engine/engine.js/index.js").Clock} */ clock) {
 		super([ TargetChasing, Transform, Velocity ])
 
@@ -58,7 +58,7 @@ export class TargetChasingRoutine extends MatchRoutine {
 	}
 }
 
-export class TargetFacingRoutine extends MatchRoutine {
+export class TargetFacingRoutine extends MatchSubRoutine {
 	constructor(/** @type {import("./engine.js").Clock} */ clock) {
 		super([ TargetFacing, Transform ])
 
@@ -82,7 +82,7 @@ export class TargetFacingRoutine extends MatchRoutine {
 	}
 }
 
-export class ForwardChasingRoutine extends MatchRoutine {
+export class ForwardChasingRoutine extends MatchSubRoutine {
 	constructor(/** @type {import("./engine.js").Clock} */ clock) {
 		super([ ForwardChasing, Transform, Velocity ])
 

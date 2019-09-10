@@ -14,4 +14,3 @@ export const /** @type {Color} */ silver = "#e0e0e0"
 export const /** @type {Color} */ grey = "#3d3d3d"
 export const /** @type {Color} */ dark = "#242424"
 export const /** @type {Color} */ black = "black"
-

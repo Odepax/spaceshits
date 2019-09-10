@@ -1,4 +1,4 @@
-﻿import { MatchRoutine } from "./routine.js"
+﻿import { MatchSubRoutine } from "./routine.js"
 import { InteractionCentral } from "./central/interaction.js"
 import { ParameterCentral } from "./central/parameter.js"
 import { Acceleration } from "./dynamic.js"
@@ -13,7 +13,7 @@ export class MouseAndKeyboardControl {
 	}
 }
 
-export class MouseAndKeyboardControlRoutine extends MatchRoutine {
+export class MouseAndKeyboardControlRoutine extends MatchSubRoutine {
 	constructor(/** @type {InteractionCentral} */ interactionCentral, /** @type {ParameterCentral} */ parameterCentral) {
 		super([ MouseAndKeyboardControl, Acceleration ])
 

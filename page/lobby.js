@@ -1,6 +1,6 @@
 ﻿import { black, white} from "../asset/style/color.js"
 import { Universe, Link } from "../game/engine.js"
-import { MatchRoutine } from "../game/routine.js"
+import { MatchSubRoutine } from "../game/routine.js"
 import { Transform } from "../game/dynamic.js"
 import { Collision, CircleCollider, testCollision } from "../game/collision.js"
 import { Render, Renderer, RenderRoutine } from "../game/render.js"
@@ -60,7 +60,7 @@ export class LobbyPage extends SpaceshitsPage {
 			new Render(new CircleRenderer())
 		])
 
-		universe.register(MatchRoutine.infer(({ Debug }) => {
+		universe.register(MatchSubRoutine.infer(({ Debug }) => {
 			/** @type {CanvasRenderingContext2D} */ const graphics = gameCanvas.getContext("2d")
 
 			graphics.font = "16px Roboto Mono"

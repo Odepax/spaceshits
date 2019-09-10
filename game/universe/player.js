@@ -5,7 +5,7 @@ import { TargetFacing } from "../movement.js"
 import { Collision, CircleCollider } from "../collision.js"
 import { Render } from "../render.js"
 import { Link, Universe } from "../engine.js"
-import { MatchRoutine } from "../routine.js"
+import { MatchSubRoutine } from "../routine.js"
 import { ParameterCentral } from "../central/parameter.js"
 import { ExplosionOnRemove } from "../explosion.js"
 import { black, grey, yellow, orange } from "../../asset/style/color.js"
@@ -63,7 +63,7 @@ export class GatlingBullet extends Link {
 	}
 }
 
-export class GatlingRoutine extends MatchRoutine {
+export class GatlingRoutine extends MatchSubRoutine {
 	constructor(/** @type {Universe} */ universe, /** @type {InteractionCentral} */ interactions, /** @type {ParameterCentral} */ parameters) {
 		super([ Gatling, Transform ])
 

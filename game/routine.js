@@ -10,10 +10,10 @@ export class SubRoutine extends Routine {
 	onSubStep(/** @type {Link} */ link) {}
 }
 
-export class MatchRoutine extends SubRoutine {
+export class MatchSubRoutine extends SubRoutine {
 	/**
 	 * @example
-	 * MatchRoutine.infer(({ Transform, Velocity, Acceleration = null }) => {
+	 * MatchSubRoutine.infer(({ Transform, Velocity, Acceleration = null }) => {
 	 *    if (Acceleration) {
 	 *       Velocity.x += Acceleration.x * clock.spf
 	 *       Velocity.y += Acceleration.y * clock.spf
@@ -24,7 +24,7 @@ export class MatchRoutine extends SubRoutine {
 	 * })
 	 */
 	static infer(/** @type {(link: Link) => void} */ lambda) {
-		const routine = new MatchRoutine(
+		const routine = new MatchSubRoutine(
 			// Adapted from:
 			// https://stackoverflow.com/a/31194949
 			// https://stackoverflow.com/questions/1007981/how-to-get-function-parameter-names-values-dynamically#answer-31194949
@@ -47,7 +47,7 @@ export class MatchRoutine extends SubRoutine {
 		return routine
 	}
 
-	constructor(/** @type {Function[]} */ requiredTraits = []) {
+	constructor(/** @type {import("./engine.js").Constructor<any>[]} */ requiredTraits = []) {
 		super()
 
 		this.requiredTraits = requiredTraits.map(it => it.name)
