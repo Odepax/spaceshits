@@ -43,7 +43,7 @@ export class SpriteRenderer extends Renderer {
 		this.offsetX = -offsetX
 		this.offsetY = -offsetY
 
-		this.devicePixelRatio = 1.5 * (window.devicePixelRatio || 1)
+		this.spriteResizeRatio = 1.5 * (window.devicePixelRatio || 1)
 		this.sprite = bitmaps.get(spritePath)
 
 		if (!this.sprite) {
@@ -53,8 +53,8 @@ export class SpriteRenderer extends Renderer {
 
 			image.decode()
 				.then(() => createImageBitmap(image, {
-					resizeWidth: image.width * this.devicePixelRatio,
-					resizeHeight: image.height * this.devicePixelRatio
+					resizeWidth: image.width * this.spriteResizeRatio,
+					resizeHeight: image.height * this.spriteResizeRatio
 				}))
 				.then(bitmap => {
 					this.sprite = bitmap
@@ -68,10 +68,10 @@ export class SpriteRenderer extends Renderer {
 		if (this.sprite) {
 			graphics.drawImage(
 				this.sprite,
-				this.spriteX * this.devicePixelRatio,
-				this.spriteY * this.devicePixelRatio,
-				this.spriteWidth * this.devicePixelRatio,
-				this.spriteHeight * this.devicePixelRatio,
+				this.spriteX * this.spriteResizeRatio,
+				this.spriteY * this.spriteResizeRatio,
+				this.spriteWidth * this.spriteResizeRatio,
+				this.spriteHeight * this.spriteResizeRatio,
 				this.offsetX,
 				this.offsetY,
 				this.spriteWidth,
