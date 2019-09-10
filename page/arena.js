@@ -9,7 +9,7 @@ import { NavigationCentral, SpaceshitsPage } from "../game/central/navigation.js
 import { MouseAndKeyboardControl, MouseAndKeyboardControlRoutine } from "../game/control.js"
 import { ParameterCentral } from "../game/central/parameter.js"
 import { TargetFacing, TargetFacingRoutine } from "../game/movement.js"
-import { Explosion, ExplosionOnRemoveRoutine } from "../game/explosion.js"
+import { Explosion, ExplosionOnRemoveRoutine, ExplosionOnAddRoutine } from "../game/explosion.js"
 import { ParticleCloudRoutine } from "../game/particle.js"
 import { EphemeralRoutine } from "../game/ephemeral.js"
 import { GatlingPlayer, GatlingRoutine } from "../game/universe/player.js"
@@ -56,6 +56,7 @@ export class ArenaPage extends SpaceshitsPage {
 		this.universe.register(new TargetFacingRoutine(this.universe.clock))
 		this.universe.register(new DynamicRoutine(this.universe, gameCanvas.offsetWidth, gameCanvas.offsetHeight))
 		this.universe.register(new EphemeralRoutine(this.universe))
+		this.universe.register(new ExplosionOnAddRoutine(this.universe))
 		this.universe.register(new ExplosionOnRemoveRoutine(this.universe))
 		this.universe.register(new ParticleCloudRoutine(this.universe.clock))
 		this.universe.register(new GatlingRoutine(this.universe, interactionCentral, this.parameters))
@@ -84,14 +85,6 @@ export class ArenaPage extends SpaceshitsPage {
 			gameCanvas.offsetWidth * 0.5,
 			gameCanvas.offsetHeight * 0.8,
 			interactionCentral.mousePosition
-		))
-
-		// Player pop-in FX.
-		this.universe.add(new Explosion(
-			new Transform(gameCanvas.offsetWidth * 0.5, gameCanvas.offsetHeight * 0.8),
-			[ black, grey, orange, purple ],
-			300,
-			2
 		))
 
 		this.universe.start()

@@ -7,8 +7,8 @@ import { Render } from "../render.js"
 import { Link, Universe } from "../engine.js"
 import { MatchSubRoutine } from "../routine.js"
 import { ParameterCentral } from "../central/parameter.js"
-import { ExplosionOnRemove } from "../explosion.js"
-import { black, grey, yellow, orange } from "../../asset/style/color.js"
+import { ExplosionOnRemove, ExplosionOnAdd } from "../explosion.js"
+import { black, grey, yellow, orange, purple } from "../../asset/style/color.js"
 import { playerGatlingSprite, playerGatlingBulletSprite } from "../../asset/sprite.js"
 
 export class GatlingPlayer extends Link {
@@ -19,6 +19,8 @@ export class GatlingPlayer extends Link {
 			new Acceleration(),
 			new Friction(),
 			new BounceOnEdges(0.5),
+
+			new ExplosionOnAdd([ black, grey, orange, purple ], 300, 2),
 
 			new MouseAndKeyboardControl(1000, 1000),
 			new TargetFacing({ Transform: mousePosition }, TargetFacing.INSTANT),

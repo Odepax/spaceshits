@@ -65,6 +65,33 @@ export class BlastRenderer extends Renderer {
 	}
 }
 
+export class ExplosionOnAdd {
+	constructor(
+		/** @type {import("../../asset/style/color.js").Color[]} */ particleColors, /** @type {number} */ radius, /** @type {number} */ ttl) {
+		this.particleColors = particleColors
+		this.radius = radius
+		this.ttl = ttl
+	}
+}
+
+export class ExplosionOnAddRoutine extends MatchRoutine {
+	constructor(/** @type {Universe} */ universe) {
+		super([ Transform, ExplosionOnAdd ])
+
+		this.universe = universe
+	}
+
+	/** @param {{ Transform: Transform, ExplosionOnAdd: ExplosionOnAdd }} */
+	onAdd({ Transform, ExplosionOnAdd }) {
+		this.universe.add(new Explosion(
+			Transform.copy,
+			ExplosionOnAdd.particleColors,
+			ExplosionOnAdd.radius,
+			ExplosionOnAdd.ttl
+		))
+	}
+}
+
 export class ExplosionOnRemove {
 	constructor(
 		/** @type {import("../../asset/style/color.js").Color[]} */ particleColors, /** @type {number} */ radius, /** @type {number} */ ttl) {
@@ -76,7 +103,7 @@ export class ExplosionOnRemove {
 
 export class ExplosionOnRemoveRoutine extends MatchRoutine {
 	constructor(/** @type {Universe} */ universe) {
-		super([Transform, ExplosionOnRemove])
+		super([ Transform, ExplosionOnRemove ])
 
 		this.universe = universe
 	}
