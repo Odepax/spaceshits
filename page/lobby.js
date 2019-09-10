@@ -60,7 +60,7 @@ export class LobbyPage extends SpaceshitsPage {
 			new Render(new CircleRenderer())
 		])
 
-		universe.register(MatchSubRoutine.infer(({ Debug }) => {
+		universe.register(MatchSubRoutine.onSubStep(({ Debug }) => {
 			/** @type {CanvasRenderingContext2D} */ const graphics = gameCanvas.getContext("2d")
 
 			graphics.font = "16px Roboto Mono"

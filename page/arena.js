@@ -62,7 +62,7 @@ export class ArenaPage extends SpaceshitsPage {
 		this.universe.register(new RenderRoutine(gameCanvas))
 
 		// FPS counter.
-		this.universe.register(MatchSubRoutine.infer(({ Debug }) => {
+		this.universe.register(MatchSubRoutine.onSubStep(({ Debug }) => {
 			/** @type {CanvasRenderingContext2D} */ const graphics = gameCanvas.getContext("2d")
 
 			graphics.font = "16px Roboto Mono"

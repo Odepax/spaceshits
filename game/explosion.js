@@ -4,7 +4,7 @@ import { Link, Universe } from "./engine.js"
 import { Transform } from "./dynamic.js"
 import { ParticleCloud, ParticleCloudRenderer } from "./particle.js"
 import { silver } from "../asset/style/color.js"
-import { MatchSubRoutine } from "./routine.js"
+import { MatchRoutine } from "./routine.js"
 
 const { max, log2, log10, PI } = Math
 
@@ -74,7 +74,7 @@ export class ExplosionOnRemove {
 	}
 }
 
-export class ExplosionOnRemoveRoutine extends MatchSubRoutine {
+export class ExplosionOnRemoveRoutine extends MatchRoutine {
 	constructor(/** @type {Universe} */ universe) {
 		super([Transform, ExplosionOnRemove])
 
