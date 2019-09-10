@@ -40,8 +40,8 @@ export class SpriteRenderer extends Renderer {
 		this.spriteY = spriteY
 		this.spriteWidth = spriteWidth
 		this.spriteHeight = spriteHeight
-		this.offsetX = offsetX
-		this.offsetY = offsetY
+		this.offsetX = -offsetX
+		this.offsetY = -offsetY
 
 		this.devicePixelRatio = 1.5 * (window.devicePixelRatio || 1)
 		this.sprite = bitmaps.get(spritePath)
