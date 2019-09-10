@@ -1,6 +1,7 @@
 import { Vector } from "./math/vector.js"
 import { MatchRoutine } from "./routine.js"
 import { normalize, shortAngle, longAngle, leftAngle, rightAngle } from "./math/angle.js"
+import { Universe } from "./engine.js"
 
 const { PI, abs, sign, min, cos, sin } = Math
 
@@ -118,26 +119,29 @@ export class BounceOnEdges {
 	}
 }
 
+export class RemoveOnEdges {}
+
 export class DynamicRoutine extends MatchRoutine {
-	constructor(/** @type {import("./engine.js").Clock} */ clock, /** @type {number} */ canvasWidth, /** @type {number} */ canvasHeight) {
+	constructor(/** @type {Universe} */ universe, /** @type {number} */ canvasWidth, /** @type {number} */ canvasHeight) {
 		super([ Transform, Velocity ])
 
-		this.clock = clock
+		this.universe = universe
 		this.canvasWidth = canvasWidth
 		this.canvasHeight = canvasHeight
 	}
 
-	/** @param {{ Transform: Transform, Velocity: Velocity, Acceleration: Acceleration , Friction: Friction, BounceOnEdges : BounceOnEdges }} */
-	onSubStep({ Transform, Velocity, Acceleration = null, Friction = null, BounceOnEdges = null }) {
+	onSubStep(/** @type {{ Transform: Transform, Velocity: Velocity, Acceleration?: Acceleration , Friction?: Friction, BounceOnEdges?: BounceOnEdges, RemoveOnEdges?: RemoveOnEdges }} */ link) {
+		const { Transform, Velocity, Acceleration, Friction, BounceOnEdges, RemoveOnEdges } = link
+
 		if (Acceleration) {
-			Acceleration.drive(Velocity, this.clock.spf)
+			Acceleration.drive(Velocity, this.universe.clock.spf)
 		}
 
 		if (Friction) {
-			Friction.applyTo(Velocity, this.clock.spf)
+			Friction.applyTo(Velocity, this.universe.clock.spf)
 		}
 
-		Velocity.drive(Transform, this.clock.spf)
+		Velocity.drive(Transform, this.universe.clock.spf)
 
 		if (BounceOnEdges) {
 			if (Transform.y < 0) {
@@ -155,6 +159,11 @@ export class DynamicRoutine extends MatchRoutine {
 				Transform.x = this.canvasWidth
 				Velocity.x *= -BounceOnEdges.speedFactorAfterBounce
 			}
+		} else if (RemoveOnEdges && (
+			   Transform.y < 0 || this.canvasHeight < Transform.y
+			|| Transform.x < 0 || this.canvasWidth < Transform.x
+		)) {
+			this.universe.remove(link)
 		}
 	}
 }

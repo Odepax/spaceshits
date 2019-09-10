@@ -1,4 +1,4 @@
-﻿import { black, white, red, grey, teal, purple, orange, silver, yellow } from "../asset/style/color.js"
+﻿import { black, white, red, grey, green, blue, teal, pink, purple, orange, silver, yellow } from "../asset/style/color.js"
 import { Universe, Link } from "../game/engine.js"
 import { MatchRoutine } from "../game/routine.js"
 import { Transform, Velocity, Acceleration, Friction, BounceOnEdges, DynamicRoutine } from "../game/dynamic.js"
@@ -9,9 +9,10 @@ import { NavigationCentral, SpaceshitsPage } from "../game/central/navigation.js
 import { MouseAndKeyboardControl, MouseAndKeyboardControlRoutine } from "../game/control.js"
 import { ParameterCentral } from "../game/central/parameter.js"
 import { TargetFacing, TargetFacingRoutine } from "../game/movement.js"
-import { Explosion } from "../game/explosion.js"
+import { Explosion, ExplosionOnRemoveRoutine } from "../game/explosion.js"
 import { ParticleCloudRoutine } from "../game/particle.js"
 import { EphemeralRoutine } from "../game/ephemeral.js"
+import { GatlingPlayer, GatlingRoutine } from "../game/universe/player.js"
 
 const { PI } = Math
 
@@ -53,11 +54,11 @@ export class ArenaPage extends SpaceshitsPage {
 		this.universe.register(new InteractionRoutine(interactionCentral))
 		this.universe.register(new MouseAndKeyboardControlRoutine(interactionCentral, this.parameters))
 		this.universe.register(new TargetFacingRoutine(this.universe.clock))
-		this.universe.register(new DynamicRoutine(this.universe.clock, gameCanvas.offsetWidth, gameCanvas.offsetHeight))
+		this.universe.register(new DynamicRoutine(this.universe, gameCanvas.offsetWidth, gameCanvas.offsetHeight))
 		this.universe.register(new EphemeralRoutine(this.universe))
+		this.universe.register(new ExplosionOnRemoveRoutine(this.universe))
 		this.universe.register(new ParticleCloudRoutine(this.universe.clock))
 		this.universe.register(new GatlingRoutine(this.universe, interactionCentral, this.parameters))
-		this.universe.register(new RemoveOnEdgesRoutine(this.universe, gameCanvas.offsetWidth, gameCanvas.offsetHeight))
 		this.universe.register(new RenderRoutine(gameCanvas))
 
 		// FPS counter.
@@ -79,33 +80,18 @@ export class ArenaPage extends SpaceshitsPage {
 		]))
 
 		// Player ship.
-		this.universe.add(new Link([
-			new Transform(gameCanvas.offsetWidth * 0.5 , gameCanvas.offsetHeight * 0.8),
-			new Velocity(0, -200),
-			new Acceleration(),
-			new Friction(),
-			new BounceOnEdges(0.5),
-
-			new MouseAndKeyboardControl(1000, 1000),
-			new TargetFacing({ Transform: interactionCentral.mousePosition }, TargetFacing.INSTANT),
-
-			new Collision(
-				new CircleCollider(28)
-			),
-
-			new Render(
-				new SpriteRenderer(new URL("../asset/sprite.svg", import.meta.url).href, 10, 10, 57, 63, 29, 32)
-			),
-
-			new Gatling()
-		]))
+		this.universe.add(new GatlingPlayer(
+			gameCanvas.offsetWidth * 0.5,
+			gameCanvas.offsetHeight * 0.8,
+			interactionCentral.mousePosition
+		))
 
 		// Player pop-in FX.
 		this.universe.add(new Explosion(
 			new Transform(gameCanvas.offsetWidth * 0.5, gameCanvas.offsetHeight * 0.8),
-			[ grey, black, orange, purple ],
+			[ black, grey, orange, purple ],
 			300,
-			3
+			2
 		))
 
 		this.universe.start()
@@ -115,74 +101,5 @@ export class ArenaPage extends SpaceshitsPage {
 		this.universe.stop()
 
 		this.universe = null
-	}
-}
-
-class Gatling {
-	constructor() {
-		this.fireRate = 0.1
-		this.timeEnlapsed = 0
-	}
-}
-
-class GatlingRoutine extends MatchRoutine {
-	constructor(/** @type {Universe} */ universe, /** @type {InteractionCentral} */ interactions, /** @type {ParameterCentral} */ parameters) {
-		super([Gatling, Transform])
-
-		this.universe = universe
-		this.interactions = interactions
-		this.parameters = parameters
-	}
-
-	/** @param {{ Gatling: Gatling, Transform: Transform }} */
-	onSubStep({ Gatling, Transform }) {
-		Gatling.timeEnlapsed += this.universe.clock.spf
-
-		if (Gatling.fireRate < Gatling.timeEnlapsed && this.interactions.isPressed(this.parameters.keys.shoot)) {
-			Gatling.timeEnlapsed = 0
-
-			this.universe.add(new Link([
-				Transform.copy.relativeOffset(35, 0),
-				Velocity.angular(Transform.directionTo(this.interactions.mousePosition), 900),
-
-				new RemoveOnEdges(),
-
-				new Collision(
-					new CircleCollider(7)
-				),
-
-				new Render(
-					new SpriteRenderer(new URL("../asset/sprite.svg", import.meta.url).href, 10, 96, 15.3, 14, 8.6, 7)
-				)
-			]))
-		}
-	}
-}
-
-class RemoveOnEdges {}
-
-class RemoveOnEdgesRoutine extends MatchRoutine {
-	constructor(/** @type {Universe} */ universe, /** @type {number} */ canvasWidth, /** @type {number} */ canvasHeight) {
-		super([ RemoveOnEdges, Transform ])
-
-		this.universe = universe
-		this.canvasWidth = canvasWidth
-		this.canvasHeight = canvasHeight
-	}
-
-	onSubStep(/** @type {{ Transform: Transform }} */ link) {
-		if (
-			   link.Transform.y < 0 || this.canvasHeight < link.Transform.y
-			|| link.Transform.x < 0 || this.canvasWidth < link.Transform.x
-		) {
-			this.universe.remove(link)
-
-			this.universe.add(new Explosion(
-				link.Transform,
-				[ silver, yellow, orange ],
-				10,
-				1
-			))
-		}
 	}
 }

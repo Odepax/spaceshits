@@ -1,9 +1,10 @@
 ﻿import { Ephemeral } from "./ephemeral.js"
 import { Renderer, Render, CompositeRenderer } from "./render.js"
-import { Link } from "./engine.js"
+import { Link, Universe } from "./engine.js"
 import { Transform } from "./dynamic.js"
 import { ParticleCloud, ParticleCloudRenderer } from "./particle.js"
 import { silver } from "../asset/style/color.js"
+import { MatchRoutine } from "./routine.js"
 
 const { max, log2, log10, PI } = Math
 
@@ -61,5 +62,32 @@ export class BlastRenderer extends Renderer {
 		graphics.stroke()
 
 		graphics.globalCompositeOperation = "source-over"
+	}
+}
+
+export class ExplosionOnRemove {
+	constructor(
+		/** @type {import("../../asset/style/color.js").Color[]} */ particleColors, /** @type {number} */ radius, /** @type {number} */ ttl) {
+		this.particleColors = particleColors
+		this.radius = radius
+		this.ttl = ttl
+	}
+}
+
+export class ExplosionOnRemoveRoutine extends MatchRoutine {
+	constructor(/** @type {Universe} */ universe) {
+		super([Transform, ExplosionOnRemove])
+
+		this.universe = universe
+	}
+
+	/** @param {{ Transform: Transform, ExplosionOnRemove: ExplosionOnRemove }} */
+	onRemove({ Transform, ExplosionOnRemove }) {
+		this.universe.add(new Explosion(
+			Transform,
+			ExplosionOnRemove.particleColors,
+			ExplosionOnRemove.radius,
+			ExplosionOnRemove.ttl
+		))
 	}
 }
