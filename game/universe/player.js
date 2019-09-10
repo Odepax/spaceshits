@@ -3,12 +3,13 @@ import { Transform, Velocity, Acceleration, Friction, BounceOnEdges, RemoveOnEdg
 import { MouseAndKeyboardControl } from "../control.js"
 import { TargetFacing } from "../movement.js"
 import { Collision, CircleCollider } from "../collision.js"
-import { Render, SpriteRenderer } from "../render.js"
+import { Render } from "../render.js"
 import { Link, Universe } from "../engine.js"
 import { MatchRoutine } from "../routine.js"
 import { ParameterCentral } from "../central/parameter.js"
 import { ExplosionOnRemove } from "../explosion.js"
-import { silver, yellow, orange } from "../../asset/style/color.js"
+import { black, grey, yellow, orange } from "../../asset/style/color.js"
+import { playerGatlingSprite, playerGatlingBulletSprite } from "../../asset/sprite.js"
 
 export class GatlingPlayer extends Link {
 	constructor(/** @type {number} */ x, /** @type {number} */ y, /** @type {Transform} */ mousePosition) {
@@ -27,7 +28,7 @@ export class GatlingPlayer extends Link {
 			),
 
 			new Render(
-				new SpriteRenderer(new URL("../../asset/sprite.svg", import.meta.url).href, 10, 10, 57, 63, 29, 32)
+				playerGatlingSprite
 			),
 
 			new Gatling()
@@ -49,14 +50,14 @@ export class GatlingBullet extends Link {
 			Velocity.angular(direction, 900),
 
 			new RemoveOnEdges(),
-			new ExplosionOnRemove([ silver, yellow, orange ], 10, 0.5),
+			new ExplosionOnRemove([ black, grey, yellow, orange ], 10, 0.5),
 
 			new Collision(
 				new CircleCollider(7)
 			),
 
 			new Render(
-				new SpriteRenderer(new URL("../../asset/sprite.svg", import.meta.url).href, 10, 96, 15.3, 14, 8.6, 7)
+				playerGatlingBulletSprite
 			)
 		])
 	}
