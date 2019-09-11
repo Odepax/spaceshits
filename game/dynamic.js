@@ -66,6 +66,12 @@ export class Transform extends Vector {
 
 		return this
 	}
+
+	rotate(/** @type {number} */ aOffset, base = this) {
+		this.a = base.a + aOffset
+
+		return this
+	}
 }
 
 export class Force extends Vector {
@@ -96,10 +102,11 @@ export class Friction {
 }
 
 export class Velocity extends Force {
-	static angular(/** @type {number} */ direction, /** @type {number} */ length) {
+	static angular(/** @type {number} */ direction, /** @type {number} */ length, a = 0) {
 		return new Velocity(
 			cos(direction) * length,
-			sin(direction) * length
+			sin(direction) * length,
+			a
 		)
 	}
 }

@@ -8,11 +8,12 @@ import { InteractionCentral, InteractionRoutine } from "../game/central/interact
 import { NavigationCentral, SpaceshitsPage } from "../game/central/navigation.js"
 import { MouseAndKeyboardControl, MouseAndKeyboardControlRoutine } from "../game/control.js"
 import { ParameterCentral } from "../game/central/parameter.js"
-import { TargetFacing, TargetFacingRoutine } from "../game/movement.js"
+import { TargetFacing, TargetFacingRoutine, ForwardChasingRoutine } from "../game/movement.js"
 import { Explosion, ExplosionOnRemoveRoutine, ExplosionOnAddRoutine } from "../game/explosion.js"
 import { ParticleCloudRoutine } from "../game/particle.js"
 import { EphemeralRoutine } from "../game/ephemeral.js"
 import { GatlingPlayer, GatlingRoutine } from "../game/universe/player.js"
+import { CubeQuad, Cube, CubeBlasterRoutine, CubeQuadBlasterRoutine, CubeMissileBlasterRoutine, CubeMissile } from "../game/universe/hostile/cube.js"
 
 const { PI } = Math
 
@@ -51,15 +52,25 @@ export class ArenaPage extends SpaceshitsPage {
 
 		const interactionCentral = new InteractionCentral(gameCanvas)
 
+		const player = new GatlingPlayer(
+			gameCanvas.offsetWidth * 0.5,
+			gameCanvas.offsetHeight * 0.8,
+			interactionCentral.mousePosition
+		)
+
 		this.universe.register(new InteractionRoutine(interactionCentral))
 		this.universe.register(new MouseAndKeyboardControlRoutine(interactionCentral, this.parameters))
 		this.universe.register(new TargetFacingRoutine(this.universe.clock))
+		this.universe.register(new ForwardChasingRoutine(this.universe.clock))
 		this.universe.register(new DynamicRoutine(this.universe, gameCanvas.offsetWidth, gameCanvas.offsetHeight))
 		this.universe.register(new EphemeralRoutine(this.universe))
 		this.universe.register(new ExplosionOnAddRoutine(this.universe))
 		this.universe.register(new ExplosionOnRemoveRoutine(this.universe))
 		this.universe.register(new ParticleCloudRoutine(this.universe.clock))
 		this.universe.register(new GatlingRoutine(this.universe, interactionCentral, this.parameters))
+		this.universe.register(new CubeBlasterRoutine(this.universe))
+		this.universe.register(new CubeQuadBlasterRoutine(this.universe))
+		this.universe.register(new CubeMissileBlasterRoutine(this.universe, player))
 		this.universe.register(new RenderRoutine(gameCanvas))
 
 		// FPS counter.
@@ -81,11 +92,19 @@ export class ArenaPage extends SpaceshitsPage {
 		]))
 
 		// Player ship.
-		this.universe.add(new GatlingPlayer(
-			gameCanvas.offsetWidth * 0.5,
-			gameCanvas.offsetHeight * 0.8,
-			interactionCentral.mousePosition
-		))
+		this.universe.add(player)
+		
+		for (const t of [ 3.0, 3.3, 3.6 ]) {
+			setTimeout(() => this.universe.add(new Cube(gameCanvas.offsetWidth * 0.5, gameCanvas.offsetHeight * 0.2)), t * 1000)
+		}
+		
+		for (const t of [ 12.0, 12.3, 12.6 ]) {
+			setTimeout(() => this.universe.add(new CubeQuad(gameCanvas.offsetWidth * 0.3, gameCanvas.offsetHeight * 0.2)), t * 1000)
+		}
+
+		for (const t of [ 21.0, 21.3, 21.6 ]) {
+			setTimeout(() => this.universe.add(new CubeMissile(gameCanvas.offsetWidth * 0.7, gameCanvas.offsetHeight * 0.2)), t * 1000)
+		}
 
 		this.universe.start()
 	}

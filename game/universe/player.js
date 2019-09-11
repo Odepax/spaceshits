@@ -46,10 +46,10 @@ export class Gatling {
 }
 
 export class GatlingBullet extends Link {
-	constructor(/** @type {Transform} */ transform, /** @type {number} */ direction) {
+	constructor(/** @type {Transform} */ transform) {
 		super([
 			transform,
-			Velocity.angular(direction, 900),
+			Velocity.angular(transform.a, 900),
 
 			new RemoveOnEdges(),
 			new ExplosionOnRemove([ black, grey, yellow, orange ], 10, 0.5),
@@ -81,10 +81,7 @@ export class GatlingRoutine extends MatchSubRoutine {
 		if (Gatling.fireRate < Gatling.timeEnlapsed && this.interactions.isPressed(this.parameters.keys.shoot)) {
 			Gatling.timeEnlapsed = 0
 
-			this.universe.add(new GatlingBullet(
-				Transform.copy.relativeOffset(35, 0),
-				Transform.directionTo(this.interactions.mousePosition)
-			))
+			this.universe.add(new GatlingBullet(Transform.copy.relativeOffset(37, 0)))
 		}
 	}
 }

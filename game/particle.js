@@ -51,15 +51,15 @@ export class ParticleCloudRenderer extends Renderer {
 
 export class ParticleCloudRoutine extends MatchSubRoutine {
 	constructor(/** @type {import("./game/engine.js").Clock} */ clock) {
-		super([ ParticleCloud ])
+		super([ ParticleCloud, Ephemeral ])
 
 		this.clock = clock
 	}
 
-	/** @param {{ ParticleCloud: ParticleCloud }} */
-	onSubStep({ ParticleCloud }) {
+	/** @param {{ ParticleCloud: ParticleCloud, Ephemeral: Ephemeral }} */
+	onSubStep({ ParticleCloud, Ephemeral }) {
 		for (const { position, movement } of ParticleCloud.particles) {
-			movement.l *= 0.98
+			movement.l *= 0.98 // TODO: Add support for time scaling.
 			movement.d += within(-0.4, +0.4)
 
 			position.x += movement.x * this.clock.spf
