@@ -94,6 +94,10 @@ export class Link {
 			this[trait.constructor.name] = trait
 		}
 	}
+
+	set(/** @type {Trait} */ trait) {
+		this[trait.constructor.name] = trait
+	}
 }
 
 /** @typedef {object} Trait */

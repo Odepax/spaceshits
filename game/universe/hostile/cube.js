@@ -1,227 +1,184 @@
-﻿import { Link } from "../../engine.js"
+﻿import { Link, Universe } from "../../engine.js"
 import { ExplosionOnAdd, ExplosionOnRemove } from "../../explosion.js"
 import { Transform, Velocity, BounceOnEdges, RemoveOnEdges } from "../../dynamic.js"
 import { white, light, silver, orange, black, grey, yellow, pink, purple } from "../../../asset/style/color.js"
 import { angle } from "../../math/random.js"
-import { cubeSprite, cubeQuadSprite, cubeMissileSprite, cubeBulletSprite, cubeQuadBulletSprite, cubeMissileBulletSprite } from "../../../asset/sprite.js"
+import { cubeSprite, cubeQuadSprite, cubeMissileSprite, cubeBulletSprite, cubeQuadBulletSprite, cubeMissileBulletSprite, smartTurretBulletSprite } from "../../../asset/sprite.js"
 import { Collision, CircleCollider } from "../../collision.js"
-import { Render } from "../../render.js"
+import { Render, SpriteRenderer } from "../../render.js"
 import { MatchSubRoutine } from "../../routine.js"
 import { TargetFacing, ForwardChasing } from "../../movement.js"
 
 const { PI } = Math
 
-export class Cube extends Link {
-	constructor(/** @type {number} */ x, /** @type {number} */ y) {
+/** @abstract */ class BaseCube extends Link {
+	constructor(
+		/** @type {number} */ x,
+		/** @type {number} */ y,
+		/** @type {import("../../../asset/style/color.js").Color} */ coreColor,
+		/** @type {import("../../../asset/style/color.js").Color} */ extraColor,
+		/** @type {SpriteRenderer} */ sprite,
+		/** @type {import("../../engine.js").Trait} */ blaster
+	) {
 		super([
 			new Transform(x, y),
 			Velocity.angular(angle(), 200, PI / 2),
 
 			new BounceOnEdges(),
-			new ExplosionOnAdd([ white, light, silver, orange ], 50, 1),
-			new ExplosionOnRemove([ orange, black, grey, silver ], 50, 1),
+			new ExplosionOnAdd([ white, light, extraColor, coreColor ], 50, 1),
+			new ExplosionOnRemove([ coreColor, black, grey, extraColor ], 50, 1),
 
 			new Collision(
 				new CircleCollider(21)
 			),
 
 			new Render(
-				cubeSprite
+				sprite
 			),
 
-			new CubeBlaster()
+			blaster
 		])
 	}
 }
 
-export class CubeQuad extends Link {
+export class Cube extends BaseCube {
 	constructor(/** @type {number} */ x, /** @type {number} */ y) {
-		super([
-			new Transform(x, y),
-			Velocity.angular(angle(), 200, PI / 2),
-
-			new BounceOnEdges(),
-			new ExplosionOnAdd([ white, light, orange, yellow ], 50, 1),
-			new ExplosionOnRemove([ yellow, black, grey, orange ], 50, 1),
-
-			new Collision(
-				new CircleCollider(21)
-			),
-
-			new Render(
-				cubeQuadSprite
-			),
-
-			new CubeQuadBlaster()
-		])
+		super(x, y, orange, silver, cubeSprite, new CubeBlaster())
 	}
 }
 
-export class CubeMissile extends Link {
+export class CubeQuad extends BaseCube {
 	constructor(/** @type {number} */ x, /** @type {number} */ y) {
-		super([
-			new Transform(x, y),
-			Velocity.angular(angle(), 200, PI / 2),
-
-			new BounceOnEdges(),
-			new ExplosionOnAdd([ white, light, orange, pink ], 50, 1),
-			new ExplosionOnRemove([ pink, black, grey, orange ], 50, 1),
-
-			new Collision(
-				new CircleCollider(21)
-			),
-
-			new Render(
-				cubeMissileSprite
-			),
-
-			new CubeMissileBlaster()
-		])
+		super(x, y, yellow, orange, cubeQuadSprite, new CubeQuadBlaster())
 	}
 }
 
-export class CubeBlaster {
+export class CubeMissile extends BaseCube {
+	constructor(/** @type {number} */ x, /** @type {number} */ y) {
+		super(x, y, pink, orange, cubeMissileSprite, new CubeMissileBlaster())
+	}
+}
+
+/** @abstract */ class BaseCubeBlaster {
 	constructor() {
 		this.fireRate = 4
 		this.timeEnlapsed = 0
 	}
 }
 
-export class CubeQuadBlaster {
-	constructor() {
-		this.fireRate = 4
-		this.timeEnlapsed = 0
-	}
-}
+export class CubeBlaster extends BaseCubeBlaster {}
+export class CubeQuadBlaster extends BaseCubeBlaster {}
+export class CubeMissileBlaster extends BaseCubeBlaster {}
 
-export class CubeMissileBlaster {
-	constructor() {
-		this.fireRate = 4
-		this.timeEnlapsed = 0
-	}
-}
-
-export class CubeBullet extends Link {
-	constructor(/** @type {Transform} */ transform) {
+/** @abstract */ class BaseCubeBullet extends Link {
+	constructor(
+		/** @type {Transform} */ transform,
+		/** @type {Velocity} */ velocity,
+		/** @type {import("../../../asset/style/color.js").Color} */ headColor,
+		/** @type {import("../../../asset/style/color.js").Color} */ tailColor,
+		/** @type {SpriteRenderer} */ sprite
+	) {
 		super([
 			transform,
-			Velocity.angular(transform.a, 600),
+			velocity,
 
 			new RemoveOnEdges(),
-			new ExplosionOnRemove([ light, silver, white ], 10, 0.5),
+			new ExplosionOnRemove([ light, headColor, tailColor ], 10, 0.5),
 
 			new Collision(
 				new CircleCollider(7)
 			),
 
 			new Render(
-				cubeBulletSprite
+				sprite
 			)
 		])
 	}
 }
 
-export class CubeQuadBullet extends Link {
+export class CubeBullet extends BaseCubeBullet {
 	constructor(/** @type {Transform} */ transform) {
-		super([
-			transform,
-			Velocity.angular(transform.a, 600),
-
-			new RemoveOnEdges(),
-			new ExplosionOnRemove([ light, orange, yellow ], 10, 0.5),
-
-			new Collision(
-				new CircleCollider(7)
-			),
-
-			new Render(
-				cubeQuadBulletSprite
-			)
-		])
+		super(transform, Velocity.angular(transform.a, 600), white, silver, cubeBulletSprite)
 	}
 }
 
-export class CubeMissileBullet extends Link {
+export class CubeQuadBullet extends BaseCubeBullet {
+	constructor(/** @type {Transform} */ transform) {
+		super(transform, Velocity.angular(transform.a, 600), yellow, orange, cubeQuadBulletSprite)
+	}
+}
+
+export class CubeMissileBullet extends BaseCubeBullet {
 	constructor(/** @type {Transform} */ transform, /** @type {{ Transform: Transform }} */ target) {
-		super([
-			transform,
-			new Velocity(),
-			new TargetFacing(target, TargetFacing.SMOOTH, PI),
-			new ForwardChasing(600),
+		super(transform, new Velocity(), pink, purple, cubeMissileBulletSprite)
 
-			new RemoveOnEdges(),
-			new ExplosionOnRemove([ light, purple, pink ], 10, 0.5),
-
-			new Collision(
-				new CircleCollider(7)
-			),
-
-			new Render(
-				cubeMissileBulletSprite
-			)
-		])
+		this.set(new TargetFacing(target, TargetFacing.SMOOTH, PI))
+		this.set(new ForwardChasing(600))
 	}
 }
 
-export class CubeBlasterRoutine extends MatchSubRoutine {
-	constructor(/** @type {Universe} */ universe) {
-		super([ Transform, CubeBlaster ])
+/** @abstract */ class BaseCubeBlasterRoutine extends MatchSubRoutine {
+	constructor(
+		/** @type {Universe} */ universe,
+		/** @type {import("../../engine.js").Constructor<BaseCubeBlaster>} */ blasterType
+	) {
+		super([ Transform, blasterType ])
 
 		this.universe = universe
+		this.blasterType = blasterType
 	}
 
-	/** @param {{ CubeBlaster: CubeBlaster, Transform: Transform }} */
-	onSubStep({ CubeBlaster, Transform }) {
-		CubeBlaster.timeEnlapsed += this.universe.clock.spf
+	onSubStep(/** @type {{ Transform: Transform }} */ link) {
+		const { Transform } = link
+		/** @type {BaseCubeBlaster} */ const blaster = link[this.blasterType.name]
 
-		if (CubeBlaster.fireRate < CubeBlaster.timeEnlapsed) {
-			CubeBlaster.timeEnlapsed = 0
+		blaster.timeEnlapsed += this.universe.clock.spf
 
-			this.universe.add(new CubeBullet(Transform.copy.relativeOffset(0, -35).rotate(-PI / 2)))
-			this.universe.add(new CubeBullet(Transform.copy.relativeOffset(0, +35).rotate(+PI / 2)))
+		if (blaster.fireRate < blaster.timeEnlapsed) {
+			blaster.timeEnlapsed = 0
+
+			this.fire(Transform)
 		}
+	}
+
+	fire(/** @type {Transform} */ transform) {
+		throw (this.constructor.name || BaseCubeBlasterRoutine.name) + "#fire() is not implemented."
 	}
 }
 
-export class CubeQuadBlasterRoutine extends MatchSubRoutine {
+export class CubeBlasterRoutine extends BaseCubeBlasterRoutine {
 	constructor(/** @type {Universe} */ universe) {
-		super([ Transform, CubeQuadBlaster ])
-
-		this.universe = universe
+		super(universe, CubeBlaster)
 	}
 
-	/** @param {{ CubeQuadBlaster: CubeQuadBlaster, Transform: Transform }} */
-	onSubStep({ CubeQuadBlaster, Transform }) {
-		CubeQuadBlaster.timeEnlapsed += this.universe.clock.spf
-
-		if (CubeQuadBlaster.fireRate < CubeQuadBlaster.timeEnlapsed) {
-			CubeQuadBlaster.timeEnlapsed = 0
-
-			this.universe.add(new CubeQuadBullet(Transform.copy.relativeOffset(-35, 0).rotate(PI)))
-			this.universe.add(new CubeQuadBullet(Transform.copy.relativeOffset(+35, 0)))
-			this.universe.add(new CubeQuadBullet(Transform.copy.relativeOffset(0, -35).rotate(-PI / 2)))
-			this.universe.add(new CubeQuadBullet(Transform.copy.relativeOffset(0, +35).rotate(+PI / 2)))
-		}
+	fire(/** @type {Transform} */ transform) {
+		this.universe.add(new CubeBullet(transform.copy.relativeOffset(0, -35).rotate(-PI / 2)))
+		this.universe.add(new CubeBullet(transform.copy.relativeOffset(0, +35).rotate(+PI / 2)))
 	}
 }
 
-export class CubeMissileBlasterRoutine extends MatchSubRoutine {
+export class CubeQuadBlasterRoutine extends BaseCubeBlasterRoutine {
+	constructor(/** @type {Universe} */ universe) {
+		super(universe, CubeQuadBlaster)
+	}
+
+	fire(/** @type {Transform} */ transform) {
+		this.universe.add(new CubeQuadBullet(transform.copy.relativeOffset(-35, 0).rotate(PI)))
+		this.universe.add(new CubeQuadBullet(transform.copy.relativeOffset(+35, 0)))
+		this.universe.add(new CubeQuadBullet(transform.copy.relativeOffset(0, -35).rotate(-PI / 2)))
+		this.universe.add(new CubeQuadBullet(transform.copy.relativeOffset(0, +35).rotate(+PI / 2)))
+	}
+}
+
+export class CubeMissileBlasterRoutine extends BaseCubeBlasterRoutine {
 	constructor(/** @type {Universe} */ universe, /** @type {{ Transform : Transform }} */ player) {
-		super([ Transform, CubeMissileBlaster ])
+		super(universe, CubeMissileBlaster)
 
-		this.universe = universe
 		this.player = player
 	}
 
-	/** @param {{ CubeMissileBlaster: CubeMissileBlaster, Transform: Transform }} */
-	onSubStep({ CubeMissileBlaster, Transform }) {
-		CubeMissileBlaster.timeEnlapsed += this.universe.clock.spf
-
-		if (CubeMissileBlaster.fireRate < CubeMissileBlaster.timeEnlapsed) {
-			CubeMissileBlaster.timeEnlapsed = 0
-
-			this.universe.add(new CubeMissileBullet(Transform.copy.relativeOffset(0, -35).rotate(-PI / 2), this.player))
-			this.universe.add(new CubeMissileBullet(Transform.copy.relativeOffset(0, +35).rotate(+PI / 2), this.player))
-		}
+	fire(/** @type {Transform} */ transform) {
+		this.universe.add(new CubeMissileBullet(transform.copy.relativeOffset(0, -35).rotate(-PI / 2), this.player))
+		this.universe.add(new CubeMissileBullet(transform.copy.relativeOffset(0, +35).rotate(+PI / 2), this.player))
 	}
 }
