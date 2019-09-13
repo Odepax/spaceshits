@@ -1,17 +1,17 @@
-﻿import { Ephemeral } from "./ephemeral.js"
-import { Renderer, Render, CompositeRenderer } from "./render.js"
-import { Link, Universe } from "./engine.js"
-import { Transform } from "./dynamic.js"
+﻿import { Ephemeral } from "../ephemeral.js"
+import { Renderer, Render, CompositeRenderer } from "../render.js"
+import { Link, Universe } from "../engine.js"
+import { Transform } from "../dynamic.js"
 import { ParticleCloud, ParticleCloudRenderer } from "./particle.js"
-import { silver } from "../asset/style/color.js"
-import { MatchRoutine } from "./routine.js"
+import { silver } from "../../asset/style/color.js"
+import { MatchRoutine } from "../routine.js"
 
 const { max, log2, log10, PI } = Math
 
 export class Explosion extends Link {
 	constructor(
 		/** @type {Transform} */ transform,
-		/** @type {import("../asset/style/color.js").Color[]} */ particleColors,
+		/** @type {import("../../asset/style/color.js").Color[]} */ particleColors,
 		radius = 10,
 		ttl = 0.5
 	) {

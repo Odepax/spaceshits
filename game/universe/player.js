@@ -7,7 +7,7 @@ import { Render } from "../render.js"
 import { Link, Universe } from "../engine.js"
 import { MatchSubRoutine } from "../routine.js"
 import { ParameterCentral } from "../central/parameter.js"
-import { ExplosionOnRemove, ExplosionOnAdd } from "../explosion.js"
+import { ExplosionOnRemove, ExplosionOnAdd } from "./explosion.js"
 import { black, grey, yellow, orange, purple } from "../../asset/style/color.js"
 import { playerGatlingSprite, playerGatlingBulletSprite } from "../../asset/sprite.js"
 

@@ -1,9 +1,9 @@
-﻿import { Vector } from "./math/vector.js"
-import { angle, within, oneOf } from "./math/random.js"
-import { Ephemeral } from "./ephemeral.js"
-import { MatchSubRoutine } from "./routine.js"
-import { Renderer } from "./render.js"
-import { light, silver } from "../asset/style/color.js"
+﻿import { Vector } from "../math/vector.js"
+import { angle, within, oneOf } from "../math/random.js"
+import { Ephemeral } from "../ephemeral.js"
+import { MatchSubRoutine } from "../routine.js"
+import { Renderer } from "../render.js"
+import { light, silver } from "../../asset/style/color.js"
 
 const { PI } = Math
 
@@ -16,7 +16,7 @@ export class ParticleCloud {
 		minSpeed = 50,
 		maxSpeed = 100
 	) {
-		/** @type {{ position: Vector, movement: Vector, radius: number, color: import("../asset/style/color.js").Color }[]} */
+		/** @type {{ position: Vector, movement: Vector, radius: number, color: import("../../asset/style/color.js").Color }[]} */
 		this.particles = []
 
 		for (let i = 0; i < particleCount; ++i) {

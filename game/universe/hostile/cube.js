@@ -1,5 +1,5 @@
 ﻿import { Link, Universe } from "../../engine.js"
-import { ExplosionOnAdd, ExplosionOnRemove } from "../../explosion.js"
+import { ExplosionOnAdd, ExplosionOnRemove } from "../explosion.js"
 import { Transform, Velocity, BounceOnEdges, RemoveOnEdges } from "../../dynamic.js"
 import { white, light, silver, orange, black, grey, yellow, pink, purple } from "../../../asset/style/color.js"
 import { angle } from "../../math/random.js"
