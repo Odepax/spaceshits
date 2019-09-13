@@ -12,8 +12,9 @@ import { TargetFacing, TargetFacingRoutine, ForwardChasingRoutine } from "../gam
 import { Explosion, ExplosionOnRemoveRoutine, ExplosionOnAddRoutine } from "../game/universe/explosion.js"
 import { ParticleCloudRoutine } from "../game/universe/particle.js"
 import { EphemeralRoutine } from "../game/ephemeral.js"
-import { GatlingPlayer, GatlingRoutine } from "../game/universe/player.js"
-import { CubeQuad, Cube, CubeBlasterRoutine, CubeQuadBlasterRoutine, CubeMissileBlasterRoutine, CubeMissile } from "../game/universe/hostile/cube.js"
+import { GatlingPlayer, MouseAndKeyboardWeaponControlRoutine } from "../game/universe/player.js"
+import { CubeQuad, Cube, CubeMissile } from "../game/universe/hostile/cube.js"
+import { WeaponRoutine } from "../game/universe/combat.js"
 
 const { PI } = Math
 
@@ -60,6 +61,7 @@ export class ArenaPage extends SpaceshitsPage {
 
 		this.universe.register(new InteractionRoutine(interactionCentral))
 		this.universe.register(new MouseAndKeyboardControlRoutine(interactionCentral, this.parameters))
+		this.universe.register(new MouseAndKeyboardWeaponControlRoutine(interactionCentral, this.parameters))
 		this.universe.register(new TargetFacingRoutine(this.universe.clock))
 		this.universe.register(new ForwardChasingRoutine(this.universe.clock))
 		this.universe.register(new DynamicRoutine(this.universe, gameCanvas.offsetWidth, gameCanvas.offsetHeight))
@@ -67,10 +69,7 @@ export class ArenaPage extends SpaceshitsPage {
 		this.universe.register(new ExplosionOnAddRoutine(this.universe))
 		this.universe.register(new ExplosionOnRemoveRoutine(this.universe))
 		this.universe.register(new ParticleCloudRoutine(this.universe.clock))
-		this.universe.register(new GatlingRoutine(this.universe, interactionCentral, this.parameters))
-		this.universe.register(new CubeBlasterRoutine(this.universe))
-		this.universe.register(new CubeQuadBlasterRoutine(this.universe))
-		this.universe.register(new CubeMissileBlasterRoutine(this.universe, player))
+		this.universe.register(new WeaponRoutine(this.universe))
 		this.universe.register(new RenderRoutine(gameCanvas))
 
 		// FPS counter.
@@ -103,7 +102,7 @@ export class ArenaPage extends SpaceshitsPage {
 		}
 
 		for (const t of [ 21.0, 21.3, 21.6 ]) {
-			setTimeout(() => this.universe.add(new CubeMissile(gameCanvas.offsetWidth * 0.7, gameCanvas.offsetHeight * 0.2)), t * 1000)
+			setTimeout(() => this.universe.add(new CubeMissile(gameCanvas.offsetWidth * 0.7, gameCanvas.offsetHeight * 0.2, player)), t * 1000)
 		}
 
 		this.universe.start()

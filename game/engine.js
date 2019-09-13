@@ -2,6 +2,7 @@ const MILLI_SECONDS = 0.001
 
 /**
  * @typedef {object} Clock
+ *
  * @property {number} spf
  * @property {number} time
  * @property {number} timeFactor
@@ -9,12 +10,12 @@ const MILLI_SECONDS = 0.001
 
 /**
  * @template T
- * @typedef {{new(...parameters: any[]): T, prototype: T, name: string}} Constructor
+ * @typedef {{ new(...parameters: any[]): T, prototype: T, name: string }} Constructor
  */
 
 /**
  * @template T
- * @typedef {{[property: string]: T}} Bag
+ * @typedef {{ [property: string]: T }} Bag
  */
 
 export class Universe {
