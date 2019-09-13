@@ -14,7 +14,7 @@ import { ParticleCloudRoutine } from "../game/universe/particle.js"
 import { EphemeralRoutine } from "../game/ephemeral.js"
 import { GatlingPlayer, MouseAndKeyboardWeaponControlRoutine } from "../game/universe/player.js"
 import { CubeQuad, Cube, CubeMissile } from "../game/universe/hostile/cube.js"
-import { WeaponRoutine } from "../game/universe/combat.js"
+import { WeaponRoutine, HpRoutine, ProjectileDamageRoutine } from "../game/universe/combat.js"
 
 const { PI } = Math
 
@@ -66,10 +66,12 @@ export class ArenaPage extends SpaceshitsPage {
 		this.universe.register(new ForwardChasingRoutine(this.universe.clock))
 		this.universe.register(new DynamicRoutine(this.universe, gameCanvas.offsetWidth, gameCanvas.offsetHeight))
 		this.universe.register(new EphemeralRoutine(this.universe))
+		this.universe.register(new WeaponRoutine(this.universe))
+		this.universe.register(new ProjectileDamageRoutine(this.universe))
+		this.universe.register(new HpRoutine(this.universe))
 		this.universe.register(new ExplosionOnAddRoutine(this.universe))
 		this.universe.register(new ExplosionOnRemoveRoutine(this.universe))
 		this.universe.register(new ParticleCloudRoutine(this.universe.clock))
-		this.universe.register(new WeaponRoutine(this.universe))
 		this.universe.register(new RenderRoutine(gameCanvas))
 
 		// FPS counter.

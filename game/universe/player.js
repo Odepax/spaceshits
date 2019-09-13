@@ -7,10 +7,10 @@ import { Render } from "../render.js"
 import { Link } from "../engine.js"
 import { MatchSubRoutine } from "../routine.js"
 import { ParameterCentral } from "../central/parameter.js"
-import { ExplosionOnAdd } from "./explosion.js"
-import { black, grey, yellow, orange, purple } from "../../asset/style/color.js"
+import { ExplosionOnAdd, ExplosionOnRemove } from "./explosion.js"
+import { black, grey, yellow, orange, purple, light } from "../../asset/style/color.js"
 import { playerGatlingSprite, playerGatlingBulletSprite } from "../../asset/sprite.js"
-import { Bullet, Weapon } from "./combat.js"
+import { Bullet, Weapon, ProjectileTarget, ProjectileTargetTypes, Hp } from "./combat.js"
 
 export class GatlingPlayer extends Link {
 	constructor(/** @type {number} */ x, /** @type {number} */ y, /** @type {Transform} */ mousePosition) {
@@ -24,6 +24,9 @@ export class GatlingPlayer extends Link {
 			new MouseAndKeyboardControl(1000, 1000),
 			new TargetFacing({ Transform: mousePosition }, TargetFacing.INSTANT),
 
+			new Hp(),
+			new ProjectileTarget(ProjectileTargetTypes.player),
+
 			new Weapon(0.1, [
 				{ type: GatlingBullet, x: 37, y: 0, a: 0 }
 			]),
@@ -35,6 +38,7 @@ export class GatlingPlayer extends Link {
 			),
 
 			new ExplosionOnAdd([ black, grey, orange, purple ], 300, 2),
+			new ExplosionOnRemove([ light, grey, orange, purple ], 600, 1),
 			new Render(playerGatlingSprite)
 		])
 	}
@@ -43,7 +47,7 @@ export class GatlingPlayer extends Link {
 
 export class GatlingBullet extends Bullet {
 	constructor(/** @type {Transform} */ transform) {
-		super(transform, 900, Symbol(), 0, 7, [ black, grey, yellow, orange ], playerGatlingBulletSprite)
+		super(transform, 900, ProjectileTargetTypes.hostile, 9, 7, [black, grey, yellow, orange], playerGatlingBulletSprite)
 	}
 }
 

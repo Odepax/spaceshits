@@ -6,7 +6,7 @@ import { angle } from "../../math/random.js"
 import { cubeSprite, cubeQuadSprite, cubeMissileSprite, cubeBulletSprite, cubeQuadBulletSprite, cubeMissileBulletSprite } from "../../../asset/sprite.js"
 import { Collision, CircleCollider } from "../../collision.js"
 import { Render, SpriteRenderer } from "../../render.js"
-import { Weapon, Bullet, Missile } from "../combat.js"
+import { Weapon, Bullet, Missile, ProjectileTargetTypes, Hp, ProjectileTarget } from "../combat.js"
 
 const { PI } = Math
 
@@ -25,15 +25,17 @@ const { PI } = Math
 
 			new BounceOnEdges(),
 			new ExplosionOnAdd([ white, light, extraColor, coreColor ], 50, 1),
-			new ExplosionOnRemove([ coreColor, black, grey, extraColor ], 50, 1),
+			new ExplosionOnRemove([ coreColor, black, grey, extraColor ], 100, 0.5),
+
+			new Hp(),
+			new ProjectileTarget(ProjectileTargetTypes.hostile),
+			blaster,
 
 			new Collision(
 				new CircleCollider(21)
 			),
 
-			new Render(sprite),
-
-			blaster
+			new Render(sprite)
 		])
 	}
 }
@@ -69,18 +71,18 @@ export class CubeMissile extends BaseCube {
 
 export class CubeBullet extends Bullet {
 	constructor(/** @type {Transform} */ transform) {
-		super(transform, 600, Symbol(), 0, 7, [ light, white, silver ], cubeBulletSprite)
+		super(transform, 600, ProjectileTargetTypes.player, 9, 7, [light, white, silver], cubeBulletSprite)
 	}
 }
 
 export class CubeQuadBullet extends Bullet {
 	constructor(/** @type {Transform} */ transform) {
-		super(transform, 600, Symbol(), 0, 7, [ light, yellow, orange ], cubeQuadBulletSprite)
+		super(transform, 600, ProjectileTargetTypes.player, 9, 7, [ light, yellow, orange ], cubeQuadBulletSprite)
 	}
 }
 
 export class CubeMissileBullet extends Missile {
 	constructor(/** @type {Transform} */ transform, /** @type {{ Transform: Transform }} */ target) {
-		super(transform, target, 600, PI, Symbol(), 0, 7, [ light, pink, purple ], cubeMissileBulletSprite)
+		super(transform, target, 600, PI, ProjectileTargetTypes.player, 9, 7, [ light, pink, purple ], cubeMissileBulletSprite)
 	}
 }
