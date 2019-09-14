@@ -1,5 +1,5 @@
 ﻿import { white } from "../asset/style/color.js"
-import { Universe, Link } from "../game/engine.js"
+import { Universe, Link, Routine } from "../game/engine.js"
 import { MatchSubRoutine } from "../game/routine.js"
 import { DynamicRoutine } from "../game/dynamic.js"
 import { RenderRoutine } from "../game/render.js"
@@ -14,6 +14,9 @@ import { EphemeralRoutine } from "../game/ephemeral.js"
 import { GatlingPlayer, MouseAndKeyboardWeaponControlRoutine, PlayerGaugesRoutine } from "../game/universe/player.js"
 import { CubeQuad, Cube, CubeMissile } from "../game/universe/hostile/cube.js"
 import { WeaponRoutine, HpRoutine, ProjectileDamageRoutine } from "../game/universe/combat.js"
+import { LoopRoutine, WaitRoutine, loop, seconds, times, wait, second } from "../game/schedule.js"
+import { DefeatPage } from "./defeat.js"
+import { VictoryPage } from "./victory.js"
 
 class Debug {}
 
@@ -56,6 +59,8 @@ export class ArenaPage extends SpaceshitsPage {
 		this.universe.register(new WeaponRoutine(this.universe))
 		this.universe.register(new ProjectileDamageRoutine(this.universe))
 		this.universe.register(new HpRoutine(this.universe))
+		this.universe.register(new LoopRoutine(this.universe))
+		this.universe.register(new WaitRoutine(this.universe))
 		this.universe.register(new ExplosionOnAddRoutine(this.universe))
 		this.universe.register(new ExplosionOnRemoveRoutine(this.universe))
 		this.universe.register(new ParticleCloudRoutine(this.universe.clock))
@@ -81,26 +86,62 @@ export class ArenaPage extends SpaceshitsPage {
 		]))
 
 		// Player ship.
-		this.universe.add(player)
-		
-		for (const t of [ 3.0, 3.3, 3.6 ]) {
-			setTimeout(() => this.universe.add(new Cube(gameCanvas.offsetWidth * 0.5, gameCanvas.offsetHeight * 0.2)), t * 1000)
-		}
-		
-		for (const t of [ 12.0, 12.3, 12.6 ]) {
-			setTimeout(() => this.universe.add(new CubeQuad(gameCanvas.offsetWidth * 0.3, gameCanvas.offsetHeight * 0.2)), t * 1000)
-		}
+		wait(this.universe, 0.1 * second, () => {
+			this.universe.add(player)
+		})
 
-		for (const t of [ 21.0, 21.3, 21.6 ]) {
-			setTimeout(() => this.universe.add(new CubeMissile(gameCanvas.offsetWidth * 0.7, gameCanvas.offsetHeight * 0.2, player)), t * 1000)
-		}
+		// Hostiles
+		const hostileList = []
+
+		wait(this.universe, 3 * seconds, () => {
+			loop(this.universe, 0.3 * seconds, 3 * times, () => {
+				const hostile = new Cube(gameCanvas.offsetWidth * 0.5, gameCanvas.offsetHeight * 0.2)
+				hostileList.push(hostile)
+				this.universe.add(hostile)
+			})
+		})
+
+		wait(this.universe, 12 * seconds, () => {
+			loop(this.universe, 0.3 * seconds, 3 * times, () => {
+				const hostile = new CubeQuad(gameCanvas.offsetWidth * 0.3, gameCanvas.offsetHeight * 0.2)
+				hostileList.push(hostile)
+				this.universe.add(hostile)
+			})
+		})
+
+		wait(this.universe, 21 * seconds, () => {
+			loop(this.universe, 0.3 * seconds, 3 * times, () => {
+				const hostile = new CubeMissile(gameCanvas.offsetWidth * 0.7, gameCanvas.offsetHeight * 0.2, player)
+				hostileList.push(hostile)
+				this.universe.add(hostile)
+			})
+		})
+
+		// Victory.
+		let hostiles = 9
+		const self = this
+
+		this.universe.register(new (class extends Routine {
+			test(link) {
+				return hostileList.includes(link)
+			}
+
+			onRemove() {
+				if (--hostiles == 0) {
+					wait(self.universe, 3 * seconds, () => self.navigation.enter(VictoryPage))
+				}
+			}
+		})())
+
+		// Defeat.
+		wait(this.universe, () => player.Hp.value < 0, () => {
+			wait(this.universe, 3 * seconds, () => this.navigation.enter(DefeatPage))
+		})
 
 		this.universe.start()
 	}
 
 	onExit() {
 		this.universe.stop()
-
-		this.universe = null
 	}
 }

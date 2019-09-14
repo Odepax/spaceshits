@@ -62,8 +62,6 @@ export class Universe {
 		this.clock.isRunning = true
 
 		requestAnimationFrame(timestamp => {
-			this.clock.spf = (timestamp - this.clock.lastTimestamp) * MILLI_SECONDS * this.clock.timeFactor
-			this.clock.time += this.clock.spf
 			this.clock.lastTimestamp = timestamp
 
 			requestAnimationFrame(timestamp => this.step(timestamp))
