@@ -19,6 +19,8 @@
 			import { QuotationPage } from "./page/quotation.js"
 			import { LobbyPage } from "./page/lobby.js"
 			import { ArenaPage } from "./page/arena.js"
+			import { DefeatPage } from "./page/defeat.js"
+			import { VictoryPage } from "./page/victory.js"
 
 			const parameterCentral = new ParameterCentral()
 			const navigationCentral = new NavigationCentral(navigationHost)
@@ -28,6 +30,8 @@
 			navigationCentral.register(QuotationPage, () => new QuotationPage(navigationCentral))
 			navigationCentral.register(LobbyPage, () => new LobbyPage(navigationCentral))
 			navigationCentral.register(ArenaPage, () => new ArenaPage(navigationCentral, parameterCentral))
+			navigationCentral.register(DefeatPage, () => new DefeatPage(navigationCentral))
+			navigationCentral.register(VictoryPage, () => new VictoryPage(navigationCentral))
 
 			navigationCentral.enter(MainPage)
 		</script>
@@ -57,7 +61,7 @@
 					<strong>Spaceshits</strong> is a 2D top-down space shooter.
 					Please keep in mind that it is still <strong>in development</strong>,
 					far from being <small>&mdash; and will probably never be &mdash;</small> properly optimized,
-					and doesn't have any sound effect yet <small>&mdash; what you I say about balanced weaponry...</small>
+					and doesn't have any sound effect yet <small>&mdash; and what should I say about balanced weaponry...</small>
 				</p>
 				<p style="margin: 20px 0;">
 					As it uses native Js browser imports, as well as Web Components-related CSS hacks,
@@ -183,6 +187,38 @@
 					<canvas id="gameCanvas" class="game-canvas" width="700" height="700" tabindex="1"></canvas>
 					<progress id="hpBar" value="1" class="gauge teal vertical-bottom"></progress>
 				</div>
+			</section>
+		</template>
+
+		<template id="defeat-page">
+			<style>
+				@import "./asset/component/style.css";
+			</style>
+			<h2 class="page-title">
+				<span>Defeat</span>
+				<small>Floor #1, Arena #1</small>
+			</h2>
+			<section class="page-content vertical-stretch stack-horizontal">
+				<button data-on="click:backToMain" class="action-card rectangles pink">
+					<span class="icon left"></span>
+					<span class="label">Sit<br /> And<br /> Cry</span>
+				</button>
+			</section>
+		</template>
+
+		<template id="victory-page">
+			<style>
+				@import "./asset/component/style.css";
+			</style>
+			<h2 class="page-title">
+				<span>Victory</span>
+				<small>Floor #1, Arena #1</small>
+			</h2>
+			<section class="page-content vertical-stretch stack-horizontal">
+				<button data-on="click:continue" class="action-card triangles yellow">
+					<span class="icon right"></span>
+					<span class="label">Continue</span>
+				</button>
 			</section>
 		</template>
 

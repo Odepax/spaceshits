@@ -73,7 +73,7 @@ export class SpaceshitsPage extends HTMLElement {
 
 		shadowDom.appendChild(template)
 
-		/** @type {{[id: string]: HTMLElement}} */ this.$ = {}
+		/** @type {{ [id: string]: HTMLElement }} */ this.$ = {}
 
 		for (const element of shadowDom.querySelectorAll("[id]")) {
 			this.$[element.getAttribute("id")] = element
