@@ -4,7 +4,7 @@ import { MouseAndKeyboardControl } from "../control.js"
 import { TargetFacing } from "../movement.js"
 import { Collision, CircleCollider } from "../collision.js"
 import { Render } from "../render.js"
-import { Link } from "../engine.js"
+import { Link, Routine } from "../engine.js"
 import { MatchSubRoutine } from "../routine.js"
 import { ParameterCentral } from "../central/parameter.js"
 import { ExplosionOnAdd, ExplosionOnRemove } from "./explosion.js"
@@ -47,7 +47,6 @@ export class GatlingPlayer extends Link {
 	}
 }
 
-
 export class GatlingBullet extends Bullet {
 	constructor(/** @type {Transform} */ transform) {
 		super(transform, 900, ProjectileTargetTypes.hostile, 9, 7, [black, grey, yellow, orange], playerGatlingBulletSprite)
@@ -67,5 +66,24 @@ export class MouseAndKeyboardWeaponControlRoutine extends MatchSubRoutine {
 	/** @param {{ Weapon: Weapon }} */
 	onSubStep({ Weapon }) {
 		Weapon.canFire = this.interactionCentral.isPressed(this.parameterCentral.keys.shoot)
+	}
+}
+
+export class PlayerGaugesRoutine extends Routine {
+	constructor(
+		/** @type {{ Hp: Hp, WeaponEnergy: WeaponEnergy }} */ player,
+		/** @type {HTMLProgressElement} */ hpBar,
+		/** @type {HTMLProgressElement} */ energyBar
+	) {
+		super()
+
+		this.player = player
+		this.hpBar = hpBar
+		this.energyBar = energyBar
+	}
+
+	onStep() {
+		this.hpBar.value = this.player.Hp.progress
+		this.energyBar.value = this.player.WeaponEnergy.progress
 	}
 }

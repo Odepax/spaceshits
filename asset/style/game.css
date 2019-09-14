@@ -1,35 +1,20 @@
-.game-canvas-wrapper {
-	padding: 6px;
-}
-
 .game-canvas {
+	box-shadow: 0 0 0 2px var(--BLACK) inset;
 	cursor: crosshair;
 	outline: none;
 }
 
-/* ----------------------------------------------------------------- */
-
-.gauge {}
-
-.gauge progress {
+.gauge {
 	display: block;
+	margin: 0 2px;
 	padding: 2px;
-	width: 108px;
-	height: 18px;
-	background-color: var(--RED);
-	border: 2px solid var(--DARK);
-	outline: 2px solid var(--BLACK);
-	outline-offset: -4px;
+	width: 200px;
+	height: 20px;
+	background-color: var(--DARK);
+	border: 2px solid var(--BLACK);
 }
 
-.gauge progress::-moz-progress-bar { background: var(--ACCENT); }
+.gauge::-moz-progress-bar { background: var(--ACCENT); }
 
-.gauge progress::-webkit-progress-bar { background: transparent; }
-.gauge progress::-webkit-progress-value { background: var(--ACCENT); }
-
-.gauge .title {
-	display: block;
-	text-align: center;
-	text-transform: uppercase;
-	color: var(--LIGHT);
-}
+.gauge::-webkit-progress-bar { background: var(--DARK); }
+.gauge::-webkit-progress-value { background: var(--ACCENT); }

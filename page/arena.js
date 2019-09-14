@@ -1,32 +1,19 @@
-﻿import { black, white, red, grey, green, blue, teal, pink, purple, orange, silver, yellow } from "../asset/style/color.js"
+﻿import { white } from "../asset/style/color.js"
 import { Universe, Link } from "../game/engine.js"
 import { MatchSubRoutine } from "../game/routine.js"
-import { Transform, Velocity, Acceleration, Friction, BounceOnEdges, DynamicRoutine } from "../game/dynamic.js"
-import { Collision, CircleCollider, testCollision } from "../game/collision.js"
-import { Render, Renderer, RenderRoutine, SpriteRenderer, CompositeRenderer } from "../game/render.js"
+import { DynamicRoutine } from "../game/dynamic.js"
+import { RenderRoutine } from "../game/render.js"
 import { InteractionCentral, InteractionRoutine } from "../game/central/interaction.js"
 import { NavigationCentral, SpaceshitsPage } from "../game/central/navigation.js"
-import { MouseAndKeyboardControl, MouseAndKeyboardControlRoutine } from "../game/control.js"
+import { MouseAndKeyboardControlRoutine } from "../game/control.js"
 import { ParameterCentral } from "../game/central/parameter.js"
-import { TargetFacing, TargetFacingRoutine, ForwardChasingRoutine } from "../game/movement.js"
-import { Explosion, ExplosionOnRemoveRoutine, ExplosionOnAddRoutine } from "../game/universe/explosion.js"
+import { TargetFacingRoutine, ForwardChasingRoutine } from "../game/movement.js"
+import { ExplosionOnRemoveRoutine, ExplosionOnAddRoutine } from "../game/universe/explosion.js"
 import { ParticleCloudRoutine } from "../game/universe/particle.js"
 import { EphemeralRoutine } from "../game/ephemeral.js"
-import { GatlingPlayer, MouseAndKeyboardWeaponControlRoutine } from "../game/universe/player.js"
+import { GatlingPlayer, MouseAndKeyboardWeaponControlRoutine, PlayerGaugesRoutine } from "../game/universe/player.js"
 import { CubeQuad, Cube, CubeMissile } from "../game/universe/hostile/cube.js"
 import { WeaponRoutine, HpRoutine, ProjectileDamageRoutine } from "../game/universe/combat.js"
-
-const { PI } = Math
-
-class CircleRenderer extends Renderer {
-	render(/** @type {CanvasRenderingContext2D} */ graphics, /** @type {Link} */ link) {
-		graphics.beginPath()
-		graphics.arc(0, 0, link.Collision.collider.radius, 0, 2 * PI)
-
-		graphics.fillStyle = red
-		graphics.fill()
-	}
-}
 
 class Debug {}
 
@@ -73,6 +60,7 @@ export class ArenaPage extends SpaceshitsPage {
 		this.universe.register(new ExplosionOnRemoveRoutine(this.universe))
 		this.universe.register(new ParticleCloudRoutine(this.universe.clock))
 		this.universe.register(new RenderRoutine(gameCanvas))
+		this.universe.register(new PlayerGaugesRoutine(player, this.$.hpBar, this.$.energyBar))
 
 		// FPS counter.
 		this.universe.register(MatchSubRoutine.onSubStep(({ Debug }) => {

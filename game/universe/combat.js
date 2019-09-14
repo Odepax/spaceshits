@@ -34,6 +34,9 @@ export class ProjectileTarget {
 		this.regen = regen
 		this.value = value
 	}
+
+	get progress() { return this.value / this.max }
+	get decline() { return 1 - this.value / this.max }
 }
 
 export class Hp extends SelfRegeneratingGauge {
@@ -44,7 +47,7 @@ export class Hp extends SelfRegeneratingGauge {
 
 export class WeaponEnergy extends SelfRegeneratingGauge {
 	constructor(/** @type {number} */ shotConsumption) {
-		super(101, 19)
+		super(101, 23)
 
 		this.shotConsumption = shotConsumption
 	}
@@ -134,7 +137,7 @@ export class HpRenderer extends Renderer {
 			this.drawOffscreenSprite()
 
 			this.offscreen.globalCompositeOperation = "color"
-			this.drawRedOverlay((1 - Hp.value / Hp.max) * (1 - ProjectileTarget.timeSinceLastHit / 3))
+			this.drawRedOverlay(Hp.decline * (1 - ProjectileTarget.timeSinceLastHit / 3))
 
 			this.offscreen.globalCompositeOperation = "destination-atop"
 			this.drawOffscreenSprite()

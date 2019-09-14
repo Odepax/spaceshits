@@ -6,7 +6,7 @@
 @import "./style/page.css";
 @import "./style/settings.css";
 @import "./style/dialogue.css";
-/*@import "./style/game.css";*/
+@import "./style/game.css";
 
 .action-card:not(:last-child) {
 	margin-right: 10px;

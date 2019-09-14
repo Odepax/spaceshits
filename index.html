@@ -176,16 +176,13 @@
 		<template id="arena-page">
 			<style>
 				@import "./asset/component/style.css";
-
-				canvas {
-					box-shadow: 0 0 0 2px var(--BLACK) inset;
-					margin-right: 10px;
-					cursor: crosshair;
-					outline: none;
-				}
 			</style>
 			<section class="page-content vertical-stretch stack-horizontal">
-				<canvas id="gameCanvas" width="700" height="700" tabindex="1"></canvas>
+				<div class="stack-horizontal">
+					<progress id="energyBar" value="1" class="gauge orange vertical-bottom"></progress>
+					<canvas id="gameCanvas" class="game-canvas" width="700" height="700" tabindex="1"></canvas>
+					<progress id="hpBar" value="1" class="gauge teal vertical-bottom"></progress>
+				</div>
 			</section>
 		</template>
 
