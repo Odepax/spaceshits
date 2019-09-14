@@ -1,10 +1,11 @@
 ﻿import { Link, Routine, Universe } from "../engine.js"
 import { Velocity, Transform, RemoveOnEdges } from "../dynamic.js"
-import { SpriteRenderer, Render } from "../render.js"
+import { SpriteRenderer, Render, Renderer } from "../render.js"
 import { ExplosionOnRemove } from "./explosion.js"
 import { Collision, CircleCollider, testCollision } from "../collision.js"
 import { TargetFacing, ForwardChasing } from "../movement.js"
 import { MatchSubRoutine } from "../routine.js"
+import { red } from "../../asset/style/color.js"
 
 /** @typedef {Symbol} ProjectileTargetType */
 
@@ -23,6 +24,7 @@ export class Projectile {
 export class ProjectileTarget {
 	constructor(/** @type {ProjectileTargetType} */ type) {
 		this.type = type
+		this.timeSinceLastHit = Number.POSITIVE_INFINITY
 	}
 }
 
@@ -89,18 +91,75 @@ export class ProjectileDamageRoutine extends Routine {
 	}
 
 	onStep() {
-		for (const projectile of this.projectiles) {
-			for (const target of this.targets) {
+		for (const target of this.targets) {
+			target.ProjectileTarget.timeSinceLastHit += this.universe.clock.spf
+
+			for (const projectile of this.projectiles) {
 				if (
 					   projectile.Projectile.targetType == target.ProjectileTarget.type
 					&& testCollision(projectile, target)
 				) {
-					target.Hp.value -= projectile.Projectile.damage
-
 					this.universe.remove(projectile)
+
+					target.Hp.value -= projectile.Projectile.damage
+					target.ProjectileTarget.timeSinceLastHit = 0
 				}
 			}
 		}
+	}
+}
+
+export class HpRenderer extends Renderer {
+	constructor(/** @type {SpriteRenderer} */ sprite) {
+		super()
+
+		this.sprite = sprite
+		this.offscreen = new OffscreenCanvas(sprite.spriteWidth, sprite.spriteHeight).getContext("2d")
+	}
+
+	render(/** @type {CanvasRenderingContext2D} */ graphics, /** @type {{ ProjectileTarget: ProjectileTarget, Hp: Hp }} */ link) {
+		if (link.ProjectileTarget.timeSinceLastHit < 3) {
+			const { ProjectileTarget, Hp } = link
+			const { offsetX, offsetY } = this.sprite
+
+			this.offscreen.globalCompositeOperation = "source-over"
+			this.drawOffscreenSprite()
+
+			this.offscreen.globalCompositeOperation = "color"
+			this.drawRedOverlay((1 - Hp.value / Hp.max) * (1 - ProjectileTarget.timeSinceLastHit / 3))
+
+			this.offscreen.globalCompositeOperation = "destination-atop"
+			this.drawOffscreenSprite()
+
+			graphics.drawImage(this.offscreen.canvas, offsetX, offsetY)
+		} else {
+			this.sprite.render(graphics, link)
+		}
+	}
+
+	/** @private */ drawOffscreenSprite() {
+		const { sprite, spriteX, spriteY, spriteWidth, spriteHeight, spriteResizeRatio } = this.sprite
+
+		this.offscreen.drawImage(
+			sprite,
+			spriteX * spriteResizeRatio,
+			spriteY * spriteResizeRatio,
+			spriteWidth * spriteResizeRatio,
+			spriteHeight * spriteResizeRatio,
+			0,
+			0,
+			spriteWidth,
+			spriteHeight
+		)
+	}
+
+	/** @private */ drawRedOverlay(/** @type {number} */ opacity) {
+		const { spriteWidth, spriteHeight } = this.sprite
+
+		this.offscreen.globalAlpha = opacity
+		this.offscreen.fillStyle = red
+		this.offscreen.fillRect(0, 0, spriteWidth, spriteHeight)
+		this.offscreen.globalAlpha = 1
 	}
 }
 

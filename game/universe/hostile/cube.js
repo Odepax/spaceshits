@@ -6,7 +6,7 @@ import { angle } from "../../math/random.js"
 import { cubeSprite, cubeQuadSprite, cubeMissileSprite, cubeBulletSprite, cubeQuadBulletSprite, cubeMissileBulletSprite } from "../../../asset/sprite.js"
 import { Collision, CircleCollider } from "../../collision.js"
 import { Render, SpriteRenderer } from "../../render.js"
-import { Weapon, Bullet, Missile, ProjectileTargetTypes, Hp, ProjectileTarget } from "../combat.js"
+import { Weapon, Bullet, Missile, ProjectileTargetTypes, Hp, ProjectileTarget, HpRenderer } from "../combat.js"
 
 const { PI } = Math
 
@@ -35,7 +35,9 @@ const { PI } = Math
 				new CircleCollider(21)
 			),
 
-			new Render(sprite)
+			new Render(
+				new HpRenderer(sprite)
+			)
 		])
 	}
 }
