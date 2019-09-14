@@ -40,10 +40,7 @@
 
 		<main id="navigationHost" class="navigation-host"></main>
 
-		<template id="main-page">
-			<style>
-				@import "./asset/component/style.css";
-			</style>
+		<template id="main-page" class="pull-in pull-out stack-vertical">
 			<header role="banner">
 				<aside>
 					<a href="https://github.com/Odepax/spaceshits">GitHub</a>
@@ -64,8 +61,8 @@
 					and doesn't have any sound effect yet <small>&mdash; and what should I say about balanced weaponry...</small>
 				</p>
 				<p style="margin: 20px 0;">
-					As it uses native Js browser imports, as well as Web Components-related CSS hacks,
-					you should expect it to go heavy on the network. Expect long load times and bandwidth feasts.
+					As it uses native Js browser imports, you should expect it to go heavy on the network.
+					Expect long load times and bandwidth feasts.
 				</p>
 				<p>
 					That said, have a good death...
@@ -87,10 +84,7 @@
 			</section>
 		</template>
 
-		<template id="settings-page">
-			<style>
-				@import "./asset/component/style.css";
-			</style>
+		<template id="settings-page" class="pull-in push-out stack-vertical">
 			<h2 class="page-title">
 				<span>Settings</span>
 				<small>Hover Over the Fields and Press Keys to Edit Them</small>
@@ -137,10 +131,7 @@
 			</section>
 		</template>
 
-		<template id="quotation-page">
-			<style>
-				@import "./asset/component/style.css";
-			</style>
+		<template id="quotation-page" class="pull-in pull-out stack-vertical">
 			<section class="page-content vertical-stretch stack-horizontal">
 				<blockquote class="dialogue">
 					<h2 class="source">An Echo from Space</h2>
@@ -149,17 +140,7 @@
 			</section>
 		</template>
 
-		<template id="lobby-page">
-			<style>
-				@import "./asset/component/style.css";
-
-				canvas {
-					box-shadow: 0 0 0 2px var(--BLACK) inset;
-					margin-right: 10px;
-					cursor: crosshair;
-					outline: none;
-				}
-			</style>
+		<template id="lobby-page" class="pull-in pull-out stack-vertical">
 			<h2 class="page-title">
 				<span>New Game</span>
 				<small>WIP</small>
@@ -169,7 +150,7 @@
 					<span class="icon cross"></span>
 					<span class="label">Flee<br /> Arena</span>
 				</button>
-				<canvas id="gameCanvas" width="380" height="380" tabindex="1"></canvas>
+				<canvas id="gameCanvas" class="game-canvas" style="margin-right: 10px;" width="380" height="380" tabindex="1"></canvas>
 				<button data-on="click:fightArena" class="action-card triangles red">
 					<span class="icon right"></span>
 					<span class="label">Fight<br /> Arena<br /> #1</span>
@@ -177,10 +158,7 @@
 			</section>
 		</template>
 
-		<template id="arena-page">
-			<style>
-				@import "./asset/component/style.css";
-			</style>
+		<template id="arena-page" class="pull-in push-out stack-vertical">
 			<section class="page-content vertical-stretch stack-horizontal">
 				<div class="stack-horizontal">
 					<progress id="energyBar" value="1" class="gauge orange vertical-bottom"></progress>
@@ -190,10 +168,7 @@
 			</section>
 		</template>
 
-		<template id="defeat-page">
-			<style>
-				@import "./asset/component/style.css";
-			</style>
+		<template id="defeat-page" class="push-in push-out stack-vertical">
 			<h2 class="page-title">
 				<span>Defeat</span>
 				<small>Floor #1, Arena #1</small>
@@ -206,10 +181,7 @@
 			</section>
 		</template>
 
-		<template id="victory-page">
-			<style>
-				@import "./asset/component/style.css";
-			</style>
+		<template id="victory-page" class="push-in push-out stack-vertical">
 			<h2 class="page-title">
 				<span>Victory</span>
 				<small>Floor #1, Arena #1</small>

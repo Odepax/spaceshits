@@ -66,21 +66,19 @@ export class SpaceshitsPage extends HTMLElement {
 	constructor() {
 		super()
 
-		this.classList.add("page", "pull-in", "push-out", "stack-vertical")
+		this.className = this.constructor[pageTemplate].className
+		this.classList.add("page")
 
-		const template = document.importNode(this.constructor[pageTemplate].content, true)
-		const shadowDom = this.attachShadow({ mode: "closed" })
-
-		shadowDom.appendChild(template)
+		this.appendChild(document.importNode(this.constructor[pageTemplate].content, true))
 
 		/** @type {{ [id: string]: HTMLElement }} */ this.$ = {}
 
-		for (const element of shadowDom.querySelectorAll("[id]")) {
+		for (const element of this.querySelectorAll("[id]")) {
 			this.$[element.getAttribute("id")] = element
 			element.removeAttribute("id")
 		}
 
-		for (const element of shadowDom.querySelectorAll("[data-on]")) {
+		for (const element of this.querySelectorAll("[data-on]")) {
 			const [ event, action ] = element.getAttribute("data-on").split(":")
 
 			element.addEventListener(event, this[action].bind(this), false)
