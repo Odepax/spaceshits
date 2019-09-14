@@ -10,7 +10,7 @@ import { ParameterCentral } from "../central/parameter.js"
 import { ExplosionOnAdd, ExplosionOnRemove } from "./explosion.js"
 import { black, grey, yellow, orange, purple, light } from "../../asset/style/color.js"
 import { playerGatlingSprite, playerGatlingBulletSprite } from "../../asset/sprite.js"
-import { Bullet, Weapon, ProjectileTarget, ProjectileTargetTypes, Hp, HpRenderer } from "./combat.js"
+import { Bullet, Weapon, ProjectileTarget, ProjectileTargetTypes, Hp, HpRenderer, WeaponEnergy } from "./combat.js"
 
 export class GatlingPlayer extends Link {
 	constructor(/** @type {number} */ x, /** @type {number} */ y, /** @type {Transform} */ mousePosition) {
@@ -27,6 +27,7 @@ export class GatlingPlayer extends Link {
 			new Hp(),
 			new ProjectileTarget(ProjectileTargetTypes.player),
 
+			new WeaponEnergy(5),
 			new Weapon(0.1, [
 				{ type: GatlingBullet, x: 37, y: 0, a: 0 }
 			]),

@@ -38,13 +38,21 @@ export class ProjectileTarget {
 
 export class Hp extends SelfRegeneratingGauge {
 	constructor() {
-		super(100)
+		super(101)
+	}
+}
+
+export class WeaponEnergy extends SelfRegeneratingGauge {
+	constructor(/** @type {number} */ shotConsumption) {
+		super(101, 19)
+
+		this.shotConsumption = shotConsumption
 	}
 }
 
 export class HpRoutine extends MatchSubRoutine {
 	constructor(/** @type {Universe} */ universe) {
-		super([Hp])
+		super([ Hp ])
 
 		this.universe = universe
 	}
@@ -189,12 +197,16 @@ export class WeaponRoutine extends MatchSubRoutine {
 		this.universe = universe
 	}
 
-	/** @param {{ Weapon: Weapon, Transform: Transform }} */
-	onSubStep({ Weapon, Transform }) {
+	/** @param {{ Weapon: Weapon, Transform: Transform, WeaponEnergy?: WeaponEnergy }} */
+	onSubStep({ Weapon, Transform, WeaponEnergy = null }) {
 		Weapon.timeEnlapsed += this.universe.clock.spf
 
-		if (Weapon.canFire && Weapon.fireRate < Weapon.timeEnlapsed) {
+		if (Weapon.canFire && Weapon.fireRate < Weapon.timeEnlapsed && (!WeaponEnergy || WeaponEnergy.shotConsumption < WeaponEnergy.value)) {
 			Weapon.timeEnlapsed = 0
+
+			if (WeaponEnergy) {
+				WeaponEnergy.value -= WeaponEnergy.shotConsumption
+			}
 
 			for (const projectile of Weapon.projectiles) {
 				this.universe.add(new projectile.type(
@@ -204,6 +216,10 @@ export class WeaponRoutine extends MatchSubRoutine {
 					projectile.target
 				))
 			}
+		}
+
+		if (WeaponEnergy && WeaponEnergy.value < WeaponEnergy.max) {
+			WeaponEnergy.value += WeaponEnergy.regen * this.universe.clock.spf
 		}
 	}
 }
