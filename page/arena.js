@@ -13,7 +13,7 @@ import { ParticleCloudRoutine } from "../game/universe/particle.js"
 import { EphemeralRoutine } from "../game/ephemeral.js"
 import { GatlingPlayer, MouseAndKeyboardWeaponControlRoutine, PlayerGaugesRoutine } from "../game/universe/player.js"
 import { CubeQuad, Cube, CubeMissile } from "../game/universe/hostile/cube.js"
-import { WeaponRoutine, HpRoutine, ProjectileDamageRoutine } from "../game/universe/combat.js"
+import { WeaponRoutine, HpRoutine, ProjectileDamageRoutine, RammingImpactDamageRoutine } from "../game/universe/combat.js"
 import { LoopRoutine, WaitRoutine, loop, seconds, times, wait, second } from "../game/schedule.js"
 import { DefeatPage } from "./defeat.js"
 import { VictoryPage } from "./victory.js"
@@ -58,6 +58,7 @@ export class ArenaPage extends SpaceshitsPage {
 		this.universe.register(new EphemeralRoutine(this.universe))
 		this.universe.register(new WeaponRoutine(this.universe))
 		this.universe.register(new ProjectileDamageRoutine(this.universe))
+		this.universe.register(new RammingImpactDamageRoutine(this.universe))
 		this.universe.register(new HpRoutine(this.universe))
 		this.universe.register(new LoopRoutine(this.universe))
 		this.universe.register(new WaitRoutine(this.universe))
@@ -65,6 +66,8 @@ export class ArenaPage extends SpaceshitsPage {
 		this.universe.register(new ExplosionOnRemoveRoutine(this.universe))
 		this.universe.register(new ParticleCloudRoutine(this.universe.clock))
 		this.universe.register(new RenderRoutine(gameCanvas))
+
+		// TODO: Implement with a renderer?
 		this.universe.register(new PlayerGaugesRoutine(player, this.$.hpBar, this.$.energyBar))
 
 		// FPS counter.

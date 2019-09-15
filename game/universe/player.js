@@ -10,7 +10,7 @@ import { ParameterCentral } from "../central/parameter.js"
 import { ExplosionOnAdd, ExplosionOnRemove } from "./explosion.js"
 import { black, grey, yellow, orange, purple, light } from "../../asset/style/color.js"
 import { playerGatlingSprite, playerGatlingBulletSprite } from "../../asset/sprite.js"
-import { Bullet, Weapon, ProjectileTarget, ProjectileTargetTypes, Hp, HpRenderer, WeaponEnergy } from "./combat.js"
+import { Bullet, Weapon, ProjectileTarget, DamageTargetTypes, Hp, HpRenderer, WeaponEnergy, RammingImpact, RammingImpactTarget } from "./combat.js"
 
 export class GatlingPlayer extends Link {
 	constructor(/** @type {number} */ x, /** @type {number} */ y, /** @type {Transform} */ mousePosition) {
@@ -25,12 +25,14 @@ export class GatlingPlayer extends Link {
 			new TargetFacing({ Transform: mousePosition }, TargetFacing.INSTANT),
 
 			new Hp(),
-			new ProjectileTarget(ProjectileTargetTypes.player),
+			new ProjectileTarget(DamageTargetTypes.player),
+			new RammingImpactTarget(DamageTargetTypes.player),
 
 			new WeaponEnergy(5),
 			new Weapon(0.1, [
 				{ type: GatlingBullet, x: 37, y: 0, a: 0 }
 			]),
+			new RammingImpact(DamageTargetTypes.hostile, 23),
 
 			new MouseAndKeyboardWeaponControl(),
 
@@ -49,7 +51,7 @@ export class GatlingPlayer extends Link {
 
 export class GatlingBullet extends Bullet {
 	constructor(/** @type {Transform} */ transform) {
-		super(transform, 900, ProjectileTargetTypes.hostile, 9, 7, [black, grey, yellow, orange], playerGatlingBulletSprite)
+		super(transform, 900, DamageTargetTypes.hostile, 9, 7, [black, grey, yellow, orange], playerGatlingBulletSprite)
 	}
 }
 

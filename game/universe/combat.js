@@ -5,26 +5,27 @@ import { ExplosionOnRemove } from "./explosion.js"
 import { Collision, CircleCollider, testCollision } from "../collision.js"
 import { TargetFacing, ForwardChasing } from "../movement.js"
 import { MatchSubRoutine } from "../routine.js"
-import { red } from "../../asset/style/color.js"
+import { red, white, silver, grey, black } from "../../asset/style/color.js"
+import { ParticleCloudRenderer, ParticleCloud } from "./particle.js"
+import { Ephemeral } from "../ephemeral.js"
 
-/** @typedef {Symbol} ProjectileTargetType */
+/** @typedef {Symbol} DamageTargetType */
 
-export const ProjectileTargetTypes = {
-	player: Symbol(),
-	hostile: Symbol()
+export const DamageTargetTypes = {
+	/** @type {DamageTargetType} */ player: Symbol(),
+	/** @type {DamageTargetType} */ hostile: Symbol()
 }
 
 export class Projectile {
-	constructor(/** @type {ProjectileTargetType} */ targetType, /** @type {number} */ damage) {
+	constructor(/** @type {DamageTargetType} */ targetType, /** @type {number} */ damage) {
 		this.targetType = targetType
 		this.damage = damage
 	}
 }
 
 export class ProjectileTarget {
-	constructor(/** @type {ProjectileTargetType} */ type) {
+	constructor(/** @type {DamageTargetType} */ type) {
 		this.type = type
-		this.timeSinceLastHit = Number.POSITIVE_INFINITY
 	}
 }
 
@@ -42,6 +43,8 @@ export class ProjectileTarget {
 export class Hp extends SelfRegeneratingGauge {
 	constructor() {
 		super(101)
+
+		this.timeSinceLastHit = Number.POSITIVE_INFINITY
 	}
 }
 
@@ -103,7 +106,7 @@ export class ProjectileDamageRoutine extends Routine {
 
 	onStep() {
 		for (const target of this.targets) {
-			target.ProjectileTarget.timeSinceLastHit += this.universe.clock.spf
+			target.Hp.timeSinceLastHit += this.universe.clock.spf
 
 			for (const projectile of this.projectiles) {
 				if (
@@ -113,7 +116,7 @@ export class ProjectileDamageRoutine extends Routine {
 					this.universe.remove(projectile)
 
 					target.Hp.value -= projectile.Projectile.damage
-					target.ProjectileTarget.timeSinceLastHit = 0
+					target.Hp.timeSinceLastHit = 0
 				}
 			}
 		}
@@ -129,15 +132,15 @@ export class HpRenderer extends Renderer {
 	}
 
 	render(/** @type {CanvasRenderingContext2D} */ graphics, /** @type {{ ProjectileTarget: ProjectileTarget, Hp: Hp }} */ link) {
-		if (link.ProjectileTarget.timeSinceLastHit < 3) {
-			const { ProjectileTarget, Hp } = link
+		if (link.Hp.timeSinceLastHit < 3) {
+			const { Hp } = link
 			const { offsetX, offsetY } = this.sprite
 
 			this.offscreen.globalCompositeOperation = "source-over"
 			this.drawOffscreenSprite()
 
 			this.offscreen.globalCompositeOperation = "color"
-			this.drawRedOverlay(Hp.decline * (1 - ProjectileTarget.timeSinceLastHit / 3))
+			this.drawRedOverlay(Hp.decline * (1 - Hp.timeSinceLastHit / 3))
 
 			this.offscreen.globalCompositeOperation = "destination-atop"
 			this.drawOffscreenSprite()
@@ -231,7 +234,7 @@ export /** @abstract */ class Bullet extends Link {
 	constructor(
 		/** @type {Transform} */ transform,
 		/** @type {number} */ speed,
-		/** @type {ProjectileTargetType} */ targetType,
+		/** @type {DamageTargetType} */ targetType,
 		/** @type {number} */ damage,
 		/** @type {number} */ collisionRadius,
 		/** @type {import("../../asset/style/color.js").Color[]} */ explosionColors,
@@ -261,7 +264,7 @@ export /** @abstract */ class Missile extends Bullet {
 		/** @type {{ Transform: Transform }} */ target,
 		/** @type {number} */ speed,
 		/** @type {number} */ rotationSpeed,
-		/** @type {ProjectileTargetType} */ targetType,
+		/** @type {DamageTargetType} */ targetType,
 		/** @type {number} */ damage,
 		/** @type {number} */ collisionRadius,
 		/** @type {import("../../asset/style/color.js").Color[]} */ explosionColors,
@@ -271,5 +274,102 @@ export /** @abstract */ class Missile extends Bullet {
 
 		this.set(new TargetFacing(target, TargetFacing.SMOOTH, rotationSpeed))
 		this.set(new ForwardChasing(speed))
+	}
+}
+
+export class RammingImpact {
+	constructor(/** @type {DamageTargetType} */ targetType, /** @type {number} */ damage) {
+		this.targetType = targetType
+		this.damage = damage
+	}
+}
+
+export class RammingImpactTarget {
+	constructor(/** @type {DamageTargetType} */ type) {
+		this.type = type
+	}
+}
+
+export class RammingImpactDamageRoutine extends Routine {
+	constructor(/** @type {Universe} */ universe) {
+		super()
+
+		this.universe = universe
+	}
+
+	test({ Transform = null, Velocity = null, Collision = null, RammingImpact = null, RammingImpactTarget = null, Hp = null }) {
+		return Transform && Velocity && Collision && (RammingImpact || (RammingImpactTarget && Hp))
+	}
+
+	onStep(/** @type {Iterable<{ Transform: Transform, Velocity: Velocity, Collision: Collision, RammingImpact?: RammingImpact, RammingImpactTarget?: RammingImpactTarget, Hp?: Hp }>} */ links) {
+		links = Array.from(links)
+
+		for (let i = 0; i < links.length; ++i) {
+			/** @type {{ Transform: Transform, Velocity: Velocity, Collision: Collision, RammingImpact?: RammingImpact, RammingImpactTarget?: RammingImpactTarget, Hp?: Hp }} */
+			const a = links[i]
+
+			for (let j = i + 1; j < links.length; ++j) {
+				/** @type {{ Transform: Transform, Velocity: Velocity, Collision: Collision, RammingImpact?: RammingImpact, RammingImpactTarget?: RammingImpactTarget, Hp?: Hp }} */
+				const b = links[j]
+
+				if (testCollision(a, b)) {
+					let collision = false
+
+					if (
+						   a.RammingImpact
+						&& b.RammingImpactTarget
+						&& a.RammingImpact.targetType == b.RammingImpactTarget.type
+					) {
+						collision = true
+
+						b.Hp.value -= a.RammingImpact.damage
+						b.Hp.timeSinceLastHit = 0
+					}
+
+					if (
+						   b.RammingImpact
+						&& a.RammingImpactTarget
+						&& b.RammingImpact.targetType == a.RammingImpactTarget.type
+					) {
+						collision = true
+
+						a.Hp.value -= b.RammingImpact.damage
+						a.Hp.timeSinceLastHit = 0
+					}
+
+					if (collision) {
+						const overlapDistance = a.Collision.collider.radius
+							+ b.Collision.collider.radius
+							- a.Transform.lengthTo(b.Transform)
+
+						const direction = a.Transform.directionTo(b.Transform)
+
+						a.Transform.angularOffset(direction, -overlapDistance / 2)
+						b.Transform.angularOffset(direction, +overlapDistance / 2)
+
+						const formerA = a.Velocity.l
+
+						a.Velocity.d = direction
+						a.Velocity.l = -b.Velocity.l
+
+						b.Velocity.d = direction
+						b.Velocity.l = +formerA
+
+						this.universe.add(new Link([
+							new Transform(
+								(a.Transform.x + b.Transform.x) / 2,
+								(a.Transform.y + b.Transform.y) / 2
+							),
+							new Ephemeral(1),
+							new ParticleCloud([ white, silver, grey, black ], 20, 2, 10, 100, 200),
+							new Render(
+								new ParticleCloudRenderer(),
+								Render.IGNORE_ROTATION
+							)
+						]))
+					}
+				}
+			}
+		}
 	}
 }
