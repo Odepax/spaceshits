@@ -12,67 +12,34 @@
 	height: 100%;
 	box-shadow: 0 0 0 9999px var(--BLACK);
 	overflow: auto;
-	transition-property: top;
-	transition-delay: var(--TRANSITION-TIME);
-	transform: scale(0);
 }
 
 .page.push-in.visible {
-	animation: push-in var(--TRANSITION-TIME) ease-in-out var(--TRANSITION-TIME) forwards;
+	animation: push-in var(--TRANSITION-TIME) ease-in-out;
 }
 
 @keyframes push-in {
 	from {
 		opacity: 0;
-		transform: scale(2);
+		transform: scale(1.2);
 	}
 
 	to {
-		transform: scale(1);
+		transform: unset;
 	}
 }
 
 .page.pull-in.visible {
-	animation: pull-in var(--TRANSITION-TIME) ease-in-out var(--TRANSITION-TIME) forwards;
+	animation: pull-in var(--TRANSITION-TIME) ease-in-out;
 }
 
 @keyframes pull-in {
 	from {
 		opacity: 0;
-		transform: scale(0.5);
+		transform: scale(0.8);
 	}
 
 	to {
-		transform: scale(1);
-	}
-}
-
-.page.push-out.hidden {
-	animation: push-out var(--TRANSITION-TIME) ease-in-out forwards;
-}
-
-@keyframes push-out {
-	from {
-		transform: scale(1);
-	}
-
-	to {
-		opacity: 0;
-		transform: scale(0.5);
-	}
-}
-
-.page.pull-out.hidden {
-	animation: pull-out var(--TRANSITION-TIME) ease-in-out forwards;
-}
-
-@keyframes pull-out {
-	from {
-		transform: scale(1);
-	}
-
-	to {
-		opacity: 0;
-		transform: scale(2);
+		transform: unset;
 	}
 }

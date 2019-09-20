@@ -34,14 +34,11 @@ export class NavigationCentral {
 
 			previousPage.onExit() // 1
 
-			previousPage.addEventListener("animationend", () => { // 2
-				previousPage.onUninstall() // 3
+			// 2: No more animation on page exit.
 
-				this.host.removeChild(previousPage) // 4
-			}, false)
+			previousPage.onUninstall() // 3
 
-			previousPage.classList.add("hidden")
-			previousPage.classList.remove("visible")
+			this.host.removeChild(previousPage) // 4
 		}
 
 		const newPage = this.factories.get(pageContructor)()
