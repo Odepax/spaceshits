@@ -678,6 +678,28 @@ class ShieldRender extends Trait {
 	}
 }
 
+class ExplosionRender extends Trait {
+	onInitialize(color, radius) {
+		this.graphics = this.universe[Global.graphics]
+		this.color = color
+		this.radius = radius
+	}
+
+	onUpdate() {
+		this.graphics.applyTransform(this.link.Transform)
+
+		this.graphics.beginPath()
+		this.graphics.arc(0, 0, this.radius * this.link.Ephemeral.progress, 0, 2 * PI)
+
+		this.graphics.fillStyle = this.color
+		this.graphics.globalAlpha = 1 - this.link.Ephemeral.progress
+		this.graphics.fill()
+		this.graphics.globalAlpha = 1
+
+		this.graphics.resetTransform()
+	}
+}
+
 // -----------------------------------------------------------------
 
 class CubeHealthBarRender extends Trait {
@@ -804,7 +826,7 @@ class PlayerAuxModuleEnergyBarRender extends Trait {
 // -----------------------------------------------------------------
 
 class Projectile extends Link {
-	onInitialize(transform, speed, radius, targetTag, damage) {
+	onInitialize(transform, speed, radius, targetTag, damage, explosionColor) {
 		this.Transform = transform
 
 		this.add(AngularLinearMovement, transform.a, speed)
@@ -813,12 +835,13 @@ class Projectile extends Link {
 
 		this.add(Ephemeral, 2)
 		this.add(InstantRammingDamage, targetTag, damage)
+		this.add(ExplosionOnRemove, explosionColor, radius * 2)
 	}
 }
 
 class GatlingBullet extends Projectile {
 	onInitialize(transform) {
-		super.onInitialize(transform, 1000, 4, Tag.enemy, 10 * this.universe[Global.playerDamageFactor])
+		super.onInitialize(transform, 1000, 4, Tag.enemy, 10 * this.universe[Global.playerDamageFactor], YELLOW)
 
 		this.add(GatlingBulletRender)
 	}
@@ -826,7 +849,7 @@ class GatlingBullet extends Projectile {
 
 class BlasterBullet extends Projectile {
 	onInitialize(transform) {
-		super.onInitialize(transform, 900, 8, Tag.enemy, 20 * this.universe[Global.playerDamageFactor])
+		super.onInitialize(transform, 900, 8, Tag.enemy, 20 * this.universe[Global.playerDamageFactor], BLUE)
 
 		this.add(BlasterBulletRender)
 	}
@@ -834,7 +857,7 @@ class BlasterBullet extends Projectile {
 
 class ShotgunBullet extends Projectile {
 	onInitialize(transform) {
-		super.onInitialize(transform, 800, 4, Tag.enemy, 15 * this.universe[Global.playerDamageFactor])
+		super.onInitialize(transform, 800, 4, Tag.enemy, 15 * this.universe[Global.playerDamageFactor], GREEN)
 
 		this.add(ShotgunBulletRender)
 	}
@@ -842,7 +865,7 @@ class ShotgunBullet extends Projectile {
 
 class CubeBullet extends Projectile {
 	onInitialize(transform) {
-		super.onInitialize(transform, 500, 7, Tag.player, 10)
+		super.onInitialize(transform, 500, 7, Tag.player, 10, ORANGE)
 
 		this.add(CubeBulletRender)
 	}
@@ -850,7 +873,7 @@ class CubeBullet extends Projectile {
 
 class CubeHighSpeedBullet extends Projectile {
 	onInitialize(transform) {
-		super.onInitialize(transform, 500, 7, Tag.player, 20)
+		super.onInitialize(transform, 500, 7, Tag.player, 20, TEAL)
 
 		this.add(CubeHighSpeedBulletRender)
 	}
@@ -858,7 +881,7 @@ class CubeHighSpeedBullet extends Projectile {
 
 class CubeExplosionShard extends Projectile {
 	onInitialize(transform) {
-		super.onInitialize(transform, 600, 6, Tag.player, 10)
+		super.onInitialize(transform, 600, 6, Tag.player, 10, PURPLE)
 
 		this.add(CubeExplosionShardRender)
 	}
@@ -1265,7 +1288,7 @@ class InteractionLogging extends Trait {
 // -----------------------------------------------------------------
 
 class Cube extends Link {
-	onInitialize(x, y, radius = 22, damage = 100, health = 100, maxSpeed = 400) {
+	onInitialize(x, y, explosionColor, radius = 22, damage = 100, health = 100, maxSpeed = 400) {
 		this[Tag.enemy] = true
 
 		this.add(Transform, x, y, rand(-PI, PI))
@@ -1276,12 +1299,13 @@ class Cube extends Link {
 		this.add(ContinuousRammingDamage, Tag.player, damage)
 
 		this.add(Destroyable, health)
+		this.add(ExplosionOnRemove, explosionColor, radius * 2)
 	}
 }
 
 class ZombieCube extends Cube {
 	onInitialize(x, y) {
-		super.onInitialize(x, y)
+		super.onInitialize(x, y, PINK)
 
 		this.add(CubeExplosionOnDeath)
 
@@ -1292,7 +1316,7 @@ class ZombieCube extends Cube {
 
 class AkimboCube extends Cube {
 	onInitialize(x, y) {
-		super.onInitialize(x, y)
+		super.onInitialize(x, y, PURPLE)
 
 		this.add(CubeExplosionOnDeath)
 		this.add(CubeDualBlaster, rand(2, 4))
@@ -1304,7 +1328,7 @@ class AkimboCube extends Cube {
 
 class CrossCube extends Cube {
 	onInitialize(x, y) {
-		super.onInitialize(x, y)
+		super.onInitialize(x, y, BLUE)
 
 		this.add(CubeExplosionOnDeath)
 		this.add(CubeQuadBlaster, rand(2, 4))
@@ -1316,7 +1340,7 @@ class CrossCube extends Cube {
 
 class HighSpeedCube extends Cube {
 	onInitialize(x, y) {
-		super.onInitialize(x, y, 22, 200, 100, 800)
+		super.onInitialize(x, y, ORANGE, 22, 200, 100, 700)
 
 		this.add(CubeHighSpeedBlaster, rand(2, 4))
 
@@ -1327,7 +1351,7 @@ class HighSpeedCube extends Cube {
 
 class SplittingCube extends Cube {
 	onInitialize(x, y) {
-		super.onInitialize(x, y, 33, 100, 200)
+		super.onInitialize(x, y, randBetween(TEAL, GREEN), 33, 100, 200)
 
 		this.add(CubeSplitOnDeath)
 
@@ -1338,7 +1362,7 @@ class SplittingCube extends Cube {
 
 class SplitOffspringCube extends Cube {
 	onInitialize(x, y) {
-		super.onInitialize(x, y, 17, 60)
+		super.onInitialize(x, y, randBetween(TEAL, GREEN), 17, 60)
 
 		this.add(SplitOffspringCubeRender)
 		this.add(CubeHealthBarRender)
@@ -1347,7 +1371,7 @@ class SplitOffspringCube extends Cube {
 
 class CubeFactory extends Cube {
 	onInitialize(x, y) {
-		super.onInitialize(x, y, 48, 150, 300, 300)
+		super.onInitialize(x, y, PINK, 48, 150, 300, 300)
 
 		this.add(CrashCrabProductionLine, rand(4, 6))
 
@@ -1368,9 +1392,31 @@ class CrashCrab extends Link {
 		this.add(ContinuousRammingDamage, Tag.player, damage)
 
 		this.add(Destroyable, health)
+		this.add(ExplosionOnRemove, RED, radius * 2)
 
 		this.add(CrashCrabRender)
 		this.add(CubeHealthBarRender)
+	}
+}
+
+// -----------------------------------------------------------------
+
+class Explosion extends Link {
+	onInitialize({ x, y, a }, color, radius) {
+		this.add(Transform, x, y, a)
+		this.add(Ephemeral, 0.5)
+		this.add(ExplosionRender, color, radius)
+	}
+}
+
+class ExplosionOnRemove extends Trait {
+	onInitialize(color, radius) {
+		this.color = color
+		this.radius = radius
+	}
+
+	onRemoved() {
+		this.universe.add(Explosion, this.link.Transform, this.color, this.radius)
 	}
 }
 
@@ -1437,6 +1483,8 @@ class Player extends Link {
 
 		this.add(PlayerShipRender)
 		this.add(PlayerHealthBarRender, playerHealthGauge)
+
+		this.add(ExplosionOnRemove, TEAL, 200)
 
 		addGun(this)
 		this.add(PlayerWeaponEnergyBarRender, playerWeaponEnergyGauge)
