@@ -1381,7 +1381,7 @@ class CubeFactory extends Cube {
 }
 
 class CrashCrab extends Link {
-	onInitialize(x, y, a, radius = 14, damage = 100, health = 100, maxSpeed = 400) {
+	onInitialize(x, y, a, radius = 14, damage = 100, health = 100, maxSpeed = 300) {
 		this[Tag.enemy] = true
 
 		this.add(Transform, x, y, a)

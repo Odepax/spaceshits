@@ -478,9 +478,18 @@
 			function playLevel(universe, currentLevel) {
 				for (let i = 0; i < currentLevel; ++i) {
 					universe.add(
-						randBetween(ZombieCube, AkimboCube, CrossCube, HighSpeedCube, SplittingCube, CubeFactory),
+						(
+							  currentLevel <  2 ? randBetween(ZombieCube)
+							: currentLevel <  3 ? randBetween(ZombieCube, AkimboCube)
+							: currentLevel <  5 ? randBetween(ZombieCube, AkimboCube, CrossCube)
+							: currentLevel <  7 ? randBetween(            AkimboCube, CrossCube)
+							: currentLevel < 11 ? randBetween(            AkimboCube, CrossCube, HighSpeedCube)
+							: currentLevel < 15 ? randBetween(                        CrossCube, HighSpeedCube, SplittingCube)
+							: currentLevel < 20 ? randBetween(            AkimboCube,                           SplittingCube, CubeFactory)
+							:                     randBetween(                        CrossCube, HighSpeedCube, SplittingCube, CubeFactory)
+						),
 						rand(0, universe[Global.canvas].width),
-						rand(0, universe[Global.canvas].height)
+						rand(0, universe[Global.canvas].height * 0.4)
 					)
 				}
 
