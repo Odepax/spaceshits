@@ -1271,17 +1271,11 @@ class InteractionLogging extends Trait {
 		const releasedKeys = Array.from(this.userInteraction.releasedKeys).join(", ")
 
 		this.graphics.fillStyle = WHITE
-		this.graphics.font = "12pt Source Code Pro"
+		this.graphics.font = "12pt monospace"
 
 		let i = 0
-		this.graphics.fillText(`Mouse position ........... ( ${mousePosition.x}, ${mousePosition.y} )`, 50, 50 + ++i * 25)
-		this.graphics.fillText(`Currently pressed keys ... ${currentlyPressedKeys}`, 50, 50 + ++i * 25)
-		this.graphics.fillText(`Recently pressed keys .... ${pressedKeys}`, 50, 50 + ++i * 25)
-		this.graphics.fillText(`Recently released keys ... ${releasedKeys}`, 50, 50 + ++i * 25)
-		this.graphics.fillText(`Last universe tick was ... ${this.universe.tickTime}`, 50, 50 + ++i * 25)
-		this.graphics.fillText(`FPS ...................... ${~~(0.5 + 1 / this.universe.tickTime)}`, 50, 50 + ++i * 25)
-		this.graphics.fillText(`Link count ............... ${this.universe.links.size}`, 50, 50 + ++i * 25)
-		this.graphics.fillText(`Trait count .............. ${this.universe.traits.size}`, 50, 50 + ++i * 25)
+		this.graphics.fillText(`${~~(0.5 + 1 / this.universe.tickTime)} FPS`, 50, 50 + ++i * 25)
+		this.graphics.fillText(`${currentlyPressedKeys}`, 50, 50 + ++i * 25)
 	}
 }
 
