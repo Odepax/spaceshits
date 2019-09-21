@@ -1,3 +1,20 @@
+a {
+	display: inline-block;
+	min-width: 120px;
+	height: 50px;
+	background: var(--DARK);
+	text-align: center;
+	line-height: 50px;
+	text-decoration: none;
+	color: var(--WHITE);
+	transition: all 0.3s ease-in-out;
+}
+
+a:hover,
+a:focus {
+	background: var(--GREY);
+}
+
 button {
 	min-width: 120px;
 	height: 50px;
@@ -9,8 +26,14 @@ button {
 	box-shadow: 0 2px black;
 	color: var(--WHITE);
 	cursor: pointer;
-	--TRANSITION-TIME: 0.3s;
-	transition: all var(--TRANSITION-TIME) ease-in-out;
+	transition: all 0.3s ease-in-out;
+}
+
+button:hover,
+button:focus {
+	background-image: url("./button-background-hover.svg");
+	box-shadow: 0 4px black;
+	color: var(--BLACK);
 }
 
 button.small {
@@ -38,10 +61,3 @@ button.light { background-position-y: -160px; }
 button.purple,
 button.pink,
 button.blue { background-position-y: -300px; }
-
-button:hover,
-button:focus {
-	background-image: url("./button-background-hover.svg");
-	box-shadow: 0 4px black;
-	color: var(--BLACK);
-}

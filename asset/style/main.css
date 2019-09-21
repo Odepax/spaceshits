@@ -1,0 +1,30 @@
+﻿header[role="banner"] {
+	padding-right: 40px;
+	background: var(--BLACK);
+}
+
+header[role="banner"] h1 img {
+	width: 64px;
+	height: auto;
+	margin-bottom: 20px;
+}
+
+header[role="banner"] h1 span {
+	display: block;
+	font-size: 30px;
+}
+
+header[role="banner"] h1 small {
+	display: block;
+	margin-top: 10px;
+	text-align: right;
+	font-size: 16px;
+}
+
+nav > *:not(:first-child) {
+	margin-top: 20px;
+}
+
+nav > a:first-of-type {
+	margin-top: 90px;
+}

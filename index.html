@@ -40,48 +40,30 @@
 
 		<main id="navigationHost" class="navigation-host"></main>
 
-		<template id="main-page" class="pull-in pull-out stack-vertical">
-			<header role="banner">
-				<aside>
-					<a href="https://github.com/Odepax/spaceshits">GitHub</a>
-				</aside>
-				<div class="stack-horizontal">
-					<img src="./asset/logo.svg" style="width: 64px; height: 64px; margin-right: 10px;" alt="Spaceshits' logo" />
-					<h1>
+		<template id="main-page" class="pull-in pull-out stack-horizontal">
+			
+			<header role="banner" class="vertical-stretch stack-horizontal" style="width: 50%;">
+				<div class="stack-vertical horizontal-stretch">
+					<h1 class="horizontal-right">
+						<img src="./asset/logo.svg" alt="Spaceshits' logo" />
 						<span>Spaceshits</span>
 						<small>Harlequin</small>
 					</h1>
 				</div>
 			</header>
-			<section class="horizontal-center" style="width: 620px; margin-top: 20px;">
-				<p>
-					<strong>Spaceshits</strong> is a 2D top-down space shooter.
-					Please keep in mind that it is still <strong>in development</strong>,
-					far from being <small>&mdash; and will probably never be &mdash;</small> properly optimized,
-					and doesn't have any sound effect yet <small>&mdash; and what should I say about balanced weaponry...</small>
-				</p>
-				<p style="margin: 20px 0;">
-					As it uses native Js browser imports, you should expect it to go heavy on the network.
-					Expect long load times and bandwidth feasts.
-				</p>
-				<p>
-					That said, have a good death...
-				</p>
+			
+			<section class="vertical-stretch stack-horizontal" style="width: 50%;">
+				<div class="stack-vertical horizontal-stretch">
+					<nav class="page-content horizontal-left stack-vertical">
+						<button data-on="click:startNewGame" class="red">New</button>
+						<!--<button data-on="click:resumeLastGame" class="green">Resume</button>-->
+						<button data-on="click:editSettings" class="blue">Settings</button>
+						<a href="https://github.com/Odepax/spaceshits">GitHub</a>
+						<!--<a href="https://odepax.itch.io/spaceshits-harlequin">Itch</a>-->
+					</nav>
+				</div>
 			</section>
-			<section class="page-content vertical-stretch stack-horizontal">
-				<button data-on="click:startNewGame" class="action-card triangles red">
-					<span class="icon plus"></span>
-					<span class="label">Start<br /> New<br /> Game</span>
-				</button>
-				<button data-on="click:resumeLastGame" class="action-card rectangles teal">
-					<span class="icon right"></span>
-					<span class="label">Resume<br /> Last<br /> Game</span>
-				</button>
-				<button data-on="click:editSettings" class="action-card circles purple">
-					<span class="icon gear"></span>
-					<span class="label">Edit<br /> Settings</span>
-				</button>
-			</section>
+
 		</template>
 
 		<template id="settings-page" class="pull-in stack-vertical">
