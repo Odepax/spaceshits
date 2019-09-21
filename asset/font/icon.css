@@ -17,14 +17,17 @@
 	font-style: normal;
 	font-size: var(--ICON-SIZE);
 	text-transform: none;
-	line-height: var(--ICON-SIZE);
+	line-height: calc(var(--ICON-SIZE) + 8px);
 }
+
+.icon.up::before { content: "^"; }
+.icon.left::before { content: "<"; }
+.icon.right::before { content: ">"; }
+.icon.down::before { content: "v"; }
 
 .icon.plus::before { content: "+"; }
 .icon.cross::before { content: "x"; }
 .icon.gear::before { content: "*"; }
 .icon.pause::before { content: "P"; }
-.icon.up::before { content: "^"; }
-.icon.left::before { content: "<"; }
-.icon.right::before { content: ">"; }
-.icon.down::before { content: "v"; }
+
+.icon.gatling::before { content: "G"; }
