@@ -1,228 +1,55 @@
-Roadmap
--- // -----------------------------------------------------------------
+Arena Stage Types
+---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 
-[OK] Colliders
-	[OK] Rectangle to rectangle
-	[OK] Circle to circle
-	[OK] Convex polygon to convex polygon
-	[OK] Convex polygon to circle
-	[OK] Include rotation
-	[OK] Quick collision, based on rectangle/rectangle, but without rotation.
-[OK] First graphics prototypes
-[OK] First gameplay
-[OK] Enemies
-	[OK] Zombie cube
-	[OK] Akimbo cube
-	[OK] Cross-gun cube
-	[OK] High-speed cube
-	[OK] Splitting cube
-	[OK] Factory cube
-		[OK] Factory
-		[OK] Crash crab
-[OK] Weapons
-	[OK] Energy Gauge
-	[OK] Gatling
-	[OK] Blaster
-	[OK] Shotgun
-[OK] Special capacities
-	[OK] Energy Gauge
-	[OK] Blink teleport
-	[OK] Restauration
-	[OK] Shield
-[OK] Out-game interface
-	[OK] Graphic chart
-	[OK] Application's screens
-		[OK] Main menu
-		[OK] Settings
-		[OK] In-game
-			[OK] Pause
-		[OK] Run lobby
-		[OK] Defeat
-		[OK] Victory
-[  ] Leveling
-	[OK] Per-level enemies builds
-	[OK] Player upgrades
-		[OK] HP cap
-		[OK] Raw damage
-		[OK] Fire rate
-		[OK] Energy cap
-		[OK] Energy regen
-		[OK] Aux cap
-		[OK] Aux regen
-		[OK] Change weapon for the Gatling
-		[OK] Change weapon for the Blaster
-		[OK] Change weapon for the Shotgun
-		[OK] Change aux module for Shield
-		[OK] Change aux module for Blink
-		[OK] Change aux module for Restauration
-	[  ] Enemies upgrades
-		[  ] Health
-		[  ] Damage
-		[  ] Speed
-		[  ] Fire rate
-	[OK] Display current run progress recap on application screens
-		[OK] Run lobby
-		[OK] Reward
-		[OK] Defeat
-		[OK] Victory
-	[  ] Memory of player progress
-		> How to backup the universe?
-		> Case of a crash?
-[OK] Better in-game HUD interface
-	[OK] Player health
-	[OK] Player weapon energy
-	[OK] Player capacity energy
-	[OK] Enemies health
-[  ] Lore
-	[  ] Characters' dialogues
-	[  ] Per-level scenarios
-[  ] VFX
-	[  ] Explosions
-	[  ] Soundtrack
-[  ] Optimization
-	[  ] Agree on the name of aux modules/special/capacity/ability, gauges, weapons, ...
-	[  ] Escape the "universe as a local global" flaw
-	[  ] Math is going on?
-	[  ] Resource loading
-		[  ] Convert images to sprite
-	[  ] Application screens as web components
-[  ] More enemies
-	[  ] Stationnary turret
-	[  ] Crash crab with gun
-	[  ] Bosses
-[  ] More special capacities
-	[  ] Berzerk
-	[  ] Missile swarm
-	[  ] Repelling shock wave
-	[  ] Minefield drop
-	[  ] Spiky hull
-		> Passive, but still subject to energy cap?
-	[  ] Whirlwind
-		> Spiky hull's 'active' alternative.
-		> Could have longer range.
-[  ] More weapons
-	[  ] Charged
-	[  ] Laser
-[  ] Better player upgrades
-	> How to introduce choice that isn't simple calculation?
-	> How to introduce choice that actually matter?
-[  ] Better enemies upgrades
-	> Respond to player upgrades adequately.
+Stage Type | Description
+-----------+------------
+Calm       | Nothing happens for a certain time.
+Swarm      | A batch of hostiles burst in.
+Waves      | Hostiles spawn regularly until no hostile is left.
+Fight      | Nothing happens until no hostile is left.
 
-An Echo in the Space
--- // -----------------------------------------------------------------
 
-Display quotes for (80 * quote.length) ms.
+Floors
+---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 
-- There exists one god that is everywhere and part of all: the universe; the universe won't come, nor stand to save anyone.
-- The circumstances of their death will influence the value of their life.
-- One cannot possibly enjoy anything they don't have full knowledge of.
-- Three. Three? Weren't there four of them?
-- Paradize and hell are not places they go, but space to fill in the memories of those who will outlive them.
-- A suicide a day keeps the pressure away!
-- Alone in the darkness, it shines...
-- Snakes appear strait under a bent ruler...
-- When the conquerors come in, the mountain perspires by the tiger's ass, and the dragon fucks the weasel.
-- The fact we have the luxury to to complain about inanities is an indicator that we feel safe enough otherwise to do so.
-- Could they have alleviated the part of the report about undergone physical sufferings?
-- It likes to see their hope vanish...
-- Life is not beautiful by nature, it becomes what they make of it.
-- Life doesn't diverge from the existence of death, but rather death arises from the concept of life.
-- Those who try to mine gold out of it, they shall receive nothing but dirt.
-- It was ridiculous, it seems dangerous, it might become obvious...
-- By the time of their disgrace, it shall awake...
-- In its long agony, its knowledge is lost.
-- It bites those who try to break its chains.
-- They will be gnawed by what they demanded; they shall simply receive what they earned.
-- When asked what it wanted to do once grown up, it answered that it wanted to do...
-- They deplorably still can't accept the idea of infinity, clinging to the idea that all thing begins and ends...
-- Yet being finite, they claim to be a fragment of its infinity; their logic is erroneous.
-- To launch the program, launch the program by following the prefered program launching method of the platform.
-- What they take for granted had once to be invented...
+Minions      | Boss    | Gives
+-------------+---------+------
+             |         | Gatling
+Missile      | Missile | Missile
+Turret       | Turret  | Blaster
+Cube, Drone  | Crasher | Shock
+Crasher, Div | General | Charger
 
-Levels Description
--- // -----------------------------------------------------------------
 
-new Level([
-	new DelayStage(2000),
+Shop
+---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 
-	new DialogStage("An echo from space", "What they take for granted had once to be invented..."),
-	new DialogStage("Jerico", "Did you hear that?"),
-	new DialogStage("Alen", "Hear what?"),
-	new DialogStage("Jerico", "That... You didn't hear some kinda strange, buzzing voice ?"),
-	new DialogStage("Alen", "Mm... No... Should I?"),
-	new DialogStage("Jerico", "M'key, now I'm going crazy..."),
+Shit + Gold = "Shold"
+1 sh / completed arena
+Boss loot proposes sholds || new weapon, or maybe just new weapon?
 
-	new DelayStage(3000),
-
-	new DialogStage("Ship system", "* Radar beeps."),
-	new DialogStage("Alen", "That, I hear! What do we have?"),
-	new DialogStage("Jerico", "I... I'm not sure... The ship doesn't know it..."),
-	new DialogStage("Alen", "Does it bite?"),
-
-	new CombatStage([ ZombieCube ]),
-
-	new DialogStage("Jerico", "The heck dude? You blew it up!"),
-	new DialogStage("Alen", "Whell, yeah! Why not?"),
-	new DialogStage("Jerico", "But we don't event know what this thing was...")
-	new DialogStage("Jerico", "Ahr! ")
-
-	new DelayStage(1000)
-])
-
-class Level {
-	constructor(stages) {
-		this.stages = stages
-	}
-
-	async execute(universe) {
-		for (const stage of this.stages) {
-			const outcome = await stage.execute()
-
-			if (outcome.victory == false)
-				return LevelOutcome.defeat()
-		}
-
-		return LevelOutcome.victory()
-	}
-}
-
-class LevelOutcome {
-	static victory() { return new LevelOutcome(true) }
-	static defeat() { return new LevelOutcome(false) }
-
-	constructor(victory) {
-		this.victory = victory
-	}
-}
-
-class DelayStage {
-	constructor(time) {
-		this.time = time
-	}
-
-	execute(universe) {
-		return Promise.resolve(LevelOutcome.victory())
-	}
-}
-
-class DialogStage {
-	constructor(speaker, message) {
-		this.speaker = speaker
-		this.message = message
-	}
-
-	execute(universe) {
-		return Promise.resolve(LevelOutcome.victory())
-	}
-}
-
-class CombatStage {
-	constructor(hostiles) {
-		this.hostiles = hostiles
-	}
-
-	execute(universe) {
-		return Promise.resolve(LevelOutcome.victory())
-	}
-}
+Cost | Item                | Description
+-----+---------------------+------------
+1 sh | Damage              | Booster.
+     | Hull Plate          | Booster.
+     | Fire Rate           | Booster.
+     | Weapon Energy Cap   | Booster.
+     | Weapon Energy Regen | Booster.
+     | Aux Energy Cap      | Booster.
+     | Aux Energy Regen    | Booster.
+-----+---------------------+------------
+2 sh | Double Gatling      | (Gatling only) More DPS, more energy consumption.
+     | Double Missile      | (Missile only) Missile swarmer.
+     | Restauration        | (Upgradable)
+     | Shield              | (Upgradable)
+     | Blink               | (Upgradable) Teleport.
+     | Spiky Hull          | (Upgradable, Passive) Deals damage on contact.
+-----+---------------------+------------
+3 sh | Berzerk             | Temporary damage booster.
+     | Missile Swarm       |
+     | Minefield Drop      |
+     | Portable Turret     |
+     | Shockwave           | Repelling blast.
+-----+---------------------+------------
+4 sh | Shockwave II        | Repelling and damaging blast.
+     | Hulk Figurine       | (Passive) The less HP, the more damage.
