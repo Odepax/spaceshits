@@ -1,0 +1,8 @@
+/* @see www.1001fonts.com/alte-din-1451-mittelschrift-font.html */
+
+@font-face {
+	font-family: "Alte DIN 1451 Mittelschrift";
+	font-weight: normal;
+	font-style: normal;
+	src: url("./alte-din-1451-mittelschrift.ttf") format("truetype");
+}

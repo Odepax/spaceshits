@@ -1,5 +1,5 @@
 @import "./color.css";
-@import "../font/roboto-mono.css";
+@import "../font/alte-din-1451-mittelschrift.css";
 @import "../font/icon.css";
 
 * {
@@ -11,6 +11,7 @@
 	font-weight: inherit;
 	font-style: inherit;
 	font-size: inherit;
+	text-transform: inherit;
 	letter-spacing: inherit;
 	color: inherit;
 }
@@ -21,10 +22,10 @@ html, body {
 
 body {
 	background: var(--DARK);
-	font-family: "Roboto Mono", monospace;
+	font-family: "Alte DIN 1451 Mittelschrift", "Bahnschrift", "Ubuntu", sans-serif;
 	font-weight: normal;
 	font-style: normal;
-	font-size: 12px;
+	font-size: 16px;
 	line-height: 1.4em;
 	text-transform: uppercase;
 	letter-spacing: 1px;
@@ -32,5 +33,5 @@ body {
 }
 
 small {
-	font-size: 10px;
+	font-size: 12px;
 }
