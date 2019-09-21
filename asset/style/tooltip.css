@@ -10,7 +10,7 @@ button > .tooltip {
 	padding: 20px;
 	width: 220px;
 	text-align: left;
-	background: black;
+	background: var(--BLACK);
 }
 
 button:focus > .tooltip,
