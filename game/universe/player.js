@@ -51,7 +51,7 @@ export class GatlingPlayer extends Link {
 
 export class GatlingBullet extends Bullet {
 	constructor(/** @type {Transform} */ transform) {
-		super(transform, 900, DamageTargetTypes.hostile, 9, 7, [black, grey, yellow, orange], playerGatlingBulletSprite)
+		super(transform, 900, DamageTargetTypes.hostile, 9, 7, [ black, grey, yellow, orange ], playerGatlingBulletSprite)
 	}
 }
 

@@ -84,51 +84,55 @@
 			</section>
 		</template>
 
-		<template id="settings-page" class="pull-in push-out stack-vertical">
-			<h2 class="page-title">
-				<span>Settings</span>
-				<small>Hover Over the Fields and Press Keys to Edit Them</small>
-			</h2>
-			<section class="page-content vertical-stretch stack-horizontal">
-				<button data-on="click:discardChanges" class="action-card rectangles blue">
-					<span class="icon cross"></span>
-					<span class="label">Discard<br /> Changes</span>
-				</button>
-				<div class="key-binding-grid">
-					<button id="key-up" class="action-block circles teal" style="grid-row-start: 1; grid-column-start: 3;">
-						<span class="icon up"></span>
-						<span class="label">...</span>
-					</button>
-					<button id="key-down" class="action-block circles teal" style="grid-row-start: 3; grid-column-start: 3;">
-						<span class="icon down"></span>
-						<span class="label">...</span>
-					</button>
-					<button id="key-left" class="action-block circles teal" style="grid-row-start: 2; grid-column-start: 2;">
-						<span class="icon left"></span>
-						<span class="label">...</span>
-					</button>
-					<button id="key-right" class="action-block circles teal" style="grid-row-start: 2; grid-column-start: 4;">
-						<span class="icon right"></span>
-						<span class="label">...</span>
-					</button>
-					<button id="key-shoot" class="action-block triangles yellow" style="grid-row-start: 1; grid-column-start: 5;">
-						<span class="icon cross"></span>
-						<span class="label">...</span>
-					</button>
-					<button id="key-aux" class="action-block rectangles blue" style="grid-row-start: 3; grid-column-start: 5;">
-						<span class="icon gear"></span>
-						<span class="label">...</span>
-					</button>
-					<button id="key-pause" class="action-block rectangles purple" style="grid-row-start: 1; grid-column-start: 1;">
-						<span class="icon pause"></span>
-						<span class="label">...</span>
-					</button>
+		<template id="settings-page" class="pull-in stack-vertical">
+			<div class="page-content vertical-stretch stack-horizontal">
+				<div class="stack-horizontal">
+				
+					<section class="vertical-bottom">
+						<button class="red" data-on="click:discardChanges">Discard</button>
+					</section>
+
+					<section class="vertical-center key-binding-grid">
+						<button id="key-up" class="small green" style="grid-row-start: 3; grid-column-start: 2;">
+							<span class="icon up"></span>
+						</button>
+						<button id="key-down" class="small green" style="grid-row-start: 4; grid-column-start: 2;">
+							<span class="icon down"></span>
+						</button>
+						<button id="key-left" class="small green" style="grid-row-start: 4; grid-column-start: 1;">
+							<span class="icon left"></span>
+						</button>
+						<button id="key-right" class="small green" style="grid-row-start: 4; grid-column-start: 3;">
+							<span class="icon right"></span>
+						</button>
+						<button id="key-shoot" class="small red" style="grid-row-start: 3; grid-column-start: 8;">
+							<span class="icon cross"></span>
+						</button>
+						<button id="key-aux" class="small blue" style="grid-row-start: 4; grid-column-start: 8;">
+							<span class="icon gear"></span>
+						</button>
+						<button id="key-pause" class="small blue" style="grid-row-start: 1; grid-column-start: 1;">
+							<span class="icon pause"></span>
+						</button>
+
+						<aside class="stack-horizontal" style="grid-row-start: 5; grid-column-start: 1; grid-row-end: 7; grid-column-end: 9;">
+							<p style="text-align: center;">
+								<span id="bindingLegend">...</span> <br/>
+								<span id="bindingKey" style="font-size: 20px;">...</span>
+							</p>
+						</aside>
+
+						<div class="canvas-wrapper" style="grid-row-start: 1; grid-column-start: 4; grid-row-end: 5; grid-column-end: 8;">
+							<canvas id="testCanvas" class="game-canvas" width="240" height="240" tabindex="1"></canvas>
+						</div>
+					</section>
+
+					<section class="vertical-bottom">
+						<button class="green" data-on="click:saveChanges">Save</button>
+					</section>
+
 				</div>
-				<button data-on="click:saveChanges" class="action-card circles pink">
-					<span class="icon right"></span>
-					<span class="label">Save<br /> Changes</span>
-				</button>
-			</section>
+			</div>
 		</template>
 
 		<template id="quotation-page" class="pull-in pull-out stack-vertical">

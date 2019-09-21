@@ -4,14 +4,6 @@
 	text-align: center;
 }
 
-.page-title > span {
-	font-weight: bold;
-}
-
-.page-title > small {
-	display: block;
-}
-
 .page-content {
-	margin: 20px 40px;
+	margin: 40px;
 }

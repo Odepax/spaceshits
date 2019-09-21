@@ -1,8 +1,23 @@
 .game-canvas {
-	box-shadow: 0 0 0 2px var(--BLACK) inset;
+	background: var(--DARK);
+	box-shadow: 0 2px var(--BLACK) inset;
 	cursor: crosshair;
 	outline: none;
+	transition: box-shadow 0.3s ease-in-out;
 }
+
+.game-canvas:hover,
+.game-canvas:focus { box-shadow: 0 4px var(--BLACK) inset; }
+
+.canvas-wrapper {
+	padding: 10px;
+	background: var(--GREY);
+	box-shadow: 0 2px var(--BLACK);
+	transition: box-shadow 0.3s ease-in-out;
+}
+
+.canvas-wrapper:hover,
+.canvas-wrapper:focus { box-shadow: 0 4px var(--BLACK); }
 
 .gauge {
 	display: block;

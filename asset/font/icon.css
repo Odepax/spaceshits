@@ -8,8 +8,7 @@
 }
 
 .icon {
-	--ICON-SIZE: 40px;
-
+	--ICON-SIZE: 30px;
 	display: inline-block;
 	width: var(--ICON-SIZE);
 	height: var(--ICON-SIZE);
@@ -17,6 +16,7 @@
 	font-weight: normal;
 	font-style: normal;
 	font-size: var(--ICON-SIZE);
+	text-transform: none;
 	line-height: var(--ICON-SIZE);
 }
 

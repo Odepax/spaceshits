@@ -74,7 +74,7 @@ export class ArenaPage extends SpaceshitsPage {
 		this.universe.register(MatchSubRoutine.onSubStep(({ Debug }) => {
 			/** @type {CanvasRenderingContext2D} */ const graphics = gameCanvas.getContext("2d")
 
-			graphics.font = "16px Roboto Mono"
+			graphics.font = "16px Alte DIN 1451 Mittelschrift"
 			graphics.fillStyle = white
 
 			let i = 0
