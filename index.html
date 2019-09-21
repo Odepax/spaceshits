@@ -25,7 +25,7 @@
 			const parameterCentral = new ParameterCentral()
 			const navigationCentral = new NavigationCentral(navigationHost)
 
-			navigationCentral.register(MainPage, () => new MainPage(navigationCentral))
+			navigationCentral.register(MainPage, () => new MainPage(navigationCentral, parameterCentral))
 			navigationCentral.register(SettingsPage, () => new SettingsPage(navigationCentral, parameterCentral))
 			navigationCentral.register(QuotationPage, () => new QuotationPage(navigationCentral))
 			navigationCentral.register(LobbyPage, () => new LobbyPage(navigationCentral))
@@ -57,7 +57,10 @@
 					<nav class="page-content horizontal-left stack-vertical">
 						<button data-on="click:startNewGame" class="red">New</button>
 						<!--<button data-on="click:resumeLastGame" class="green">Resume</button>-->
-						<button data-on="click:editSettings" class="blue">Settings</button>
+						<button data-on="click:editSettings" class="blue">
+							<span>Settings</span>
+							<small id="settingsTooltip" class="tooltip">...</small>
+						</button>
 						<a href="https://github.com/Odepax/spaceshits">GitHub</a>
 						<!--<a href="https://odepax.itch.io/spaceshits-harlequin">Itch</a>-->
 					</nav>
@@ -110,7 +113,10 @@
 					</section>
 
 					<section class="vertical-bottom">
-						<button class="green" data-on="click:saveChanges">Save</button>
+						<button class="green" data-on="click:saveChanges">
+							<span>Save</span>
+							<small id="settingsTooltip" class="tooltip">...</small>
+						</button>
 					</section>
 
 				</div>

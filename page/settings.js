@@ -76,10 +76,23 @@ export class SettingsPage extends SpaceshitsPage {
 			this.$.bindingKey.textContent = null
 		} else {
 			this.$.bindingLegend.textContent = this.bindingLegends[key]
-			this.$.bindingKey.textContent = this.parameters.keys[key]
+			this.$.bindingKey.textContent = this.formatKey(key)
 				.replace("Key", "")
 				.replace("Mouse", "Mouse ")
 		}
+
+		this.$.settingsTooltip.innerHTML = `
+			Move: ${ this.formatKey("up")} ${this.formatKey("left")} ${this.formatKey("down")} ${this.formatKey("right")} <br />
+			Shoot: ${ this.formatKey("shoot")} <br />
+			AUX Module: ${ this.formatKey("aux")} <br />
+			Pause: ${ this.formatKey("pause")}
+		`
+	}
+
+	/** @private */ formatKey(/** @type {string} */ key) {
+		return this.parameters.keys[key]
+			.replace("Key", "")
+			.replace("Mouse", "Mouse ")
 	}
 
 	onEnter() {

@@ -1,0 +1,20 @@
+button {
+	position: relative;
+}
+
+button > .tooltip {
+	position: absolute;
+	left: calc(100% + 20px);
+	top: 0;
+	display: none;
+	padding: 20px;
+	width: 220px;
+	text-align: left;
+	background: black;
+}
+
+button:focus > .tooltip,
+button:hover > .tooltip {
+	display: inline-block;
+	color: white;
+}
