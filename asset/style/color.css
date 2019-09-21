@@ -14,16 +14,17 @@
 	--DARK: #242424;
 	--BLACK: black;
 	--ACCENT: var(--LIGHT);
+	--ACCENT-DARK: var(--GREY);
 }
 
-.red { --ACCENT: var(--RED); }
-.orange { --ACCENT: var(--ORANGE); }
-.yellow { --ACCENT: var(--YELLOW); }
-.green { --ACCENT: var(--GREEN); }
-.teal { --ACCENT: var(--TEAL); }
-.blue { --ACCENT: var(--BLUE); }
-.purple { --ACCENT: var(--PURPLE); }
-.pink { --ACCENT: var(--PINK); }
+.red { --ACCENT: var(--RED); --ACCENT-DARK: #59202b; }
+.orange { --ACCENT: var(--ORANGE); --ACCENT-DARK: #60421d; }
+.yellow { --ACCENT: var(--YELLOW); --ACCENT-DARK: #5f551e; }
+.green { --ACCENT: var(--GREEN); --ACCENT-DARK: #4a5e2a; }
+.teal { --ACCENT: var(--TEAL); --ACCENT-DARK: #2d4b3a; }
+.blue { --ACCENT: var(--BLUE); --ACCENT-DARK: #1e4e5f; }
+.purple { --ACCENT: var(--PURPLE); --ACCENT-DARK: #433a54; }
+.pink { --ACCENT: var(--PINK); --ACCENT-DARK: #5f394c; }
 .white { --ACCENT: var(--WHITE); }
 .light { --ACCENT: var(--LIGHT); }
 .silver { --ACCENT: var(--SILVER); }

@@ -40,7 +40,7 @@
 
 		<main id="navigationHost" class="navigation-host"></main>
 
-		<template id="main-page" class="pull-in pull-out stack-horizontal">
+		<template id="main-page" class="pull-in stack-horizontal">
 			
 			<header role="banner" class="vertical-stretch stack-horizontal" style="width: 50%;">
 				<div class="stack-vertical horizontal-stretch">
@@ -69,61 +69,59 @@
 
 		</template>
 
-		<template id="settings-page" class="pull-in stack-vertical">
-			<div class="page-content vertical-stretch stack-horizontal">
-				<div class="stack-horizontal">
+		<template id="settings-page" class="pull-in stack-horizontal">
+			<div class="page-content stack-horizontal">
 				
-					<section class="vertical-bottom">
-						<button class="red" data-on="click:discardChanges">Discard</button>
-					</section>
+				<section class="vertical-bottom">
+					<button class="red" data-on="click:discardChanges">Discard</button>
+				</section>
 
-					<section class="vertical-center key-binding-grid">
-						<button id="key-up" class="small green" style="grid-row-start: 3; grid-column-start: 2;">
-							<span class="icon up"></span>
-						</button>
-						<button id="key-down" class="small green" style="grid-row-start: 4; grid-column-start: 2;">
-							<span class="icon down"></span>
-						</button>
-						<button id="key-left" class="small green" style="grid-row-start: 4; grid-column-start: 1;">
-							<span class="icon left"></span>
-						</button>
-						<button id="key-right" class="small green" style="grid-row-start: 4; grid-column-start: 3;">
-							<span class="icon right"></span>
-						</button>
-						<button id="key-shoot" class="small red" style="grid-row-start: 3; grid-column-start: 8;">
-							<span class="icon cross"></span>
-						</button>
-						<button id="key-aux" class="small blue" style="grid-row-start: 4; grid-column-start: 8;">
-							<span class="icon gear"></span>
-						</button>
-						<button id="key-pause" class="small blue" style="grid-row-start: 1; grid-column-start: 1;">
-							<span class="icon pause"></span>
-						</button>
+				<section class="vertical-center key-binding-grid">
+					<button id="key-up" class="small green" style="grid-row-start: 3; grid-column-start: 2;">
+						<span class="icon up"></span>
+					</button>
+					<button id="key-down" class="small green" style="grid-row-start: 4; grid-column-start: 2;">
+						<span class="icon down"></span>
+					</button>
+					<button id="key-left" class="small green" style="grid-row-start: 4; grid-column-start: 1;">
+						<span class="icon left"></span>
+					</button>
+					<button id="key-right" class="small green" style="grid-row-start: 4; grid-column-start: 3;">
+						<span class="icon right"></span>
+					</button>
+					<button id="key-shoot" class="small red" style="grid-row-start: 3; grid-column-start: 8;">
+						<span class="icon cross"></span>
+					</button>
+					<button id="key-aux" class="small blue" style="grid-row-start: 4; grid-column-start: 8;">
+						<span class="icon gear"></span>
+					</button>
+					<button id="key-pause" class="small blue" style="grid-row-start: 1; grid-column-start: 1;">
+						<span class="icon pause"></span>
+					</button>
 
-						<aside class="stack-horizontal" style="grid-row-start: 5; grid-column-start: 1; grid-row-end: 7; grid-column-end: 9;">
-							<p style="text-align: center;">
-								<span id="bindingLegend">...</span> <br/>
-								<span id="bindingKey" style="font-size: 20px;">...</span>
-							</p>
-						</aside>
+					<aside class="stack-horizontal" style="grid-row-start: 5; grid-column-start: 1; grid-row-end: 7; grid-column-end: 9;">
+						<p style="text-align: center;">
+							<span id="bindingLegend">...</span> <br/>
+							<span id="bindingKey" style="font-size: 20px;">...</span>
+						</p>
+					</aside>
 
-						<div class="canvas-wrapper" style="grid-row-start: 1; grid-column-start: 4; grid-row-end: 5; grid-column-end: 8;">
-							<canvas id="testCanvas" class="game-canvas" width="240" height="240" tabindex="1"></canvas>
-						</div>
-					</section>
+					<div class="canvas-wrapper" style="grid-row-start: 1; grid-column-start: 4; grid-row-end: 5; grid-column-end: 8;">
+						<canvas id="testCanvas" class="game-canvas" width="240" height="240" tabindex="1"></canvas>
+					</div>
+				</section>
 
-					<section class="vertical-bottom">
-						<button class="green" data-on="click:saveChanges">
-							<span>Save</span>
-							<small id="settingsTooltip" class="tooltip">...</small>
-						</button>
-					</section>
+				<section class="vertical-bottom">
+					<button class="green" data-on="click:saveChanges">
+						<span>Save</span>
+						<small id="settingsTooltip" class="tooltip">...</small>
+					</button>
+				</section>
 
-				</div>
 			</div>
 		</template>
 
-		<template id="quotation-page" class="pull-in pull-out stack-vertical">
+		<template id="quotation-page" class="pull-in stack-vertical">
 			<section class="page-content vertical-stretch stack-horizontal">
 				<blockquote class="dialogue">
 					<h2 class="source">An Echo from Space</h2>
@@ -132,7 +130,7 @@
 			</section>
 		</template>
 
-		<template id="lobby-page" class="pull-in pull-out stack-vertical">
+		<template id="lobby-page" class="pull-in stack-vertical">
 			<h2 class="page-title">
 				<span>New Game</span>
 				<small>WIP</small>
@@ -150,17 +148,24 @@
 			</section>
 		</template>
 
-		<template id="arena-page" class="pull-in push-out stack-vertical">
-			<section class="page-content vertical-stretch stack-horizontal">
-				<div class="stack-horizontal">
-					<progress id="energyBar" value="1" class="gauge orange vertical-bottom"></progress>
-					<canvas id="gameCanvas" class="game-canvas" width="700" height="700" tabindex="1"></canvas>
-					<progress id="hpBar" value="1" class="gauge teal vertical-bottom"></progress>
+		<template id="arena-page" class="pull-in stack-horizontal">
+			<section class="page-content stack-horizontal">
+
+				<div class="stack-vertical vertical-bottom">
+					<progress id="energyBar" value="1" class="orange"></progress>
+					<progress id="hpBar" value="1" class="green"></progress>
 				</div>
+
+				<div class="canvas-wrapper" style="width: 720px; height: 722px; margin: 0 20px;">
+					<canvas id="gameCanvas" class="game-canvas" width="700" height="700" tabindex="1"></canvas>
+				</div>
+
+				<div style="width: 190px;" ></div>
+
 			</section>
 		</template>
 
-		<template id="defeat-page" class="push-in push-out stack-vertical">
+		<template id="defeat-page" class="push-in stack-vertical">
 			<h2 class="page-title">
 				<span>Defeat</span>
 				<small>Floor #1, Arena #1</small>
@@ -173,7 +178,7 @@
 			</section>
 		</template>
 
-		<template id="victory-page" class="push-in push-out stack-vertical">
+		<template id="victory-page" class="push-in stack-vertical">
 			<h2 class="page-title">
 				<span>Victory</span>
 				<small>Floor #1, Arena #1</small>

@@ -19,17 +19,16 @@
 .canvas-wrapper:hover,
 .canvas-wrapper:focus { box-shadow: 0 4px var(--BLACK); }
 
-.gauge {
+progress {
 	display: block;
-	margin: 0 2px;
-	padding: 2px;
-	width: 200px;
-	height: 20px;
-	background-color: var(--DARK);
-	border: 2px solid var(--BLACK);
+	margin-top: 20px;
+	width: 190px;
+	height: 15px;
+	background-color: var(--ACCENT-DARK);
+	box-shadow: 0 3px var(--BLACK);
 }
 
-.gauge::-moz-progress-bar { background: var(--ACCENT); }
+progress::-moz-progress-bar { background: var(--ACCENT); }
 
-.gauge::-webkit-progress-bar { background: var(--DARK); }
-.gauge::-webkit-progress-value { background: var(--ACCENT); }
+progress::-webkit-progress-bar { background: var(--ACCENT-DARK); }
+progress::-webkit-progress-value { background: var(--ACCENT); }

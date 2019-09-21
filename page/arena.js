@@ -78,9 +78,9 @@ export class ArenaPage extends SpaceshitsPage {
 			graphics.fillStyle = white
 
 			let i = 0
-			graphics.fillText("FPS: " + ~~(1 / this.universe.clock.spf), 50, 30 + 20 * ++i)
-			graphics.fillText("Mouse: ( " + interactionCentral.mousePosition.x + " , " + interactionCentral.mousePosition.y + " )", 50, 30 + 20 * ++i)
-			graphics.fillText("Keys: [ " + Array.from(interactionCentral.currentlyPressedKeys).join(", ") + " ]", 50, 30 + 20 * ++i)
+			graphics.fillText(~~(1 / this.universe.clock.spf) + " FPS", 50, 30 + 20 * ++i)
+			graphics.fillText(interactionCentral.mousePosition.x + ", " + interactionCentral.mousePosition.y, 50, 30 + 20 * ++i)
+			graphics.fillText(Array.from(interactionCentral.currentlyPressedKeys).join(", "), 50, 30 + 20 * ++i)
 		}))
 
 		// FPS counter.
