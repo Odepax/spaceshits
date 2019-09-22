@@ -31,3 +31,11 @@
 .icon.pause::before { content: "P"; }
 
 .icon.gatling::before { content: "G"; }
+
+.icon.damage-booster::before { content: "D"; }
+.icon.fire-rate-booster::before { content: "F"; }
+.icon.hull-booster::before { content: "H"; }
+.icon.weapon-cap-booster::before { content: "W"; }
+.icon.weapon-regen-booster::before { content: "X"; }
+.icon.aux-cap-booster::before { content: "E"; }
+.icon.aux-regen-booster::before { content: "U"; }
