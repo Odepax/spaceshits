@@ -17,7 +17,7 @@ export class MatchSubRoutine extends SubRoutine {
 	 * Infers MatchSubRoutine's required traits from lambda parameters names.
 	 *
 	 * @example
-	 * MatchSubRoutine.infer(({ Transform, Velocity, Acceleration = null }) => {
+	 * MatchSubRoutine.onSubStep(({ Transform, Velocity, Acceleration = null }) => {
 	 *    if (Acceleration) {
 	 *       Velocity.x += Acceleration.x * clock.spf
 	 *       Velocity.y += Acceleration.y * clock.spf

@@ -7,12 +7,12 @@ import { TargetFacingRoutine, ForwardChasingRoutine } from "../movement.js"
 import { DynamicRoutine } from "../dynamic.js"
 import { EphemeralRoutine } from "../ephemeral.js"
 import { WeaponRoutine, ProjectileDamageRoutine, RammingImpactDamageRoutine, HpRoutine } from "../universe/combat.js"
-import { LoopRoutine, WaitRoutine, wait, second, seconds, loop, times } from "../schedule.js"
+import { LoopRoutine, WaitRoutine, wait, second, loop, seconds, } from "../schedule.js"
 import { ExplosionOnAddRoutine, ExplosionOnRemoveRoutine } from "../universe/explosion.js"
 import { ParticleCloudRoutine } from "../universe/particle.js"
 import { RenderRoutine } from "../render.js"
 import { MatchSubRoutine } from "../routine.js"
-import { Cube, CubeQuad, CubeMissile } from "../universe/hostile/cube.js"
+import { Cube, CubeQuad, CubeMissile, HostileTag } from "../universe/hostile/cube.js"
 import { white } from "../../asset/style/color.js"
 
 /** Save & restore, run progression. */
@@ -29,9 +29,10 @@ export class GameCentral {
 
 	buildArena(/** @type {HTMLCanvasElement} */ gameCanvas, /** @type {HTMLProgressElement} */ hpBar, /** @type {HTMLProgressElement} */ energyBar) {
 		const interactionCentral = new InteractionCentral(gameCanvas)
-
 		const universe = new Universe()
 
+		// player = build player
+		//    foreach item: item.apply(this, player)
 		const player = new GatlingPlayer(
 			gameCanvas.offsetWidth * 0.5,
 			gameCanvas.offsetHeight * 0.8,
@@ -76,10 +77,31 @@ export class GameCentral {
 			new Debug()
 		]))
 
-		return new Arena(interactionCentral, universe, player, gameCanvas)
+		return new Arena(gameCanvas, universe, player, [
+			new SwarmStage(() => [ new Cube(gameCanvas.offsetWidth * 0.5, gameCanvas.offsetHeight * 0.2) ]),
+			new CalmStage(0.3 * second),
+			new SwarmStage(() => [ new Cube(gameCanvas.offsetWidth * 0.5, gameCanvas.offsetHeight * 0.2) ]),
+			new CalmStage(0.3 * second),
+			new SwarmStage(() => [ new Cube(gameCanvas.offsetWidth * 0.5, gameCanvas.offsetHeight * 0.2) ]),
 
-		// player = build player
-		//    foreach item: item.apply(this, player)
+			new CalmStage(9 * seconds),
+		
+			new SwarmStage(() => [ new CubeQuad(gameCanvas.offsetWidth * 0.3, gameCanvas.offsetHeight * 0.2) ]),
+			new CalmStage(0.3 * second),
+			new SwarmStage(() => [ new CubeQuad(gameCanvas.offsetWidth * 0.3, gameCanvas.offsetHeight * 0.2) ]),
+			new CalmStage(0.3 * second),
+			new SwarmStage(() => [ new CubeQuad(gameCanvas.offsetWidth * 0.3, gameCanvas.offsetHeight * 0.2) ]),
+
+			new CalmStage(9 * seconds),
+
+			new SwarmStage(() => [ new CubeMissile(gameCanvas.offsetWidth * 0.7, gameCanvas.offsetHeight * 0.2, player) ]),
+			new CalmStage(0.3 * second),
+			new SwarmStage(() => [ new CubeMissile(gameCanvas.offsetWidth * 0.7, gameCanvas.offsetHeight * 0.2, player) ]),
+			new CalmStage(0.3 * second),
+			new SwarmStage(() => [ new CubeMissile(gameCanvas.offsetWidth * 0.7, gameCanvas.offsetHeight * 0.2, player) ]),
+
+			new FightStage()
+		])
 	}
 
 	buildShop() {
@@ -88,74 +110,143 @@ export class GameCentral {
 }
 
 export class Arena {
-	constructor(/** @type {InteractionCentral} */ interactions, /** @type {Universe} */ universe, /** @type {GatlingPlayer} */ player, /** @type {HTMLCanvasElement} */ gameCanvas) {
-		this.interactions = interactions
+	constructor(
+		/** @type {HTMLCanvasElement} */ gameCanvas,
+		/** @type {Universe} */ universe,
+		/** @type {GatlingPlayer} */ player,
+		/** @type {Iterable<ArenaStage>} */ stages
+	) {
+		this.gameCanvas = gameCanvas
 		this.universe = universe
 		this.player = player
-		this.gameCanvas = gameCanvas
+		this.stages = stages
+		/** @type {Set<Link>} */ this.hostiles = new Set()
 	}
 
-	start(/** @type {() => void} */ victoryCallback, /** @type {() => void} */ defeatCallback) {
-		const { universe, player, gameCanvas } = this
+	add(/** @type {{ HostileTag: HostileTag }} */ hostile) {
+		this.universe.add(hostile)
+	}
 
-		// Player ship.
-		wait(this.universe, 0.1 * second, () => {
-			this.universe.add(this.player)
-		})
-
-		// Hostiles
-		const hostileList = []
-
-		wait(universe, 3 * seconds, () => {
-			loop(universe, 0.3 * seconds, 3 * times, () => {
-				const hostile = new Cube(gameCanvas.offsetWidth * 0.5, gameCanvas.offsetHeight * 0.2)
-				hostileList.push(hostile)
-				universe.add(hostile)
-			})
-		})
-
-		wait(universe, 12 * seconds, () => {
-			loop(universe, 0.3 * seconds, 3 * times, () => {
-				const hostile = new CubeQuad(gameCanvas.offsetWidth * 0.3, gameCanvas.offsetHeight * 0.2)
-				hostileList.push(hostile)
-				universe.add(hostile)
-			})
-		})
-
-		wait(universe, 21 * seconds, () => {
-			loop(universe, 0.3 * seconds, 3 * times, () => {
-				const hostile = new CubeMissile(gameCanvas.offsetWidth * 0.7, gameCanvas.offsetHeight * 0.2, player)
-				hostileList.push(hostile)
-				universe.add(hostile)
-			})
-		})
-
-		// Victory.
-		let hostiles = 9 // TODO: Remove hard-coded value.
-		const self = this
-
+	wait(/** @type {() => void} */ victoryCallback, /** @type {() => void} */ defeatCallback) {
+		const arena = this
 		this.universe.register(new (class extends Routine {
-			test(link) {
-				return hostileList.includes(link)
+			test({ HostileTag = null }) {
+				return HostileTag
 			}
 
-			onRemove() {
-				if (--hostiles == 0) {
-					wait(self.universe, 3 * seconds, victoryCallback)
-				}
+			onAdd(/** @type {Link} */ hostile) {
+				arena.hostiles.add(hostile)
+			}
+
+			onRemove(/** @type {Link} */ hostile) {
+				arena.hostiles.delete(hostile)
 			}
 		})())
 
-		// Defeat.
-		wait(this.universe, () => this.player.Hp.value < 0, () => {
-			wait(this.universe, 3 * seconds, defeatCallback)
-		})
-
+		this.universe.add(this.player)
 		this.universe.start()
+
+		wait(this.universe, 3 * seconds, async () => {
+			for (const stage of this.stages) {
+				if (!(await stage.wait(this))) {
+					wait(this.universe, 3 * seconds, defeatCallback)
+					return
+				}
+			}
+
+			wait(this.universe, 3 * seconds, victoryCallback)
+		})
 	}
 
-	stop() {
+	complete() {
 		this.universe.stop()
+	}
+}
+
+export /** @abstract */ class ArenaStage {
+	/** @returns {Promise<boolean>} */ wait(/** @type {Arena} */ arena) {
+		throw (this.constructor.name || ArenaStage.name) + "#wait(Arena) was not implemented."
+	}
+}
+
+/** Nothing happens for a certain time. */
+export class CalmStage extends ArenaStage {
+	constructor(/** @type {number} */ calmTime) {
+		super()
+
+		this.calmTime = calmTime
+	}
+
+	wait(/** @type {Arena} */ arena) {
+		return new Promise(resolve => {
+			wait(arena.universe, this.calmTime, () => {
+				resolve(true)
+			})
+
+			wait(arena.universe, () => arena.player.Hp.value < 0, () => {
+				resolve(false)
+			})
+		})
+	}
+}
+
+/** A batch of hostiles burst in. */
+export class SwarmStage extends ArenaStage {
+	constructor(/** @type {(arena: Arena) => Iterable<{ HostileTag: HostileTag }>} */ buildHostiles) {
+		super()
+
+		this.buildHostiles = buildHostiles
+	}
+
+	wait(/** @type {Arena} */ arena) {
+		for (const hostile of this.buildHostiles(arena)) {
+			arena.add(hostile)
+		}
+
+		return Promise.resolve(true)
+	}
+}
+
+/** Hostiles spawn regularly until no hostile is left. */
+export class WavesStage extends ArenaStage {
+	constructor(/** @type {number} */ spawnInterval, /** @type {(arena: Arena) => Iterable<{ HostileTag: HostileTag }>} */ buildHostiles) {
+		super()
+
+		this.spawnInterval = spawnInterval
+		this.buildHostiles = buildHostiles
+	}
+
+	wait(/** @type {Arena} */ arena) {
+		loop(arena.universe, this.spawnInterval, 9999, () => {
+			for (const hostile of this.buildHostiles(arena)) {
+				arena.add(hostile)
+			}
+		})
+
+		return new Promise(resolve => {
+			wait(arena.universe, () => arena.hostiles.size == 0, () => {
+				resolve(true)
+			})
+
+			wait(arena.universe, () => arena.player.Hp.value < 0, () => {
+				resolve(false)
+			})
+		})
+	}
+}
+
+/** Nothing happens until no hostile is left. */
+export class FightStage extends ArenaStage {
+	wait(/** @type {Arena} */ arena) {
+		return new Promise(resolve => {
+			wait(arena.universe, () => arena.hostiles.size == 0, () => {
+				resolve(true)
+			})
+
+			wait(arena.universe, () => arena.player.Hp.value < 0, () => {
+				resolve(false)
+			})
+		})
 	}
 }
 

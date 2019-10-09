@@ -24,13 +24,13 @@ export class ArenaPage extends SpaceshitsPage {
 	}
 
 	onEnter() {
-		this.arena.start(
+		this.arena.wait(
 			() => this.navigation.enter(VictoryPage),
 			() => this.navigation.enter(DefeatPage)
 		)
 	}
 
 	onExit() {
-		this.arena.stop()
+		this.arena.complete()
 	}
 }
