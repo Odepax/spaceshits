@@ -10,6 +10,8 @@ import { Weapon, Bullet, Missile, DamageTargetTypes, Hp, ProjectileTarget, HpRen
 
 const { PI } = Math
 
+export class HostileTag {}
+
 /** @abstract */ class BaseCube extends Link {
 	constructor(
 		/** @type {number} */ x,
@@ -31,6 +33,7 @@ const { PI } = Math
 			new ProjectileTarget(DamageTargetTypes.hostile),
 			new RammingImpactTarget(DamageTargetTypes.hostile),
 			blaster,
+			new HostileTag(),
 			new RammingImpact(DamageTargetTypes.player, 13),
 
 			new Collision(

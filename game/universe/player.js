@@ -12,6 +12,8 @@ import { black, grey, yellow, orange, purple, light } from "../../asset/style/co
 import { playerGatlingSprite, playerGatlingBulletSprite } from "../../asset/sprite.js"
 import { Bullet, Weapon, ProjectileTarget, DamageTargetTypes, Hp, HpRenderer, WeaponEnergy, RammingImpact, RammingImpactTarget } from "./combat.js"
 
+export class PlayerTag {}
+
 export class GatlingPlayer extends Link {
 	constructor(/** @type {number} */ x, /** @type {number} */ y, /** @type {Transform} */ mousePosition) {
 		super([
@@ -27,6 +29,7 @@ export class GatlingPlayer extends Link {
 			new Hp(),
 			new ProjectileTarget(DamageTargetTypes.player),
 			new RammingImpactTarget(DamageTargetTypes.player),
+			new PlayerTag(),
 
 			new WeaponEnergy(5),
 			new Weapon(0.1, [
