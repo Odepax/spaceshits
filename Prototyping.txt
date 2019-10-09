@@ -1,3 +1,10 @@
+Game = Lore
+     + Ux <-------- Input
+     + Logic <----- Reaction to input
+     + Physic <---- Reaction to reaction to input
+     + Graphic <--- Reaction to reaction to reaction to input
+     + Music <----- Same
+
 Arena Stage Types
 ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 
