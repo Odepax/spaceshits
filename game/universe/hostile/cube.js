@@ -6,11 +6,14 @@ import { angle } from "../../math/random.js"
 import { cubeSprite, cubeQuadSprite, cubeMissileSprite, cubeBulletSprite, cubeQuadBulletSprite, cubeMissileBulletSprite } from "../../../asset/sprite.js"
 import { Collision, CircleCollider } from "../../collision.js"
 import { Render, SpriteRenderer } from "../../render.js"
-import { Weapon, Bullet, Missile, DamageTargetTypes, Hp, ProjectileTarget, HpRenderer, RammingImpactTarget, RammingImpact } from "../combat.js"
+import { Weapon, Bullet, Missile, Hp, ProjectileTarget, HpRenderer, RammingImpactTarget, RammingImpact } from "../combat.js"
+import { PlayerTarget } from "../player.js"
 
 const { PI } = Math
 
-export class HostileTag {}
+// const _HostileTarget = Object.create(HostileTarget.prototype);
+// export function HostileTarget() { return _HostileTarget }
+export class HostileTarget {}
 
 /** @abstract */ class BaseCube extends Link {
 	constructor(
@@ -30,11 +33,14 @@ export class HostileTag {}
 			new ExplosionOnRemove([ coreColor, black, grey, extraColor ], 100, 0.5),
 
 			new Hp(),
-			new ProjectileTarget(DamageTargetTypes.hostile),
-			new RammingImpactTarget(DamageTargetTypes.hostile),
+
+			new HostileTarget(),
+			new ProjectileTarget(),
+			new RammingImpactTarget(),
+
+			new RammingImpact(PlayerTarget, 13),
+
 			blaster,
-			new HostileTag(),
-			new RammingImpact(DamageTargetTypes.player, 13),
 
 			new Collision(
 				new CircleCollider(21)
@@ -78,18 +84,18 @@ export class CubeMissile extends BaseCube {
 
 export class CubeBullet extends Bullet {
 	constructor(/** @type {Transform} */ transform) {
-		super(transform, 600, DamageTargetTypes.player, 9, 7, [light, white, silver], cubeBulletSprite)
+		super(transform, 600, PlayerTarget, 9, 7, [ light, white, silver ], cubeBulletSprite)
 	}
 }
 
 export class CubeQuadBullet extends Bullet {
 	constructor(/** @type {Transform} */ transform) {
-		super(transform, 600, DamageTargetTypes.player, 9, 7, [ light, yellow, orange ], cubeQuadBulletSprite)
+		super(transform, 600, PlayerTarget, 9, 7, [ light, yellow, orange ], cubeQuadBulletSprite)
 	}
 }
 
 export class CubeMissileBullet extends Missile {
 	constructor(/** @type {Transform} */ transform, /** @type {{ Transform: Transform }} */ target) {
-		super(transform, target, 600, PI, DamageTargetTypes.player, 9, 7, [ light, pink, purple ], cubeMissileBulletSprite)
+		super(transform, target, 600, PI, PlayerTarget, 9, 7, [ light, pink, purple ], cubeMissileBulletSprite)
 	}
 }

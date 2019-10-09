@@ -9,25 +9,14 @@ import { red, white, silver, grey, black } from "../../asset/style/color.js"
 import { ParticleCloudRenderer, ParticleCloud } from "./particle.js"
 import { Ephemeral } from "../ephemeral.js"
 
-/** @typedef {Symbol} DamageTargetType */
-
-export const DamageTargetTypes = {
-	/** @type {DamageTargetType} */ player: Symbol(),
-	/** @type {DamageTargetType} */ hostile: Symbol()
-}
-
 export class Projectile {
-	constructor(/** @type {DamageTargetType} */ targetType, /** @type {number} */ damage) {
+	constructor(/** @type {import("../engine.js").Constructor<import("../engine.js").Trait>} */ targetType, /** @type {number} */ damage) {
 		this.targetType = targetType
 		this.damage = damage
 	}
 }
 
-export class ProjectileTarget {
-	constructor(/** @type {DamageTargetType} */ type) {
-		this.type = type
-	}
-}
+export class ProjectileTarget {}
 
 /** @abstract */ class SelfRegeneratingGauge {
 	constructor(/** @type {number} */ max, regen = 0, value = max) {
@@ -110,7 +99,7 @@ export class ProjectileDamageRoutine extends Routine {
 
 			for (const projectile of this.projectiles) {
 				if (
-					   projectile.Projectile.targetType == target.ProjectileTarget.type
+					   target[projectile.Projectile.targetType.name]
 					&& testCollision(projectile, target)
 				) {
 					this.universe.remove(projectile)
@@ -234,7 +223,7 @@ export /** @abstract */ class Bullet extends Link {
 	constructor(
 		/** @type {Transform} */ transform,
 		/** @type {number} */ speed,
-		/** @type {DamageTargetType} */ targetType,
+		/** @type {import("../engine.js").Constructor<import("../engine.js").Trait>} */ targetType,
 		/** @type {number} */ damage,
 		/** @type {number} */ collisionRadius,
 		/** @type {import("../../asset/style/color.js").Color[]} */ explosionColors,
@@ -264,7 +253,7 @@ export /** @abstract */ class Missile extends Bullet {
 		/** @type {{ Transform: Transform }} */ target,
 		/** @type {number} */ speed,
 		/** @type {number} */ rotationSpeed,
-		/** @type {DamageTargetType} */ targetType,
+		/** @type {import("../engine.js").Constructor<import("../engine.js").Trait>} */ targetType,
 		/** @type {number} */ damage,
 		/** @type {number} */ collisionRadius,
 		/** @type {import("../../asset/style/color.js").Color[]} */ explosionColors,
@@ -278,17 +267,13 @@ export /** @abstract */ class Missile extends Bullet {
 }
 
 export class RammingImpact {
-	constructor(/** @type {DamageTargetType} */ targetType, /** @type {number} */ damage) {
+	constructor(/** @type {import("../engine.js").Constructor<import("../engine.js").Trait>} */ targetType, /** @type {number} */ damage) {
 		this.targetType = targetType
 		this.damage = damage
 	}
 }
 
-export class RammingImpactTarget {
-	constructor(/** @type {DamageTargetType} */ type) {
-		this.type = type
-	}
-}
+export class RammingImpactTarget {}
 
 export class RammingImpactDamageRoutine extends Routine {
 	constructor(/** @type {Universe} */ universe) {
@@ -318,7 +303,7 @@ export class RammingImpactDamageRoutine extends Routine {
 					if (
 						   a.RammingImpact
 						&& b.RammingImpactTarget
-						&& a.RammingImpact.targetType == b.RammingImpactTarget.type
+						&& b[a.RammingImpact.targetType.name]
 					) {
 						collision = true
 
@@ -329,7 +314,7 @@ export class RammingImpactDamageRoutine extends Routine {
 					if (
 						   b.RammingImpact
 						&& a.RammingImpactTarget
-						&& b.RammingImpact.targetType == a.RammingImpactTarget.type
+						&& a[b.RammingImpact.targetType.name]
 					) {
 						collision = true
 

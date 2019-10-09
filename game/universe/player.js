@@ -10,9 +10,12 @@ import { ParameterCentral } from "../central/parameter.js"
 import { ExplosionOnAdd, ExplosionOnRemove } from "./explosion.js"
 import { black, grey, yellow, orange, purple, light } from "../../asset/style/color.js"
 import { playerGatlingSprite, playerGatlingBulletSprite } from "../../asset/sprite.js"
-import { Bullet, Weapon, ProjectileTarget, DamageTargetTypes, Hp, HpRenderer, WeaponEnergy, RammingImpact, RammingImpactTarget } from "./combat.js"
+import { Bullet, Weapon, ProjectileTarget, Hp, HpRenderer, WeaponEnergy, RammingImpact, RammingImpactTarget } from "./combat.js"
+import { HostileTarget } from "./hostile/cube.js"
 
-export class PlayerTag {}
+// const _PlayerTarget = Object.create(PlayerTarget.prototype);
+// export function PlayerTarget() { return _PlayerTarget }
+export class PlayerTarget {}
 
 export class GatlingPlayer extends Link {
 	constructor(/** @type {number} */ x, /** @type {number} */ y, /** @type {Transform} */ mousePosition,  /** @type {HTMLProgressElement} */ hpBar, /** @type {HTMLProgressElement} */ energyBar) {
@@ -27,16 +30,17 @@ export class GatlingPlayer extends Link {
 			new TargetFacing({ Transform: mousePosition }, TargetFacing.INSTANT),
 
 			new Hp(),
-			new ProjectileTarget(DamageTargetTypes.player),
-			new RammingImpactTarget(DamageTargetTypes.player),
-			new PlayerTag(),
+
+			new PlayerTarget(),
+			new ProjectileTarget(),
+			new RammingImpactTarget(),
+
+			new RammingImpact(HostileTarget, 23),
 
 			new WeaponEnergy(5),
 			new Weapon(0.1, [
 				{ type: GatlingBullet, x: 37, y: 0, a: 0 }
 			]),
-			new RammingImpact(DamageTargetTypes.hostile, 23),
-
 			new MouseAndKeyboardWeaponControl(),
 
 			new Collision(
@@ -57,7 +61,7 @@ export class GatlingPlayer extends Link {
 
 export class GatlingBullet extends Bullet {
 	constructor(/** @type {Transform} */ transform) {
-		super(transform, 900, DamageTargetTypes.hostile, 9, 7, [ black, grey, yellow, orange ], playerGatlingBulletSprite)
+		super(transform, 900, HostileTarget, 9, 7, [ black, grey, yellow, orange ], playerGatlingBulletSprite)
 	}
 }
 

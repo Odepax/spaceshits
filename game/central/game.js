@@ -12,7 +12,7 @@ import { ExplosionOnAddRoutine, ExplosionOnRemoveRoutine } from "../universe/exp
 import { ParticleCloudRoutine } from "../universe/particle.js"
 import { RenderRoutine } from "../render.js"
 import { MatchSubRoutine } from "../routine.js"
-import { Cube, CubeQuad, CubeMissile, HostileTag } from "../universe/hostile/cube.js"
+import { Cube, CubeQuad, CubeMissile, HostileTarget } from "../universe/hostile/cube.js"
 import { white } from "../../asset/style/color.js"
 
 /** Save & restore, run progression. */
@@ -145,15 +145,15 @@ export class Arena {
 		/** @type {Set<Link>} */ this.hostiles = new Set()
 	}
 
-	add(/** @type {{ HostileTag: HostileTag }} */ hostile) {
+	add(/** @type {{ HostileTarget: HostileTarget }} */ hostile) {
 		this.universe.add(hostile)
 	}
 
 	wait(/** @type {() => void} */ victoryCallback, /** @type {() => void} */ defeatCallback) {
 		const arena = this
 		this.universe.register(new (class extends Routine {
-			test({ HostileTag = null }) {
-				return HostileTag
+			test({ HostileTarget = null }) {
+				return HostileTarget
 			}
 
 			onAdd(/** @type {Link} */ hostile) {
@@ -214,7 +214,7 @@ export class CalmStage extends ArenaStage {
 
 /** A batch of hostiles burst in. */
 export class SwarmStage extends ArenaStage {
-	constructor(/** @type {(arena: Arena) => Iterable<{ HostileTag: HostileTag }>} */ buildHostiles) {
+	constructor(/** @type {(arena: Arena) => Iterable<{ HostileTarget: HostileTarget }>} */ buildHostiles) {
 		super()
 
 		this.buildHostiles = buildHostiles
@@ -231,7 +231,7 @@ export class SwarmStage extends ArenaStage {
 
 /** Hostiles spawn regularly until no hostile is left. */
 export class WavesStage extends ArenaStage {
-	constructor(/** @type {number} */ spawnInterval, /** @type {(arena: Arena) => Iterable<{ HostileTag: HostileTag }>} */ buildHostiles) {
+	constructor(/** @type {number} */ spawnInterval, /** @type {(arena: Arena) => Iterable<{ HostileTarget: HostileTarget }>} */ buildHostiles) {
 		super()
 
 		this.spawnInterval = spawnInterval
