@@ -3,8 +3,8 @@ import { Transform, Velocity, Acceleration, Friction, BounceOnEdges } from "../d
 import { MouseAndKeyboardControl } from "../control.js"
 import { TargetFacing } from "../movement.js"
 import { Collision, CircleCollider } from "../collision.js"
-import { Render } from "../render.js"
-import { Link, Routine } from "../engine.js"
+import { Render, CompositeRenderer, Renderer } from "../render.js"
+import { Link } from "../engine.js"
 import { MatchSubRoutine } from "../routine.js"
 import { ParameterCentral } from "../central/parameter.js"
 import { ExplosionOnAdd, ExplosionOnRemove } from "./explosion.js"
@@ -15,7 +15,7 @@ import { Bullet, Weapon, ProjectileTarget, DamageTargetTypes, Hp, HpRenderer, We
 export class PlayerTag {}
 
 export class GatlingPlayer extends Link {
-	constructor(/** @type {number} */ x, /** @type {number} */ y, /** @type {Transform} */ mousePosition) {
+	constructor(/** @type {number} */ x, /** @type {number} */ y, /** @type {Transform} */ mousePosition,  /** @type {HTMLProgressElement} */ hpBar, /** @type {HTMLProgressElement} */ energyBar) {
 		super([
 			new Transform(x, y),
 			new Velocity(0, -200),
@@ -46,7 +46,10 @@ export class GatlingPlayer extends Link {
 			new ExplosionOnAdd([ black, grey, orange, purple ], 300, 2),
 			new ExplosionOnRemove([ light, grey, orange, purple ], 600, 1),
 			new Render(
-				new HpRenderer(playerGatlingSprite)
+				new CompositeRenderer([
+					new HpRenderer(playerGatlingSprite),
+					new GaugeToProgressBarRenderer(hpBar, energyBar)
+				])
 			)
 		])
 	}
@@ -74,21 +77,20 @@ export class MouseAndKeyboardWeaponControlRoutine extends MatchSubRoutine {
 	}
 }
 
-export class PlayerGaugesRoutine extends Routine {
-	constructor(
-		/** @type {{ Hp: Hp, WeaponEnergy: WeaponEnergy }} */ player,
-		/** @type {HTMLProgressElement} */ hpBar,
-		/** @type {HTMLProgressElement} */ energyBar
-	) {
+export class GaugeToProgressBarRenderer extends Renderer {
+	constructor(/** @type {HTMLProgressElement} */ hpBar, /** @type {HTMLProgressElement} */ energyBar) {
 		super()
 
-		this.player = player
 		this.hpBar = hpBar
 		this.energyBar = energyBar
 	}
 
-	onStep() {
-		this.hpBar.value = this.player.Hp.progress
-		this.energyBar.value = this.player.WeaponEnergy.progress
+	/**
+	 * @param {CanvasRenderingContext2D} _
+	 * @param {{ Hp: Hp, WeaponEnergy: WeaponEnergy }}
+	 */
+	render(_, { Hp, WeaponEnergy }) {
+		this.hpBar.value = Hp.progress
+		this.energyBar.value = WeaponEnergy.progress
 	}
 }

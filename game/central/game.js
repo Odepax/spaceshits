@@ -1,7 +1,7 @@
 ﻿import { ParameterCentral } from "./parameter.js"
 import { InteractionCentral, InteractionRoutine } from "./interaction.js"
 import { Universe, Link, Routine } from "../engine.js"
-import { GatlingPlayer, PlayerGaugesRoutine, MouseAndKeyboardWeaponControlRoutine } from "../universe/player.js"
+import { GatlingPlayer, MouseAndKeyboardWeaponControlRoutine } from "../universe/player.js"
 import { MouseAndKeyboardControlRoutine } from "../control.js"
 import { TargetFacingRoutine, ForwardChasingRoutine } from "../movement.js"
 import { DynamicRoutine } from "../dynamic.js"
@@ -47,7 +47,9 @@ export class GameCentral {
 		const player = new GatlingPlayer(
 			gameCanvas.offsetWidth * 0.5,
 			gameCanvas.offsetHeight * 0.8,
-			interactionCentral.mousePosition
+			interactionCentral.mousePosition,
+			hpBar,
+			energyBar
 		)
 
 		universe.register(new InteractionRoutine(interactionCentral))
@@ -67,7 +69,6 @@ export class GameCentral {
 		universe.register(new ExplosionOnRemoveRoutine(universe))
 		universe.register(new ParticleCloudRoutine(universe.clock))
 		universe.register(new RenderRoutine(gameCanvas))
-		universe.register(new PlayerGaugesRoutine(player, hpBar, energyBar)) // TODO: Implement with a renderer?
 
 		// FPS counter.
 		class Debug {}
