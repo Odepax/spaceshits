@@ -13,6 +13,7 @@
 		<meta name="robots" content="index, follow" />
 		<script type="module">
 			import { ParameterCentral  } from "./game/central/parameter.js"
+			import { GameCentral } from "./game/central/game.js"
 			import { NavigationCentral } from "./game/central/navigation.js"
 			import { MainPage } from "./page/main.js"
 			import { SettingsPage } from "./page/settings.js"
@@ -23,13 +24,14 @@
 			import { VictoryPage } from "./page/victory.js"
 
 			const parameterCentral = new ParameterCentral()
+			const gameCentral = new GameCentral(parameterCentral)
 			const navigationCentral = new NavigationCentral(navigationHost)
 
 			navigationCentral.register(MainPage, () => new MainPage(navigationCentral, parameterCentral))
 			navigationCentral.register(SettingsPage, () => new SettingsPage(navigationCentral, parameterCentral))
 			navigationCentral.register(QuotationPage, () => new QuotationPage(navigationCentral))
 			navigationCentral.register(LobbyPage, () => new LobbyPage(navigationCentral))
-			navigationCentral.register(ArenaPage, () => new ArenaPage(navigationCentral, parameterCentral))
+			navigationCentral.register(ArenaPage, () => new ArenaPage(navigationCentral, gameCentral))
 			navigationCentral.register(DefeatPage, () => new DefeatPage(navigationCentral))
 			navigationCentral.register(VictoryPage, () => new VictoryPage(navigationCentral))
 
