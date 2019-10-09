@@ -27,6 +27,17 @@ export class GameCentral {
 		}
 	}
 
+	stepArena() {
+		++this.arena
+	}
+
+	reset() {
+		this.floor = 1
+		this.arena = 1
+		this.player.sholdCount = 0
+		this.player.items.clear()
+	}
+
 	buildArena(/** @type {HTMLCanvasElement} */ gameCanvas, /** @type {HTMLProgressElement} */ hpBar, /** @type {HTMLProgressElement} */ energyBar) {
 		const interactionCentral = new InteractionCentral(gameCanvas)
 		const universe = new Universe()
@@ -77,7 +88,7 @@ export class GameCentral {
 			new Debug()
 		]))
 
-		return new Arena(gameCanvas, universe, player, [
+		return new Arena(gameCanvas, universe, player, this.arena == 1 ? [
 			new SwarmStage(() => [ new Cube(gameCanvas.offsetWidth * 0.5, gameCanvas.offsetHeight * 0.2) ]),
 			new CalmStage(0.3 * second),
 			new SwarmStage(() => [ new Cube(gameCanvas.offsetWidth * 0.5, gameCanvas.offsetHeight * 0.2) ]),
@@ -101,6 +112,16 @@ export class GameCentral {
 			new SwarmStage(() => [ new CubeMissile(gameCanvas.offsetWidth * 0.7, gameCanvas.offsetHeight * 0.2, player) ]),
 
 			new FightStage()
+		] : [
+			new SwarmStage(() => [ new CubeMissile(gameCanvas.offsetWidth * 0.5, gameCanvas.offsetHeight * 0.2, player) ]),
+			new CalmStage(0.3 * second),
+			new SwarmStage(() => [ new CubeMissile(gameCanvas.offsetWidth * 0.5, gameCanvas.offsetHeight * 0.2, player) ]),
+			new CalmStage(0.3 * second),
+			new SwarmStage(() => [ new CubeMissile(gameCanvas.offsetWidth * 0.5, gameCanvas.offsetHeight * 0.2, player) ]),
+			
+			new CalmStage(3 * seconds),
+
+			new WavesStage(3 * seconds, () => [ new CubeQuad(gameCanvas.offsetWidth * 0.5, gameCanvas.offsetHeight * 0.2) ])
 		])
 	}
 

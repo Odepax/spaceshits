@@ -45,7 +45,7 @@ export class LoopRoutine extends MatchSubRoutine {
 
 	/** @param {{ Loop: Loop } */
 	onAdd({ Loop }) {
-		Loop.nextIterationTime = this.universe.clock.time + Loop.interval
+		Loop.nextIterationTime = this.universe.clock.time
 	}
 
 	onSubStep(/** @type {{ Loop: Loop }} */ link) {

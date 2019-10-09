@@ -32,8 +32,8 @@
 			navigationCentral.register(QuotationPage, () => new QuotationPage(navigationCentral))
 			navigationCentral.register(LobbyPage, () => new LobbyPage(navigationCentral))
 			navigationCentral.register(ArenaPage, () => new ArenaPage(navigationCentral, gameCentral))
-			navigationCentral.register(DefeatPage, () => new DefeatPage(navigationCentral))
-			navigationCentral.register(VictoryPage, () => new VictoryPage(navigationCentral))
+			navigationCentral.register(DefeatPage, () => new DefeatPage(navigationCentral, gameCentral))
+			navigationCentral.register(VictoryPage, () => new VictoryPage(navigationCentral, gameCentral))
 
 			navigationCentral.enter(MainPage)
 		</script>
@@ -150,7 +150,7 @@
 		</template>
 
 		<template id="arena-page" class="pull-in stack-horizontal">
-			<h1 class="page-title">Floor 1 &ndash; Arena 1</h1>
+			<h1 class="page-title">Floor <span id="floorNumber">...</span> &ndash; Arena <span id="arenaNumber">...</span></h1>
 			<section class="page-content stack-horizontal">
 
 				<div class="stack-vertical vertical-bottom">
@@ -168,7 +168,7 @@
 		</template>
 
 		<template id="defeat-page" class="push-in stack-horizontal">
-			<h1 class="page-title">Defeated at Floor 1 &ndash; Arena 1</h1>
+			<h1 class="page-title">Defeated at Floor <span id="floorNumber">...</span> &ndash; Arena <span id="arenaNumber">...</span></h1>
 			<section class="page-content ">
 				<button data-on="click:backToMain" class="pink large">
 					<span class="icon left"></span>

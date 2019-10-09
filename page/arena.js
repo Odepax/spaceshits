@@ -20,6 +20,9 @@ export class ArenaPage extends SpaceshitsPage {
 		gameCanvas.addEventListener("mouseenter", () => gameCanvas.focus(), false)
 		gameCanvas.addEventListener("mousedown", () => gameCanvas.focus(), false)
 
+		this.$.floorNumber.textContent = this.game.floor
+		this.$.arenaNumber.textContent = this.game.arena
+
 		this.arena = this.game.buildArena(this.$.gameCanvas, this.$.hpBar, this.$.energyBar)
 	}
 
