@@ -6,7 +6,7 @@ import { MouseAndKeyboardControlRoutine } from "../control.js"
 import { TargetFacingRoutine, ForwardChasingRoutine } from "../movement.js"
 import { DynamicRoutine } from "../dynamic.js"
 import { EphemeralRoutine } from "../ephemeral.js"
-import { WeaponRoutine, ProjectileDamageRoutine, RammingImpactDamageRoutine, HpRoutine } from "../universe/combat.js"
+import { WeaponRoutine, ProjectileDamageRoutine, RammingImpactDamageRoutine, HpRoutine, Weapon, Hp, WeaponEnergy } from "../universe/combat.js"
 import { LoopRoutine, WaitRoutine, wait, second, loop, seconds, } from "../schedule.js"
 import { ExplosionOnAddRoutine, ExplosionOnRemoveRoutine } from "../universe/explosion.js"
 import { ParticleCloudRoutine } from "../universe/particle.js"
@@ -23,22 +23,34 @@ export class GameCentral {
 		this.arena = 1
 		this.player = {
 			sholdCount: 0,
-			/** @type {Set<Item>} */ items: new Set()
+			/** @type {(player: GatlingPlayer) => void} */ weaponInstaller: () => {}, // TODO: Do...
+			/** @type {(player: GatlingPlayer) => void} */ auxModuleInstaller: () => {}, // TODO: Do...
+			/** @type {Set<(player: GatlingPlayer) => void>} */ itemInstallers: new Set()
 		}
 	}
 
 	stepArena() {
 		++this.arena
+		++this.player.sholdCount
 	}
 
 	reset() {
 		this.floor = 1
 		this.arena = 1
 		this.player.sholdCount = 0
-		this.player.items.clear()
+		this.player.itemInstallers.clear()
 	}
 
-	buildArena(/** @type {HTMLCanvasElement} */ gameCanvas, /** @type {HTMLProgressElement} */ hpBar, /** @type {HTMLProgressElement} */ energyBar) {
+	/** @private */ initializePlayer(/** @type {GatlingPlayer} */ player) {
+		this.player.weaponInstaller(player)
+		this.player.auxModuleInstaller(player)
+
+		for (const itemInstaller of this.player.itemInstallers) {
+			itemInstaller(player)
+		}
+	}
+
+	getArena(/** @type {HTMLCanvasElement} */ gameCanvas, /** @type {HTMLProgressElement} */ hpBar, /** @type {HTMLProgressElement} */ energyBar) {
 		const interactionCentral = new InteractionCentral(gameCanvas)
 		const universe = new Universe()
 
@@ -51,6 +63,8 @@ export class GameCentral {
 			hpBar,
 			energyBar
 		)
+
+		this.initializePlayer(player)
 
 		universe.register(new InteractionRoutine(interactionCentral))
 		universe.register(new MouseAndKeyboardControlRoutine(interactionCentral, this.parameters))
@@ -126,8 +140,48 @@ export class GameCentral {
 		])
 	}
 
-	buildShop() {
-		return new Shop()
+	getShop() {
+		return new Shop([
+			{
+				name: "Damage Booster",
+				description: "Increases weapon damages.",
+				price: 1,
+				icon: "damage-booster",
+				colorName: "red",
+
+				onInstall(/** @type {GameCentral} */ game) {
+					game.player.itemInstallers.add((/** @type {{ Weapon: Weapon }} */ player) => {
+						player.Weapon.damageBoostFactor += 10.2
+					})
+				}
+			},
+			{
+				name: "Hull Plate",
+				description: "Increases hull resilience.",
+				price: 1,
+				icon: "hull-booster",
+				colorName: "green",
+
+				onInstall(/** @type {GameCentral} */ game) {
+					game.player.itemInstallers.add((/** @type {{ Hp: Hp }} */ player) => {
+						player.Hp.max = player.Hp.value += 13
+					})
+				}
+			},
+			{
+				name: "Weapon Energy Booster",
+				description: "Increases weapon energy capacity.",
+				price: 1,
+				icon: "weapon-cap-booster",
+				colorName: "red",
+
+				onInstall(/** @type {GameCentral} */ game) {
+					game.player.itemInstallers.add((/** @type {{ WeaponEnergy: WeaponEnergy }} */ player) => {
+						player.WeaponEnergy.max = player.WeaponEnergy.value += 13
+					})
+				}
+			}
+		])
 	}
 }
 
@@ -239,7 +293,7 @@ export class WavesStage extends ArenaStage {
 	}
 
 	wait(/** @type {Arena} */ arena) {
-		loop(arena.universe, this.spawnInterval, 9999, () => {
+		const { stop } = loop(arena.universe, this.spawnInterval, 9999, () => {
 			for (const hostile of this.buildHostiles(arena)) {
 				arena.add(hostile)
 			}
@@ -247,10 +301,12 @@ export class WavesStage extends ArenaStage {
 
 		return new Promise(resolve => {
 			wait(arena.universe, () => arena.hostiles.size == 0, () => {
+				stop()
 				resolve(true)
 			})
 
 			wait(arena.universe, () => arena.player.Hp.value < 0, () => {
+				stop()
 				resolve(false)
 			})
 		})
@@ -277,15 +333,14 @@ export class FightStage extends ArenaStage {
  *
  * @property {string} name
  * @property {string} description
- * @property {int} price
+ * @property {number} price
  * @property {string} icon
  * @property {string} colorName
- *
- * @method install(GameCentral, Player)
+ * @property {(game: GameCentral) => void} onInstall
  */
 
 export class Shop {
-	constructor() {
-		this.items = []
+	constructor(/** @type {Iterable<Item>} */ items) {
+		this.items = items
 	}
 }

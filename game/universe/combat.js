@@ -182,6 +182,7 @@ export class Weapon {
 		this.timeEnlapsed = 0
 		this.projectiles = projectiles
 		this.canFire = true
+		this.damageBoostFactor = 1
 	}
 }
 
@@ -203,13 +204,19 @@ export class WeaponRoutine extends MatchSubRoutine {
 				WeaponEnergy.value -= WeaponEnergy.shotConsumption
 			}
 
-			for (const projectile of Weapon.projectiles) {
-				this.universe.add(new projectile.type(
+			for (const projectileDefinition of Weapon.projectiles) {
+				const projectile = new projectileDefinition.type(
 					Transform.copy
-						.relativeOffset(projectile.x, projectile.y)
-						.rotate(projectile.a),
-					projectile.target
-				))
+						.relativeOffset(projectileDefinition.x, projectileDefinition.y)
+						.rotate(projectileDefinition.a),
+					projectileDefinition.target
+				)
+
+				if (projectile.Projectile) {
+					projectile.Projectile.damage *= Weapon.damageBoostFactor
+				}
+
+				this.universe.add(projectile)
 			}
 		}
 
