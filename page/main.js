@@ -1,7 +1,7 @@
 ﻿import { NavigationCentral, SpaceshitsPage } from "../game/central/navigation.js"
 import { QuotationPage } from "./quotation.js"
 import { SettingsPage } from "./settings.js"
-import { LobbyPage } from "./lobby.js"
+import { ShopPage } from "./shop.js"
 import { ParameterCentral } from "../game/central/parameter.js"
 import { GameCentral } from "../game/central/game.js"
 
@@ -38,6 +38,6 @@ export class MainPage extends SpaceshitsPage {
 		this.navigation.enter(QuotationPage)
 	}
 
-	resumeLastGame() { this.navigation.enter(LobbyPage) }
+	resumeLastGame() { this.navigation.enter(ShopPage) }
 	editSettings() { this.navigation.enter(SettingsPage) }
 }

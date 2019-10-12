@@ -18,7 +18,6 @@
 			import { MainPage } from "./page/main.js"
 			import { SettingsPage } from "./page/settings.js"
 			import { QuotationPage } from "./page/quotation.js"
-			import { LobbyPage } from "./page/lobby.js"
 			import { ArenaPage } from "./page/arena.js"
 			import { DefeatPage } from "./page/defeat.js"
 			import { VictoryPage } from "./page/victory.js"
@@ -31,7 +30,6 @@
 			navigationCentral.register(MainPage, () => new MainPage(navigationCentral, parameterCentral, gameCentral))
 			navigationCentral.register(SettingsPage, () => new SettingsPage(navigationCentral, parameterCentral))
 			navigationCentral.register(QuotationPage, () => new QuotationPage(navigationCentral))
-			navigationCentral.register(LobbyPage, () => new LobbyPage(navigationCentral))
 			navigationCentral.register(ArenaPage, () => new ArenaPage(navigationCentral, gameCentral))
 			navigationCentral.register(ShopPage, () => new ShopPage(navigationCentral, gameCentral))
 			navigationCentral.register(DefeatPage, () => new DefeatPage(navigationCentral, gameCentral))
@@ -123,24 +121,6 @@
 				<h2 class="source">An Echo from Space</h2>
 				<p class="message" id="quote">...</p>
 			</blockquote>
-		</template>
-
-		<template id="lobby-page" class="pull-in stack-vertical">
-			<h2 class="pull-up-page-title">
-				<span>New Game</span>
-				<small>WIP</small>
-			</h2>
-			<section class="page-content vertical-stretch stack-horizontal">
-				<button data-on="click:fleeArena" class="action-card rectangles teal">
-					<span class="icon cross"></span>
-					<span class="label">Flee<br /> Arena</span>
-				</button>
-				<canvas id="gameCanvas" class="game-canvas" style="margin-right: 10px;" width="380" height="380" tabindex="1"></canvas>
-				<button data-on="click:fightArena" class="action-card triangles red">
-					<span class="icon right"></span>
-					<span class="label">Fight<br /> Arena<br /> #1</span>
-				</button>
-			</section>
 		</template>
 
 		<template id="arena-page" class="pull-in stack-horizontal">
