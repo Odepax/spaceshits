@@ -14,6 +14,7 @@ import { RenderRoutine } from "../render.js"
 import { MatchSubRoutine } from "../routine.js"
 import { Cube, CubeQuad, CubeMissile, HostileTarget } from "../universe/hostile/cube.js"
 import { white } from "../../asset/style/color.js"
+import { pop } from "../math/random.js"
 
 /** Save & restore, run progression. */
 export class GameCentral {
@@ -27,18 +28,93 @@ export class GameCentral {
 			/** @type {(player: GatlingPlayer) => void} */ auxModuleInstaller: () => {}, // TODO: Do...
 			/** @type {Set<(player: GatlingPlayer) => void>} */ itemInstallers: new Set()
 		}
+
+		/** @private @type {Shop} */ this.shop = null
+		/** @private */ this.rebuildShop = true
 	}
 
 	stepArena() {
 		++this.arena
 		++this.player.sholdCount
+		this.rebuildShop = !(this.arena % 2)
 	}
 
 	reset() {
 		this.floor = 1
 		this.arena = 1
+		this.rebuildShop = true
 		this.player.sholdCount = 0
 		this.player.itemInstallers.clear()
+	}
+
+	get availableItems() {
+		return [
+			{
+				name: "Hull Plate",
+				description: "Increases hull resilience.",
+				price: 1,
+				icon: "hull-booster",
+				colorName: "green",
+
+				onInstall(/** @type {GameCentral} */ game) {
+					game.player.itemInstallers.add((/** @type {{ Hp: Hp }} */ player) => {
+						player.Hp.max = player.Hp.value += 13
+					})
+				}
+			},
+			{
+				name: "Damage Booster",
+				description: "Increases weapon damages.",
+				price: 1,
+				icon: "damage-booster",
+				colorName: "red",
+
+				onInstall(/** @type {GameCentral} */ game) {
+					game.player.itemInstallers.add((/** @type {{ Weapon: Weapon }} */ player) => {
+						player.Weapon.damageBoostFactor += 0.2
+					})
+				}
+			},
+			{
+				name: "Fire Rate Booster",
+				description: "Increases weapon fire rate.",
+				price: 1,
+				icon: "fire-rate-booster",
+				colorName: "red",
+
+				onInstall(/** @type {GameCentral} */ game) {
+					game.player.itemInstallers.add((/** @type {{ Weapon: Weapon }} */ player) => {
+						player.Weapon.fireRate -= 0.01
+					})
+				}
+			},
+			{
+				name: "Weapon Energy Booster",
+				description: "Increases weapon energy capacity.",
+				price: 1,
+				icon: "weapon-cap-booster",
+				colorName: "red",
+
+				onInstall(/** @type {GameCentral} */ game) {
+					game.player.itemInstallers.add((/** @type {{ WeaponEnergy: WeaponEnergy }} */ player) => {
+						player.WeaponEnergy.max = player.WeaponEnergy.value += 13
+					})
+				}
+			},
+			{
+				name: "Weapon Energy Generation Booster",
+				description: "Increases weapon energy regeneration rate.",
+				price: 1,
+				icon: "weapon-regen-booster",
+				colorName: "red",
+
+				onInstall(/** @type {GameCentral} */ game) {
+					game.player.itemInstallers.add((/** @type {{ WeaponEnergy: WeaponEnergy }} */ player) => {
+						player.WeaponEnergy.regen += 2
+					})
+				}
+			}
+		]
 	}
 
 	/** @private */ initializePlayer(/** @type {GatlingPlayer} */ player) {
@@ -141,47 +217,19 @@ export class GameCentral {
 	}
 
 	getShop() {
-		return new Shop([
-			{
-				name: "Damage Booster",
-				description: "Increases weapon damages.",
-				price: 1,
-				icon: "damage-booster",
-				colorName: "red",
+		if (this.rebuildShop) {
+			const availableItems = this.availableItems
 
-				onInstall(/** @type {GameCentral} */ game) {
-					game.player.itemInstallers.add((/** @type {{ Weapon: Weapon }} */ player) => {
-						player.Weapon.damageBoostFactor += 10.2
-					})
-				}
-			},
-			{
-				name: "Hull Plate",
-				description: "Increases hull resilience.",
-				price: 1,
-				icon: "hull-booster",
-				colorName: "green",
+			this.rebuildShop = false
+			this.shop = new Shop([
+				pop(availableItems),
+				pop(availableItems),
+				pop(availableItems),
+				pop(availableItems)
+			])
+		}
 
-				onInstall(/** @type {GameCentral} */ game) {
-					game.player.itemInstallers.add((/** @type {{ Hp: Hp }} */ player) => {
-						player.Hp.max = player.Hp.value += 13
-					})
-				}
-			},
-			{
-				name: "Weapon Energy Booster",
-				description: "Increases weapon energy capacity.",
-				price: 1,
-				icon: "weapon-cap-booster",
-				colorName: "red",
-
-				onInstall(/** @type {GameCentral} */ game) {
-					game.player.itemInstallers.add((/** @type {{ WeaponEnergy: WeaponEnergy }} */ player) => {
-						player.WeaponEnergy.max = player.WeaponEnergy.value += 13
-					})
-				}
-			}
-		])
+		return this.shop
 	}
 }
 
