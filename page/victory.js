@@ -1,6 +1,6 @@
 ﻿import { NavigationCentral, SpaceshitsPage } from "../game/central/navigation.js"
-import { ArenaPage } from "./arena.js"
 import { GameCentral } from "../game/central/game.js"
+import { MainPage } from "./main.js"
 
 export class VictoryPage extends SpaceshitsPage {
 	constructor(/** @type {NavigationCentral} */ navigation, /** @type {GameCentral} */ game) {
@@ -10,11 +10,11 @@ export class VictoryPage extends SpaceshitsPage {
 		this.game = game
 	}
 
-	onExit() {
-		this.game.stepArena()
+	onInstall() {
+		this.game.reset()
 	}
 
 	continue() {
-		this.navigation.enter(ArenaPage)
+		this.navigation.enter(MainPage)
 	}
 }

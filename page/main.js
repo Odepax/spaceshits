@@ -3,16 +3,22 @@ import { QuotationPage } from "./quotation.js"
 import { SettingsPage } from "./settings.js"
 import { LobbyPage } from "./lobby.js"
 import { ParameterCentral } from "../game/central/parameter.js"
+import { GameCentral } from "../game/central/game.js"
 
 export class MainPage extends SpaceshitsPage {
-	constructor(/** @type {NavigationCentral} */ navigation, /** @type {ParameterCentral} */ parameters) {
+	constructor(/** @type {NavigationCentral} */ navigation, /** @type {ParameterCentral} */ parameters, /** @type {GameCentral} */ game) {
 		super()
 
 		this.navigation = navigation
 		this.parameters = parameters
+		this.game = game
 	}
 
 	onInstall() {
+		if (this.game.floor == 1 && this.game.arena == 1) {
+			this.$.resumeButton.style.display = "none"
+		}
+
 		this.$.settingsTooltip.innerHTML = `
 			Move: ${ this.formatKey("up") } ${ this.formatKey("left") } ${ this.formatKey("down") } ${ this.formatKey("right") } <br />
 			Shoot: ${ this.formatKey("shoot")} <br />
@@ -27,7 +33,11 @@ export class MainPage extends SpaceshitsPage {
 			.replace("Mouse", "Mouse ")
 	}
 
-	startNewGame() { this.navigation.enter(QuotationPage) }
+	startNewGame() {
+		this.game.reset()
+		this.navigation.enter(QuotationPage)
+	}
+
 	resumeLastGame() { this.navigation.enter(LobbyPage) }
 	editSettings() { this.navigation.enter(SettingsPage) }
 }

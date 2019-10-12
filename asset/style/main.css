@@ -21,10 +21,10 @@ header[role="banner"] h1 small {
 	font-size: 16px;
 }
 
-nav > *:not(:first-child) {
-	margin-top: 20px;
+nav {
+	padding-left: 20px;
 }
 
 nav > a:first-of-type {
-	margin-top: 90px;
+	margin-top: 90px !important;
 }

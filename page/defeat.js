@@ -1,6 +1,6 @@
 ﻿import { NavigationCentral, SpaceshitsPage } from "../game/central/navigation.js"
-import { MainPage } from "./main.js"
 import { GameCentral } from "../game/central/game.js"
+import { MainPage } from "./main.js"
 
 export class DefeatPage extends SpaceshitsPage {
 	constructor(/** @type {NavigationCentral} */ navigation, /** @type {GameCentral} */ game) {
@@ -13,9 +13,7 @@ export class DefeatPage extends SpaceshitsPage {
 	onInstall() {
 		this.$.floorNumber.textContent = this.game.floor
 		this.$.arenaNumber.textContent = this.game.arena
-	}
 
-	onExit() {
 		this.game.reset()
 	}
 

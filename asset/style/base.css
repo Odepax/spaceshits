@@ -35,3 +35,8 @@ body {
 small {
 	font-size: 12px;
 }
+
+strong {
+	font-size: 20px;
+	font-weight: normal;
+}

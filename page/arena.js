@@ -1,7 +1,7 @@
 ﻿import { GameCentral, Arena } from "../game/central/game.js"
 import { NavigationCentral, SpaceshitsPage } from "../game/central/navigation.js"
 import { DefeatPage } from "./defeat.js"
-import { VictoryPage } from "./victory.js"
+import { ShopPage } from "./shop.js"
 
 export class ArenaPage extends SpaceshitsPage {
 	constructor(/** @type {NavigationCentral} */ navigation, /** @type {GameCentral} */ game) {
@@ -23,13 +23,18 @@ export class ArenaPage extends SpaceshitsPage {
 		this.$.floorNumber.textContent = this.game.floor
 		this.$.arenaNumber.textContent = this.game.arena
 
-		this.arena = this.game.buildArena(this.$.gameCanvas, this.$.hpBar, this.$.energyBar)
+		this.arena = this.game.getArena(this.$.gameCanvas, this.$.hpBar, this.$.energyBar)
 	}
 
 	onEnter() {
 		this.arena.wait(
-			() => this.navigation.enter(VictoryPage),
-			() => this.navigation.enter(DefeatPage)
+			() => {
+				this.game.stepArena()
+				this.navigation.enter(ShopPage)
+			},
+			() => {
+				this.navigation.enter(DefeatPage)
+			}
 		)
 	}
 

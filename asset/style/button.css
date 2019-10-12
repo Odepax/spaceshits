@@ -3,6 +3,7 @@ a {
 	min-width: 120px;
 	height: 50px;
 	background: var(--DARK);
+	border-radius: 0;
 	text-align: center;
 	line-height: 50px;
 	text-decoration: none;
@@ -22,6 +23,7 @@ button {
 	background-image: url("./button-background.svg");
 	background-position-x: -20px;
 	border: none;
+	border-radius: 0;
 	outline: none;
 	box-shadow: 0 2px black;
 	color: var(--WHITE);
