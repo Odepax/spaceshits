@@ -30,6 +30,8 @@
 .icon.gear::before { content: "*"; }
 .icon.pause::before { content: "P"; }
 
+.icon.sholds::before { content: "$"; }
+
 .icon.gatling::before { content: "G"; }
 
 .icon.damage-booster::before { content: "D"; }
