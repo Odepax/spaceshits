@@ -7,12 +7,12 @@ import { TargetFacingRoutine, ForwardChasingRoutine } from "../movement.js"
 import { DynamicRoutine } from "../dynamic.js"
 import { EphemeralRoutine } from "../ephemeral.js"
 import { WeaponRoutine, ProjectileDamageRoutine, RammingImpactDamageRoutine, HpRoutine, Weapon, Hp, WeaponEnergy } from "../universe/combat.js"
-import { LoopRoutine, WaitRoutine, wait, second, loop, seconds, } from "../schedule.js"
+import { LoopRoutine, WaitRoutine, wait, second, loop, seconds, times } from "../schedule.js"
 import { ExplosionOnAddRoutine, ExplosionOnRemoveRoutine } from "../universe/explosion.js"
 import { ParticleCloudRoutine } from "../universe/particle.js"
 import { RenderRoutine } from "../render.js"
 import { MatchSubRoutine } from "../routine.js"
-import { Cube, CubeQuad, CubeMissile, HostileTarget } from "../universe/hostile/cube.js"
+import { Cube, CubeMissile, HostileTarget } from "../universe/hostile/cube.js"
 import { white } from "../../asset/style/color.js"
 import { pop } from "../math/random.js"
 
@@ -34,6 +34,7 @@ export class GameCentral {
 	}
 
 	stepArena() {
+		// TODO: Implement floors.
 		++this.arena
 		++this.player.sholdCount
 		this.rebuildShop = !(this.arena % 2)
@@ -164,54 +165,128 @@ export class GameCentral {
 		universe.register(MatchSubRoutine.onSubStep(({ Debug }) => {
 			/** @type {CanvasRenderingContext2D} */ const graphics = gameCanvas.getContext("2d")
 
-			graphics.font = "16px Alte DIN 1451 Mittelschrift"
+			graphics.font = "16px \"Alte DIN 1451 Mittelschrift\""
 			graphics.fillStyle = white
 
-			let i = 0
-			graphics.fillText(~~(1 / universe.clock.spf) + " FPS", 50, 30 + 20 * ++i)
-			graphics.fillText(interactionCentral.mousePosition.x + ", " + interactionCentral.mousePosition.y, 50, 30 + 20 * ++i)
-			graphics.fillText(Array.from(interactionCentral.currentlyPressedKeys).join(", "), 50, 30 + 20 * ++i)
+			let lineOffset = 0
+			graphics.fillText(~~(1 / universe.clock.spf) + " FPS", 50, 30 + 20 * ++lineOffset)
+			graphics.fillText(interactionCentral.mousePosition.x + ", " + interactionCentral.mousePosition.y, 50, 30 + 20 * ++lineOffset)
+			graphics.fillText(Array.from(interactionCentral.currentlyPressedKeys).join(", "), 50, 30 + 20 * ++lineOffset)
 		}))
 
 		universe.add(new Link([
 			new Debug()
 		]))
 
-		return new Arena(gameCanvas, universe, player, this.arena == 1 ? [
-			new SwarmStage(() => [ new Cube(gameCanvas.offsetWidth * 0.5, gameCanvas.offsetHeight * 0.2) ]),
-			new CalmStage(0.3 * second),
-			new SwarmStage(() => [ new Cube(gameCanvas.offsetWidth * 0.5, gameCanvas.offsetHeight * 0.2) ]),
-			new CalmStage(0.3 * second),
-			new SwarmStage(() => [ new Cube(gameCanvas.offsetWidth * 0.5, gameCanvas.offsetHeight * 0.2) ]),
+		return new Arena(gameCanvas, universe, player, this.getStages(gameCanvas, player))
+	}
 
-			new CalmStage(9 * seconds),
-		
-			new SwarmStage(() => [ new CubeQuad(gameCanvas.offsetWidth * 0.3, gameCanvas.offsetHeight * 0.2) ]),
-			new CalmStage(0.3 * second),
-			new SwarmStage(() => [ new CubeQuad(gameCanvas.offsetWidth * 0.3, gameCanvas.offsetHeight * 0.2) ]),
-			new CalmStage(0.3 * second),
-			new SwarmStage(() => [ new CubeQuad(gameCanvas.offsetWidth * 0.3, gameCanvas.offsetHeight * 0.2) ]),
+	/** @private */ getStages(/** @type {HTMLCanvasElement} */ gameCanvas, /** @type {GatlingPlayer} */ player) {
+		return [
+			[
+				new WavesStage(0.3 * second, 2 * times, () => [
+					new Cube(gameCanvas.offsetWidth * 0.5, gameCanvas.offsetHeight * 0.2)
+				]),
+				new FightStage(),
 
-			new CalmStage(9 * seconds),
+				new CalmStage(3 * seconds),
 
-			new SwarmStage(() => [ new CubeMissile(gameCanvas.offsetWidth * 0.7, gameCanvas.offsetHeight * 0.2, player) ]),
-			new CalmStage(0.3 * second),
-			new SwarmStage(() => [ new CubeMissile(gameCanvas.offsetWidth * 0.7, gameCanvas.offsetHeight * 0.2, player) ]),
-			new CalmStage(0.3 * second),
-			new SwarmStage(() => [ new CubeMissile(gameCanvas.offsetWidth * 0.7, gameCanvas.offsetHeight * 0.2, player) ]),
+				new WavesStage(0.3 * second, 2 * times, () => [
+					new Cube(gameCanvas.offsetWidth * 0.3, gameCanvas.offsetHeight * 0.2),
+					new Cube(gameCanvas.offsetWidth * 0.7, gameCanvas.offsetHeight * 0.2)
+				]),
+				new FightStage()
+			],
+			[
+				new WavesStage(0.3 * second, 2 * times, () => [
+					new Cube(gameCanvas.offsetWidth * 0.3, gameCanvas.offsetHeight * 0.2),
+					new Cube(gameCanvas.offsetWidth * 0.7, gameCanvas.offsetHeight * 0.2)
+				]),
+				new FightStage(),
 
-			new FightStage()
-		] : [
-			new SwarmStage(() => [ new CubeMissile(gameCanvas.offsetWidth * 0.5, gameCanvas.offsetHeight * 0.2, player) ]),
-			new CalmStage(0.3 * second),
-			new SwarmStage(() => [ new CubeMissile(gameCanvas.offsetWidth * 0.5, gameCanvas.offsetHeight * 0.2, player) ]),
-			new CalmStage(0.3 * second),
-			new SwarmStage(() => [ new CubeMissile(gameCanvas.offsetWidth * 0.5, gameCanvas.offsetHeight * 0.2, player) ]),
-			
-			new CalmStage(3 * seconds),
+				new CalmStage(3 * seconds),
 
-			new WavesStage(3 * seconds, () => [ new CubeQuad(gameCanvas.offsetWidth * 0.5, gameCanvas.offsetHeight * 0.2) ])
-		])
+				new WavesStage(0.3 * second, 2 * times, () => [
+					new Cube(gameCanvas.offsetWidth * 0.3, gameCanvas.offsetHeight * 0.2),
+					new Cube(gameCanvas.offsetWidth * 0.5, gameCanvas.offsetHeight * 0.2),
+					new Cube(gameCanvas.offsetWidth * 0.7, gameCanvas.offsetHeight * 0.2)
+				]),
+				new FightStage()
+			],
+			[
+				new WavesStage(0.3 * second, 3 * times, () => [
+					new Cube(gameCanvas.offsetWidth * 0.5, gameCanvas.offsetHeight * 0.2)
+				]),
+
+				new CalmStage(3 * seconds),
+
+				new WavesStage(2 * seconds, 10 * times, () => [
+					new Cube(gameCanvas.offsetWidth * 0.5, gameCanvas.offsetHeight * 0.2)
+				]),
+				new FightStage()
+			],
+			[
+				new WavesStage(0.3 * second, 3 * times, () => [
+					new Cube(gameCanvas.offsetWidth * 0.3, gameCanvas.offsetHeight * 0.2),
+					new Cube(gameCanvas.offsetWidth * 0.7, gameCanvas.offsetHeight * 0.2)
+				]),
+				new FightStage(),
+
+				new CalmStage(3 * seconds),
+
+				new SwarmStage(() => [
+					new CubeMissile(gameCanvas.offsetWidth * 0.5, gameCanvas.offsetHeight * 0.2, player)
+				]),
+				new FightStage()
+			],
+			[
+				new SwarmStage(() => [
+					new CubeMissile(gameCanvas.offsetWidth * 0.5, gameCanvas.offsetHeight * 0.2, player)
+				]),
+
+				new CalmStage(3 * seconds),
+
+				new WavesStage(0.3 * second, 2 * times, () => [
+					new Cube(gameCanvas.offsetWidth * 0.3, gameCanvas.offsetHeight * 0.2),
+					new Cube(gameCanvas.offsetWidth * 0.7, gameCanvas.offsetHeight * 0.2),
+					new CubeMissile(gameCanvas.offsetWidth * 0.5, gameCanvas.offsetHeight * 0.2, player)
+				]),
+				new FightStage()
+			],
+			[
+				new WavesStage(0.3 * second, 2 * times, () => [
+					new Cube(gameCanvas.offsetWidth * 0.3, gameCanvas.offsetHeight * 0.2),
+					new Cube(gameCanvas.offsetWidth * 0.5, gameCanvas.offsetHeight * 0.2),
+					new Cube(gameCanvas.offsetWidth * 0.7, gameCanvas.offsetHeight * 0.2)
+				]),
+				new FightStage(),
+
+				new CalmStage(3 * seconds),
+
+				new SwarmStage(() => [
+					new CubeMissile(gameCanvas.offsetWidth * 0.3, gameCanvas.offsetHeight * 0.2, player),
+					new CubeMissile(gameCanvas.offsetWidth * 0.5, gameCanvas.offsetHeight * 0.2, player),
+					new CubeMissile(gameCanvas.offsetWidth * 0.7, gameCanvas.offsetHeight * 0.2, player)
+				]),
+				new FightStage()
+			],
+			[
+				new WavesStage(2 * seconds, 3 * times, () => [
+					new Cube(gameCanvas.offsetWidth * 0.3, gameCanvas.offsetHeight * 0.2),
+					new Cube(gameCanvas.offsetWidth * 0.7, gameCanvas.offsetHeight * 0.2)
+				]),
+				new FightStage(),
+
+				new CalmStage(3 * seconds),
+
+				new WavesStage(2 * seconds, 2 * times, () => [
+					new Cube(gameCanvas.offsetWidth * 0.5, gameCanvas.offsetHeight * 0.2),
+					new CubeMissile(gameCanvas.offsetWidth * 0.3, gameCanvas.offsetHeight * 0.2, player),
+					new CubeMissile(gameCanvas.offsetWidth * 0.7, gameCanvas.offsetHeight * 0.2, player)
+				]),
+				new FightStage()
+			]
+		][this.arena - 1]
 	}
 
 	getShop() {
@@ -329,30 +404,29 @@ export class SwarmStage extends ArenaStage {
 	}
 }
 
-/** Hostiles spawn regularly until no hostile is left. */
+/** Hostiles spawn regularly. */
 export class WavesStage extends ArenaStage {
-	constructor(/** @type {number} */ spawnInterval, /** @type {(arena: Arena) => Iterable<{ HostileTarget: HostileTarget }>} */ buildHostiles) {
+	constructor(/** @type {number} */ spawnInterval, /** @type {number} */ maxSpawnCount, /** @type {(arena: Arena) => Iterable<{ HostileTarget: HostileTarget }>} */ buildHostiles) {
 		super()
 
 		this.spawnInterval = spawnInterval
+		this.maxSpawnCount = maxSpawnCount
 		this.buildHostiles = buildHostiles
 	}
 
 	wait(/** @type {Arena} */ arena) {
-		const { stop } = loop(arena.universe, this.spawnInterval, 9999, () => {
-			for (const hostile of this.buildHostiles(arena)) {
-				arena.add(hostile)
-			}
-		})
-
 		return new Promise(resolve => {
-			wait(arena.universe, () => arena.hostiles.size == 0, () => {
-				stop()
-				resolve(true)
+			loop(arena.universe, this.spawnInterval, this.maxSpawnCount, i => {
+				for (const hostile of this.buildHostiles(arena)) {
+					arena.add(hostile)
+				}
+
+				if (i == this.maxSpawnCount - 1) {
+					resolve(true)
+				}
 			})
 
 			wait(arena.universe, () => arena.player.Hp.value < 0, () => {
-				stop()
 				resolve(false)
 			})
 		})

@@ -2,6 +2,7 @@
 import { NavigationCentral, SpaceshitsPage } from "../game/central/navigation.js"
 import { DefeatPage } from "./defeat.js"
 import { ShopPage } from "./shop.js"
+import { VictoryPage } from "./victory.js"
 
 export class ArenaPage extends SpaceshitsPage {
 	constructor(/** @type {NavigationCentral} */ navigation, /** @type {GameCentral} */ game) {
@@ -29,8 +30,12 @@ export class ArenaPage extends SpaceshitsPage {
 	onEnter() {
 		this.arena.wait(
 			() => {
-				this.game.stepArena()
-				this.navigation.enter(ShopPage)
+				if (this.game.arena == 7) { // TODO: Remove hard-coded value.
+					this.navigation.enter(VictoryPage)
+				} else {
+					this.game.stepArena()
+					this.navigation.enter(ShopPage)
+				}
 			},
 			() => {
 				this.navigation.enter(DefeatPage)
