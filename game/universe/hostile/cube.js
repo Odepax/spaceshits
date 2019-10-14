@@ -90,12 +90,12 @@ export class CubeBullet extends Bullet {
 
 export class CubeQuadBullet extends Bullet {
 	constructor(/** @type {Transform} */ transform) {
-		super(transform, 600, PlayerTarget, 9, 7, [ light, yellow, orange ], cubeQuadBulletSprite)
+		super(transform, 600, PlayerTarget, 11, 7, [ light, yellow, orange ], cubeQuadBulletSprite)
 	}
 }
 
 export class CubeMissileBullet extends Missile {
 	constructor(/** @type {Transform} */ transform, /** @type {{ Transform: Transform }} */ target) {
-		super(transform, target, 600, PI, PlayerTarget, 9, 7, [ light, pink, purple ], cubeMissileBulletSprite)
+		super(transform, target, 600, PI, PlayerTarget, 5, 7, [ light, pink, purple ], cubeMissileBulletSprite)
 	}
 }

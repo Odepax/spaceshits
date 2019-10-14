@@ -39,7 +39,7 @@ export class Hp extends SelfRegeneratingGauge {
 
 export class WeaponEnergy extends SelfRegeneratingGauge {
 	constructor(/** @type {number} */ shotConsumption) {
-		super(101, 23)
+		super(113, 23)
 
 		this.shotConsumption = shotConsumption
 	}
