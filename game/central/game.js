@@ -72,7 +72,7 @@ export class GameCentral {
 
 				onInstall(/** @type {GameCentral} */ game) {
 					game.player.itemInstallers.add((/** @type {{ Weapon: Weapon }} */ player) => {
-						player.Weapon.damageBoostFactor += 0.2
+						player.Weapon.damageBoostFactor += 0.1
 					})
 				}
 			},
