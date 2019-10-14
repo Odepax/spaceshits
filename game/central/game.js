@@ -47,11 +47,11 @@ export class GameCentral {
 		this.player.itemInstallers.clear()
 	}
 
-	get availableItems() {
+	/** @private */ get availableItems() {
 		return [
 			{
 				name: "Hull Plate",
-				description: "Increases hull resilience.",
+				description: "Increases hull resilience",
 				price: 1,
 				icon: "hull-booster",
 				colorName: "green",
@@ -63,8 +63,8 @@ export class GameCentral {
 				}
 			},
 			{
-				name: "Damage Booster",
-				description: "Increases weapon damages.",
+				name: "Bigger Bullets",
+				description: "Increases weapon damages",
 				price: 1,
 				icon: "damage-booster",
 				colorName: "red",
@@ -76,8 +76,8 @@ export class GameCentral {
 				}
 			},
 			{
-				name: "Fire Rate Booster",
-				description: "Increases weapon fire rate.",
+				name: "Bullet Rain",
+				description: "Increases weapon fire rate",
 				price: 1,
 				icon: "fire-rate-booster",
 				colorName: "red",
@@ -89,8 +89,8 @@ export class GameCentral {
 				}
 			},
 			{
-				name: "Weapon Energy Booster",
-				description: "Increases weapon energy capacity.",
+				name: "Mountain of Bullets",
+				description: "Increases weapon energy capacity",
 				price: 1,
 				icon: "weapon-cap-booster",
 				colorName: "red",
@@ -102,8 +102,8 @@ export class GameCentral {
 				}
 			},
 			{
-				name: "Weapon Energy Generation Booster",
-				description: "Increases weapon energy regeneration rate.",
+				name: "Bullet Semen",
+				description: "Increases weapon energy regeneration rate",
 				price: 1,
 				icon: "weapon-regen-booster",
 				colorName: "red",
@@ -130,8 +130,6 @@ export class GameCentral {
 		const interactionCentral = new InteractionCentral(gameCanvas)
 		const universe = new Universe()
 
-		// player = build player
-		//    foreach item: item.apply(this, player)
 		const player = new GatlingPlayer(
 			gameCanvas.offsetWidth * 0.5,
 			gameCanvas.offsetHeight * 0.8,

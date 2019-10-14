@@ -63,7 +63,7 @@ export class ShopPage extends SpaceshitsPage {
 			this.$.itemPrice.textContent = null
 			this.$.itemPriceCurrencyIcon.style.display = "none"
 		} else {
-			this.$.itemDescription.innerHTML = item.name + " <br /> " + item.description
+			this.$.itemDescription.innerHTML = `"${ item.name }" <br /> ${ item.description }`
 			this.$.itemPrice.textContent = item.price
 			this.$.itemPriceCurrencyIcon.style.display = null
 		}
