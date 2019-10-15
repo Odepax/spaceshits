@@ -178,6 +178,17 @@ export class GameCentral {
 			new Debug()
 		]))
 
+		// Pause button.
+		gameCanvas.addEventListener("keydown", ({ code }) => {
+			if (code == this.parameters.keys.pause) {
+				if (universe.clock.isRunning) {
+					universe.stop()
+				} else {
+					universe.start()
+				}
+			}
+		}, false)
+
 		return new Arena(gameCanvas, universe, player, this.getStages(gameCanvas, player))
 	}
 
