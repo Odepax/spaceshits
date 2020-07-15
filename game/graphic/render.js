@@ -4,7 +4,7 @@ import { Colors } from "./assets/colors.js"
 import { Universe } from "../core/engine.js"
 import { UserInputCapturer } from "../ux/user-input-capture.js"
 import { SetRoutine } from "../core/routines.js"
-import { VfxRegistry, OnAddExplosion, OnRemoveExplosion } from "./vfx.js"
+import { VfxRegistry, OnAddExplosion, OnRemoveExplosion, AuraFx } from "./vfx.js"
 import { Random } from "../math/random.js"
 
 export class Render {
@@ -79,7 +79,7 @@ export class RenderRoutine extends SetRoutine {
 
 	/** @param {Link} link */
 	accepts(link) {
-		return link.has(Render, Motion)
+		return link.has(Render, Motion) || link.has(AuraFx, Motion)
 	}
 
 	onStep() {
@@ -109,7 +109,8 @@ export class RenderRoutine extends SetRoutine {
 
 	/** @private */
 	renderSprites() {
-		for (const link of this.links) {
+		for (const link of this.links)
+		if (link.has(Render)) {
 			const [ motion, render ] = link.get(Motion, Render)
 
 			// setTransform(ScaleX, SkewX, SkewY, ScaleY, TranslateX, TranslateY)
@@ -197,6 +198,27 @@ export class RenderRoutine extends SetRoutine {
 		this.graphics.globalCompositeOperation = "screen"
 
 		const { time, spf } = this.universe.clock
+
+		for (const link of this.links)
+		if (link.has(AuraFx)) {
+			const [ motion, aura ] = link.get(Motion, AuraFx)
+
+			const { x, y } = motion.position
+			const { color, opacityFactor, radius } = aura
+
+			this.graphics.beginPath()
+			this.graphics.arc(x, y, radius, 0, 2 * Math.PI)
+
+			this.graphics.globalAlpha = opacityFactor / 6
+			this.graphics.fillStyle = color
+			this.graphics.fill()
+
+			this.graphics.globalAlpha = opacityFactor
+			this.graphics.strokeStyle = color
+			this.graphics.lineWidth = 2
+			this.graphics.stroke()
+			this.graphics.globalAlpha = 1
+		}
 
 		for (const particle of this.vfx.particles) {
 			if (particle.deathTime < time)

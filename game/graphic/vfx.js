@@ -35,6 +35,31 @@ class OnEventExplosion {
 export class OnAddExplosion extends OnEventExplosion {}
 export class OnRemoveExplosion extends OnEventExplosion {}
 
+export class AuraFx {
+	/** @param {number} radius @param {string} color */
+	constructor(radius, color) {
+		this.radius = radius
+		this.color = color
+		this.opacityFactor = 1
+	}
+}
+
+// ALT:
+/*
+new Link(
+	new Render(
+		Render.sprite(Sprites.turretBase, Render.ignoreRotation, Layers.ground),
+		Render.sprite(Sprites.turretGun, Render.followRotation, Layers.ground),
+		Render.circle(100, Layers.vfx, {
+			blendMode: BlendModes.screen,
+			fill: Colors.blue,
+			fillOpacity: 0.3,
+			stroke: Colors.blue
+		})
+	)
+)
+*/
+
 export class VfxRegistry {
 	/** @param {Universe} universe */
 	constructor(universe) {

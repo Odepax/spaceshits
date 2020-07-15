@@ -10,11 +10,12 @@ import { CollisionDetectionRoutine, CollisionDetector } from "../../physic/colli
 import { RammingDamageRoutine } from "../../logic/ramming-damage.js"
 import { VfxRegistry } from "../../graphic/vfx.js"
 import { Colors } from "../../graphic/assets/colors.js"
-import { LifeAndDeathRoutine, HpGauge } from "../../logic/life-and-death.js"
+import { LifeAndDeathRoutine } from "../../logic/life-and-death.js"
 import { GatlingPlayerWeaponRoutine } from "../../lore/player-weapons.js"
-import { RenderRoutine, Render } from "../../graphic/render.js"
+import { RenderRoutine } from "../../graphic/render.js"
 import { Random } from "../../math/random.js"
 import { DamageColorizationRoutine, PlayerStatsVisualizationRoutine } from "../../graphic/hud.js"
+import { AutoFieldModuleRoutine } from "../../logic/auto-field.js"
 
 export class ArenaPage extends Page {
 	/** @param {PageRegistry} navigation @param {GameKeeper} game */
@@ -62,6 +63,7 @@ export class ArenaPage extends Page {
 
 			// User input capture.
 			universe.register(new UserInputCaptureRoutine(userInput))
+			// TODO: Move CollisionDetectionRoutine up here, i.e. in the capture stage?
 
 			// Decision making --- logic 1.
 			universe.register(new PlayerControlRoutine(userInput, this.game, universe))
@@ -76,6 +78,7 @@ export class ArenaPage extends Page {
 
 			universe.register(rammingDamage)
 			universe.register(new LifeAndDeathRoutine(universe))
+			universe.register(new AutoFieldModuleRoutine(universe))
 
 			// Render.
 			/** @param {Link} a @param {Link} b */
@@ -90,11 +93,12 @@ export class ArenaPage extends Page {
 			universe.register(new RenderRoutine(this.$.gameCanvas, spriteSource, universe, userInput, vfx))
 			universe.register(new PlayerStatsVisualizationRoutine(this.$.hpProgress))
 
-			universe.add(new Turret(400, 300))
 			universe.add(new Turret(300, 400))
+			universe.add(new Turret(400, 300))
+
 			universe.add(new Player())
 
-			for (let i = 0; i < 0; ++i)
+			for (let i = 0; i < 3; ++i)
 				universe.add(new Hostile(
 					Random.between(300, 700),
 					Random.between(300, 700),

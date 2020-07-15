@@ -4,6 +4,7 @@ import { Render } from "./render.js"
 import { Universe, Link } from "../core/engine.js"
 import { Colors } from "./assets/colors.js"
 import { Player } from "../lore/player.js"
+import { AuraFx } from "./vfx.js"
 
 /** @implements {import("../core/engine").Routine} */
 export class PlayerStatsVisualizationRoutine {
@@ -46,17 +47,24 @@ export class DamageColorizationRoutine extends AutoIteratingRoutine {
 
 	/** @param {Link} link */
 	accepts(link) {
-		return link.has(HpGauge, Render)
+		return link.has(HpGauge, Render) || link.has(HpGauge, AuraFx)
 	}
 
 	/** @param {Link} link */
 	onSubStep(link) {
-		const [ hp, render ] = link.get(HpGauge, Render)
+		const [ hp, render, aura ] = link.get(HpGauge, Render, AuraFx)
 
-		const damageRatio = 1 - hp.value / hp.max // TODO: refactor decline computation?
-		const oscillator = 0.5 + Math.sin(this.universe.clock.time * damageRatio * 2 * Math.PI) / 2
+		const hpRatio = Math.min(hp.value / hp.max, 1) // TODO: refactor progress/decline computation?
 
-		render.colorizationColor = Colors.red
-		render.colorizationFactor = oscillator * damageRatio
+		if (render) {
+			const damageRatio = 1 - hpRatio
+			const oscillator = 0.5 + Math.sin(this.universe.clock.time * damageRatio * 2 * Math.PI) / 2
+
+			render.colorizationColor = Colors.red
+			render.colorizationFactor = oscillator * damageRatio
+		}
+
+		else
+			aura.opacityFactor = hpRatio
 	}
 }
