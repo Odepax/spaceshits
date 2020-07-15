@@ -1,7 +1,6 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 	<head>
-
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
@@ -9,50 +8,37 @@
 
 		<meta name="robots" content="index, follow" />
 		<meta name="author" content="Odepax" />
-		<meta name="description" content="Spaceshits" />
-		<meta name="keywords" content="spaceshits, odepax" />
+		<meta name="description" content="Spaceshits is a 2D top-down arena-based shooter game." />
+		<meta name="keywords" content="top-down, space, shooter, game, spaceshits, odepax" />
 		<meta name="theme-color" content="#242424" />
 
-		<link rel="stylesheet" type="text/css" href="./asset/style.css" />
-		<link rel="shortcut icon" type="image/x-icon" href="./asset/favicon.ico" />
+		<link rel="stylesheet" type="text/css" href="./game/ux/pages/assets/style.css" />
+		<link rel="shortcut icon" type="image/x-icon" href="./game/ux/pages/assets/favicon.ico" />
 
 		<script type="module">
-			import { ParameterCentral  } from "./game/central/parameter.js"
-			import { GameCentral } from "./game/central/game.js"
-			import { NavigationCentral } from "./game/central/navigation.js"
-			import { MainPage } from "./page/main.js"
-			import { SettingsPage } from "./page/settings.js"
-			import { QuotationPage } from "./page/quotation.js"
-			import { ArenaPage } from "./page/arena.js"
-			import { DefeatPage } from "./page/defeat.js"
-			import { VictoryPage } from "./page/victory.js"
-			import { ShopPage } from "./page/shop.js"
+			import { GameKeeper } from "./game/lore/game-keeper.js"
+			import { PageRegistry } from "./game/ux/page-registry.js"
+			import { MainPage } from "./game/ux/pages/main.js"
+			import { ArenaPage } from "./game/ux/pages/arena.js"
 
-			const parameterCentral = new ParameterCentral()
-			const gameCentral = new GameCentral(parameterCentral)
-			const navigationCentral = new NavigationCentral(navigationHost)
+			const game = new GameKeeper()
+			const navigation = new PageRegistry(navigationHost)
 
-			navigationCentral.register(MainPage, () => new MainPage(navigationCentral, parameterCentral, gameCentral))
-			navigationCentral.register(SettingsPage, () => new SettingsPage(navigationCentral, parameterCentral))
-			navigationCentral.register(QuotationPage, () => new QuotationPage(navigationCentral))
-			navigationCentral.register(ArenaPage, () => new ArenaPage(navigationCentral, gameCentral))
-			navigationCentral.register(ShopPage, () => new ShopPage(navigationCentral, gameCentral))
-			navigationCentral.register(DefeatPage, () => new DefeatPage(navigationCentral, gameCentral))
-			navigationCentral.register(VictoryPage, () => new VictoryPage(navigationCentral, gameCentral))
+			navigation.add(MainPage, () => new MainPage(navigation, game))
+			navigation.add(ArenaPage, () => new ArenaPage(navigation, game))
 
-			navigationCentral.enter(MainPage)
+			//navigation.enter(MainPage)
+			navigation.enter(ArenaPage)
 		</script>
-
 	</head>
 	<body>
-
 		<main id="navigationHost" class="navigation-host"></main>
 
-		<template id="main-page" class="pull-in stack-horizontal content-vertical-stretch content-horizontal-stretch">
+		<template id="MainPage" class="pull-in stack-horizontal content-vertical-stretch content-horizontal-stretch">
 
 			<header role="banner" class="stack-vertical content-vertical-center content-horizontal-right">
 				<h1>
-					<img src="./asset/logo.svg" alt="Spaceshits' logo" />
+					<img src="./game/ux/pages/assets/logo.svg" alt="Spaceshits' logo" />
 					<span>Spaceshits</span>
 					<small>Harlequin</small>
 				</h1>
@@ -63,7 +49,12 @@
 				<button id="resumeButton" data-on="click:resumeLastGame" class="green">Resume</button>
 				<button data-on="click:editSettings" class="blue">
 					<span>Settings</span>
-					<small id="settingsTooltip" class="tooltip">...</small>
+					<small class="tooltip">
+						Move: <span id="upKeyTooltip">...</span> <span id="leftKeyTooltip">...</span> <span id="downKeyTooltip">...</span> <span id="rightKeyTooltip">...</span> <br />
+						Shoot: <span id="shootKeyTooltip">...</span> <br />
+						AUX Module: <span id="auxKeyTooltip">...</span> <br />
+						Pause: <span id="pauseKeyTooltip">...</span>
+					</small>
 				</button>
 				<a href="https://github.com/Odepax/spaceshits">GitHub</a>
 				<!--<a href="https://odepax.itch.io/spaceshits-harlequin">Itch</a>-->
@@ -71,7 +62,7 @@
 
 		</template>
 
-		<template id="settings-page" class="pull-in stack-horizontal">
+		<template id="SettingsPage" class="pull-in stack-horizontal">
 			<h1 class="pull-up-page-title">Settings</h1>
 			<div class="stack-horizontal">
 
@@ -116,26 +107,31 @@
 
 				<button class="vertical-bottom green" data-on="click:saveChanges">
 					<span>Save</span>
-					<small id="settingsTooltip" class="tooltip">...</small>
+					<small class="tooltip">
+						Move: <span id="upKeyTooltip">...</span> <span id="leftKeyTooltip">...</span> <span id="downKeyTooltip">...</span> <span id="rightKeyTooltip">...</span> <br />
+						Shoot: <span id="shootKeyTooltip">...</span> <br />
+						AUX Module: <span id="auxKeyTooltip">...</span> <br />
+						Pause: <span id="pauseKeyTooltip">...</span>
+					</small>
 				</button>
 
 			</div>
 		</template>
 
-		<template id="quotation-page" class="pull-in stack-horizontal">
+		<template id="QuotationPage" class="pull-in stack-horizontal">
 			<blockquote class="dialogue">
 				<h2 class="source">An Echo from Space</h2>
 				<p class="message" id="quote">...</p>
 			</blockquote>
 		</template>
 
-		<template id="arena-page" class="pull-in stack-horizontal">
+		<template id="ArenaPage" class="pull-in stack-horizontal">
 			<h1 class="pull-up-page-title">Floor <span id="floorNumber">...</span> &ndash; Arena <span id="arenaNumber">...</span></h1>
 			<section class="page-content stack-horizontal">
 
 				<div class="stack-vertical vertical-bottom">
-					<progress id="energyBar" value="1" class="orange margin-bottom-small"></progress>
-					<progress id="hpBar" value="1" class="green"></progress>
+					<progress id="energyProgress" value="1" class="orange margin-bottom-small"></progress>
+					<progress id="hpProgress" value="1" class="green"></progress>
 				</div>
 
 				<div class="canvas-wrapper margin-horizontal-small" style="width: 720px; height: 722px;">
@@ -147,21 +143,21 @@
 			</section>
 		</template>
 
-		<template id="defeat-page" class="push-in stack-horizontal">
+		<template id="DefeatPage" class="push-in stack-horizontal">
 			<h1 class="pull-up-page-title">Defeated at Floor <span id="floorNumber">...</span> &ndash; Arena <span id="arenaNumber">...</span></h1>
 			<button data-on="click:backToMain" class="pink large">
 				<span class="icon left"></span>
 			</button>
 		</template>
 
-		<template id="victory-page" class="push-in stack-horizontal">
+		<template id="VictoryPage" class="push-in stack-horizontal">
 			<h1 class="pull-up-page-title">Victory</h1>
 			<button data-on="click:continue" class="green large">
 				<span class="icon left"></span>
 			</button>
 		</template>
 
-		<template id="shop-page" class="pull-in stack-horizontal">
+		<template id="ShopPage" class="pull-in stack-horizontal">
 			<h1 class="pull-up-page-title">Gift Shop &mdash; Floor <span id="floorNumber">...</span> &ndash; Arena <span id="arenaNumber">...</span></h1>
 			<section class="stack-vertical content-horizontal-center">
 
@@ -196,6 +192,5 @@
 
 			</section>
 		</template>
-
 	</body>
 </html>

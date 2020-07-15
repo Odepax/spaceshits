@@ -1,23 +1,24 @@
-﻿const { PI } = Math
+﻿export const Random = {
+	/** @template T @param {T[]} values */
+	in(values) {
+		return values[parseInt(Math.random() * values.length)]
+	},
 
-/** @template T */
-export function oneOf(/** @type {T[]} */ values) {
-	return values[parseInt(Math.random() * values.length)]
-}
+	/** @template T @param {T[]} values */
+	pop(values) {
+		return values.splice(parseInt(Math.random() * values.length), 1)[0]
+	},
 
-/** @template T */
-export function pop(/** @type {T[]} */ values) {
-	return values.splice(parseInt(Math.random() * values.length), 1)[0]
-}
+	/** @param {number} minInclusive @param {number} maxExclusive */
+	between(minInclusive, maxExclusive) {
+		return Math.random() * (maxExclusive - minInclusive) + minInclusive
+	},
 
-export function within(/** @type{number} */ min, /** @type{number} */ max) {
-	return Math.random() * (max - min) + min
-}
+	sign() {
+		return this.in([ -1, 1 ])
+	},
 
-export function sign() {
-	return oneOf([ -1, 1 ])
-}
-
-export function angle() {
-	return within(-PI, PI)
+	angle() {
+		return this.between(-Math.PI, Math.PI)
+	}
 }

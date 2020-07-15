@@ -1,9 +1,14 @@
 Game = Lore
      + Ux <-------- Input
      + Logic <----- Reaction to input
+          - Decision (player control, target chasing)
+          - Friction
      + Physic <---- Reaction to reaction to input
+          - Motion (drift)
+          - Collision
      + Graphic <--- Reaction to reaction to reaction to input
      + Music <----- Same
+
 
 Arena Stage Types
 ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----

@@ -1,0 +1,82 @@
+:root {
+	--RED: #f91340;
+	--ORANGE: darkorange;
+	--YELLOW: gold;
+	--GREEN: greenyellow;
+	--TEAL: mediumseagreen;
+	--BLUE: deepskyblue;
+	--PURPLE: mediumpurple;
+	--PINK: hotpink;
+	--WHITE: white;
+	--LIGHT: #f0f0f0;
+	--SILVER: #e0e0e0;
+	--GREY: #3d3d3d;
+	--DARK: #242424;
+	--BLACK: black;
+	--ACCENT: var(--LIGHT);
+	--ACCENT-DARK: var(--GREY);
+}
+
+.red { --ACCENT: var(--RED); --ACCENT-DARK: #59202b; }
+.orange { --ACCENT: var(--ORANGE); --ACCENT-DARK: #60421d; }
+.yellow { --ACCENT: var(--YELLOW); --ACCENT-DARK: #5f551e; }
+.green { --ACCENT: var(--GREEN); --ACCENT-DARK: #4a5e2a; }
+.teal { --ACCENT: var(--TEAL); --ACCENT-DARK: #2d4b3a; }
+.blue { --ACCENT: var(--BLUE); --ACCENT-DARK: #1e4e5f; }
+.purple { --ACCENT: var(--PURPLE); --ACCENT-DARK: #433a54; }
+.pink { --ACCENT: var(--PINK); --ACCENT-DARK: #5f394c; }
+.white { --ACCENT: var(--WHITE); }
+.light { --ACCENT: var(--LIGHT); }
+.silver { --ACCENT: var(--SILVER); }
+.grey { --ACCENT: var(--GREY); }
+.dark { --ACCENT: var(--DARK); }
+.black { --ACCENT: var(--BLACK); }
+
+/* @see www.1001fonts.com/alte-din-1451-mittelschrift-font.html */
+@font-face {
+	font-family: "Alte DIN 1451 Mittelschrift";
+	font-weight: normal;
+	font-style: normal;
+	src: url("./fonts/alte-din-1451-mittelschrift.ttf") format("truetype");
+}
+
+@import "./icon.css";
+
+* {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+	text-size-adjust: 100%;
+	font-family: inherit;
+	font-weight: inherit;
+	font-style: inherit;
+	font-size: inherit;
+	text-transform: inherit;
+	letter-spacing: inherit;
+	color: inherit;
+}
+
+html, body {
+	height: 100%;
+}
+
+body {
+	background: var(--DARK);
+	font-family: "Alte DIN 1451 Mittelschrift", "Bahnschrift", "Ubuntu", sans-serif;
+	font-weight: normal;
+	font-style: normal;
+	font-size: 16px;
+	line-height: 1.4em;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	color: var(--WHITE);
+}
+
+small {
+	font-size: 12px;
+}
+
+strong {
+	font-size: 20px;
+	font-weight: normal;
+}
