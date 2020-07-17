@@ -55,7 +55,7 @@ export class ArenaPage extends Page {
 		//)
 
 		Sprites.import().then(spriteSource => {
-			const universe = new Universe()
+			const universe = new Universe(this.$.gameCanvas.offsetWidth, this.$.gameCanvas.offsetHeight)
 
 			const userInput = new UserInputCapturer(this.$.gameCanvas)
 			const collisions = new CollisionDetector()
@@ -70,7 +70,7 @@ export class ArenaPage extends Page {
 			universe.register(new GatlingPlayerWeaponRoutine(userInput, this.game, universe))
 
 			// Motion dynamics & collision detection.
-			universe.register(new MotionRoutine(universe, this.$.gameCanvas))
+			universe.register(new MotionRoutine(universe))
 			universe.register(new CollisionDetectionRoutine(collisions))
 
 			// Collision reactions -- logic 2.

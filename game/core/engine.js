@@ -26,8 +26,11 @@
 const MILLI_SECONDS = 0.001
 
 export class Universe extends Set {
-	constructor() {
+	constructor(width, height) {
 		super()
+
+		this.width = width
+		this.height = height
 
 		this.clock = {
 			spf: 0,

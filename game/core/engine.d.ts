@@ -25,6 +25,8 @@ export declare interface Clock {
 }
 
 export declare class Universe {
+	constructor(public width: number, public height: number)
+
 	clock: Clock
 
 	register(routine: Routine)

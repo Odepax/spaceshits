@@ -24,12 +24,11 @@ Motion.removeOnEdges = 0
 Motion.ignoreEdges = -1
 
 export class MotionRoutine extends AutoIteratingRoutine {
-	/** @param {Universe} universe @param {HTMLCanvasElement} canvas */
-	constructor(universe, canvas) {
+	/** @param {Universe} universe */
+	constructor(universe) {
 		super()
 
 		this.universe = universe
-		this.canvas = canvas
 	}
 
 	/** @param {Link} link */
@@ -44,8 +43,8 @@ export class MotionRoutine extends AutoIteratingRoutine {
 		Force.apply(motion.velocity, motion.position, Math.min(this.universe.clock.spf, 10))
 
 		if (motion.isRemovedOnEdges && (
-			   motion.position.x < 0 || this.canvas.offsetWidth < motion.position.x
-			|| motion.position.y < 0 || this.canvas.offsetHeight < motion.position.y
+			   motion.position.x < 0 || this.universe.width < motion.position.x
+			|| motion.position.y < 0 || this.universe.height < motion.position.y
 		))
 			this.universe.remove(link)
 
@@ -55,8 +54,8 @@ export class MotionRoutine extends AutoIteratingRoutine {
 				motion.velocity.x *= -motion.edgeBounceFactor
 			}
 
-			else if (this.canvas.offsetWidth < motion.position.x) {
-				motion.position.x = this.canvas.offsetWidth
+			else if (this.universe.width < motion.position.x) {
+				motion.position.x = this.universe.width
 				motion.velocity.x *= -motion.edgeBounceFactor
 			}
 
@@ -65,8 +64,8 @@ export class MotionRoutine extends AutoIteratingRoutine {
 				motion.velocity.y *= -motion.edgeBounceFactor
 			}
 
-			else if (this.canvas.offsetHeight < motion.position.y) {
-				motion.position.y = this.canvas.offsetHeight
+			else if (this.universe.height < motion.position.y) {
+				motion.position.y = this.universe.height
 				motion.velocity.y *= -motion.edgeBounceFactor
 			}
 		}
