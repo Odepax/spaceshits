@@ -11,7 +11,7 @@ import { RammingDamageRoutine } from "../../logic/ramming-damage.js"
 import { VfxRegistry } from "../../graphic/vfx.js"
 import { Colors } from "../../graphic/assets/colors.js"
 import { LifeAndDeathRoutine } from "../../logic/life-and-death.js"
-import { GatlingPlayerWeaponRoutine } from "../../lore/player-weapons.js"
+import { GatlingPlayerWeaponRoutine, ShockgunPlayerWeaponRoutine, ChargerPlayerWeaponRoutine } from "../../lore/player-weapons.js"
 import { RenderRoutine } from "../../graphic/render.js"
 import { Random } from "../../math/random.js"
 import { DamageColorizationRoutine, PlayerStatsVisualizationRoutine } from "../../graphic/hud.js"
@@ -68,7 +68,7 @@ export class ArenaPage extends Page {
 
 			// Decision making --- logic 1.
 			universe.register(new PlayerControlRoutine(userInput, this.game, universe))
-			universe.register(new GatlingPlayerWeaponRoutine(userInput, this.game, universe))
+			universe.register(new ChargerPlayerWeaponRoutine(userInput, this.game, universe))
 
 			//universe.register(ArenaScenarios[n](universe))
 
