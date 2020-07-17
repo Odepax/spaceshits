@@ -84,11 +84,16 @@ export class Transform {
 		return Math.atan2(this.y - y, this.x - x)
 	}
 
-	lengthTo({ x = 0, y = 0 }) {
+	squaredLengthTo({ x = 0, y = 0 }) {
 		const dx = x - this.x
 		const dy = y - this.y
 
-		return Math.sqrt(dx * dx + dy * dy)
+		return dx * dx + dy * dy
+	}
+
+	/** @param {{ x?: number, y?: number }} other */
+	lengthTo(other) {
+		return Math.sqrt(this.squaredLengthTo(other))
 	}
 
 	/** @param {number} value */

@@ -12,6 +12,8 @@ import { RammingDamage } from "../logic/ramming-damage.js"
 import { Colors } from "../graphic/assets/colors.js"
 import { Render } from "../graphic/render.js"
 import { Random } from "../math/random.js"
+import { AutoIteratingRoutine } from "../core/routines.js"
+import { Angle } from "../math/angle.js"
 
 // TODO: Should we have one file per weapon?
 
@@ -176,6 +178,151 @@ export class ShockgunPlayerWeaponRoutine {
 			this.energy += this.energyRegen * this.universe.clock.spf
 	}
 }
+
+// ----
+
+
+
+class MissileBullet extends Link {
+	/** @param {Transform} position */
+	constructor(position) {
+		// TODO: refactor player bullets (wait for other factors...)
+		super(
+			new Motion(position, Transform.angular(position.a, 800), Motion.removeOnEdges), 
+
+			new Collider(7, Tags.player | Tags.bullet),
+			new RammingDamage(9, Tags.hostile | Tags.ship, RammingDamage.removeOnDamage),
+
+			new Render(Sprites.playerMissileBullet),
+			new OnRemoveExplosion(7 /* Collider.radius */ / 15, [ Colors.black, Colors.grey, Colors.purple, Colors.pink ], 7 /* Collider.radius */ * 1.5)
+		)
+	}
+}
+
+/** @implements {import("../core/engine").Routine} */
+export class MissilePlayerWeaponRoutine {
+	/** @param {UserInputCapturer} userInput @param {GameKeeper} game @param {Universe} universe */
+	constructor(userInput, game, universe) {
+		this.userInput = userInput
+		this.game = game
+		this.universe = universe
+
+		/** @private @type {Player} */
+		this.player = null
+
+		/** @private @type {Set<MissileBullet>} */
+		this.missiles = new Set()
+
+		/** @private @type {Set<Link>} */
+		this.hostiles = new Set()
+
+		this.nextShotTime = Number.NEGATIVE_INFINITY
+		this.reloadTime = 0.13
+
+		this.nextFireAngle = 0.4
+		this.maxMissileSteerSpeed = Math.PI
+
+		this.energy = this.energyMax = 113
+		this.energyRegen = 23
+		this.energyConsumption = 7
+	}
+
+	/** @param {Link} link */
+	onAdd(link) {
+		if (!this.player && link instanceof Player)
+			this.player = link
+
+		else if (link instanceof MissileBullet)
+			this.missiles.add(link)
+
+		else {
+			const [ collider ] = link.get(Collider)
+
+			if (collider && Tags.match(collider.tag, Tags.hostile | Tags.ship))
+				this.hostiles.add(link)
+		}
+	}
+
+	/** @param {Link} link */
+	onRemove(link) {
+		if (link == this.player)
+			this.player = null
+
+		this.missiles.delete(link)
+		this.hostiles.delete(link)
+	}
+
+	onStep() {
+		if (!this.player)
+			return
+
+		this.fireMoreMissiles()
+		this.steerMissiles()
+	}
+
+	/** @private */
+	steerMissiles() {
+		let closestHostilePosition = this.userInput.mousePosition
+		let closestHostileDistance = Number.POSITIVE_INFINITY
+
+		for (const hostile of this.hostiles) {
+			const hostilePosition = hostile.get(Motion)[0].position
+			const hostileDistance = hostilePosition.squaredLengthTo(this.userInput.mousePosition)
+
+			if (hostileDistance < closestHostileDistance) {
+				closestHostilePosition = hostilePosition
+				closestHostileDistance = hostileDistance
+			}
+		}
+
+		for (const missile of this.missiles) {
+			const [ missileMotion ] = missile.get(Motion)
+
+			// Target facing.
+			const directionAngle = Angle.shortArcBetween(missileMotion.position.a, missileMotion.position.directionTo(closestHostilePosition))
+
+			if (Math.abs(directionAngle) < this.maxMissileSteerSpeed * this.universe.clock.spf) {
+				missileMotion.velocity.a = 0
+				missileMotion.position.a += directionAngle
+			}
+
+			else
+				missileMotion.velocity.a = Math.sign(directionAngle) * this.maxMissileSteerSpeed
+
+			// Forward chasing.
+			missileMotion.velocity.d = missileMotion.position.a
+		}
+	}
+
+	/** @private */
+	fireMoreMissiles() {
+		if (
+			   this.nextShotTime < this.universe.clock.time // Has reloaded?
+			&& this.energyConsumption <= this.energy // Has energy?
+			&& this.userInput.isPressed(this.game.keyBindings.shoot) // Has order?
+		) {
+			this.nextShotTime = this.universe.clock.time + this.reloadTime
+			this.energy -= this.energyConsumption
+
+			const bullet = new MissileBullet(
+				this.player.get(Motion)[0]
+					.position
+					.copy
+					.rotateBy(this.nextFireAngle *= -1)
+					.relativeOffsetBy({ x: 37, y: 0 })
+			)
+
+			// TODO: rotate bullet (if needed).
+			// TODO: Apply damage boosters.
+
+			this.universe.add(bullet)
+		}
+
+		if (this.energy < this.energyMax)
+			this.energy += this.energyRegen * this.universe.clock.spf
+	}
+}
+
 
 // ----
 
