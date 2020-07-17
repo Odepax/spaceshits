@@ -16,6 +16,7 @@ import { RenderRoutine } from "../../graphic/render.js"
 import { Random } from "../../math/random.js"
 import { DamageColorizationRoutine, PlayerStatsVisualizationRoutine } from "../../graphic/hud.js"
 import { AutoFieldModuleRoutine } from "../../logic/auto-field.js"
+import { ArenaScenarios } from "../../lore/arena-scenarios.js"
 
 export class ArenaPage extends Page {
 	/** @param {PageRegistry} navigation @param {GameKeeper} game */
@@ -68,6 +69,8 @@ export class ArenaPage extends Page {
 			// Decision making --- logic 1.
 			universe.register(new PlayerControlRoutine(userInput, this.game, universe))
 			universe.register(new GatlingPlayerWeaponRoutine(userInput, this.game, universe))
+
+			//universe.register(ArenaScenarios[n](universe))
 
 			// Motion dynamics & collision detection.
 			universe.register(new MotionRoutine(universe))

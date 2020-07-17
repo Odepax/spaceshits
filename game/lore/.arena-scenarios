@@ -1,9 +1,0 @@
-// levels:
-class Arena1Routine extends Routine { // Routine is not a class anymore, you you get it...
-	// ...
-}
-
-// (?)
-function buildUniverse(arena = 1) {
-	universe.register(Arena1Routine(universe))
-}

@@ -14,7 +14,7 @@ import { AutoFieldModule } from "../logic/auto-field.js"
 export class Player extends Link {
 	constructor() {
 		super(
-			new Motion(new Transform(100, 100), undefined, 0.6),
+			new Motion(new Transform(700 * 0.5, 700 * 0.8), undefined, 0.6),
 
 			new Collider(28, Tags.player | Tags.ship),
 			new RammingDamage(23, Tags.hostile | Tags.ship, RammingDamage.bounceOnDamage),
