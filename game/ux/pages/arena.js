@@ -17,6 +17,7 @@ import { Random } from "../../math/random.js"
 import { DamageColorizationRoutine, PlayerStatsVisualizationRoutine } from "../../graphic/hud.js"
 import { AutoFieldModuleRoutine } from "../../logic/auto-field.js"
 import { ArenaScenarios } from "../../lore/arena-scenarios.js"
+import { AutoWeaponModuleRoutine } from "../../logic/auto-weapon.js"
 
 export class ArenaPage extends Page {
 	/** @param {PageRegistry} navigation @param {GameKeeper} game */
@@ -69,6 +70,8 @@ export class ArenaPage extends Page {
 			// Decision making --- logic 1.
 			universe.register(new PlayerControlRoutine(userInput, this.game, universe))
 			universe.register(new MissilePlayerWeaponRoutine(userInput, this.game, universe))
+			universe.register(new AutoFieldModuleRoutine(universe))
+			universe.register(new AutoWeaponModuleRoutine(universe))
 
 			//universe.register(ArenaScenarios[n](universe))
 
@@ -81,7 +84,6 @@ export class ArenaPage extends Page {
 
 			universe.register(rammingDamage)
 			universe.register(new LifeAndDeathRoutine(universe))
-			universe.register(new AutoFieldModuleRoutine(universe))
 
 			// Render.
 			/** @param {Link} a @param {Link} b */

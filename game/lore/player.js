@@ -10,6 +10,7 @@ import { Colors } from "../graphic/assets/colors.js"
 import { HpGauge } from "../logic/life-and-death.js"
 import { Render } from "../graphic/render.js"
 import { AutoFieldModule } from "../logic/auto-field.js"
+import { AutoWeaponModule } from "../logic/auto-weapon.js"
 
 export class Player extends Link {
 	constructor() {
@@ -28,19 +29,44 @@ export class Player extends Link {
 	}
 }
 
+class HostileBullet extends Link {
+	/** @param {Transform} position */
+	constructor(position) {
+		// TODO: refactor hostile bullets (wait for other factors...)
+		super(
+			new Motion(position, Transform.angular(position.a, 800), Motion.removeOnEdges),
+
+			new Collider(7, Tags.hostile | Tags.bullet),
+			new RammingDamage(9, Tags.player | Tags.ship, RammingDamage.removeOnDamage),
+
+			new Render(Sprites.cubeQuadBullet),
+			new OnRemoveExplosion(7 /* Collider.radius */ / 15, [ Colors.light, Colors.yellow, Colors.orange ], 7 /* Collider.radius */ * 1.5)
+		)
+	}
+}
+
 export class Hostile extends Link {
 	constructor(x = 300, y = 400, vx = 150, vy = 150) {
 		super(
-			new Motion(new Transform(x, y), new Transform(vx, vy, 6.2), 1),
+			new Motion(new Transform(x, y), new Transform(vx, vy, 0.2), 1),
 
 			new Collider(21, Tags.hostile | Tags.ship),
 			new RammingDamage(13, Tags.player | Tags.ship, RammingDamage.bounceOnDamage),
 
 			new HpGauge(101),
 
-			new AutoFieldModule(turret => new ShockShield(turret.get(Motion)[0].position, 31), 5),
+			// new AutoFieldModule(turret => new ShockShield(turret.get(Motion)[0].position, 31), 5),
+			new AutoWeaponModule(3, cube => [0, 1, 2, 3]
+				.map(i => new HostileBullet(
+					cube.get(Motion)[0]
+						.position
+						.copy
+						.rotateBy(i * Math.PI / 2)
+						.relativeOffsetBy({ x: 37, y: 0 })
+				))
+			),
 
-			new Render(Sprites.crasher),
+			new Render(Sprites.cubeQuad),
 			new OnAddExplosion(1, [ Colors.white, Colors.light, Colors.silver, Colors.orange ], 50),
 			new OnRemoveExplosion(0.5, [ Colors.orange, Colors.black, Colors.grey, Colors.silver ], 100)
 		)
