@@ -6,13 +6,12 @@ import { Motion } from "../physic/motion.js"
 import { Transform } from "../math/transform.js"
 import { Tags } from "./tags.js"
 import { Sprites } from "../graphic/assets/sprites.js"
-import { OnRemoveExplosion } from "../graphic/vfx.js"
+import { OnRemoveExplosion, AuraFx } from "../graphic/vfx.js"
 import { Collider } from "../physic/collision.js"
 import { RammingDamage } from "../logic/ramming-damage.js"
 import { Colors } from "../graphic/assets/colors.js"
 import { Render } from "../graphic/render.js"
 import { Random } from "../math/random.js"
-import { AutoIteratingRoutine } from "../core/routines.js"
 import { Angle } from "../math/angle.js"
 
 // TODO: Should we have one file per weapon?
@@ -216,6 +215,9 @@ export class MissilePlayerWeaponRoutine {
 		/** @private @type {Set<Link>} */
 		this.hostiles = new Set()
 
+		/** @private */
+		this.autolock = new Motion(undefined, undefined, Motion.ignoreEdges)
+
 		this.nextShotTime = Number.NEGATIVE_INFINITY
 		this.reloadTime = 0.13
 
@@ -229,8 +231,11 @@ export class MissilePlayerWeaponRoutine {
 
 	/** @param {Link} link */
 	onAdd(link) {
-		if (!this.player && link instanceof Player)
+		if (!this.player && link instanceof Player) {
 			this.player = link
+
+			this.universe.add(new Link(this.autolock, new AuraFx(37, Colors.red)))
+		}
 
 		else if (link instanceof MissileBullet)
 			this.missiles.add(link)
@@ -274,6 +279,8 @@ export class MissilePlayerWeaponRoutine {
 				closestHostileDistance = hostileDistance
 			}
 		}
+
+		this.autolock.position = closestHostilePosition
 
 		for (const missile of this.missiles) {
 			const [ missileMotion ] = missile.get(Motion)
