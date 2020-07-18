@@ -4,20 +4,18 @@ import { Universe, Link } from "../../core/engine.js"
 import { UserInputCapturer, UserInputCaptureRoutine } from "../user-input-capture.js"
 import { PlayerControlRoutine } from "../../logic/player-control.js"
 import { MotionRoutine, Motion } from "../../physic/motion.js"
-import { Player, Hostile, Turret } from "../../lore/player.js"
+import { Player } from "../../lore/player.js"
 import { Sprites } from "../../graphic/assets/sprites.js"
 import { CollisionDetectionRoutine, CollisionDetector } from "../../physic/collision.js"
 import { RammingDamageRoutine } from "../../logic/ramming-damage.js"
 import { VfxRegistry } from "../../graphic/vfx.js"
 import { Colors } from "../../graphic/assets/colors.js"
 import { LifeAndDeathRoutine } from "../../logic/life-and-death.js"
-import { GatlingPlayerWeaponRoutine, ShockgunPlayerWeaponRoutine, ChargerPlayerWeaponRoutine, MissilePlayerWeaponRoutine } from "../../lore/player-weapons.js"
+import { MissilePlayerWeaponRoutine } from "../../lore/player-weapons.js"
 import { RenderRoutine } from "../../graphic/render.js"
-import { Random } from "../../math/random.js"
 import { DamageColorizationRoutine, PlayerStatsVisualizationRoutine } from "../../graphic/hud.js"
-import { AutoFieldModuleRoutine } from "../../logic/auto-field.js"
-import { ArenaScenarios } from "../../lore/arena-scenarios.js"
-import { AutoWeaponModuleRoutine, HostileMissileRoutine } from "../../logic/auto-weapon.js"
+import { AutoWeaponModuleRoutine } from "../../logic/auto-weapon.js"
+import { Turret, TurretAimRoutine } from "../../lore/hostiles/turret.js"
 
 export class ArenaPage extends Page {
 	/** @param {PageRegistry} navigation @param {GameKeeper} game */
@@ -70,9 +68,8 @@ export class ArenaPage extends Page {
 			// Decision making --- logic 1.
 			universe.register(new PlayerControlRoutine(userInput, this.game, universe))
 			universe.register(new MissilePlayerWeaponRoutine(userInput, this.game, universe))
-			universe.register(new AutoFieldModuleRoutine(universe))
+			universe.register(new TurretAimRoutine())
 			universe.register(new AutoWeaponModuleRoutine(universe))
-			universe.register(new HostileMissileRoutine(universe))
 
 			//universe.register(ArenaScenarios[n](universe))
 
@@ -99,18 +96,10 @@ export class ArenaPage extends Page {
 			universe.register(new RenderRoutine(this.$.gameCanvas, spriteSource, universe, userInput, vfx))
 			universe.register(new PlayerStatsVisualizationRoutine(this.$.hpProgress))
 
-			universe.add(new Turret(300, 400))
-			universe.add(new Turret(400, 300))
+			universe.add(new Turret(700 * 0.3, 700 * 0.2))
+			universe.add(new Turret(700 * 0.7, 700 * 0.2))
 
 			universe.add(new Player())
-
-			for (let i = 0; i < 3; ++i)
-				universe.add(new Hostile(
-					Random.between(300, 700),
-					Random.between(300, 700),
-					Random.between(-200, 200),
-					Random.between(-200, 200)
-				))
 
 			this.u = universe
 			this.u.start()
