@@ -189,7 +189,7 @@ class MissileBullet extends Link {
 		super(
 			new Motion(position, Transform.angular(position.a, 800), Motion.removeOnEdges), 
 
-			new Collider(7, Tags.player | Tags.bullet),
+			new Collider(7, Tags.player | Tags.missile),
 			new RammingDamage(9, Tags.hostile | Tags.ship, RammingDamage.removeOnDamage),
 
 			new Render(Sprites.playerMissileBullet),
@@ -209,7 +209,7 @@ export class MissilePlayerWeaponRoutine {
 		/** @private @type {Player} */
 		this.player = null
 
-		/** @private @type {Set<MissileBullet>} */
+		/** @private @type {Set<Link>} */
 		this.missiles = new Set()
 
 		/** @private @type {Set<Link>} */
@@ -237,14 +237,15 @@ export class MissilePlayerWeaponRoutine {
 			this.universe.add(new Link(this.autolock, new AuraFx(37, Colors.red)))
 		}
 
-		else if (link instanceof MissileBullet)
-			this.missiles.add(link)
-
 		else {
 			const [ collider ] = link.get(Collider)
 
-			if (collider && Tags.match(collider.tag, Tags.hostile | Tags.ship))
-				this.hostiles.add(link)
+			if (collider)
+				if (Tags.match(collider.tag, Tags.hostile | Tags.ship))
+					this.hostiles.add(link)
+
+				else if (Tags.match(collider.tag, Tags.player | Tags.missile))
+					this.missiles.add(link)
 		}
 	}
 
@@ -253,16 +254,17 @@ export class MissilePlayerWeaponRoutine {
 		if (link == this.player)
 			this.player = null
 
-		this.missiles.delete(link)
-		this.hostiles.delete(link)
+		else {
+			this.missiles.delete(link)
+			this.hostiles.delete(link)
+		}
 	}
 
 	onStep() {
-		if (!this.player)
-			return
-
-		this.fireMoreMissiles()
-		this.steerMissiles()
+		if (this.player) {
+			this.fireMoreMissiles()
+			this.steerMissiles()
+		}
 	}
 
 	/** @private */
