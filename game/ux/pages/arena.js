@@ -11,10 +11,11 @@ import { RammingDamageRoutine } from "../../logic/ramming-damage.js"
 import { VfxRegistry } from "../../graphic/vfx.js"
 import { Colors } from "../../graphic/assets/colors.js"
 import { LifeAndDeathRoutine } from "../../logic/life-and-death.js"
-import { MissilePlayerWeaponRoutine } from "../../lore/player-weapons.js"
+import { MissilePlayerWeaponRoutine, GatlingPlayerWeaponRoutine } from "../../lore/player-weapons.js"
 import { RenderRoutine } from "../../graphic/render.js"
 import { DamageColorizationRoutine, PlayerStatsVisualizationRoutine } from "../../graphic/hud.js"
-import { AutoWeaponModuleRoutine } from "../../logic/auto-weapon.js"
+import { AutoWeaponModuleRoutine, HostileMissileRoutine } from "../../logic/auto-weapon.js"
+import { MissileBoss, MissileBossRoutine } from "../../lore/hostiles/missile-boss.js"
 import { Turret, TurretAimRoutine } from "../../lore/hostiles/turret.js"
 
 export class ArenaPage extends Page {
@@ -67,9 +68,12 @@ export class ArenaPage extends Page {
 
 			// Decision making --- logic 1.
 			universe.register(new PlayerControlRoutine(userInput, this.game, universe))
-			universe.register(new MissilePlayerWeaponRoutine(userInput, this.game, universe))
+			universe.register(new GatlingPlayerWeaponRoutine(userInput, this.game, universe))
+
 			universe.register(new TurretAimRoutine())
 			universe.register(new AutoWeaponModuleRoutine(universe))
+			universe.register(new MissileBossRoutine(universe))
+			universe.register(new HostileMissileRoutine(universe))
 
 			//universe.register(ArenaScenarios[n](universe))
 
@@ -95,6 +99,8 @@ export class ArenaPage extends Page {
 			universe.register(new DamageColorizationRoutine(universe))
 			universe.register(new RenderRoutine(this.$.gameCanvas, spriteSource, universe, userInput, vfx))
 			universe.register(new PlayerStatsVisualizationRoutine(this.$.hpProgress))
+
+			universe.add(new MissileBoss(700 * 0.5, 700 * 0.2))
 
 			universe.add(new Turret(700 * 0.3, 700 * 0.2))
 			universe.add(new Turret(700 * 0.7, 700 * 0.2))

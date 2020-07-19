@@ -22,7 +22,7 @@ export class Player extends Link {
 
 			new HpGauge(101),
 
-			new Render(Sprites.playerMissile),
+			new Render(Sprites.playerGatling),
 			new OnAddExplosion(2, [ Colors.black, Colors.grey, Colors.orange, Colors.purple ], 300),
 			new OnRemoveExplosion(1, [ Colors.light, Colors.grey, Colors.orange, Colors.purple ], 600)
 		)
