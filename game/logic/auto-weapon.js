@@ -2,9 +2,9 @@
 import { AutoIteratingRoutine } from "../core/routines.js"
 import { Player } from "../lore/player.js"
 import { Motion } from "../physic/motion.js"
-import { Angle } from "../math/angle.js"
 import { Tags } from "../lore/tags.js"
 import { Collider } from "../physic/collision.js"
+import { TargetFacing } from "../math/target-facing.js"
 
 export class AutoWeaponModule {
 	/** @param {number} reloadTime @param {(parent: Link) => Link[]} factory */
@@ -101,16 +101,13 @@ export class HostileMissileRoutine extends AutoIteratingRoutine {
 		const [ missileMotion ] = link.get(Motion)
 		const [ playerMotion ] = this.player.get(Motion)
 
-		// Target facing.
-		const directionAngle = Angle.shortArcBetween(missileMotion.position.a, missileMotion.position.directionTo(playerMotion.position))
-
-		if (Math.abs(directionAngle) < this.maxMissileSteerSpeed * this.universe.clock.spf) {
-			missileMotion.velocity.a = 0
-			missileMotion.position.a += directionAngle
-		}
-
-		else
-			missileMotion.velocity.a = Math.sign(directionAngle) * this.maxMissileSteerSpeed
+		TargetFacing.smooth(
+			missileMotion.position,
+			missileMotion.velocity,
+			playerMotion.position,
+			this.maxMissileSteerSpeed,
+			this.universe.clock.spf
+		)
 
 		// Forward chasing.
 		missileMotion.velocity.d = missileMotion.position.a

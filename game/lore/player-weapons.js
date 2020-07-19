@@ -12,7 +12,7 @@ import { RammingDamage } from "../logic/ramming-damage.js"
 import { Colors } from "../graphic/assets/colors.js"
 import { Render } from "../graphic/render.js"
 import { Random } from "../math/random.js"
-import { Angle } from "../math/angle.js"
+import { TargetFacing } from "../math/target-facing.js"
 
 // TODO: Should we have one file per weapon?
 
@@ -287,16 +287,13 @@ export class MissilePlayerWeaponRoutine {
 		for (const missile of this.missiles) {
 			const [ missileMotion ] = missile.get(Motion)
 
-			// Target facing.
-			const directionAngle = Angle.shortArcBetween(missileMotion.position.a, missileMotion.position.directionTo(closestHostilePosition))
-
-			if (Math.abs(directionAngle) < this.maxMissileSteerSpeed * this.universe.clock.spf) {
-				missileMotion.velocity.a = 0
-				missileMotion.position.a += directionAngle
-			}
-
-			else
-				missileMotion.velocity.a = Math.sign(directionAngle) * this.maxMissileSteerSpeed
+			TargetFacing.smooth(
+				missileMotion.position,
+				missileMotion.velocity,
+				closestHostilePosition,
+				this.maxMissileSteerSpeed,
+				this.universe.clock.spf
+			)
 
 			// Forward chasing.
 			missileMotion.velocity.d = missileMotion.position.a

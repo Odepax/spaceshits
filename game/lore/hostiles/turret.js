@@ -12,6 +12,7 @@ import { OnAddExplosion, OnRemoveExplosion } from "../../graphic/vfx.js"
 import { Colors } from "../../graphic/assets/colors.js"
 import { Player } from "../player.js"
 import { AutoIteratingRoutine } from "../../core/routines.js"
+import { TargetFacing } from "../../math/target-facing.js"
 
 // TODO: refactor hostile bullets (wait for other factors...)
 // TODO: refactor hostiles (wait for other factors...)
@@ -26,7 +27,7 @@ class TurretBullet extends Link {
 			new RammingDamage(9, Tags.player | Tags.ship, RammingDamage.removeOnDamage),
 
 			new Render(Sprites.turretBullet),
-			new OnRemoveExplosion(7 /* Collider.radius */ / 15, [Colors.light, Colors.white, Colors.silver], 7 /* Collider.radius */ * 1.5)
+			new OnRemoveExplosion(7 /* Collider.radius */ / 15, [ Colors.light, Colors.white, Colors.silver ], 7 /* Collider.radius */ * 1.5)
 		)
 	}
 }
@@ -99,6 +100,6 @@ export class TurretAimRoutine extends AutoIteratingRoutine {
 		const [ turretMotion ] = link.get(Motion)
 		const [ playerMotion ] = this.player.get(Motion)
 
-		turretMotion.position.a = turretMotion.position.directionTo(playerMotion.position)
+		TargetFacing.instant(turretMotion.position, playerMotion.position)
 	}
 }
