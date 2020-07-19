@@ -13,6 +13,7 @@ import { Colors } from "../graphic/assets/colors.js"
 import { Render } from "../graphic/render.js"
 import { Random } from "../math/random.js"
 import { TargetFacing } from "../math/target-facing.js"
+import { MissileControl } from "../logic/missile-control.js"
 
 // TODO: Should we have one file per weapon?
 
@@ -187,9 +188,10 @@ class MissileBullet extends Link {
 	constructor(position) {
 		// TODO: refactor player bullets (wait for other factors...)
 		super(
-			new Motion(position, Transform.angular(position.a, 800), Motion.removeOnEdges), 
+			new Motion(position, Transform.angular(position.a, 800), Motion.removeOnEdges),
+			new MissileControl(Math.PI),
 
-			new Collider(7, Tags.player | Tags.missile),
+			new Collider(7, Tags.player | Tags.bullet),
 			new RammingDamage(9, Tags.hostile | Tags.ship, RammingDamage.removeOnDamage),
 
 			new Render(Sprites.playerMissileBullet),
@@ -216,13 +218,11 @@ export class MissilePlayerWeaponRoutine {
 		this.hostiles = new Set()
 
 		/** @private */
-		this.autolock = new Motion(undefined, undefined, Motion.ignoreEdges)
+		this.autolock = new Motion(this.userInput.mousePosition, undefined, Motion.ignoreEdges)
 
 		this.nextShotTime = Number.NEGATIVE_INFINITY
 		this.reloadTime = 0.13
-
 		this.nextFireAngle = 0.4
-		this.maxMissileSteerSpeed = Math.PI
 
 		this.energy = this.energyMax = 113
 		this.energyRegen = 23
@@ -238,13 +238,13 @@ export class MissilePlayerWeaponRoutine {
 		}
 
 		else {
-			const [ collider ] = link.get(Collider)
+			const [ collider, missileControl ] = link.get(Collider, MissileControl)
 
 			if (collider)
 				if (Tags.match(collider.tag, Tags.hostile | Tags.ship))
 					this.hostiles.add(link)
 
-				else if (Tags.match(collider.tag, Tags.player | Tags.missile))
+				else if (missileControl && Tags.match(collider.tag, Tags.player | Tags.bullet))
 					this.missiles.add(link)
 		}
 	}
@@ -254,10 +254,11 @@ export class MissilePlayerWeaponRoutine {
 		if (link == this.player)
 			this.player = null
 
-		else {
-			this.missiles.delete(link)
-			this.hostiles.delete(link)
-		}
+		else if (this.missiles.delete(link))
+			;
+
+		else if (this.hostiles.delete(link) && this.hostiles.size == 0)
+			this.autolock.position = this.userInput.mousePosition
 	}
 
 	onStep() {
@@ -269,6 +270,9 @@ export class MissilePlayerWeaponRoutine {
 
 	/** @private */
 	steerMissiles() {
+		if (this.hostiles.size == 0)
+			return;
+
 		let closestHostilePosition = this.userInput.mousePosition
 		let closestHostileDistance = Number.POSITIVE_INFINITY
 
@@ -285,13 +289,13 @@ export class MissilePlayerWeaponRoutine {
 		this.autolock.position = closestHostilePosition
 
 		for (const missile of this.missiles) {
-			const [ missileMotion ] = missile.get(Motion)
+			const [ missileMotion, missileControl ] = missile.get(Motion, MissileControl)
 
 			TargetFacing.smooth(
 				missileMotion.position,
 				missileMotion.velocity,
 				closestHostilePosition,
-				this.maxMissileSteerSpeed,
+				missileControl.steeringSpeed,
 				this.universe.clock.spf
 			)
 

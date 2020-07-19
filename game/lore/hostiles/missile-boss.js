@@ -14,14 +14,16 @@ import { Player } from "../player.js"
 import { Random } from "../../math/random.js"
 import { Universe } from "../../core/engine.js"
 import { TargetFacing } from "../../math/target-facing.js"
+import { MissileControl } from "../../logic/missile-control.js"
 
 class MissileBossMissileM extends Link {
 	/** @param {Transform} position */
 	constructor(position) {
 		super(
 			new Motion(position, Transform.angular(position.a, 800), Motion.removeOnEdges),
+			new MissileControl(Math.PI),
 
-			new Collider(7, Tags.hostile | Tags.missile),
+			new Collider(7, Tags.hostile | Tags.bullet),
 			new RammingDamage(9, Tags.player | Tags.ship, RammingDamage.removeOnDamage),
 
 			new Render(Sprites.missileBossBulletM),
@@ -30,11 +32,18 @@ class MissileBossMissileM extends Link {
 	}
 }
 
+class ProtectiveMissileControl extends MissileControl {
+	constructor() {
+		super(Random.between(1, 4) * Math.PI)
+	}
+}
+
 class MissileBossMissileS extends Link {
 	/** @param {Transform} position */
 	constructor(position) {
 		super(
 			new Motion(position, Transform.angular(position.a, Random.between(600, 700)), Motion.ignoreEdges),
+			new ProtectiveMissileControl(),
 
 			new Collider(7, Tags.hostile | Tags.bullet),
 			new RammingDamage(9, Tags.player | Tags.ship | Tags.bullet, RammingDamage.removeOnDamage),
@@ -51,6 +60,7 @@ class MissileBossMissileL extends Link {
 	constructor(position) {
 		super(
 			new Motion(position, Transform.angular(position.a, Random.between(400, 800)), Motion.ignoreEdges),
+			new ProtectiveMissileControl(),
 
 			new Collider(7, Tags.hostile | Tags.bullet),
 			new RammingDamage(9, Tags.player | Tags.ship | Tags.bullet, RammingDamage.removeOnDamage),
@@ -106,8 +116,8 @@ export class MissileBossRoutine {
 		this.boss = null
 
 		/** @private @type {Set<Link>} */
-		this.activeMissiles = new Set()
-		this.maxActiveMissileCount = 70
+		this.protectiveMissiles = new Set()
+		this.maxProtectiveMissileCount = 70
 		this.reloadTime = 0.1
 		this.nextShotTime = -1
 	}
@@ -122,8 +132,8 @@ export class MissileBossRoutine {
 			this.nextShotTime = this.universe.clock.time + this.reloadTime
 		}
 
-		else if (link instanceof MissileBossMissileS || link instanceof MissileBossMissileL)
-			this.activeMissiles.add(link)
+		else if (link.has(ProtectiveMissileControl))
+			this.protectiveMissiles.add(link)
 	}
 
 	/** @param {Link} link */
@@ -134,12 +144,12 @@ export class MissileBossRoutine {
 		else if (link == this.boss) {
 			this.boss = null
 
-			for (const missile of this.activeMissiles)
+			for (const missile of this.protectiveMissiles)
 				this.universe.remove(missile)
 		}
 
 		else
-			this.activeMissiles.delete(link)
+			this.protectiveMissiles.delete(link)
 	}
 
 	onStep() {
@@ -154,14 +164,14 @@ export class MissileBossRoutine {
 	steerProtectiveMissiles() {
 		const [ bossMotion ] = this.boss.get(Motion)
 
-		for (const missile of this.activeMissiles) {
-			const [ missileMotion ] = missile.get(Motion)
+		for (const missile of this.protectiveMissiles) {
+			const [ missileMotion, missileControl ] = missile.get(Motion, ProtectiveMissileControl)
 
 			TargetFacing.smooth(
 				missileMotion.position,
 				missileMotion.velocity,
 				bossMotion.position,
-				Random.between(1, 4) * Math.PI,
+				missileControl.steeringSpeed,
 				this.universe.clock.spf
 			)
 
@@ -174,7 +184,7 @@ export class MissileBossRoutine {
 	fireProtectiveMissiles() {
 		if (
 			   this.nextShotTime < this.universe.clock.time
-			&& this.activeMissiles.size < this.maxActiveMissileCount
+			&& this.protectiveMissiles.size < this.maxProtectiveMissileCount
 		) {
 			this.nextShotTime = this.universe.clock.time + this.reloadTime
 

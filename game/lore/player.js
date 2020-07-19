@@ -11,6 +11,7 @@ import { HpGauge } from "../logic/life-and-death.js"
 import { Render } from "../graphic/render.js"
 import { AutoFieldModule } from "../logic/auto-field.js"
 import { AutoWeaponModule } from "../logic/auto-weapon.js"
+import { MissileControl } from "../logic/missile-control.js"
 
 export class Player extends Link {
 	constructor() {
@@ -22,7 +23,7 @@ export class Player extends Link {
 
 			new HpGauge(101),
 
-			new Render(Sprites.playerGatling),
+			new Render(Sprites.playerMissile),
 			new OnAddExplosion(2, [ Colors.black, Colors.grey, Colors.orange, Colors.purple ], 300),
 			new OnRemoveExplosion(1, [ Colors.light, Colors.grey, Colors.orange, Colors.purple ], 600)
 		)
@@ -51,8 +52,9 @@ class HostileMissile extends Link {
 		// TODO: refactor hostile bullets (wait for other factors...)
 		super(
 			new Motion(position, Transform.angular(position.a, 800), Motion.removeOnEdges),
+			new MissileControl(Math.PI),
 
-			new Collider(7, Tags.hostile | Tags.missile),
+			new Collider(7, Tags.hostile | Tags.bullet),
 			new RammingDamage(9, Tags.player | Tags.ship, RammingDamage.removeOnDamage),
 
 			new Render(Sprites.cubeMissileBullet),

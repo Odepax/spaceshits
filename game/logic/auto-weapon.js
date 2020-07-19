@@ -5,6 +5,7 @@ import { Motion } from "../physic/motion.js"
 import { Tags } from "../lore/tags.js"
 import { Collider } from "../physic/collision.js"
 import { TargetFacing } from "../math/target-facing.js"
+import { MissileControl } from "./missile-control.js"
 
 export class AutoWeaponModule {
 	/** @param {number} reloadTime @param {(parent: Link) => Link[]} factory */
@@ -61,9 +62,6 @@ export class HostileMissileRoutine extends AutoIteratingRoutine {
 
 		/** @private @type {Player} */
 		this.player = null
-
-		/** @private */
-		this.maxMissileSteerSpeed = Math.PI
 	}
 
 	/** @param {Link} link */
@@ -86,9 +84,9 @@ export class HostileMissileRoutine extends AutoIteratingRoutine {
 
 	/** @param {Link} link */
 	accepts(link) {
-		const [ collider ] = link.get(Collider)
+		const [ collider, missileControl ] = link.get(Collider, MissileControl)
 
-		return collider && Tags.match(collider.tag, Tags.hostile | Tags.missile)
+		return missileControl && collider && Tags.match(collider.tag, Tags.hostile | Tags.bullet)
 	}
 
 	onStep() {
@@ -98,14 +96,14 @@ export class HostileMissileRoutine extends AutoIteratingRoutine {
 
 	/** @param {Link} link */
 	onSubStep(link) {
-		const [ missileMotion ] = link.get(Motion)
+		const [ missileMotion, missileControl ] = link.get(Motion, MissileControl)
 		const [ playerMotion ] = this.player.get(Motion)
 
 		TargetFacing.smooth(
 			missileMotion.position,
 			missileMotion.velocity,
 			playerMotion.position,
-			this.maxMissileSteerSpeed,
+			missileControl.steeringSpeed,
 			this.universe.clock.spf
 		)
 
