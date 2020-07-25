@@ -18,6 +18,7 @@ export class LifeAndDeathRoutine extends AutoIteratingRoutine {
 
 		this.universe = universe
 	}
+
 	/**@param {Link} link */
 	accepts(link) {
 		return link.has(HpGauge)

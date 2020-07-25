@@ -17,6 +17,10 @@ import { DamageColorizationRoutine, PlayerStatsVisualizationRoutine } from "../.
 import { AutoWeaponModuleRoutine, HostileMissileRoutine } from "../../logic/auto-weapon.js"
 import { MissileBoss, MissileBossRoutine } from "../../lore/hostiles/missile-boss.js"
 import { Turret, TurretAimRoutine } from "../../lore/hostiles/turret.js"
+import { AuraMedic } from "../../lore/hostiles/aura-medic.js"
+import { AutoFieldModuleRoutine } from "../../logic/auto-field.js"
+import { HealFieldRoutine } from "../../logic/heal-field.js"
+import { Random } from "../../math/random.js"
 
 export class ArenaPage extends Page {
 	/** @param {PageRegistry} navigation @param {GameKeeper} game */
@@ -66,13 +70,14 @@ export class ArenaPage extends Page {
 			universe.register(new UserInputCaptureRoutine(userInput))
 			// TODO: Move CollisionDetectionRoutine up here, i.e. in the capture stage?
 
-			// Decision making --- logic 1.
+			// Decision making -- logic 1.
 			universe.register(new PlayerControlRoutine(userInput, this.game, universe))
 			universe.register(new MissilePlayerWeaponRoutine(userInput, this.game, universe))
 
 			universe.register(new TurretAimRoutine())
 			universe.register(new AutoWeaponModuleRoutine(universe))
-			universe.register(new MissileBossRoutine(universe))
+			universe.register(new AutoFieldModuleRoutine(universe))
+			//universe.register(new MissileBossRoutine(universe))
 			universe.register(new HostileMissileRoutine(universe))
 
 			//universe.register(ArenaScenarios[n](universe))
@@ -82,28 +87,37 @@ export class ArenaPage extends Page {
 			universe.register(new CollisionDetectionRoutine(collisions))
 
 			// Collision reactions -- logic 2.
-			const rammingDamage = new RammingDamageRoutine(collisions, universe)
-
-			universe.register(rammingDamage)
-			universe.register(new LifeAndDeathRoutine(universe))
-
-			// Render.
-			/** @param {Link} a @param {Link} b */
-			rammingDamage.onBounce = (a, b) => {
+			universe.register(new RammingDamageRoutine(collisions, universe, (a, b) => {
 				const { x: ax, y: ay } = a.get(Motion)[0].position
 				const { x: bx, y: by } = b.get(Motion)[0].position
 
 				vfx.spawnParticleBurst(20, (ax + bx) / 2, (ay + by) / 2, 100, 200, 1, [ Colors.white, Colors.silver, Colors.grey, Colors.black ], 2, 10)
-			}
+			}))
 
+			/** @type {WeakMap<Link, number>} */ 
+			const nextHealParticuleTimes = new WeakMap()
+			universe.register(new HealFieldRoutine(collisions, universe, link => {
+				if ((nextHealParticuleTimes.get(link) || 0) < universe.clock.time) {
+					nextHealParticuleTimes.set(link, universe.clock.time + Random.between(0.2, 0.6))
+
+					const { x, y } = link.get(Motion)[0].position
+
+					vfx.spawnParticleBurst(2, x, y, 70, 170, 0.5, [ Colors.green, Colors.teal ], 3, 7)
+				}
+			}))
+
+			universe.register(new LifeAndDeathRoutine(universe))
+
+			// Render.
 			universe.register(new DamageColorizationRoutine(universe))
 			universe.register(new RenderRoutine(this.$.gameCanvas, spriteSource, universe, userInput, vfx))
 			universe.register(new PlayerStatsVisualizationRoutine(this.$.hpProgress))
 
-			universe.add(new MissileBoss(700 * 0.5, 700 * 0.2))
+			//universe.add(new MissileBoss(700 * 0.5, 700 * 0.2))
 
-			universe.add(new Turret(700 * 0.3, 700 * 0.2))
-			universe.add(new Turret(700 * 0.7, 700 * 0.2))
+			universe.add(new Turret(700 * 0.4, 700 * 0.2))
+			universe.add(new AuraMedic(700 * 0.5, 700 * 0.2))
+			universe.add(new Turret(700 * 0.6, 700 * 0.2))
 
 			universe.add(new Player())
 

@@ -20,15 +20,13 @@ RammingDamage.bounceOnDamage = 2
 RammingDamage.bounceOtherOnDamage = 4
 
 export class RammingDamageRoutine extends SetRoutine {
-	/** @param {CollisionDetector} collisions @param {Universe} universe */
-	constructor(collisions, universe) {
+	/** @param {CollisionDetector} collisions @param {Universe} universe @param {(a: Link, b: Link) => void} onBounce */
+	constructor(collisions, universe, onBounce = null) {
 		super()
 
 		this.collisions = collisions
 		this.universe = universe
-
-		/** @type {(a: Link, b: Link) => void} */
-		this.onBounce = null
+		this.onBounce = onBounce
 	}
 
 	/** @param {Link} link */
