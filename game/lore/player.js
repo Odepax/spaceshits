@@ -30,6 +30,20 @@ export class Player extends Link {
 	}
 }
 
+// TODO: use PlayerEnergy trait
+//class PlayerEnergy {
+//	constructor() {
+//		this.weapon = this.weaponMax = 113
+//		this.weaponRegen = 23
+//		this.weaponConsumption = 5
+
+//		this.aux = this.auxMax = 113
+//		this.auxRegen = 23
+//		this.auxConsumption = 5
+//	}
+//}
+
+
 class HostileBullet extends Link {
 	/** @param {Transform} position */
 	constructor(position) {

@@ -15,7 +15,8 @@ import { Random } from "../math/random.js"
 import { TargetFacing } from "../math/target-facing.js"
 import { MissileControl } from "../logic/missile-control.js"
 
-// TODO: Should we have one file per weapon?
+// TODO: use PlayerEnergy trait
+// TODO: have one file per weapon
 
 class GatlingBullet extends Link {
 	/** @param {Transform} position */

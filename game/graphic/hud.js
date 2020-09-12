@@ -6,6 +6,8 @@ import { Colors } from "./assets/colors.js"
 import { Player } from "../lore/player.js"
 import { AuraFx } from "./vfx.js"
 
+// TODO: use PlayerEnergy trait
+
 /** @implements {import("../core/engine").Routine} */
 export class PlayerStatsVisualizationRoutine {
 	/** @param {HTMLProgressElement} hpProgress */

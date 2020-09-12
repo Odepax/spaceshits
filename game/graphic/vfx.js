@@ -23,6 +23,7 @@ import { Random } from "../math/random.js"
  * @property {number} radius
  */
 
+/** @abstract */
 class OnEventExplosion {
 	/** @param {number} ttl @param {string[]} colors @param {number} radius */
 	constructor(ttl, colors, radius) {
@@ -44,7 +45,7 @@ export class AuraFx {
 	}
 }
 
-// ALT:
+// TODO: consider alternative render config
 /*
 new Link(
 	new Render(
