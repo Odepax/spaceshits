@@ -6,7 +6,7 @@ import { Tags } from "../tags.js"
 import { RammingDamage } from "../../logic/ramming-damage.js"
 import { AuraFx } from "../../graphic/vfx.js"
 import { Colors } from "../../graphic/assets/colors.js"
-import { UserInputCapturer } from "../../ux/user-input-capture.js"
+import { UserInputRegistry } from "../../ux/user-input-capture.js"
 import { GameKeeper } from "../game-keeper.js"
 import { Player } from "../player.js"
 import { Ratio } from "../../math/ratio.js"
@@ -37,7 +37,7 @@ export class Shockwave extends Link {
 }
 
 export class ShockwavePlayerAuxRoutine {
-	/** @param {UserInputCapturer} userInput @param {GameKeeper} game @param {Universe} universe */
+	/** @param {UserInputRegistry} userInput @param {GameKeeper} game @param {Universe} universe */
 	constructor(userInput, game, universe) {
 		this.userInput = userInput
 		this.game = game

@@ -1,6 +1,6 @@
 import { Transform } from "../math/transform.js"
 
-export class UserInputCapturer {
+export class UserInputRegistry {
 	/** @param {HTMLElement} observedElement */
 	constructor(observedElement) {
 		this.mousePosition = new Transform()
@@ -49,13 +49,13 @@ export class UserInputCapturer {
 		element.addEventListener("mousedown", event => {
 			event.preventDefault()
 
-			this.pressedKeys.next.add(UserInputCapturer.mouseButtonLabels[event.button]);
+			this.pressedKeys.next.add(UserInputRegistry.mouseButtonLabels[event.button]);
 		}, false)
 
 		document.addEventListener("mouseup", event => {
 			event.preventDefault()
 
-			this.releasedKeys.next.add(UserInputCapturer.mouseButtonLabels[event.button]);
+			this.releasedKeys.next.add(UserInputRegistry.mouseButtonLabels[event.button]);
 		}, false)
 
 		element.addEventListener("keydown", event => {
@@ -92,11 +92,11 @@ export class UserInputCapturer {
 	}
 }
 
-UserInputCapturer.mouseButtonLabels = [ "MouseLeft", "MouseMiddle", "MouseRight" ]
+UserInputRegistry.mouseButtonLabels = [ "MouseLeft", "MouseMiddle", "MouseRight" ]
 
 /** @implements {import("../core/engine").Routine} */
 export class UserInputCaptureRoutine {
-	/** @param {UserInputCapturer} userInput */
+	/** @param {UserInputRegistry} userInput */
 	constructor(userInput) {
 		this.userInput = userInput
 	}

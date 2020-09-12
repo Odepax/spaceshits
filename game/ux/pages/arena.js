@@ -1,7 +1,7 @@
 ﻿import { Page, PageRegistry } from "../page-registry.js"
 import { GameKeeper } from "../../lore/game-keeper.js"
 import { Universe, Link } from "../../core/engine.js"
-import { UserInputCapturer, UserInputCaptureRoutine } from "../user-input-capture.js"
+import { UserInputRegistry, UserInputCaptureRoutine } from "../user-input-capture.js"
 import { PlayerControlRoutine } from "../../logic/player-control.js"
 import { MotionRoutine, Motion } from "../../physic/motion.js"
 import { Player, Hostile } from "../../lore/player.js"
@@ -64,7 +64,7 @@ export class ArenaPage extends Page {
 		Sprites.import().then(spriteSource => {
 			const universe = new Universe(this.$.gameCanvas.offsetWidth, this.$.gameCanvas.offsetHeight)
 
-			const userInput = new UserInputCapturer(this.$.gameCanvas)
+			const userInput = new UserInputRegistry(this.$.gameCanvas)
 			const collisions = new CollisionDetector()
 			const vfx = new VfxRegistry(universe)
 

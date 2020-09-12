@@ -1,6 +1,6 @@
 ﻿import { Page, PageRegistry } from "../page-registry.js"
 import { GameKeeper } from "../../lore/game-keeper.js"
-import { UserInputCapturer } from "../user-input-capture.js"
+import { UserInputRegistry } from "../user-input-capture.js"
 
 export class SettingsPage extends Page {
 	/** @param {PageRegistry} navigation @param {GameKeeper} game */
@@ -45,7 +45,7 @@ export class SettingsPage extends Page {
 			}, false)
 
 			binder.addEventListener("keydown", ({ code }) => this.setBinding(key, code), false)
-			binder.addEventListener("mousedown", ({ button }) => this.setBinding(key, UserInputCapturer.mouseButtonLabels[button]), false)
+			binder.addEventListener("mousedown", ({ button }) => this.setBinding(key, UserInputRegistry.mouseButtonLabels[button]), false)
 		}
 
 		const testCanvas = this.$.testCanvas

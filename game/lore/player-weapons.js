@@ -1,4 +1,4 @@
-import { UserInputCapturer } from "../ux/user-input-capture.js"
+import { UserInputRegistry } from "../ux/user-input-capture.js"
 import { GameKeeper } from "./game-keeper.js"
 import { Universe, Link } from "../core/engine.js"
 import { Player } from "./player.js"
@@ -36,7 +36,7 @@ class GatlingBullet extends Link {
 
 /** @implements {import("../core/engine").Routine} */
 export class GatlingPlayerWeaponRoutine {
-	/** @param {UserInputCapturer} userInput @param {GameKeeper} game @param {Universe} universe */
+	/** @param {UserInputRegistry} userInput @param {GameKeeper} game @param {Universe} universe */
 	constructor(userInput, game, universe) {
 		this.userInput = userInput
 		this.game = game
@@ -118,7 +118,7 @@ class ShockgunBullet extends Link {
 
 /** @implements {import("../core/engine").Routine} */
 export class ShockgunPlayerWeaponRoutine {
-	/** @param {UserInputCapturer} userInput @param {GameKeeper} game @param {Universe} universe */
+	/** @param {UserInputRegistry} userInput @param {GameKeeper} game @param {Universe} universe */
 	constructor(userInput, game, universe) {
 		this.userInput = userInput
 		this.game = game
@@ -203,7 +203,7 @@ class MissileBullet extends Link {
 
 /** @implements {import("../core/engine").Routine} */
 export class MissilePlayerWeaponRoutine {
-	/** @param {UserInputCapturer} userInput @param {GameKeeper} game @param {Universe} universe */
+	/** @param {UserInputRegistry} userInput @param {GameKeeper} game @param {Universe} universe */
 	constructor(userInput, game, universe) {
 		this.userInput = userInput
 		this.game = game
@@ -373,7 +373,7 @@ class ChargerLBullet extends Link {
 
 /** @implements {import("../core/engine").Routine} */
 export class ChargerPlayerWeaponRoutine {
-	/** @param {UserInputCapturer} userInput @param {GameKeeper} game @param {Universe} universe */
+	/** @param {UserInputRegistry} userInput @param {GameKeeper} game @param {Universe} universe */
 	constructor(userInput, game, universe) {
 		this.userInput = userInput
 		this.game = game

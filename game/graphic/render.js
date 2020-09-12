@@ -2,7 +2,7 @@ import { Link } from "../core/engine.js"
 import { Motion } from "../physic/motion.js"
 import { Colors } from "./assets/colors.js"
 import { Universe } from "../core/engine.js"
-import { UserInputCapturer } from "../ux/user-input-capture.js"
+import { UserInputRegistry } from "../ux/user-input-capture.js"
 import { SetRoutine } from "../core/routines.js"
 import { VfxRegistry, OnAddExplosion, OnRemoveExplosion, AuraFx } from "./vfx.js"
 import { Random } from "../math/random.js"
@@ -32,7 +32,7 @@ export class Sprite {
 }
 
 export class RenderRoutine extends SetRoutine {
-	/** @param {HTMLCanvasElement} canvas @param {ImageBitmap} spriteSource @param {Universe} universe @param {UserInputCapturer} userInput @param {VfxRegistry} vfx */
+	/** @param {HTMLCanvasElement} canvas @param {ImageBitmap} spriteSource @param {Universe} universe @param {UserInputRegistry} userInput @param {VfxRegistry} vfx */
 	constructor(canvas, spriteSource, universe, userInput, vfx) {
 		super()
 

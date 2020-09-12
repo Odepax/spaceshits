@@ -1,6 +1,6 @@
 import { Link } from "../core/engine.js"
 import { Motion } from "../physic/motion.js"
-import { UserInputCapturer } from "../ux/user-input-capture.js"
+import { UserInputRegistry } from "../ux/user-input-capture.js"
 import { Player } from "../lore/player.js"
 import { Transform } from "../math/transform.js"
 import { Force } from "../math/force.js"
@@ -9,7 +9,7 @@ import { GameKeeper } from "../lore/game-keeper.js"
 
 /** @implements {import("../core/engine").Routine} */
 export class PlayerControlRoutine {
-	/** @param {UserInputCapturer} userInput @param {GameKeeper} game @param {Universe} universe */
+	/** @param {UserInputRegistry} userInput @param {GameKeeper} game @param {Universe} universe */
 	constructor(userInput, game, universe) {
 		this.userInput = userInput
 		this.game = game
