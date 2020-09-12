@@ -4,9 +4,9 @@ import { Universe, Link } from "../../core/engine.js"
 import { UserInputCapturer, UserInputCaptureRoutine } from "../user-input-capture.js"
 import { PlayerControlRoutine } from "../../logic/player-control.js"
 import { MotionRoutine, Motion } from "../../physic/motion.js"
-import { Player } from "../../lore/player.js"
+import { Player, Hostile } from "../../lore/player.js"
 import { Sprites } from "../../graphic/assets/sprites.js"
-import { CollisionDetectionRoutine, CollisionDetector } from "../../physic/collision.js"
+import { Collider, CollisionDetectionRoutine, CollisionDetector } from "../../physic/collision.js"
 import { RammingDamageRoutine } from "../../logic/ramming-damage.js"
 import { VfxRegistry } from "../../graphic/vfx.js"
 import { Colors } from "../../graphic/assets/colors.js"
@@ -21,6 +21,8 @@ import { AuraMedic } from "../../lore/hostiles/aura-medic.js"
 import { AutoFieldModuleRoutine } from "../../logic/auto-field.js"
 import { HealFieldRoutine } from "../../logic/heal-field.js"
 import { Random } from "../../math/random.js"
+import { ShockwavePlayerAuxRoutine } from "../../lore/player-modules/shockwave.js"
+import { Ratio } from "../../math/ratio.js"
 
 export class ArenaPage extends Page {
 	/** @param {PageRegistry} navigation @param {GameKeeper} game */
@@ -73,6 +75,7 @@ export class ArenaPage extends Page {
 			// Decision making -- logic 1.
 			universe.register(new PlayerControlRoutine(userInput, this.game, universe))
 			universe.register(new MissilePlayerWeaponRoutine(userInput, this.game, universe))
+			universe.register(new ShockwavePlayerAuxRoutine(userInput, this.game, universe))
 
 			universe.register(new TurretAimRoutine())
 			universe.register(new AutoWeaponModuleRoutine(universe))
@@ -88,10 +91,18 @@ export class ArenaPage extends Page {
 
 			// Collision reactions -- logic 2.
 			universe.register(new RammingDamageRoutine(collisions, universe, (a, b) => {
-				const { x: ax, y: ay } = a.get(Motion)[0].position
-				const { x: bx, y: by } = b.get(Motion)[0].position
+				const [ { position: { x: ax, y: ay } }, { radius: ar } ] = a.get(Motion, Collider)
+				const [ { position: { x: bx, y: by } }, { radius: br } ] = b.get(Motion, Collider)
 
-				vfx.spawnParticleBurst(20, (ax + bx) / 2, (ay + by) / 2, 100, 200, 1, [ Colors.white, Colors.silver, Colors.grey, Colors.black ], 2, 10)
+				// Stolen from the Internets:
+				// https://brilliant.org/wiki/section-formula/
+				const am = Ratio.progress(ar, ar + br)
+				const bm = Ratio.progress(br, ar + br)
+
+				const px = (am * bx + bm * ax) / (am + bm)
+				const py = (am * by + bm * ay) / (am + bm)
+
+				vfx.spawnParticleBurst(20, px, py, 100, 200, 1, [ Colors.white, Colors.silver, Colors.grey, Colors.black ], 2, 10)
 			}))
 
 			/** @type {WeakMap<Link, number>} */ 
@@ -113,11 +124,18 @@ export class ArenaPage extends Page {
 			universe.register(new RenderRoutine(this.$.gameCanvas, spriteSource, universe, userInput, vfx))
 			universe.register(new PlayerStatsVisualizationRoutine(this.$.hpProgress))
 
-			//universe.add(new MissileBoss(700 * 0.5, 700 * 0.2))
+			universe.add(new Turret(700 * 0.3, 700 * 0.2))
+			universe.add(new Turret(700 * 0.7, 700 * 0.2))
 
-			universe.add(new Turret(700 * 0.4, 700 * 0.2))
-			universe.add(new AuraMedic(700 * 0.5, 700 * 0.2))
-			universe.add(new Turret(700 * 0.6, 700 * 0.2))
+			for (let i = 0; i < 3; ++i)
+				universe.add(new Hostile(
+					700 * Math.random(),
+					700 * Math.random(),
+					Random.between(-200, 200),
+					Random.between(-200, 200)
+				))
+
+			//universe.add(new MissileBoss(700 * 0.5, 700 * 0.2))
 
 			universe.add(new Player())
 
