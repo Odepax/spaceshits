@@ -75,7 +75,7 @@ export class ArenaPage extends Page {
 			// Decision making -- logic 1.
 			universe.register(new PlayerControlRoutine(userInput, this.game, universe))
 			universe.register(new MissilePlayerWeaponRoutine(userInput, this.game, universe))
-			universe.register(new ShockwavePlayerAuxRoutine(userInput, this.game, universe))
+			universe.register(new ShockwavePlayerAuxRoutine(userInput, collisions, this.game, universe))
 
 			universe.register(new TurretAimRoutine())
 			universe.register(new AutoWeaponModuleRoutine(universe))

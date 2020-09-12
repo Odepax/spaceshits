@@ -1,7 +1,7 @@
 import { Link, Universe } from "../../core/engine.js"
 import { Transform } from "../../math/transform.js"
 import { Motion } from "../../physic/motion.js"
-import { Collider } from "../../physic/collision.js"
+import { Collider, CollisionRegistry } from "../../physic/collision.js"
 import { Tags } from "../tags.js"
 import { RammingDamage } from "../../logic/ramming-damage.js"
 import { AuraFx } from "../../graphic/vfx.js"
@@ -10,6 +10,8 @@ import { UserInputRegistry } from "../../ux/user-input-capture.js"
 import { GameKeeper } from "../game-keeper.js"
 import { Player } from "../player.js"
 import { Ratio } from "../../math/ratio.js"
+import { Flag } from "../../math/flag.js"
+import { HpGauge } from "../../logic/life-and-death.js"
 
 class WaveGrowth {
 	/** @param {number} spawnTime @param {number} deathTime @param {number} maxRadius */
@@ -37,9 +39,10 @@ class Shockwave extends Link {
 }
 
 export class ShockwavePlayerAuxRoutine {
-	/** @param {UserInputRegistry} userInput @param {GameKeeper} game @param {Universe} universe */
-	constructor(userInput, game, universe) {
+	/** @param {UserInputRegistry} userInput @param {CollisionRegistry} collisions @param {GameKeeper} game @param {Universe} universe */
+	constructor(userInput, collisions, game, universe) {
 		this.userInput = userInput
+		this.collisions = collisions
 		this.game = game
 		this.universe = universe
 
@@ -48,6 +51,9 @@ export class ShockwavePlayerAuxRoutine {
 
 		/** @private @type {Set<Link>} */
 		this.waves = new Set()
+		
+		/** @private @type {Set<Link>} */
+		this.hostiles = new Set()
 
 		this.energy = this.energyMax = 113 // TODO: Use new PlayerEnergy trait
 		this.energyRegen = 23
@@ -59,6 +65,9 @@ export class ShockwavePlayerAuxRoutine {
 		if (link instanceof Shockwave)
 			this.waves.add(link)
 
+		else if (Flag.contains(link.get(Collider)[0]?.tag, Tags.hostile | Tags.ship/* | Tags.bullet*/))
+			this.hostiles.add(link)
+
 		else if (!this.player && link instanceof Player)
 			this.player = link
 	}
@@ -69,7 +78,7 @@ export class ShockwavePlayerAuxRoutine {
 			this.player = null
 
 		else
-			this.waves.delete(link)
+			this.waves.delete(link) || this.hostiles.delete(link)
 	}
 
 	onStep() {
@@ -91,7 +100,7 @@ export class ShockwavePlayerAuxRoutine {
 		}
 
 		for (const wave of this.waves) {
-			const [ waveCollider, waveAura, { spawnTime, deathTime, maxRadius } ] = wave.get(Collider, AuraFx, WaveGrowth)
+			const [ { position: wavePosition } , waveCollider, waveAura, { spawnTime, deathTime, maxRadius } ] = wave.get(Motion, Collider, AuraFx, WaveGrowth)
 
 			if (deathTime < this.universe.clock.time)
 				this.universe.remove(wave)
@@ -102,6 +111,20 @@ export class ShockwavePlayerAuxRoutine {
 				waveAura.radius = waveCollider.radius = maxRadius * progress
 				waveAura.opacityFactor = 1 - progress
 			}
+
+			const waveSpeed = maxRadius / (deathTime - spawnTime)
+
+			for (const hostile of this.hostiles)
+				if (this.collisions.startedColliding(wave, hostile)) {
+					const [ motion, rammingDamage ] = hostile.get(Motion, RammingDamage)
+
+					if (rammingDamage?.damageReaction == RammingDamage.bounceOnDamage) {
+						const waveDirection = wavePosition.directionTo(motion.position)
+
+						motion.velocity.d = waveDirection
+						motion.velocity.l = waveSpeed
+					}
+				}
 		}
 	}
 }

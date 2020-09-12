@@ -50,8 +50,8 @@ export class RammingDamageRoutine extends SetRoutine {
 
 				if ((
 					   Tags.match(rammingDamageA?.targetTag, colliderB.tag)
-					|| Tags.match(rammingDamageB?.targetTag, colliderA.tag) )
-					&& this.collisions.areColliding(a, b)
+					|| Tags.match(rammingDamageB?.targetTag, colliderA.tag))
+					&& this.collisions.startedColliding(a, b)
 				) {
 					// Assuming that collisions don't go down here by accident,
 					// therefore assuming (and not checking for) rammingDamageX.
