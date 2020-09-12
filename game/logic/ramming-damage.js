@@ -1,7 +1,7 @@
 import { Universe, Link } from "../core/engine.js"
 import { SetRoutine } from "../core/routines.js"
 import { Motion } from "../physic/motion.js"
-import { Collider, CollisionDetector } from "../physic/collision.js"
+import { Collider, CollisionRegistry } from "../physic/collision.js"
 import { HpGauge } from "./life-and-death.js"
 import { Tags } from "../lore/tags.js"
 
@@ -20,7 +20,7 @@ RammingDamage.bounceOnDamage = 2
 RammingDamage.bounceOtherOnDamage = 4
 
 export class RammingDamageRoutine extends SetRoutine {
-	/** @param {CollisionDetector} collisions @param {Universe} universe @param {(a: Link, b: Link) => void} onBounce */
+	/** @param {CollisionRegistry} collisions @param {Universe} universe @param {(a: Link, b: Link) => void} onBounce */
 	constructor(collisions, universe, onBounce = null) {
 		super()
 

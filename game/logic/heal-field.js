@@ -1,4 +1,4 @@
-import { CollisionDetector, Collider } from "../physic/collision.js"
+import { CollisionRegistry, Collider } from "../physic/collision.js"
 import { Universe, Link } from "../core/engine.js"
 import { HpGauge } from "./life-and-death.js"
 import { Tags } from "../lore/tags.js"
@@ -13,7 +13,7 @@ export class HealField {
 
 /** @implements {import("../../core/engine").Routine} */
 export class HealFieldRoutine {
-	/** @param {CollisionDetector} collisions @param {Universe} universe @param {(link: Link) => void} onHeal */
+	/** @param {CollisionRegistry} collisions @param {Universe} universe @param {(link: Link) => void} onHeal */
 	constructor(collisions, universe, onHeal = null) {
 		this.collisions = collisions
 		this.universe = universe

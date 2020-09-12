@@ -1,7 +1,6 @@
 import { Link } from "../core/engine.js"
-import { Collision } from "../math/collision.js"
 import { Motion } from "./motion.js"
-import { SetRoutine } from "../core/routines.js"
+import { Collision } from "../math/collision.js"
 
 export class Collider {
 	/** @param {number} radius @param {number} tag */
@@ -13,7 +12,9 @@ export class Collider {
 
 /** @private @type { WeakMap<object, number>} */
 const ids = new WeakMap()
+
 let nextId = 0
+
 /** @private @param {object} a @param {object} b */
 function unorderedPairingHash(a, b) {
 	a = ids.get(a) || (ids.set(a, ++nextId), nextId)
@@ -30,105 +31,55 @@ function unorderedPairingHash(a, b) {
 	return 0.5 * (n + m) * (n + m + 1) + n
 }
 
-// TODO: just fix that horrible stinky crap.
+export class CollisionRegistry {
+	constructor() {
+		/** @private @type {Set<number>} */
+		this.ongoingCollisions = new Set()
+	}
 
-/** @private */
-class LazyCollisionMap {
-	//constructor() {
-	//	/** @private @type {Map<number, boolean>} */
-	//	this.cache = new Map()
-	//}
+	/** @param {Link} a @param {Link} b */
+	areColliding(a, b) {
+		return this.ongoingCollisions.has(unorderedPairingHash(a, b))
+	}
+}
 
-	///** @param {Link} a @param {Link} b */
-	//get(a, b) {
-	//	const key = unorderedPairingHash(a, b)
+/** @implements {import("../core/engine").Routine} */
+export class CollisionDetectionRoutine {
+	/** @param {CollisionRegistry} collisions */
+	constructor(collisions) {
+		this.collisions = collisions
 
-	//	return this.cache.get(key)
-	//}
+		/** @private @type {Set<Link>} */
+		this.links = new Set()
+	}
 
-	///** @param {Link} a @param {Link} b */
-	//getOrCheck(a, b) {
-	//	const key = unorderedPairingHash(a, b)
-	//	let collision
+	/** @param {Link} link */
+	onAdd(link) {
+		if (link.has(Motion, Collider))
+			this.links.add(link)
+	}
 
-	//	return this.cache.get(key) ?? (this.cache.set(key, collision = this.testCollision(a, b)), collision)
-	//}
+	/** @param {Link} link */
+	onRemove(link) {
+		this.links.delete(link)
+	}
 
-	//clear() {
-	//	return this.cache.clear()
-	//}
+	onStep() {
+		this.collisions.ongoingCollisions.clear()
+
+		const links = Array.from(this.links)
+
+		for (let i = 0; i < links.length; ++i)
+		for (let j = i + 1; j < links.length; ++j)
+			if (this.testCollision(links[i], links[j]))
+				this.collisions.ongoingCollisions.add(unorderedPairingHash(links[i], links[j]))
+	}
 
 	/** @private @param {Link} a @param {Link} b */
-	static testCollision(a, b) {
+	testCollision(a, b) {
 		const [ { position: { x: ax, y: ay } }, { radius: ar } ] = a.get(Motion, Collider)
 		const [ { position: { x: bx, y: by } }, { radius: br } ] = b.get(Motion, Collider)
 
 		return Collision.testCircles(ax, ay, ar, bx, by, br)
 	}
-}
-
-export class CollisionDetector { // TODO: rename to "CollisionRegistry" ?
-	constructor() {
-		/** @private @type {Set<number>} */
-		this.cache = new Set()
-
-	//	this.ongoingCollisions = new LazyCollisionMap()
-	//	this.previousCollisions = new LazyCollisionMap()
-	}
-
-	/** @param {Link} a @param {Link} b */
-	areColliding(a, b) {
-		//return this.ongoingCollisions.getOrCheck(a, b)
-		return this.cache.has(unorderedPairingHash(a, b))
-	}
-
-	///** @param {Link} a @param {Link} b */
-	//startedColliding(a, b) {
-	//	return this.ongoingCollisions.getOrCheck(a, b) && !this.previousCollisions.get(a, b)
-	//}
-
-	///** @param {Link} a @param {Link} b */
-	//stopedColliding(a, b) {
-	//	return this.previousCollisions.get(a, b) && !this.ongoingCollisions.getOrCheck(a, b)
-	//}
-
-	///** @private */
-	//step() {
-	//	const previous = this.previousCollisions
-
-	//	this.previousCollisions = this.ongoingCollisions
-	//	this.ongoingCollisions = (previous.clear(), previous)
-	//}
-}
-
-/** @implements {import("../core/engine").Routine} */
-export class CollisionDetectionRoutine extends SetRoutine {
-	/** @param {CollisionDetector} collisions */
-	constructor(collisions) {
-		super()
-
-		this.collisions = collisions
-	}
-
-	/** @param {Link} link */
-	accepts(link) {
-		return link.has(Motion, Collider)
-	}
-
-	onStep() {
-		this.collisions.cache.clear()
-
-		for (const a of this.links) // TODO: are we double-testing double-looping?
-		for (const b of this.links)
-			if (a != b && LazyCollisionMap.testCollision(a, b))
-				this.collisions.cache.add(unorderedPairingHash(a, b))
-	}
-
-	//onStep() {
-	//	this.collisions.step()
-	//}
-
-	// Nothing to do here...
-	//onAdd() {}
-	//onRemove() {}
 }

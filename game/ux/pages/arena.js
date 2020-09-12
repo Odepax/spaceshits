@@ -6,7 +6,7 @@ import { PlayerControlRoutine } from "../../logic/player-control.js"
 import { MotionRoutine, Motion } from "../../physic/motion.js"
 import { Player, Hostile } from "../../lore/player.js"
 import { Sprites } from "../../graphic/assets/sprites.js"
-import { Collider, CollisionDetectionRoutine, CollisionDetector } from "../../physic/collision.js"
+import { Collider, CollisionDetectionRoutine, CollisionRegistry } from "../../physic/collision.js"
 import { RammingDamageRoutine } from "../../logic/ramming-damage.js"
 import { VfxRegistry } from "../../graphic/vfx.js"
 import { Colors } from "../../graphic/assets/colors.js"
@@ -65,7 +65,7 @@ export class ArenaPage extends Page {
 			const universe = new Universe(this.$.gameCanvas.offsetWidth, this.$.gameCanvas.offsetHeight)
 
 			const userInput = new UserInputRegistry(this.$.gameCanvas)
-			const collisions = new CollisionDetector()
+			const collisions = new CollisionRegistry()
 			const vfx = new VfxRegistry(universe)
 
 			// User input capture.
@@ -126,6 +126,7 @@ export class ArenaPage extends Page {
 
 			universe.add(new Turret(700 * 0.3, 700 * 0.2))
 			universe.add(new Turret(700 * 0.7, 700 * 0.2))
+			universe.add(new AuraMedic(700 * 0.6, 700 * 0.2))
 
 			for (let i = 0; i < 3; ++i)
 				universe.add(new Hostile(
