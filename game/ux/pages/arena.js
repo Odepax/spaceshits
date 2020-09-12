@@ -136,9 +136,9 @@ export class ArenaPage extends Page {
 					Random.between(-200, 200)
 				))
 
-			//universe.add(new MissileBoss(700 * 0.5, 700 * 0.2))
-
 			universe.add(new Player())
+
+			//universe.add(new MissileBoss(700 * 0.5, 700 * 0.2))
 
 			this.u = universe
 			this.u.start()

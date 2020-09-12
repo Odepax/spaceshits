@@ -20,18 +20,18 @@ class WaveGrowth {
 	}
 }
 
-export class Shockwave extends Link {
+class Shockwave extends Link {
 	/** @param {Transform} position @param {number} time */
 	constructor(position, time) {
 		super(
 			new Motion(position, undefined, Motion.ignoreEdges),
 
-			new Collider(200, Tags.player | Tags.field),
-			new RammingDamage(0, Tags.hostile | Tags.ship/* | Tags.bullet*/, RammingDamage.bounceOtherOnDamage),
+			new Collider(0, Tags.player | Tags.field),
+			new RammingDamage(19, Tags.hostile | Tags.ship/* | Tags.bullet*/, RammingDamage.ignoreDamage),
 
 			new WaveGrowth(time, time + 0.7, 307),
 
-			new AuraFx(200, Colors.orange)
+			new AuraFx(0, Colors.orange)
 		)
 	}
 }
@@ -99,7 +99,7 @@ export class ShockwavePlayerAuxRoutine {
 			else {
 				const progress = Ratio.progressBetween(this.universe.clock.time, spawnTime, deathTime)
 
-				//waveAura.radius = waveCollider.radius = maxRadius * progress
+				waveAura.radius = waveCollider.radius = maxRadius * progress
 				waveAura.opacityFactor = 1 - progress
 			}
 		}

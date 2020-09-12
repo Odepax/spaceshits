@@ -35,11 +35,27 @@ export class CollisionRegistry {
 	constructor() {
 		/** @private @type {Set<number>} */
 		this.ongoingCollisions = new Set()
+
+		/** @private @type {Set<number>} */
+		this.newCollisions = new Set()
+
+		/** @private @type {Set<number>} */
+		this.endedCollisions = new Set()
 	}
 
 	/** @param {Link} a @param {Link} b */
 	areColliding(a, b) {
 		return this.ongoingCollisions.has(unorderedPairingHash(a, b))
+	}
+
+	/** @param {Link} a @param {Link} b */
+	startedColliding(a, b) {
+		return this.newCollisions.has(unorderedPairingHash(a, b))
+	}
+
+	/** @param {Link} a @param {Link} b */
+	stopedColliding(a, b) {
+		return this.endedCollisions.has(unorderedPairingHash(a, b))
 	}
 }
 
@@ -65,14 +81,31 @@ export class CollisionDetectionRoutine {
 	}
 
 	onStep() {
-		this.collisions.ongoingCollisions.clear()
+		for (const collision of this.collisions.newCollisions)
+			this.collisions.ongoingCollisions.add(collision)
+
+		this.collisions.newCollisions.clear()
+		this.collisions.endedCollisions.clear()
 
 		const links = Array.from(this.links)
 
 		for (let i = 0; i < links.length; ++i)
-		for (let j = i + 1; j < links.length; ++j)
-			if (this.testCollision(links[i], links[j]))
-				this.collisions.ongoingCollisions.add(unorderedPairingHash(links[i], links[j]))
+		for (let j = i + 1; j < links.length; ++j) {
+			const collision = unorderedPairingHash(links[i], links[j])
+
+			if (this.testCollision(links[i], links[j])) {
+				if (!this.collisions.ongoingCollisions.has(collision))
+					this.collisions.newCollisions.add(collision)
+			}
+
+			else {
+				if (this.collisions.ongoingCollisions.has(collision))
+					this.collisions.endedCollisions.add(collision)
+			}
+		}
+
+		for (const collision of this.collisions.endedCollisions)
+			this.collisions.ongoingCollisions.delete(collision)
 	}
 
 	/** @private @param {Link} a @param {Link} b */
