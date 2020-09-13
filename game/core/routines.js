@@ -1,7 +1,7 @@
 ﻿import { Link } from "./engine.js"
 
 /** @abstract @implements {import("./engine").Routine} */
-export class SetRoutine {
+export class AutoIteratingRoutine {
 	constructor() {
 		/** @protected @type {Set<Link>} */
 		this.links = new Set()
@@ -21,13 +21,9 @@ export class SetRoutine {
 			this.onRemoved(link)
 	}
 
-	/** @protected @abstract @param {Link} link @returns {boolean} */
-	accepts(link) {
-		throw (this.constructor.name || SetRoutine.name) + "#accepts(Link) was not implemented."
-	}
-
 	onStep() {
-		throw (this.constructor.name || SetRoutine.name) + "#onStep() was not implemented."
+		for (const link of this.links)
+			this.onSubStep(link)
 	}
 
 	/** @protected @abstract @param {Link} link */
@@ -35,13 +31,10 @@ export class SetRoutine {
 
 	/** @protected @abstract @param {Link} link */
 	onRemoved(link) {}
-}
 
-/** @abstract */
-export class AutoIteratingRoutine extends SetRoutine {
-	onStep() {
-		for (const link of this.links)
-			this.onSubStep(link)
+	/** @protected @abstract @param {Link} link @returns {boolean} */
+	accepts(link) {
+		throw this.constructor.name + "#accepts(Link) was not implemented."
 	}
 
 	/** @protected @abstract @param {Link} link */

@@ -1,5 +1,4 @@
 import { Universe, Link } from "../core/engine.js"
-import { SetRoutine } from "../core/routines.js"
 import { Motion } from "../physic/motion.js"
 import { Collider, CollisionRegistry } from "../physic/collision.js"
 import { HpGauge } from "./life-and-death.js"
@@ -19,22 +18,30 @@ RammingDamage.removeOnDamage = 1
 RammingDamage.bounceOnDamage = 2
 RammingDamage.bounceOtherOnDamage = 4
 
-export class RammingDamageRoutine extends SetRoutine {
+/** @implements {import("../core/engine").Routine */
+export class RammingDamageRoutine {
 	/** @param {CollisionRegistry} collisions @param {Universe} universe @param {(a: Link, b: Link) => void} onBounce */
 	constructor(collisions, universe, onBounce = null) {
-		super()
-
 		this.collisions = collisions
 		this.universe = universe
 		this.onBounce = onBounce
+
+		/** @private @type {Set<Link>} */
+		this.links = new Set()
 	}
 
 	/** @param {Link} link */
-	accepts(link) {
-		return link.has(Motion, Collider) && (
+	onAdd(link) {
+		if (link.has(Motion, Collider) && (
 			   link.has(RammingDamage)
 			|| link.has(HpGauge)
-		)
+		))
+			this.links.add(link)
+	}
+
+	/** @param {Link} link */
+	onRemove(link) {
+		this.links.delete(link)
 	}
 
 	onStep() {

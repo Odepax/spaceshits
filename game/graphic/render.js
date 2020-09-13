@@ -3,7 +3,6 @@ import { Motion } from "../physic/motion.js"
 import { Colors } from "./assets/colors.js"
 import { Universe } from "../core/engine.js"
 import { UserInputRegistry } from "../ux/user-input-capture.js"
-import { SetRoutine } from "../core/routines.js"
 import { VfxRegistry, OnAddExplosion, OnRemoveExplosion, AuraFx } from "./vfx.js"
 import { Random } from "../math/random.js"
 import { Ratio } from "../math/ratio.js"
@@ -32,11 +31,10 @@ export class Sprite {
 	}
 }
 
-export class RenderRoutine extends SetRoutine {
+/** @implements {import("../core/engine").Routine} */
+export class RenderRoutine {
 	/** @param {HTMLCanvasElement} canvas @param {ImageBitmap} spriteSource @param {Universe} universe @param {UserInputRegistry} userInput @param {VfxRegistry} vfx */
 	constructor(canvas, spriteSource, universe, userInput, vfx) {
-		super()
-
 		const { width: originalWidth, height: originalHeight } = canvas.getBoundingClientRect()
 
 		canvas.width = originalWidth * window.devicePixelRatio
@@ -54,33 +52,38 @@ export class RenderRoutine extends SetRoutine {
 
 		// setTransform(ScaleX, SkewX, SkewY, ScaleY, TranslateX, TranslateY)
 		this.offscreen.setTransform(window.devicePixelRatio, 0, 0, window.devicePixelRatio, 0, 0)
+
+		/** @private @type {Set<Link>} */
+		this.objects = new Set()
+
+		/** @private @type {Set<Link>} */
+		this.auras = new Set()
 	}
 
 	/** @param {Link} link */
 	onAdd(link) {
-		super.onAdd(link)
+		if (link.has(Motion)) {
+			link.has(Render) && this.objects.add(link)
+			link.has(AuraFx) && this.auras.add(link)
 
-		if (link.has(OnAddExplosion, Motion)) {
-			const [{ ttl, colors, radius }, { position: { x, y } }] = link.get(OnAddExplosion, Motion)
+			if (link.has(OnAddExplosion)) {
+				const [{ ttl, colors, radius }, { position: { x, y } }] = link.get(OnAddExplosion, Motion)
 
-			this.vfx.spawnExplosion(x, y, ttl, colors, radius)
+				this.vfx.spawnExplosion(x, y, ttl, colors, radius)
+			}
 		}
 	}
 
 	/** @param {Link} link */
 	onRemove(link) {
-		super.onRemove(link)
+		this.objects.delete(link)
+		this.auras.delete(link)
 
 		if (link.has(OnRemoveExplosion, Motion)) {
 			const [{ ttl, colors, radius }, { position: { x, y } }] = link.get(OnRemoveExplosion, Motion)
 
 			this.vfx.spawnExplosion(x, y, ttl, colors, radius)
 		}
-	}
-
-	/** @param {Link} link */
-	accepts(link) {
-		return link.has(Render, Motion) || link.has(AuraFx, Motion)
 	}
 
 	onStep() {
@@ -110,8 +113,7 @@ export class RenderRoutine extends SetRoutine {
 
 	/** @private */
 	renderSprites() {
-		for (const link of this.links)
-		if (link.has(Render)) {
+		for (const link of this.objects) {
 			const [ motion, render ] = link.get(Motion, Render)
 
 			// setTransform(ScaleX, SkewX, SkewY, ScaleY, TranslateX, TranslateY)
@@ -200,8 +202,7 @@ export class RenderRoutine extends SetRoutine {
 
 		const { time, spf } = this.universe.clock
 
-		for (const link of this.links)
-		if (link.has(AuraFx)) {
+		for (const link of this.auras) {
 			const [ motion, aura ] = link.get(Motion, AuraFx)
 
 			const { x, y } = motion.position
