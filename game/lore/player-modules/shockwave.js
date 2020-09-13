@@ -8,7 +8,7 @@ import { AuraFx } from "../../graphic/vfx.js"
 import { Colors } from "../../graphic/assets/colors.js"
 import { UserInputRegistry } from "../../ux/user-input-capture.js"
 import { GameKeeper } from "../game-keeper.js"
-import { Player } from "../player.js"
+import { Player, PlayerEnergy } from "../player.js"
 import { Ratio } from "../../math/ratio.js"
 import { Flag } from "../../math/flag.js"
 import { HpGauge } from "../../logic/life-and-death.js"
@@ -54,10 +54,6 @@ export class ShockwavePlayerAuxRoutine {
 		
 		/** @private @type {Set<Link>} */
 		this.hostiles = new Set()
-
-		this.energy = this.energyMax = 113 // TODO: Use new PlayerEnergy trait
-		this.energyRegen = 23
-		this.energyConsumption = 17
 	}
 
 	/** @param {Link} link */
@@ -68,8 +64,10 @@ export class ShockwavePlayerAuxRoutine {
 		else if (Flag.contains(link.get(Collider)[0]?.tag, Tags.hostile | Tags.ship/* | Tags.bullet*/))
 			this.hostiles.add(link)
 
-		else if (!this.player && link instanceof Player)
+		else if (!this.player && link instanceof Player) {
 			this.player = link
+			this.player.get(PlayerEnergy)[0].auxConsumption = 17
+		}
 	}
 
 	/** @param {Link} link */
@@ -83,11 +81,13 @@ export class ShockwavePlayerAuxRoutine {
 
 	onStep() {
 		if (this.player) {
+			const [ playerEnergy ] = this.player.get(PlayerEnergy)
+
 			if (
-				   this.energyConsumption <= this.energy // Has energy?
+				   playerEnergy.auxConsumption <= playerEnergy.aux // Has energy?
 				&& this.userInput.wasPressed(this.game.keyBindings.aux) // Has order?
 			) {
-				this.energy -= this.energyConsumption
+				playerEnergy.aux -= playerEnergy.auxConsumption
 
 				this.universe.add(new Shockwave(
 					this.player.get(Motion)[0].position.copy,
@@ -95,8 +95,8 @@ export class ShockwavePlayerAuxRoutine {
 				))
 			}
 
-			if (this.energy < this.energyMax)
-				this.energy += this.energyRegen * this.universe.clock.spf
+			if (playerEnergy.aux < playerEnergy.auxMax)
+				playerEnergy.aux += playerEnergy.auxRegen * this.universe.clock.spf
 		}
 
 		for (const wave of this.waves) {

@@ -16,7 +16,7 @@ import { TargetFacing } from "../math/target-facing.js"
 import { MissileControl } from "../logic/missile-control.js"
 import { Flag } from "../math/flag.js"
 
-// TODO: use PlayerEnergy trait
+// TODO: use PlayerEnergy trait => implement @ refactoring
 // TODO: have one file per weapon
 
 class GatlingBullet extends Link {

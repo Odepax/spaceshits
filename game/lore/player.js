@@ -13,6 +13,18 @@ import { AutoFieldModule } from "../logic/auto-field.js"
 import { AutoWeaponModule } from "../logic/auto-weapon.js"
 import { MissileControl } from "../logic/missile-control.js"
 
+export class PlayerEnergy {
+	constructor() {
+		this.weapon = this.weaponMax = 113
+		this.weaponRegen = 23
+		this.weaponConsumption = 5
+
+		this.aux = this.auxMax = 113
+		this.auxRegen = 23
+		this.auxConsumption = 5
+	}
+}
+
 export class Player extends Link {
 	constructor() {
 		super(
@@ -22,6 +34,7 @@ export class Player extends Link {
 			new RammingDamage(23, Tags.hostile | Tags.ship, RammingDamage.bounceOnDamage),
 
 			new HpGauge(101),
+			new PlayerEnergy(),
 
 			new Render(Sprites.playerMissile),
 			new OnAddExplosion(2, [ Colors.black, Colors.grey, Colors.orange, Colors.purple ], 300),
@@ -29,20 +42,6 @@ export class Player extends Link {
 		)
 	}
 }
-
-// TODO: use PlayerEnergy trait
-//class PlayerEnergy {
-//	constructor() {
-//		this.weapon = this.weaponMax = 113
-//		this.weaponRegen = 23
-//		this.weaponConsumption = 5
-
-//		this.aux = this.auxMax = 113
-//		this.auxRegen = 23
-//		this.auxConsumption = 5
-//	}
-//}
-
 
 class HostileBullet extends Link {
 	/** @param {Transform} position */
