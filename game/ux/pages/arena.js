@@ -122,7 +122,7 @@ export class ArenaPage extends Page {
 			// Render.
 			universe.register(new DamageColorizationRoutine(universe))
 			universe.register(new RenderRoutine(this.$.gameCanvas, spriteSource, universe, userInput, vfx))
-			universe.register(new PlayerStatsVisualizationRoutine(this.$.hpProgress))
+			universe.register(new PlayerStatsVisualizationRoutine(this.$.hpProgress, this.$.energyProgress, this.$.moduleProgress))
 
 			universe.add(new Turret(700 * 0.3, 700 * 0.2))
 			universe.add(new Turret(700 * 0.7, 700 * 0.2))

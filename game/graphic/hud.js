@@ -3,17 +3,17 @@ import { HpGauge } from "../logic/life-and-death.js"
 import { Render } from "./render.js"
 import { Universe, Link } from "../core/engine.js"
 import { Colors } from "./assets/colors.js"
-import { Player } from "../lore/player.js"
+import { Player, PlayerEnergy } from "../lore/player.js"
 import { AuraFx } from "./vfx.js"
 import { Ratio } from "../math/ratio.js"
 
-// TODO: use PlayerEnergy trait
-
 /** @implements {import("../core/engine").Routine} */
 export class PlayerStatsVisualizationRoutine {
-	/** @param {HTMLProgressElement} hpProgress */
-	constructor(hpProgress) {
+	/** @param {HTMLProgressElement} hpProgress @param {HTMLProgressElement} weaponEnergyProgress @param {HTMLProgressElement} auxEnergyProgress */
+	constructor(hpProgress, weaponEnergyProgress, auxEnergyProgress) {
 		this.hpProgress = hpProgress
+		this.weaponEnergyProgress = weaponEnergyProgress
+		this.auxEnergyProgress = auxEnergyProgress
 
 		/** @private @type {Player} */
 		this.player = null
@@ -33,9 +33,11 @@ export class PlayerStatsVisualizationRoutine {
 
 	onStep() {
 		if (this.player) {
-			const [ { value, max } ] = this.player.get(HpGauge)
+			const [ { value, max }, { weapon, weaponMax, aux, auxMax } ] = this.player.get(HpGauge, PlayerEnergy)
 
 			this.hpProgress.value = Ratio.progress(value, max)
+			this.weaponEnergyProgress.value = Ratio.progress(weapon, weaponMax)
+			this.auxEnergyProgress.value = Ratio.progress(aux, auxMax)
 		}
 	}
 }
