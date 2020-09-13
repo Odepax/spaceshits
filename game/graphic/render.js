@@ -6,6 +6,7 @@ import { UserInputRegistry } from "../ux/user-input-capture.js"
 import { SetRoutine } from "../core/routines.js"
 import { VfxRegistry, OnAddExplosion, OnRemoveExplosion, AuraFx } from "./vfx.js"
 import { Random } from "../math/random.js"
+import { Ratio } from "../math/ratio.js"
 
 export class Render {
 	/** @param {Sprite[]} sprites */
@@ -227,9 +228,7 @@ export class RenderRoutine extends SetRoutine {
 			else {
 				let { x, y, vd, vl, spawnTime, deathTime, color, radius } = particle
 
-				const timeToLive = deathTime - spawnTime // TODO: Refactor decline/progress computation.
-				const remainingTimeToLive = deathTime - time
-				const decline = remainingTimeToLive / timeToLive
+				const decline = Ratio.declineBetween(time, spawnTime, deathTime)
 
 				vl = vl * decline // "Friction"...
 
@@ -251,9 +250,7 @@ export class RenderRoutine extends SetRoutine {
 			else {
 				const { x, y, spawnTime, deathTime, color, radius } = blast
 
-				const timeToLive = deathTime - spawnTime // TODO: Refactor decline/progress computation.
-				const remainingTimeToLive = deathTime - time
-				const decline = remainingTimeToLive / timeToLive
+				const decline = Ratio.declineBetween(time, spawnTime, deathTime)
 				const progress = 1 - decline
 
 				this.graphics.beginPath()

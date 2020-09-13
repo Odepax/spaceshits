@@ -5,6 +5,7 @@ import { Universe, Link } from "../core/engine.js"
 import { Colors } from "./assets/colors.js"
 import { Player } from "../lore/player.js"
 import { AuraFx } from "./vfx.js"
+import { Ratio } from "../math/ratio.js"
 
 // TODO: use PlayerEnergy trait
 
@@ -32,9 +33,9 @@ export class PlayerStatsVisualizationRoutine {
 
 	onStep() {
 		if (this.player) {
-			const [ hp ] = this.player.get(HpGauge)
+			const [ { value, max } ] = this.player.get(HpGauge)
 
-			this.hpProgress.value = hp.value / hp.max
+			this.hpProgress.value = Ratio.progress(value, max)
 		}
 	}
 }
@@ -56,7 +57,7 @@ export class DamageColorizationRoutine extends AutoIteratingRoutine {
 	onSubStep(link) {
 		const [ hp, render, aura ] = link.get(HpGauge, Render, AuraFx)
 
-		const hpRatio = Math.min(hp.value / hp.max, 1) // TODO: refactor progress/decline computation?
+		const hpRatio = Math.min(Ratio.progress(hp.value, hp.max), 1)
 
 		if (render) {
 			const damageRatio = 1 - hpRatio
