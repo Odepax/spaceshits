@@ -6,6 +6,7 @@ import { Tags } from "../lore/tags.js"
 import { Collider } from "../physic/collision.js"
 import { TargetFacing } from "../math/target-facing.js"
 import { MissileControl } from "./missile-control.js"
+import { Flag } from "../math/flag.js"
 
 export class AutoWeaponModule {
 	/** @param {number} reloadTime @param {(parent: Link) => Link[]} factory */
@@ -86,7 +87,7 @@ export class HostileMissileRoutine extends AutoIteratingRoutine {
 	accepts(link) {
 		const [ collider, missileControl ] = link.get(Collider, MissileControl)
 
-		return missileControl && collider && Tags.match(collider.tag, Tags.hostile | Tags.bullet)
+		return missileControl && collider && Flag.contains(collider.tag, Tags.hostile | Tags.bullet)
 	}
 
 	onStep() {

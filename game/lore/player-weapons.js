@@ -14,6 +14,7 @@ import { Render } from "../graphic/render.js"
 import { Random } from "../math/random.js"
 import { TargetFacing } from "../math/target-facing.js"
 import { MissileControl } from "../logic/missile-control.js"
+import { Flag } from "../math/flag.js"
 
 // TODO: use PlayerEnergy trait
 // TODO: have one file per weapon
@@ -242,10 +243,10 @@ export class MissilePlayerWeaponRoutine {
 			const [ collider, missileControl ] = link.get(Collider, MissileControl)
 
 			if (collider)
-				if (Tags.match(collider.tag, Tags.hostile | Tags.ship))
+				if (Flag.contains(collider.tag, Tags.hostile | Tags.ship))
 					this.hostiles.add(link)
 
-				else if (missileControl && Tags.match(collider.tag, Tags.player | Tags.bullet))
+				else if (missileControl && Flag.contains(collider.tag, Tags.player | Tags.bullet))
 					this.missiles.add(link)
 		}
 	}

@@ -2,6 +2,7 @@ import { Universe, Link } from "../core/engine.js"
 import { Collider } from "../physic/collision.js"
 import { Tags } from "./tags.js"
 import { Player } from "./player.js"
+import { Flag } from "../math/flag.js"
 
 /** @abstract */
 export class ArenaStage {
@@ -150,7 +151,7 @@ export class StagedArenaScenarioRoutine {
 	onAdd(link) {
 		const [ collider ] = link.get(Collider)
 
-		if (collider && Tags.match(collider.tag, Tags.hostile))
+		if (collider && Flag.contains(collider.tag, Tags.hostile))
 			++this.remainingHostileCount
 	}
 
@@ -172,7 +173,7 @@ export class StagedArenaScenarioRoutine {
 		else {
 			const [ collider ] = link.get(Collider)
 
-			if (collider && Tags.match(collider.tag, Tags.hostile))
+			if (collider && Flag.contains(collider.tag, Tags.hostile))
 				--this.remainingHostileCount
 		}
 	}

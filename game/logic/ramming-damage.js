@@ -3,7 +3,7 @@ import { SetRoutine } from "../core/routines.js"
 import { Motion } from "../physic/motion.js"
 import { Collider, CollisionRegistry } from "../physic/collision.js"
 import { HpGauge } from "./life-and-death.js"
-import { Tags } from "../lore/tags.js"
+import { Flag } from "../math/flag.js"
 
 export class RammingDamage {
 	/** @param {number} damage @param {number} targetTag @param {number} damageReaction See static flags. */
@@ -49,8 +49,8 @@ export class RammingDamageRoutine extends SetRoutine {
 				const [ motionB, colliderB, rammingDamageB, hpB ] = b.get(Motion, Collider, RammingDamage, HpGauge)
 
 				if ((
-					   Tags.match(rammingDamageA?.targetTag, colliderB.tag)
-					|| Tags.match(rammingDamageB?.targetTag, colliderA.tag))
+					   Flag.contains(colliderB.tag, rammingDamageA?.targetTag)
+					|| Flag.contains(colliderA.tag, rammingDamageB?.targetTag))
 					&& this.collisions.startedColliding(a, b)
 				) {
 					// Assuming that collisions don't go down here by accident,

@@ -1,7 +1,7 @@
 import { CollisionRegistry, Collider } from "../physic/collision.js"
 import { Universe, Link } from "../core/engine.js"
 import { HpGauge } from "./life-and-death.js"
-import { Tags } from "../lore/tags.js"
+import { Flag } from "../math/flag.js"
 
 export class HealField {
 	/** @param {number} healRate @param {number} targetTag */
@@ -48,7 +48,7 @@ export class HealFieldRoutine {
 				const [ targetCollider, targetHp ] = target.get(Collider, HpGauge)
 
 				if (
-					   Tags.match(fieldHeal.targetTag, targetCollider.tag)
+					   Flag.contains(targetCollider.tag, fieldHeal.targetTag)
 					&& this.collisions.areColliding(field, target)
 					&& targetHp.value < targetHp.max
 				) {
