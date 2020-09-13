@@ -54,15 +54,17 @@ export class AutoWeaponModuleRoutine extends AutoIteratingRoutine {
 	}
 }
 
-export class HostileMissileRoutine extends AutoIteratingRoutine {
+/** @implements {import("../core/engine").Routine */
+export class HostileMissileRoutine {
 	/** @param {Universe} universe */
 	constructor(universe) {
-		super()
-
 		this.universe = universe
 
 		/** @private @type {Player} */
 		this.player = null
+
+		/** @private @type {Set<Link>} */
+		this.links = new Set()
 	}
 
 	/** @param {Link} link */
@@ -70,8 +72,8 @@ export class HostileMissileRoutine extends AutoIteratingRoutine {
 		if (!this.player && link instanceof Player) // TODO: review the way we distinguish the player
 			this.player = link
 
-		else
-			super.onAdd(link)
+		else if (link.has(MissileControl) && Flag.contains(link.get(Collider)[0]?.tag, Tags.hostile | Tags.bullet))
+			this.links.add(link)
 	}
 
 	/** @param {Link} link */
@@ -80,35 +82,25 @@ export class HostileMissileRoutine extends AutoIteratingRoutine {
 			this.player = null
 
 		else
-			super.onRemove(link)
-	}
-
-	/** @param {Link} link */
-	accepts(link) {
-		const [ collider, missileControl ] = link.get(Collider, MissileControl)
-
-		return missileControl && collider && Flag.contains(collider.tag, Tags.hostile | Tags.bullet)
+			this.links.delete(link)
 	}
 
 	onStep() {
 		if (this.player)
-			super.onStep()
-	}
+		for (const link of this.links) {
+			const [ missileMotion, missileControl ] = link.get(Motion, MissileControl)
+			const [ playerMotion ] = this.player.get(Motion)
 
-	/** @param {Link} link */
-	onSubStep(link) {
-		const [ missileMotion, missileControl ] = link.get(Motion, MissileControl)
-		const [ playerMotion ] = this.player.get(Motion)
+			TargetFacing.smooth(
+				missileMotion.position,
+				missileMotion.velocity,
+				playerMotion.position,
+				missileControl.steeringSpeed,
+				this.universe.clock.spf
+			)
 
-		TargetFacing.smooth(
-			missileMotion.position,
-			missileMotion.velocity,
-			playerMotion.position,
-			missileControl.steeringSpeed,
-			this.universe.clock.spf
-		)
-
-		// Forward chasing.
-		missileMotion.velocity.d = missileMotion.position.a
+			// Forward chasing.
+			missileMotion.velocity.d = missileMotion.position.a
+		}
 	}
 }

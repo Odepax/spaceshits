@@ -11,7 +11,6 @@ import { Sprites } from "../../graphic/assets/sprites.js"
 import { OnAddExplosion, OnRemoveExplosion } from "../../graphic/vfx.js"
 import { Colors } from "../../graphic/assets/colors.js"
 import { Player } from "../player.js"
-import { AutoIteratingRoutine } from "../../core/routines.js"
 import { TargetFacing } from "../../math/target-facing.js"
 
 // TODO: refactor hostile bullets (wait for other factors...)
@@ -59,12 +58,14 @@ export class Turret extends Link {
 	}
 }
 
-export class TurretAimRoutine extends AutoIteratingRoutine {
+/** @implements {import("../../core/engine").Routine */
+export class TurretAimRoutine {
 	constructor() {
-		super()
-
 		/** @private @type {Player} */
 		this.player = null
+
+		/** @private @type {Set<Link>} */
+		this.turrets = new Set()
 	}
 
 	/** @param {Link} link */
@@ -72,8 +73,8 @@ export class TurretAimRoutine extends AutoIteratingRoutine {
 		if (!this.player && link instanceof Player)
 			this.player = link
 
-		else
-			super.onAdd(link)
+		else if (link instanceof Turret)
+			this.turrets.add(link)
 	}
 
 	/** @param {Link} link */
@@ -82,24 +83,16 @@ export class TurretAimRoutine extends AutoIteratingRoutine {
 			this.player = null
 
 		else
-			super.onRemove(link)
-	}
-
-	/** @param {Link} link */
-	accepts(link) {
-		return link instanceof Turret
+			this.turrets.delete(link)
 	}
 
 	onStep() {
 		if (this.player)
-			super.onStep()
-	}
+		for (const turret of this.turrets) {
+			const [ turretMotion ] = turret.get(Motion)
+			const [ playerMotion ] = this.player.get(Motion)
 
-	/** @param {Link} link */
-	onSubStep(link) {
-		const [ turretMotion ] = link.get(Motion)
-		const [ playerMotion ] = this.player.get(Motion)
-
-		TargetFacing.instant(turretMotion.position, playerMotion.position)
+			TargetFacing.instant(turretMotion.position, playerMotion.position)
+		}
 	}
 }

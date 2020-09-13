@@ -34,18 +34,6 @@ export class AutoFieldModuleRoutine extends AutoIteratingRoutine {
 	}
 
 	/** @param {Link} link */
-	onSubStep(link) {
-		const [ fieldModule ] = link.get(AutoFieldModule)
-
-		if (!fieldModule.field && fieldModule.nextRespawnTime <= this.universe.clock.time) {
-			fieldModule.field = fieldModule.factory(link)
-
-			this.fields.set(fieldModule.field, link)
-			this.universe.add(fieldModule.field)
-		}
-	}
-
-	/** @param {Link} link */
 	onAdded(link) {
 		const [ fieldModule ] = link.get(AutoFieldModule)
 
@@ -59,7 +47,7 @@ export class AutoFieldModuleRoutine extends AutoIteratingRoutine {
 	onRemove(link) {
 		if (this.fields.has(link)) {
 			const parent = this.fields.get(link)
-			const [fieldModule] = parent.get(AutoFieldModule)
+			const [ fieldModule ] = parent.get(AutoFieldModule)
 
 			fieldModule.field = null
 
@@ -76,5 +64,17 @@ export class AutoFieldModuleRoutine extends AutoIteratingRoutine {
 
 		if (field)
 			this.universe.remove(field)
+	}
+
+	/** @param {Link} link */
+	onSubStep(link) {
+		const [ fieldModule ] = link.get(AutoFieldModule)
+
+		if (!fieldModule.field && fieldModule.nextRespawnTime <= this.universe.clock.time) {
+			fieldModule.field = fieldModule.factory(link)
+
+			this.fields.set(fieldModule.field, link)
+			this.universe.add(fieldModule.field)
+		}
 	}
 }

@@ -39,6 +39,6 @@ export class AutoIteratingRoutine {
 
 	/** @protected @abstract @param {Link} link */
 	onSubStep(link) {
-		throw (this.constructor.name || AutoIteratingRoutine.name) + "#onSubStep(Link) was not implemented."
+		throw this.constructor.name + "#onSubStep(Link) was not implemented."
 	}
 }
