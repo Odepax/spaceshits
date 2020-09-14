@@ -11,7 +11,6 @@ import { GameKeeper } from "../game-keeper.js"
 import { Player, PlayerEnergy } from "../player.js"
 import { Ratio } from "../../math/ratio.js"
 import { Flag } from "../../math/flag.js"
-import { HpGauge } from "../../logic/life-and-death.js"
 
 class WaveGrowth {
 	/** @param {number} spawnTime @param {number} deathTime @param {number} maxRadius */

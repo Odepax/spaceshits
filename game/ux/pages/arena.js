@@ -23,6 +23,7 @@ import { HealFieldRoutine } from "../../logic/heal-field.js"
 import { Random } from "../../math/random.js"
 import { ShockwavePlayerAuxRoutine } from "../../lore/player-modules/shockwave.js"
 import { Ratio } from "../../math/ratio.js"
+import { BerzerkPlayerAuxRoutine } from "../../lore/player-modules/berzerk.js"
 
 export class ArenaPage extends Page {
 	/** @param {PageRegistry} navigation @param {GameKeeper} game */
@@ -75,7 +76,12 @@ export class ArenaPage extends Page {
 			// Decision making -- logic 1.
 			universe.register(new PlayerControlRoutine(userInput, this.game, universe))
 			universe.register(new MissilePlayerWeaponRoutine(userInput, this.game, universe))
-			universe.register(new ShockwavePlayerAuxRoutine(userInput, collisions, this.game, universe))
+			universe.register(new BerzerkPlayerAuxRoutine(userInput, this.game, universe, link => {
+				const { x, y } = link.get(Motion)[0].position
+
+				vfx.spawnParticleBurst(2, x, y, 70, 170, 0.5, [ Colors.orange, Colors.red ], 3, 7)
+			}))
+
 
 			universe.register(new TurretAimRoutine())
 			universe.register(new AutoWeaponModuleRoutine(universe))
@@ -125,16 +131,18 @@ export class ArenaPage extends Page {
 			universe.register(new PlayerStatsVisualizationRoutine(this.$.hpProgress, this.$.energyProgress, this.$.moduleProgress))
 
 			universe.add(new Turret(700 * 0.3, 700 * 0.2))
+			universe.add(new Turret(700 * 0.4, 700 * 0.2))
+			universe.add(new Turret(700 * 0.6, 700 * 0.2))
 			universe.add(new Turret(700 * 0.7, 700 * 0.2))
-			universe.add(new AuraMedic(700 * 0.6, 700 * 0.2))
+			universe.add(new AuraMedic(700 * 0.5, 700 * 0.2))
 
-			for (let i = 0; i < 3; ++i)
-				universe.add(new Hostile(
-					700 * Math.random(),
-					700 * Math.random(),
-					Random.between(-200, 200),
-					Random.between(-200, 200)
-				))
+			//for (let i = 0; i < 3; ++i)
+			//	universe.add(new Hostile(
+			//		700 * Math.random(),
+			//		700 * Math.random(),
+			//		Random.between(-200, 200),
+			//		Random.between(-200, 200)
+			//	))
 
 			universe.add(new Player())
 
