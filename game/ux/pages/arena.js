@@ -29,6 +29,7 @@ import { Crasher, SmartCrasher, SmartCrasherAttractionRoutine } from "../../lore
 import { MedicAura, ShieldAura } from "../../lore/hostiles/auras.js"
 import { Div, DivDivisionRoutine } from "../../lore/hostiles/divs.js"
 import { CombatDrone, Drone, DroneAimRoutine } from "../../lore/hostiles/drones.js"
+import { ArenaScenarios } from "../../lore/arena-scenarios.js"
 
 export class ArenaPage extends Page {
 	/** @param {PageRegistry} navigation @param {GameKeeper} game */
@@ -97,7 +98,7 @@ export class ArenaPage extends Page {
 			//universe.register(new MissileBossRoutine(universe))
 			universe.register(new HostileMissileRoutine(universe))
 
-			//universe.register(ArenaScenarios[n](universe))
+			universe.register(ArenaScenarios[0](universe))
 
 			// Motion dynamics & collision detection.
 			universe.register(new MotionRoutine(universe))
@@ -153,8 +154,8 @@ export class ArenaPage extends Page {
 
 			//universe.add(new Div(new Transform(700 * 0.5, 700 * 0.3)))
 
-			universe.add(new Drone(new Transform(700 * 0.3, 700 * 0.3)))
-			universe.add(new CombatDrone(new Transform(700 * 0.7, 700 * 0.3)))
+			//universe.add(new Drone(new Transform(700 * 0.3, 700 * 0.3)))
+			//universe.add(new CombatDrone(new Transform(700 * 0.7, 700 * 0.3)))
 
 			universe.add(new Player())
 

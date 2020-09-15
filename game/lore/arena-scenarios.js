@@ -1,7 +1,9 @@
 ﻿import { Universe } from "../core/engine.js"
 import { StagedArenaScenarioRoutine, SwarmStage, FightStage, WavesStage, CalmStage } from "./arena-stages.js"
-import { Hostile } from "./player.js"
 import { Random } from "../math/random.js"
+import { Crasher } from "./hostiles/crashers.js"
+import { Motion } from "../physic/motion.js"
+import { Transform } from "../math/transform.js"
 
 const every = 1
 const second = 1
@@ -9,8 +11,36 @@ const seconds = 1
 const max = 1
 const times = 1
 
+function madSaw(x) {
+	const c = new Crasher(new Transform(x, 0))
+	const v = c.get(Motion)[0].velocity
+
+	v.x = 0
+	v.y = 150
+
+	return c
+}
+
 /** @type {( (universe: Universe) => import("../core/engine").Routine )[]} */
 export const ArenaScenarios = [
+	universe => new StagedArenaScenarioRoutine(universe, [
+		new SwarmStage(() => [ madSaw(universe.width * 0.5) ]),
+
+		new CalmStage(0.3 * seconds), new SwarmStage(() => [ madSaw(universe.width * 0.45), madSaw(universe.width * 0.55) ]),
+		new CalmStage(0.3 * seconds), new SwarmStage(() => [ madSaw(universe.width * 0.40), madSaw(universe.width * 0.60) ]),
+		new CalmStage(0.3 * seconds), new SwarmStage(() => [ madSaw(universe.width * 0.35), madSaw(universe.width * 0.65) ]),
+		new CalmStage(0.3 * seconds), new SwarmStage(() => [ madSaw(universe.width * 0.30), madSaw(universe.width * 0.70) ]),
+		new CalmStage(0.3 * seconds), new SwarmStage(() => [ madSaw(universe.width * 0.25), madSaw(universe.width * 0.75) ]),
+		new CalmStage(0.3 * seconds), new SwarmStage(() => [ madSaw(universe.width * 0.20), madSaw(universe.width * 0.80) ]),
+		new CalmStage(0.3 * seconds), new SwarmStage(() => [ madSaw(universe.width * 0.15), madSaw(universe.width * 0.85) ]),
+		new CalmStage(0.3 * seconds), new SwarmStage(() => [ madSaw(universe.width * 0.10), madSaw(universe.width * 0.90) ]),
+		new CalmStage(0.3 * seconds), new SwarmStage(() => [ madSaw(universe.width * 0.05), madSaw(universe.width * 0.95) ]),
+
+		new FightStage()
+
+		// And then, turrets...
+	]),
+	/*
 	universe => new StagedArenaScenarioRoutine(universe, [
 		new SwarmStage(() => [
 			new Hostile(universe.width * 0.3, universe.height * 0.2, Random.between(-200, 200), Random.between(-200, 200)),
@@ -128,4 +158,5 @@ export const ArenaScenarios = [
 		]),
 		new FightStage()
 	])
+	*/
 ]
