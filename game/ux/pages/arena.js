@@ -4,7 +4,7 @@ import { Universe, Link } from "../../core/engine.js"
 import { UserInputRegistry, UserInputCaptureRoutine } from "../user-input-capture.js"
 import { PlayerControlRoutine } from "../../logic/player-control.js"
 import { MotionRoutine, Motion } from "../../physic/motion.js"
-import { Player, Hostile } from "../../lore/player.js"
+import { Player } from "../../lore/player.js"
 import { Sprites } from "../../graphic/assets/sprites.js"
 import { Collider, CollisionDetectionRoutine, CollisionRegistry } from "../../physic/collision.js"
 import { RammingDamageRoutine } from "../../logic/ramming-damage.js"
@@ -16,14 +16,19 @@ import { RenderRoutine } from "../../graphic/render.js"
 import { DamageColorizationRoutine, PlayerStatsVisualizationRoutine } from "../../graphic/hud.js"
 import { AutoWeaponModuleRoutine, HostileMissileRoutine } from "../../logic/auto-weapon.js"
 import { MissileBoss, MissileBossRoutine } from "../../lore/hostiles/missile-boss.js"
-import { Turret, TurretAimRoutine } from "../../lore/hostiles/turret.js"
-import { AuraMedic } from "../../lore/hostiles/aura-medic.js"
+import { SmartTurret, SmartTurretAimRoutine, Turret, TurretAimRoutine } from "../../lore/hostiles/turrets.js"
 import { AutoFieldModuleRoutine } from "../../logic/auto-field.js"
 import { HealFieldRoutine } from "../../logic/heal-field.js"
 import { Random } from "../../math/random.js"
 import { ShockwavePlayerAuxRoutine } from "../../lore/player-modules/shockwave.js"
 import { Ratio } from "../../math/ratio.js"
 import { BerzerkPlayerAuxRoutine } from "../../lore/player-modules/berzerk.js"
+import { DuoCube, MissileCube, QuadCube } from "../../lore/hostiles/cubes.js"
+import { Transform } from "../../math/transform.js"
+import { Crasher, SmartCrasher, SmartCrasherAttractionRoutine } from "../../lore/hostiles/crashers.js"
+import { MedicAura, ShieldAura } from "../../lore/hostiles/auras.js"
+import { Div, DivDivisionRoutine } from "../../lore/hostiles/divs.js"
+import { CombatDrone, Drone, DroneAimRoutine } from "../../lore/hostiles/drones.js"
 
 export class ArenaPage extends Page {
 	/** @param {PageRegistry} navigation @param {GameKeeper} game */
@@ -82,8 +87,11 @@ export class ArenaPage extends Page {
 				vfx.spawnParticleBurst(2, x, y, 70, 170, 0.5, [ Colors.orange, Colors.red ], 3, 7)
 			}))
 
-
 			universe.register(new TurretAimRoutine())
+			universe.register(new SmartTurretAimRoutine(universe))
+			universe.register(new DroneAimRoutine(universe))
+			universe.register(new SmartCrasherAttractionRoutine(universe))
+			universe.register(new DivDivisionRoutine(universe))
 			universe.register(new AutoWeaponModuleRoutine(universe))
 			universe.register(new AutoFieldModuleRoutine(universe))
 			//universe.register(new MissileBossRoutine(universe))
@@ -130,19 +138,23 @@ export class ArenaPage extends Page {
 			universe.register(new RenderRoutine(this.$.gameCanvas, spriteSource, universe, userInput, vfx))
 			universe.register(new PlayerStatsVisualizationRoutine(this.$.hpProgress, this.$.energyProgress, this.$.moduleProgress))
 
-			universe.add(new Turret(700 * 0.3, 700 * 0.2))
-			universe.add(new Turret(700 * 0.4, 700 * 0.2))
-			universe.add(new Turret(700 * 0.6, 700 * 0.2))
-			universe.add(new Turret(700 * 0.7, 700 * 0.2))
-			universe.add(new AuraMedic(700 * 0.5, 700 * 0.2))
+			//universe.add(new DuoCube(new Transform(700 * 0.3, 700 * 0.3)))
+			//universe.add(new QuadCube(new Transform(700 * 0.5, 700 * 0.3)))
+			//universe.add(new MissileCube(new Transform(700 * 0.7, 700 * 0.3)))
 
-			//for (let i = 0; i < 3; ++i)
-			//	universe.add(new Hostile(
-			//		700 * Math.random(),
-			//		700 * Math.random(),
-			//		Random.between(-200, 200),
-			//		Random.between(-200, 200)
-			//	))
+			//universe.add(new Turret(new Transform(700 * 0.4, 700 * 0.3)))
+			//universe.add(new SmartTurret(new Transform(700 * 0.6, 700 * 0.3)))
+
+			//universe.add(new Crasher(new Transform(700 * 0.4, 700 * 0.3)))
+			//universe.add(new SmartCrasher(new Transform(700 * 0.6, 700 * 0.3)))
+
+			//universe.add(new ShieldAura(new Transform(700 * 0.3, 700 * 0.3)))
+			//universe.add(new MedicAura(new Transform(700 * 0.7, 700 * 0.3)))
+
+			//universe.add(new Div(new Transform(700 * 0.5, 700 * 0.3)))
+
+			universe.add(new Drone(new Transform(700 * 0.3, 700 * 0.3)))
+			universe.add(new CombatDrone(new Transform(700 * 0.7, 700 * 0.3)))
 
 			universe.add(new Player())
 
