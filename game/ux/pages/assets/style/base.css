@@ -1,3 +1,13 @@
+@import "./icon.css";
+
+/* @see www.1001fonts.com/alte-din-1451-mittelschrift-font.html */
+@font-face {
+	font-family: "Alte DIN 1451 Mittelschrift";
+	font-weight: normal;
+	font-style: normal;
+	src: url("./fonts/alte-din-1451-mittelschrift.ttf") format("truetype");
+}
+
 :root {
 	--RED: #f91340;
 	--ORANGE: darkorange;
@@ -31,16 +41,6 @@
 .grey { --ACCENT: var(--GREY); }
 .dark { --ACCENT: var(--DARK); }
 .black { --ACCENT: var(--BLACK); }
-
-/* @see www.1001fonts.com/alte-din-1451-mittelschrift-font.html */
-@font-face {
-	font-family: "Alte DIN 1451 Mittelschrift";
-	font-weight: normal;
-	font-style: normal;
-	src: url("./fonts/alte-din-1451-mittelschrift.ttf") format("truetype");
-}
-
-@import "./icon.css";
 
 * {
 	box-sizing: border-box;

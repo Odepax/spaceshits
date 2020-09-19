@@ -9,7 +9,10 @@ export class ArenaPage extends Page {
 		this.navigation = navigation
 		this.game = game
 
+		/** @private */
 		this.isPaused = false
+
+		/** @private */
 		this.togglePause = event => {
 			if (event.code == this.game.keyBindings.pause) {
 				event.preventDefault()

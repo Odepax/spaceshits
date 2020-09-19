@@ -1,5 +1,7 @@
 ﻿import { Page, PageRegistry } from "../page-registry.js"
 import { GameKeeper } from "../../lore/game-keeper.js"
+import { QuotationPage } from "./quotation.js"
+import { SettingsPage } from "./settings.js"
 
 export class MainPage extends Page {
 	/** @param {PageRegistry} navigation @param {GameKeeper} game */
@@ -28,11 +30,13 @@ export class MainPage extends Page {
 		return key
 			.replace("Key", "")
 			.replace("Mouse", "Mouse ")
+			.replace("Arrow", "")
+			.replace("Numpad", "Numpad ")
 	}
 
 	startNewGame() {
 		//this.game.reset()
-		//this.navigation.enter(QuotationPage)
+		this.navigation.enter(QuotationPage)
 	}
 
 	resumeLastGame() {
@@ -40,6 +44,6 @@ export class MainPage extends Page {
 	}
 
 	editSettings() {
-		//this.navigation.enter(SettingsPage)
+		this.navigation.enter(SettingsPage)
 	}
 }

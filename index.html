@@ -1,34 +1,35 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta charset="utf-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
 		<title>Spaceshits &mdash; A 2D Top-Down Space Shooter</title>
 
-		<meta name="robots" content="index, follow" />
-		<meta name="author" content="Odepax" />
-		<meta name="description" content="Spaceshits is a 2D top-down arena-based shooter game." />
-		<meta name="keywords" content="top-down, space, shooter, game, spaceshits, odepax" />
-		<meta name="theme-color" content="#242424" />
+		<meta name="robots" content="index, follow"/>
+		<meta name="author" content="Odepax"/>
+		<meta name="description" content="Spaceshits is a 2D top-down arena-based shooter game."/>
+		<meta name="keywords" content="top-down, space, shooter, game, spaceshits, odepax"/>
+		<meta name="theme-color" content="#242424"/>
 
-		<link rel="stylesheet" type="text/css" href="./game/ux/pages/assets/style.css" />
-		<link rel="shortcut icon" type="image/x-icon" href="./game/ux/pages/assets/favicon.ico" />
+		<link rel="stylesheet" type="text/css" href="./game/ux/pages/assets/style.css"/>
+		<link rel="shortcut icon" type="image/x-icon" href="./game/ux/pages/assets/favicon.ico"/>
 
 		<script type="module">
 			import { GameKeeper } from "./game/lore/game-keeper.js"
 			import { PageRegistry } from "./game/ux/page-registry.js"
 			import { MainPage } from "./game/ux/pages/main.js"
 			import { ArenaPage } from "./game/ux/pages/arena.js"
+			import { SettingsPage } from "./game/ux/pages/settings.js"
 
 			const game = new GameKeeper()
 			const navigation = new PageRegistry(navigationHost)
 
 			navigation.add(MainPage, () => new MainPage(navigation, game))
 			navigation.add(ArenaPage, () => new ArenaPage(navigation, game))
+			navigation.add(SettingsPage, () => new SettingsPage(navigation, game))
 
-			//navigation.enter(MainPage)
-			navigation.enter(ArenaPage)
+			navigation.enter(MainPage)
 		</script>
 	</head>
 	<body>
@@ -38,7 +39,7 @@
 
 			<header role="banner" class="stack-vertical content-vertical-center content-horizontal-right">
 				<h1>
-					<img src="./game/ux/pages/assets/logo.svg" alt="Spaceshits' logo" />
+					<img src="./game/ux/pages/assets/logo.svg" alt="Spaceshits' logo"/>
 					<span>Spaceshits</span>
 					<small>Harlequin</small>
 				</h1>
@@ -50,9 +51,9 @@
 				<button data-on="click:editSettings" class="blue">
 					<span>Settings</span>
 					<small class="tooltip">
-						Move: <span id="upKeyTooltip">...</span> <span id="leftKeyTooltip">...</span> <span id="downKeyTooltip">...</span> <span id="rightKeyTooltip">...</span> <br />
-						Shoot: <span id="shootKeyTooltip">...</span> <br />
-						AUX Module: <span id="auxKeyTooltip">...</span> <br />
+						Move: <span id="upKeyTooltip">...</span> <span id="leftKeyTooltip">...</span> <span id="downKeyTooltip">...</span> <span id="rightKeyTooltip">...</span> <br/>
+						Shoot: <span id="shootKeyTooltip">...</span> <br/>
+						AUX Module: <span id="auxKeyTooltip">...</span> <br/>
 						Pause: <span id="pauseKeyTooltip">...</span>
 					</small>
 				</button>
@@ -95,7 +96,7 @@
 
 					<aside class="stack-horizontal" style="--row: 5; --col: 1; --rspan: 2; --cspan: 8;">
 						<p style="text-align: center;">
-							<span id="bindingLegend">...</span> <br />
+							<span id="bindingLegend">...</span> <br/>
 							<strong id="bindingKey">...</strong>
 						</p>
 					</aside>
@@ -108,9 +109,9 @@
 				<button class="vertical-bottom green" data-on="click:saveChanges">
 					<span>Save</span>
 					<small class="tooltip">
-						Move: <span id="upKeyTooltip">...</span> <span id="leftKeyTooltip">...</span> <span id="downKeyTooltip">...</span> <span id="rightKeyTooltip">...</span> <br />
-						Shoot: <span id="shootKeyTooltip">...</span> <br />
-						AUX Module: <span id="auxKeyTooltip">...</span> <br />
+						Move: <span id="upKeyTooltip">...</span> <span id="leftKeyTooltip">...</span> <span id="downKeyTooltip">...</span> <span id="rightKeyTooltip">...</span> <br/>
+						Shoot: <span id="shootKeyTooltip">...</span> <br/>
+						AUX Module: <span id="auxKeyTooltip">...</span> <br/>
 						Pause: <span id="pauseKeyTooltip">...</span>
 					</small>
 				</button>
@@ -174,7 +175,7 @@
 
 					<aside class="stack-horizontal margin-horizontal-large margin-top-large" style="width: 540px; height: 120px;">
 						<p style="text-align: center;">
-							<span id="itemDescription">...</span> <br />
+							<span id="itemDescription">...</span> <br/>
 							<span id="itemPriceCurrencyIcon" class="icon sholds" style="--ICON-SIZE: 22px; vertical-align: sub;"></span>
 							<strong id="itemPrice">...</strong>
 						</p>

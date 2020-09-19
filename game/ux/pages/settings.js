@@ -1,6 +1,16 @@
 ﻿import { Page, PageRegistry } from "../page-registry.js"
 import { GameKeeper } from "../../lore/game-keeper.js"
-import { UserInputRegistry } from "../user-input-capture.js"
+import { UserInputCaptureRoutine, UserInputRegistry } from "../user-input-capture.js"
+import { RenderRoutine } from "../../graphic/render.js"
+import { ShockwavePlayerAuxRoutine } from "../../lore/player-modules/shockwave.js"
+import { GatlingPlayerWeaponRoutine } from "../../lore/player-weapons.js"
+import { Universe } from "../../core/engine.js"
+import { Player } from "../../lore/player.js"
+import { Transform } from "../../math/transform.js"
+import { Sprites } from "../../graphic/assets/sprites.js"
+import { PlayerControlRoutine } from "../../logic/player-control.js"
+import { MotionRoutine } from "../../physic/motion.js"
+import { MainPage } from "./main.js"
 
 export class SettingsPage extends Page {
 	/** @param {PageRegistry} navigation @param {GameKeeper} game */
@@ -9,10 +19,9 @@ export class SettingsPage extends Page {
 
 		this.navigation = navigation
 		this.game = game
-		this.userInput = userInput
 
 		/** @private */
-		this.keyBindings = Object.assign({}, this.game.keyBindings)
+		this.originalKeyBindings = Object.assign({}, this.game.keyBindings)
 
 		/** @private */
 		this.keyLabels = {
@@ -25,11 +34,27 @@ export class SettingsPage extends Page {
 			pause: "Toggle pause"
 		}
 
+		/** @private */
+		this.isPaused = false
+
+		/** @private */
+		this.togglePause = event => {
+			if (event.code == this.game.keyBindings.pause) {
+				event.preventDefault()
+
+				this.isPaused
+					? this.universe.then(u => u.start())
+					: this.universe.then(u => u.stop())
+
+				this.isPaused = !this.isPaused
+			}
+		}
+
 		this.syncLegend(null)
 	}
 
 	onInstall() {
-		for (const key of Object.getOwnPropertyNames(this.keyBindings)) {
+		for (const key of Object.getOwnPropertyNames(this.game.keyBindings)) {
 			const binder = this.$["key-" + key]
 
 			binder.addEventListener("mouseenter", () => {
@@ -57,22 +82,22 @@ export class SettingsPage extends Page {
 
 	/** @private @param {string} key @param {string} binding */
 	setBinding(key, binding) {
-		this.keyBindings[key] = binding
+		this.game.keyBindings[key] = binding
 		this.syncLegend(key)
 	}
 
 	/** @private @param {string} key */
 	syncLegend(key = null) {
-		this.$.bindingLegend.textContent = key ? this.keyLabels[key] : "Hover over the fields <br/> and press keys to edit the bindings"
-		this.$.bindingKey.textContent = key ? this.formatKey(this.keyBindings[key]) : null
+		this.$.bindingLegend.innerHTML = key ? this.keyLabels[key] : "Hover over the fields <br/> and press keys to edit the bindings"
+		this.$.bindingKey.textContent = key ? this.formatKey(this.game.keyBindings[key]) : null
 
-		this.$.upKeyTooltip.textContent = this.formatKey(this.keyBindings.up)
-		this.$.leftKeyTooltip.textContent = this.formatKey(this.keyBindings.left)
-		this.$.downKeyTooltip.textContent = this.formatKey(this.keyBindings.down)
-		this.$.rightKeyTooltip.textContent = this.formatKey(this.keyBindings.right)
-		this.$.shootKeyTooltip.textContent = this.formatKey(this.keyBindings.shoot)
-		this.$.auxKeyTooltip.textContent = this.formatKey(this.keyBindings.aux)
-		this.$.pauseKeyTooltip.textContent = this.formatKey(this.keyBindings.pause)
+		this.$.upKeyTooltip.textContent = this.formatKey(this.game.keyBindings.up)
+		this.$.leftKeyTooltip.textContent = this.formatKey(this.game.keyBindings.left)
+		this.$.downKeyTooltip.textContent = this.formatKey(this.game.keyBindings.down)
+		this.$.rightKeyTooltip.textContent = this.formatKey(this.game.keyBindings.right)
+		this.$.shootKeyTooltip.textContent = this.formatKey(this.game.keyBindings.shoot)
+		this.$.auxKeyTooltip.textContent = this.formatKey(this.game.keyBindings.aux)
+		this.$.pauseKeyTooltip.textContent = this.formatKey(this.game.keyBindings.pause)
 	}
 
 	/** @private @param {string} key */
@@ -80,64 +105,57 @@ export class SettingsPage extends Page {
 		return key
 			.replace("Key", "")
 			.replace("Mouse", "Mouse ")
+			.replace("Arrow", "")
+			.replace("Numpad", "Numpad ")
 	}
 
 	onEnter() {
-		///** @type HTMLCanvasElement */
-		//const testCanvas = this.$.testCanvas
+		this.universe = this.buildTestUniverse()
 
-		//this.universe = new Universe()
-
-		//const interactionCentral = new InteractionCentral(testCanvas)
-
-		//this.universe.register(new InteractionRoutine(interactionCentral))
-		//this.universe.register(new MouseAndKeyboardControlRoutine(interactionCentral, this.parameters))
-		//this.universe.register(new MouseAndKeyboardWeaponControlRoutine(interactionCentral, this.parameters))
-		//this.universe.register(new TargetFacingRoutine(this.universe.clock))
-		//this.universe.register(new DynamicRoutine(this.universe, testCanvas.offsetWidth, testCanvas.offsetHeight))
-		//this.universe.register(new EphemeralRoutine(this.universe))
-		//this.universe.register(new WeaponRoutine(this.universe))
-		//this.universe.register(new ExplosionOnAddRoutine(this.universe))
-		//this.universe.register(new ExplosionOnRemoveRoutine(this.universe))
-		//this.universe.register(new ParticleCloudRoutine(this.universe.clock))
-		//this.universe.register(new RenderRoutine(testCanvas))
-		
-		//// Test player.
-		//this.universe.add(new Link([
-		//	new Transform(testCanvas.offsetWidth * 0.5, testCanvas.offsetHeight * 0.8),
-		//	new Velocity(0, -50),
-		//	new Acceleration(),
-		//	new Friction(),
-		//	new BounceOnEdges(0.5),
-
-		//	new MouseAndKeyboardControl(500, 500),
-		//	new TargetFacing({ Transform: interactionCentral.mousePosition }, TargetFacing.INSTANT),
-
-		//	new Weapon(0.2, [
-		//		{ type: GatlingBullet, x: 35, y: -10, a: 0 },
-		//		{ type: GatlingBullet, x: 45, y: +10, a: 0 }
-		//	]),
-
-		//	new MouseAndKeyboardWeaponControl(),
-
-		//	new ExplosionOnAdd([black, grey, orange, purple], 100, 1),
-		//	new Render(playerDoubleGatlingSprite)
-		//]))
-
-		//this.universe.start()
+		this.universe.then(u => u.start())
+		document.addEventListener("keydown", this.togglePause, false)
 	}
 
 	onExit() {
-		//this.universe.stop()
+		document.removeEventListener("keydown", this.togglePause, false)
+		this.universe?.then(u => u.stop())
 	}
 
 	discardChanges() {
-		//this.navigation.enter(MainPage)
+		Object.assign(this.game.keyBindings, this.originalKeyBindings)
+
+		this.navigation.enter(MainPage)
 	}
 
 	saveChanges() {
-		//Object.assign(this.game.keyBindings, this.keyBindings)
+		this.navigation.enter(MainPage)
+	}
 
-		//this.navigation.enter(MainPage)
+	/** @private */
+	buildTestUniverse() {
+		return Sprites.import().then(spriteSource => {
+			/** @type HTMLCanvasElement */
+			const testCanvas = this.$.testCanvas
+			const userInput = new UserInputRegistry(testCanvas)
+			const collisions = null
+			const vfx = { particles: [], blasts: [], spawnExplosion() {} }
+
+			const universe = new Universe(testCanvas.offsetWidth, testCanvas.offsetHeight)
+
+			universe.register(new UserInputCaptureRoutine(userInput))
+			universe.register(new PlayerControlRoutine(userInput, this.game, universe))
+			universe.register(new GatlingPlayerWeaponRoutine(userInput, this.game, universe))
+			universe.register(new ShockwavePlayerAuxRoutine(userInput, collisions, this.game, universe))
+			universe.register(new MotionRoutine(universe))
+			universe.register(new RenderRoutine(testCanvas, spriteSource, universe, userInput, vfx))
+
+			universe.add(new Player(
+				new Transform(0.5 * universe.width, 0.5 * universe.height),
+				undefined,
+				[ Sprites.playerGatling ]
+			))
+
+			return universe
+		})
 	}
 }
