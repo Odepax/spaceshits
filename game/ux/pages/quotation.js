@@ -1,6 +1,7 @@
 ﻿import { Random } from "../../math/random.js"
 import { Page, PageRegistry } from "../page-registry.js"
 import { Quotes } from "../../lore/quotes.js"
+import { ArenaPage } from "./arena.js"
 
 export class QuotationPage extends Page {
 	/** @param {PageRegistry} navigation */
@@ -21,6 +22,6 @@ export class QuotationPage extends Page {
 	}
 
 	onEnter() {
-		//setTimeout(() => this.navigation.enter(ArenaPage), this.quoteDisplayDuration)
+		setTimeout(() => this.navigation.enter(ArenaPage), this.quoteDisplayDuration)
 	}
 }

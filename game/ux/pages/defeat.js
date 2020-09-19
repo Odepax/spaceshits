@@ -1,5 +1,6 @@
-﻿import { Page, PageRegistry } from "../page-registry"
-import { GameKeeper } from "../../lore/game-keeper"
+﻿import { Page, PageRegistry } from "../page-registry.js"
+import { GameKeeper } from "../../lore/game-keeper.js"
+import { MainPage } from "./main.js"
 
 export class DefeatPage extends Page {
 	/** @param {PageRegistry} navigation @param {GameKeeper} game */
@@ -14,10 +15,10 @@ export class DefeatPage extends Page {
 		this.$.floorNumber.textContent = this.game.currentFloor
 		this.$.arenaNumber.textContent = this.game.currentArena
 
-		//this.game.reset() // TODO: do this not from the UI
+		this.game.reset()
 	}
 
 	backToMain() {
-		//this.navigation.enter(MainPage)
+		this.navigation.enter(MainPage)
 	}
 }

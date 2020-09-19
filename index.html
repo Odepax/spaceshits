@@ -21,6 +21,9 @@
 			import { MainPage } from "./game/ux/pages/main.js"
 			import { ArenaPage } from "./game/ux/pages/arena.js"
 			import { SettingsPage } from "./game/ux/pages/settings.js"
+			import { QuotationPage } from "./game/ux/pages/quotation.js"
+			import { VictoryPage } from "./game/ux/pages/victory.js"
+			import { DefeatPage } from "./game/ux/pages/defeat.js"
 
 			const game = new GameKeeper()
 			const navigation = new PageRegistry(navigationHost)
@@ -28,6 +31,9 @@
 			navigation.add(MainPage, () => new MainPage(navigation, game))
 			navigation.add(ArenaPage, () => new ArenaPage(navigation, game))
 			navigation.add(SettingsPage, () => new SettingsPage(navigation, game))
+			navigation.add(QuotationPage, () => new QuotationPage(navigation))
+			navigation.add(VictoryPage, () => new VictoryPage(navigation, game))
+			navigation.add(DefeatPage, () => new DefeatPage(navigation, game))
 
 			navigation.enter(MainPage)
 		</script>

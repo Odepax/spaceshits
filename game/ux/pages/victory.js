@@ -1,5 +1,6 @@
-﻿import { Page, PageRegistry } from "../page-registry"
-import { GameKeeper } from "../../lore/game-keeper"
+﻿import { Page, PageRegistry } from "../page-registry.js"
+import { GameKeeper } from "../../lore/game-keeper.js"
+import { MainPage } from "./main.js"
 
 export class VictoryPage extends Page {
 	/** @param {PageRegistry} navigation @param {GameKeeper} game */
@@ -11,10 +12,10 @@ export class VictoryPage extends Page {
 	}
 
 	onInstall() {
-		//this.game.reset() // TODO: do this not from the UI
+		this.game.reset()
 	}
 
 	continue() {
-		//this.navigation.enter(MainPage)
+		this.navigation.enter(MainPage)
 	}
 }

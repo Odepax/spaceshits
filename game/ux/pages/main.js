@@ -35,7 +35,7 @@ export class MainPage extends Page {
 	}
 
 	startNewGame() {
-		//this.game.reset()
+		this.game.reset()
 		this.navigation.enter(QuotationPage)
 	}
 
