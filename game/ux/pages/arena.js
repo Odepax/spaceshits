@@ -1,35 +1,6 @@
 ﻿import { Page, PageRegistry } from "../page-registry.js"
 import { GameKeeper } from "../../lore/game-keeper.js"
-import { Universe, Link } from "../../core/engine.js"
-import { UserInputRegistry, UserInputCaptureRoutine } from "../user-input-capture.js"
-import { PlayerControlRoutine } from "../../logic/player-control.js"
-import { MotionRoutine, Motion } from "../../physic/motion.js"
-import { Player } from "../../lore/player.js"
-import { Sprites } from "../../graphic/assets/sprites.js"
-import { Collider, CollisionDetectionRoutine, CollisionRegistry } from "../../physic/collision.js"
-import { RammingDamageRoutine } from "../../logic/ramming-damage.js"
-import { VfxRegistry } from "../../graphic/vfx.js"
-import { Colors } from "../../graphic/assets/colors.js"
-import { LifeAndDeathRoutine } from "../../logic/life-and-death.js"
-import { MissilePlayerWeaponRoutine, GatlingPlayerWeaponRoutine } from "../../lore/player-weapons.js"
-import { RenderRoutine } from "../../graphic/render.js"
-import { DamageColorizationRoutine, PlayerStatsVisualizationRoutine } from "../../graphic/hud.js"
-import { AutoWeaponModuleRoutine, HostileMissileRoutine } from "../../logic/auto-weapon.js"
-import { MissileBoss, MissileBossRoutine } from "../../lore/hostiles/missile-boss.js"
-import { SmartTurret, SmartTurretAimRoutine, Turret, TurretAimRoutine } from "../../lore/hostiles/turrets.js"
-import { AutoFieldModuleRoutine } from "../../logic/auto-field.js"
-import { HealFieldRoutine } from "../../logic/heal-field.js"
-import { Random } from "../../math/random.js"
-import { ShockwavePlayerAuxRoutine } from "../../lore/player-modules/shockwave.js"
-import { Ratio } from "../../math/ratio.js"
-import { BerzerkPlayerAuxRoutine } from "../../lore/player-modules/berzerk.js"
-import { DuoCube, MissileCube, QuadCube } from "../../lore/hostiles/cubes.js"
-import { Transform } from "../../math/transform.js"
-import { Crasher, SmartCrasher, SmartCrasherAttractionRoutine } from "../../lore/hostiles/crashers.js"
-import { MedicAura, ShieldAura } from "../../lore/hostiles/auras.js"
-import { Div, DivDivisionRoutine } from "../../lore/hostiles/divs.js"
-import { CombatDrone, Drone, DroneAimRoutine } from "../../lore/hostiles/drones.js"
-import { ArenaScenarios } from "../../lore/arena-scenarios.js"
+import { Universe } from "../../core/engine.js"
 
 export class ArenaPage extends Page {
 	/** @param {PageRegistry} navigation @param {GameKeeper} game */
@@ -41,6 +12,7 @@ export class ArenaPage extends Page {
 	}
 
 	onInstall() {
+		/** @type {HTMLCanvasElement} */ 
 		const gameCanvas = this.$.gameCanvas
 
 		gameCanvas.focus()
@@ -49,8 +21,6 @@ export class ArenaPage extends Page {
 
 		this.$.floorNumber.textContent = this.game.currentFloor
 		this.$.arenaNumber.textContent = this.game.currentArena
-
-		//this.arena = this.game.buildArena(this.$.gameCanvas, this.$.hpBar, this.$.energyBar)
 	}
 
 	onEnter() {
@@ -68,106 +38,15 @@ export class ArenaPage extends Page {
 		//	}
 		//)
 
-		Sprites.import().then(spriteSource => {
-			const universe = new Universe(this.$.gameCanvas.offsetWidth, this.$.gameCanvas.offsetHeight)
+		const onVictory = () => console.log("Victory!")
+		const onDefeat = () => console.log("Defeat...")
 
-			const userInput = new UserInputRegistry(this.$.gameCanvas)
-			const collisions = new CollisionRegistry()
-			const vfx = new VfxRegistry(universe)
+		this.universe = this.game.buildArena(this.$.gameCanvas, this.$.hpProgress, this.$.energyProgress, this.$.moduleProgress, onVictory, onDefeat)
 
-			// User input capture.
-			universe.register(new UserInputCaptureRoutine(userInput))
-			// TODO: Move CollisionDetectionRoutine up here, i.e. in the capture stage?
-
-			// Decision making -- logic 1.
-			universe.register(new PlayerControlRoutine(userInput, this.game, universe))
-			universe.register(new MissilePlayerWeaponRoutine(userInput, this.game, universe))
-			universe.register(new BerzerkPlayerAuxRoutine(userInput, this.game, universe, link => {
-				const { x, y } = link.get(Motion)[0].position
-
-				vfx.spawnParticleBurst(2, x, y, 70, 170, 0.5, [ Colors.orange, Colors.red ], 3, 7)
-			}))
-
-			universe.register(new TurretAimRoutine())
-			universe.register(new SmartTurretAimRoutine(universe))
-			universe.register(new DroneAimRoutine(universe))
-			universe.register(new SmartCrasherAttractionRoutine(universe))
-			universe.register(new DivDivisionRoutine(universe))
-			universe.register(new AutoWeaponModuleRoutine(universe))
-			universe.register(new AutoFieldModuleRoutine(universe))
-			//universe.register(new MissileBossRoutine(universe))
-			universe.register(new HostileMissileRoutine(universe))
-
-			universe.register(ArenaScenarios[0](universe))
-
-			// Motion dynamics & collision detection.
-			universe.register(new MotionRoutine(universe))
-			universe.register(new CollisionDetectionRoutine(collisions))
-
-			// Collision reactions -- logic 2.
-			universe.register(new RammingDamageRoutine(collisions, universe, (a, b) => {
-				const [ { position: { x: ax, y: ay } }, { radius: ar } ] = a.get(Motion, Collider)
-				const [ { position: { x: bx, y: by } }, { radius: br } ] = b.get(Motion, Collider)
-
-				// Stolen from the Internets:
-				// https://brilliant.org/wiki/section-formula/
-				const am = Ratio.progress(ar, ar + br)
-				const bm = Ratio.progress(br, ar + br)
-
-				const px = (am * bx + bm * ax) / (am + bm)
-				const py = (am * by + bm * ay) / (am + bm)
-
-				vfx.spawnParticleBurst(20, px, py, 100, 200, 1, [ Colors.white, Colors.silver, Colors.grey, Colors.black ], 2, 10)
-			}))
-
-			/** @type {WeakMap<Link, number>} */ 
-			const nextHealParticuleTimes = new WeakMap()
-			universe.register(new HealFieldRoutine(collisions, universe, link => {
-				if ((nextHealParticuleTimes.get(link) || 0) < universe.clock.time) {
-					nextHealParticuleTimes.set(link, universe.clock.time + Random.between(0.2, 0.6))
-
-					const { x, y } = link.get(Motion)[0].position
-
-					vfx.spawnParticleBurst(2, x, y, 70, 170, 0.5, [ Colors.green, Colors.teal ], 3, 7)
-				}
-			}))
-
-			universe.register(new LifeAndDeathRoutine(universe))
-
-			// Render.
-			universe.register(new DamageColorizationRoutine(universe))
-			universe.register(new RenderRoutine(this.$.gameCanvas, spriteSource, universe, userInput, vfx))
-			universe.register(new PlayerStatsVisualizationRoutine(this.$.hpProgress, this.$.energyProgress, this.$.moduleProgress))
-
-			//universe.add(new DuoCube(new Transform(700 * 0.3, 700 * 0.3)))
-			//universe.add(new QuadCube(new Transform(700 * 0.5, 700 * 0.3)))
-			//universe.add(new MissileCube(new Transform(700 * 0.7, 700 * 0.3)))
-
-			//universe.add(new Turret(new Transform(700 * 0.4, 700 * 0.3)))
-			//universe.add(new SmartTurret(new Transform(700 * 0.6, 700 * 0.3)))
-
-			//universe.add(new Crasher(new Transform(700 * 0.4, 700 * 0.3)))
-			//universe.add(new SmartCrasher(new Transform(700 * 0.6, 700 * 0.3)))
-
-			//universe.add(new ShieldAura(new Transform(700 * 0.3, 700 * 0.3)))
-			//universe.add(new MedicAura(new Transform(700 * 0.7, 700 * 0.3)))
-
-			//universe.add(new Div(new Transform(700 * 0.5, 700 * 0.3)))
-
-			//universe.add(new Drone(new Transform(700 * 0.3, 700 * 0.3)))
-			//universe.add(new CombatDrone(new Transform(700 * 0.7, 700 * 0.3)))
-
-			universe.add(new Player())
-
-			//universe.add(new MissileBoss(700 * 0.5, 700 * 0.2))
-
-			this.u = universe
-			this.u.start()
-		})
+		this.universe.then(u => u.start())
 	}
 
 	onExit() {
-		this.u?.stop()
-		//this.arena.complete()
+		this.universe?.then(u => u.stop())
 	}
 }

@@ -101,15 +101,11 @@ export class FightStage extends ArenaStage {
 
 /** @implements {import("../core/engine").Routine} */
 export class StagedArenaScenarioRoutine {
-	/** @param {Universe} universe @param {ArenaStage[]} stages */
-	constructor(universe, stages) {
+/** @param {Universe} universe @param {ArenaStage[]} stages @param {() => void} onVictory @param {() => void} onDefeat */
+	constructor(universe, stages, onVictory = null, onDefeat = null) {
 		this.universe = universe
-
-		/** @type {() => void} */
-		this.onVictory = () => console.log("Victory!")
-
-		/** @type {() => void} */
-		this.onDefeat = () => console.log("Defeat...")
+		this.onVictory = onVictory
+		this.onDefeat = onDefeat
 
 		/** @private */
 		this.remainingHostileCount = 0

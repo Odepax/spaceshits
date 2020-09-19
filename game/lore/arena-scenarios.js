@@ -21,9 +21,9 @@ function madSaw(x) {
 	return c
 }
 
-/** @type {( (universe: Universe) => import("../core/engine").Routine )[]} */
+/** @type {( (universe: Universe, onVictory: () => void, onDefeat: () => void) => import("../core/engine").Routine )[]} */
 export const ArenaScenarios = [
-	universe => new StagedArenaScenarioRoutine(universe, [
+	(universe, onVictory, onDefeat) => new StagedArenaScenarioRoutine(universe, [
 		new SwarmStage(() => [ madSaw(universe.width * 0.5) ]),
 
 		new CalmStage(0.3 * seconds), new SwarmStage(() => [ madSaw(universe.width * 0.45), madSaw(universe.width * 0.55) ]),
@@ -39,17 +39,17 @@ export const ArenaScenarios = [
 		new FightStage()
 
 		// And then, turrets...
-	]),
+	], onVictory, onDefeat),
 	/*
-	universe => new StagedArenaScenarioRoutine(universe, [
+	(universe, onVictory, onDefeat) => new StagedArenaScenarioRoutine(universe, [
 		new SwarmStage(() => [
 			new Hostile(universe.width * 0.3, universe.height * 0.2, Random.between(-200, 200), Random.between(-200, 200)),
 			new Hostile(universe.width * 0.7, universe.height * 0.2, Random.between(-200, 200), Random.between(-200, 200))
 		]),
 		new FightStage()
-	]),
+	], onVictory, onDefeat),
 
-	universe => new StagedArenaScenarioRoutine(universe, [
+	(universe, onVictory, onDefeat) => new StagedArenaScenarioRoutine(universe, [
 		new WavesStage(every * 0.3 * seconds, max * 2 * times, () => [
 			//new Cube(universe.width * 0.5, universe.height * 0.2)
 		]),
@@ -62,9 +62,9 @@ export const ArenaScenarios = [
 			//new Cube(universe.width * 0.7, universe.height * 0.2)
 		]),
 		new FightStage()
-	]),
+	], onVictory, onDefeat),
 
-	universe => new StagedArenaScenarioRoutine(universe, [
+	(universe, onVictory, onDefeat) => new StagedArenaScenarioRoutine(universe, [
 		new WavesStage(every * 0.3 * seconds, max * 2 * times, () => [
 			//new Cube(universe.width * 0.3, universe.height * 0.2),
 			//new Cube(universe.width * 0.7, universe.height * 0.2)
@@ -79,9 +79,9 @@ export const ArenaScenarios = [
 			//new Cube(universe.width * 0.7, universe.height * 0.2)
 		]),
 		new FightStage()
-	]),
+	], onVictory, onDefeat),
 
-	universe => new StagedArenaScenarioRoutine(universe, [
+	(universe, onVictory, onDefeat) => new StagedArenaScenarioRoutine(universe, [
 		new WavesStage(every * 0.3 * seconds, max * 3 * times, () => [
 			//new Cube(universe.width * 0.5, universe.height * 0.2)
 		]),
@@ -92,9 +92,9 @@ export const ArenaScenarios = [
 			//new Cube(universe.width * 0.5, universe.height * 0.2)
 		]),
 		new FightStage()
-	]),
+	], onVictory, onDefeat),
 
-	universe => new StagedArenaScenarioRoutine(universe, [
+	(universe, onVictory, onDefeat) => new StagedArenaScenarioRoutine(universe, [
 		new WavesStage(every * 0.3 * seconds, max * 3 * times, () => [
 			//new Cube(universe.width * 0.3, universe.height * 0.2),
 			//new Cube(universe.width * 0.7, universe.height * 0.2)
@@ -107,9 +107,9 @@ export const ArenaScenarios = [
 			//new CubeMissile(universe.width * 0.5, universe.height * 0.2, player)
 		]),
 		new FightStage()
-	]),
+	], onVictory, onDefeat),
 
-	universe => new StagedArenaScenarioRoutine(universe, [
+	(universe, onVictory, onDefeat) => new StagedArenaScenarioRoutine(universe, [
 		new SwarmStage(() => [
 			//new CubeMissile(universe.width * 0.5, universe.height * 0.2, player)
 		]),
@@ -122,9 +122,9 @@ export const ArenaScenarios = [
 			//new CubeMissile(universe.width * 0.5, universe.height * 0.2, player)
 		]),
 		new FightStage()
-	]),
+	], onVictory, onDefeat),
 
-	universe => new StagedArenaScenarioRoutine(universe, [
+	(universe, onVictory, onDefeat) => new StagedArenaScenarioRoutine(universe, [
 		new WavesStage(every * 0.3 * seconds, max * 2 * times, () => [
 			//new Cube(universe.width * 0.3, universe.height * 0.2),
 			//new Cube(universe.width * 0.5, universe.height * 0.2),
@@ -140,9 +140,9 @@ export const ArenaScenarios = [
 			//new CubeMissile(universe.width * 0.7, universe.height * 0.2, player)
 		]),
 		new FightStage()
-	]),
+	], onVictory, onDefeat),
 
-	universe => new StagedArenaScenarioRoutine(universe, [
+	(universe, onVictory, onDefeat) => new StagedArenaScenarioRoutine(universe, [
 		new WavesStage(every * 2 * seconds, max * 3 * times, () => [
 			//new Cube(universe.width * 0.3, universe.height * 0.2),
 			//new Cube(universe.width * 0.7, universe.height * 0.2)
@@ -157,6 +157,6 @@ export const ArenaScenarios = [
 			//new CubeMissile(universe.width * 0.7, universe.height * 0.2, player)
 		]),
 		new FightStage()
-	])
+	], onVictory, onDefeat)
 	*/
 ]
