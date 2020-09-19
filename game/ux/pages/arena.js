@@ -8,6 +8,19 @@ export class ArenaPage extends Page {
 
 		this.navigation = navigation
 		this.game = game
+
+		this.isPaused = false
+		this.togglePause = event => {
+			if (event.code == this.game.keyBindings.pause) {
+				event.preventDefault()
+
+				this.isPaused
+					? this.universe.then(u => u.start())
+					: this.universe.then(u => u.stop())
+
+				this.isPaused = !this.isPaused
+			}
+		}
 	}
 
 	onInstall() {
@@ -44,9 +57,11 @@ export class ArenaPage extends Page {
 		this.universe = this.game.buildArena(this.$.gameCanvas, this.$.hpProgress, this.$.energyProgress, this.$.moduleProgress, onVictory, onDefeat)
 
 		this.universe.then(u => u.start())
+		document.addEventListener("keydown", this.togglePause, false)
 	}
 
 	onExit() {
+		document.removeEventListener("keydown", this.togglePause, false)
 		this.universe?.then(u => u.stop())
 	}
 }
