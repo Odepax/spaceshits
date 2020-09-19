@@ -1,6 +1,5 @@
 ﻿import { Page, PageRegistry } from "../page-registry.js"
 import { GameKeeper } from "../../lore/game-keeper.js"
-import { Universe } from "../../core/engine.js"
 
 export class ArenaPage extends Page {
 	/** @param {PageRegistry} navigation @param {GameKeeper} game */
@@ -24,22 +23,23 @@ export class ArenaPage extends Page {
 	}
 
 	onEnter() {
-		//this.arena.wait(
-		//	() => {
-		//		if (this.game.arena == 7) { // TODO: Remove hard-coded value.
-		//			this.navigation.enter(VictoryPage)
-		//		} else {
-		//			this.game.stepArena()
-		//			this.navigation.enter(ShopPage)
-		//		}
-		//	},
-		//	() => {
-		//		this.navigation.enter(DefeatPage)
-		//	}
-		//)
+		const onVictory = () => {
+			console.log("Victory!")
 
-		const onVictory = () => console.log("Victory!")
-		const onDefeat = () => console.log("Defeat...")
+			//if (this.game.isLastArena)
+			//	this.navigation.enter(VictoryPage)
+
+			//else {
+			//	this.game.stepArena()
+			//	this.navigation.enter(ShopPage)
+			//}
+		}
+
+		const onDefeat = () => {
+			console.log("Defeat...")
+
+			//this.navigation.enter(DefeatPage)
+		}
 
 		this.universe = this.game.buildArena(this.$.gameCanvas, this.$.hpProgress, this.$.energyProgress, this.$.moduleProgress, onVictory, onDefeat)
 

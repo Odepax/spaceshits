@@ -101,8 +101,6 @@ export class MissileBoss extends Link {
 	}
 }
 
-// TODO: is this not better an arena scenario?
-
 /** @implements {import("../../core/engine").Routine} */ 
 export class MissileBossRoutine {
 	/** @param {Universe} universe */
@@ -153,30 +151,9 @@ export class MissileBossRoutine {
 	}
 
 	onStep() {
-		if (!this.player || !this.boss)
-			return;
-
-		this.fireProtectiveMissiles()
-		this.steerProtectiveMissiles()
-	}
-
-	/** @private */
-	steerProtectiveMissiles() {
-		const [ bossMotion ] = this.boss.get(Motion)
-
-		for (const missile of this.protectiveMissiles) {
-			const [ missileMotion, missileControl ] = missile.get(Motion, ProtectiveMissileControl)
-
-			TargetFacing.smooth(
-				missileMotion.position,
-				missileMotion.velocity,
-				bossMotion.position,
-				missileControl.steeringSpeed,
-				this.universe.clock.spf
-			)
-
-			// Forward chasing.
-			missileMotion.velocity.d = missileMotion.position.a
+		if (this.player && this.boss) {
+			this.fireProtectiveMissiles()
+			this.steerProtectiveMissiles()
 		}
 	}
 
@@ -207,6 +184,26 @@ export class MissileBossRoutine {
 			// TODO: Apply damage boosters.
 
 			this.universe.add(bullet)
+		}
+	}
+
+	/** @private */
+	steerProtectiveMissiles() {
+		const [ bossMotion ] = this.boss.get(Motion)
+
+		for (const missile of this.protectiveMissiles) {
+			const [ missileMotion, missileControl ] = missile.get(Motion, ProtectiveMissileControl)
+
+			TargetFacing.smooth(
+				missileMotion.position,
+				missileMotion.velocity,
+				bossMotion.position,
+				missileControl.steeringSpeed,
+				this.universe.clock.spf
+			)
+
+			// Forward chasing.
+			missileMotion.velocity.d = missileMotion.position.a
 		}
 	}
 }
