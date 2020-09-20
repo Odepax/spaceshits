@@ -3,7 +3,6 @@ import { GameKeeper } from "../../lore/game-keeper.js"
 import { UserInputCaptureRoutine, UserInputRegistry } from "../user-input-capture.js"
 import { RenderRoutine } from "../../graphic/render.js"
 import { ShockwavePlayerAuxRoutine } from "../../lore/player-modules/shockwave.js"
-import { GatlingPlayerWeaponRoutine } from "../../lore/player-weapons.js"
 import { Universe } from "../../core/engine.js"
 import { Player } from "../../lore/player.js"
 import { Transform } from "../../math/transform.js"
@@ -11,6 +10,7 @@ import { Sprites } from "../../graphic/assets/sprites.js"
 import { PlayerControlRoutine } from "../../logic/player-control.js"
 import { MotionRoutine } from "../../physic/motion.js"
 import { MainPage } from "./main.js"
+import { DoubleGatlingPlayerWeaponRoutine } from "../../lore/player-weapons/gatling.js"
 
 export class SettingsPage extends Page {
 	/** @param {PageRegistry} navigation @param {GameKeeper} game */
@@ -144,7 +144,7 @@ export class SettingsPage extends Page {
 
 			universe.register(new UserInputCaptureRoutine(userInput))
 			universe.register(new PlayerControlRoutine(userInput, this.game, universe))
-			universe.register(new GatlingPlayerWeaponRoutine(userInput, this.game, universe))
+			universe.register(new DoubleGatlingPlayerWeaponRoutine(userInput, this.game, universe))
 			universe.register(new ShockwavePlayerAuxRoutine(userInput, collisions, this.game, universe))
 			universe.register(new MotionRoutine(universe))
 			universe.register(new RenderRoutine(testCanvas, spriteSource, universe, userInput, vfx))
@@ -152,7 +152,7 @@ export class SettingsPage extends Page {
 			universe.add(new Player(
 				new Transform(0.5 * universe.width, 0.5 * universe.height),
 				undefined,
-				[ Sprites.playerGatling ]
+				[ Sprites.playerDoubleGatling ]
 			))
 
 			return universe

@@ -1,6 +1,10 @@
-﻿
-// TODO: refactor hostile bullets (wait for other factors...)
-// TODO: refactor hostiles (wait for other factors...)
+﻿// TODO: refactor player (& hostile?) bullets
+// TODO: refactor player (& hostile?) weapons
+// TODO: refactor player modules
+// TODO: refactor hostiles
+
+// TODO: Apply damage boosters.
+// TODO: Apply fire rate boosters.
 
 // TODO: collision radii
 // TODO: balance HP
