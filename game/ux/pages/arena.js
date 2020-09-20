@@ -1,5 +1,8 @@
 ﻿import { Page, PageRegistry } from "../page-registry.js"
 import { GameKeeper } from "../../lore/game-keeper.js"
+import { VictoryPage } from "./victory.js"
+import { DefeatPage } from "./defeat.js"
+import { ShopPage } from "./shop.js"
 
 export class ArenaPage extends Page {
 	/** @param {PageRegistry} navigation @param {GameKeeper} game */
@@ -42,19 +45,20 @@ export class ArenaPage extends Page {
 		const onVictory = () => {
 			console.log("Victory!")
 
-			//if (this.game.isLastArena)
-			//	this.navigation.enter(VictoryPage)
+			if (this.game.isLastArena)
+				this.navigation.enter(VictoryPage)
 
-			//else {
-			//	this.game.stepArena()
-			//	this.navigation.enter(ShopPage)
-			//}
+			else
+				this.universe.then(universe => {
+					this.game.completeArena(universe.clock.time)
+					this.navigation.enter(ShopPage)
+				})
 		}
 
 		const onDefeat = () => {
 			console.log("Defeat...")
 
-			//this.navigation.enter(DefeatPage)
+			this.navigation.enter(DefeatPage)
 		}
 
 		this.universe = this.game.buildArena(this.$.gameCanvas, this.$.hpProgress, this.$.energyProgress, this.$.moduleProgress, onVictory, onDefeat)

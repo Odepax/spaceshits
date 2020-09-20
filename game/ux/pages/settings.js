@@ -49,8 +49,6 @@ export class SettingsPage extends Page {
 				this.isPaused = !this.isPaused
 			}
 		}
-
-		this.syncLegend(null)
 	}
 
 	onInstall() {
@@ -78,6 +76,8 @@ export class SettingsPage extends Page {
 		testCanvas.focus()
 		testCanvas.addEventListener("mouseenter", () => testCanvas.focus(), false)
 		testCanvas.addEventListener("mousedown", () => testCanvas.focus(), false)
+
+		this.syncLegend(null)
 	}
 
 	/** @private @param {string} key @param {string} binding */

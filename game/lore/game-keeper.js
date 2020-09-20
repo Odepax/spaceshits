@@ -1,5 +1,7 @@
 ﻿import { Sprites } from "../graphic/assets/sprites.js"
+import { Random } from "../math/random.js"
 import { ArenaScenarios } from "./arena-scenarios.js"
+import { ShopItems } from "./shop-items.js"
 
 /** Keeps track of key bindings, game settings and player's items and progresion; builds shop and arenas. */
 export class GameKeeper {
@@ -14,8 +16,22 @@ export class GameKeeper {
 			pause: "Escape"
 		}
 
+		this.reset()
+	}
+
+	reset() {
 		/** @private */
 		this.arenaIndex = 0
+
+		this.balance = 101
+
+		this.damageBoosts = 0
+		this.hullBoosts = 0
+		this.fireRateBoosts = 0
+		this.weaponEnergyCapBoosts = 0
+		this.weaponEnergyRegenBoosts = 0
+		this.auxEnergyCapBoosts = 0
+		this.auxEnergyRegenBoosts = 0
 	}
 
 	get currentArena() {
@@ -30,8 +46,14 @@ export class GameKeeper {
 		return this.arenaIndex == 0
 	}
 
-	reset() {
-		this.arenaIndex = 0
+	get isLastArena() {
+		return this.arenaIndex == ArenaScenarios.length - 1
+	}
+
+	/** @param {number} arenaCompletionTime */
+	completeArena(arenaCompletionTime) {
+		this.balance += ~~(1500 * this.arenaIndex / arenaCompletionTime)
+		++this.arenaIndex
 	}
 
 	load() {
@@ -43,7 +65,14 @@ export class GameKeeper {
 	}
 
 	buildShop() {
-		// TODO
+		const availableItems = Array.from(ShopItems)
+
+		return [
+			Random.pop(availableItems),
+			Random.pop(availableItems),
+			Random.pop(availableItems),
+			Random.pop(availableItems)
+		]
 	}
 
 	/**

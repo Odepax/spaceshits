@@ -2,6 +2,7 @@
 import { GameKeeper } from "../../lore/game-keeper.js"
 import { QuotationPage } from "./quotation.js"
 import { SettingsPage } from "./settings.js"
+import { ShopPage } from "./shop.js"
 
 export class MainPage extends Page {
 	/** @param {PageRegistry} navigation @param {GameKeeper} game */
@@ -40,7 +41,7 @@ export class MainPage extends Page {
 	}
 
 	resumeLastGame() {
-		//this.navigation.enter(ShopPage)
+		this.navigation.enter(ShopPage)
 	}
 
 	editSettings() {

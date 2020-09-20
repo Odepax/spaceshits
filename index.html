@@ -24,6 +24,7 @@
 			import { QuotationPage } from "./game/ux/pages/quotation.js"
 			import { VictoryPage } from "./game/ux/pages/victory.js"
 			import { DefeatPage } from "./game/ux/pages/defeat.js"
+			import { ShopPage } from "./game/ux/pages/shop.js"
 
 			const game = new GameKeeper()
 			const navigation = new PageRegistry(navigationHost)
@@ -34,6 +35,7 @@
 			navigation.add(QuotationPage, () => new QuotationPage(navigation))
 			navigation.add(VictoryPage, () => new VictoryPage(navigation, game))
 			navigation.add(DefeatPage, () => new DefeatPage(navigation, game))
+			navigation.add(ShopPage, () => new ShopPage(navigation, game))
 
 			navigation.enter(MainPage)
 		</script>
@@ -137,8 +139,8 @@
 			<section class="page-content stack-horizontal">
 
 				<div class="stack-vertical vertical-bottom">
-					<progress id="moduleProgress" value="1" class="orange margin-bottom-small"></progress>
-					<progress id="energyProgress" value="1" class="purple margin-bottom-small"></progress>
+					<progress id="moduleProgress" value="1" class="purple margin-bottom-small"></progress>
+					<progress id="energyProgress" value="1" class="orange margin-bottom-small"></progress>
 					<progress id="hpProgress" value="1" class="green"></progress>
 				</div>
 
