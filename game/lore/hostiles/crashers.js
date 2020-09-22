@@ -1,54 +1,57 @@
-﻿import { Link } from "../../core/engine.js"
-import { Transform } from "../../math/transform.js"
-import { Motion } from "../../physic/motion.js"
-import { Random } from "../../math/random.js"
-import { Collider } from "../../physic/collision.js"
-import { Tags } from "../tags.js"
-import { RammingDamage } from "../../logic/ramming-damage.js"
-import { HpGauge } from "../../logic/life-and-death.js"
-import { Render } from "../../graphic/render.js"
-import { Sprites } from "../../graphic/assets/sprites.js"
-import { OnAddExplosion, OnRemoveExplosion } from "../../graphic/vfx.js"
+import { Link, Universe } from "../../core/engine.js"
 import { Colors } from "../../graphic/assets/colors.js"
-import { Universe } from "../../core/engine.js"
+import { Sprites } from "../../graphic/assets/sprites.js"
+import { Render } from "../../graphic/render.js"
+import { OnAddExplosion, OnRemoveExplosion } from "../../graphic/vfx.js"
+import { HostileShip, HostileStuff } from "../../logic/hostile.js"
+import { HpGauge } from "../../logic/life-and-death.js"
+import { PlayerShip } from "../../logic/player.js"
+import { RammingDamage } from "../../logic/ramming-damage.js"
 import { Angle } from "../../math/angle.js"
+import { Random } from "../../math/random.js"
+import { Transform } from "../../math/transform.js"
+import { Collider } from "../../physic/collision.js"
+import { Motion } from "../../physic/motion.js"
 
-import { Player } from "../player.js"
+/** @param {Transform} position */
+export function crasher(position) {
+	return new Link(
+		HostileStuff,
+		HostileShip,
 
-export class Crasher extends Link {
-	/** @param {Transform} position */
-	constructor(position) {
-		super(
-			new Motion(position, Transform.angular(Random.angle(), Random.between(100, 200), Random.sign() * 2 * Math.PI), 1),
+		new Motion(position, Transform.angular(Random.angle(), Random.between(100, 200), Random.sign() * 2 * Math.PI), 1),
 
-			new Collider(21, Tags.hostile | Tags.ship),
-			new RammingDamage(17, Tags.player | Tags.ship, RammingDamage.bounceOnDamage),
+		new Collider(21),
+		new RammingDamage(17, PlayerShip, RammingDamage.bounceOnDamage),
 
-			new HpGauge(101),
+		new HpGauge(101),
 
-			new Render(Sprites.crasher),
-			new OnAddExplosion(1, [ Colors.white, Colors.light, Colors.silver, Colors.orange ], 50),
-			new OnRemoveExplosion(0.5, [ Colors.orange, Colors.black, Colors.grey, Colors.silver ], 100)
-		)
-	}
+		new Render(Sprites.crasher),
+		new OnAddExplosion(1, [ Colors.white, Colors.light, Colors.silver, Colors.orange ], 50),
+		new OnRemoveExplosion(0.5, [ Colors.orange, Colors.black, Colors.grey, Colors.silver ], 100)
+	)
 }
 
-export class SmartCrasher extends Link {
-	/** @param {Transform} position */
-	constructor(position) {
-		super(
-			new Motion(position, Transform.angular(Random.angle(), Random.between(100, 200), Random.sign() * 2 * Math.PI), 1),
+const HostileSmartCrasher = Symbol()
 
-			new Collider(21, Tags.hostile | Tags.ship),
-			new RammingDamage(17, Tags.player | Tags.ship, RammingDamage.bounceOnDamage),
+/** @param {Transform} position */
+export function smartCrasher(position) {
+	return new Link(
+		HostileStuff,
+		HostileShip,
+		HostileSmartCrasher,
 
-			new HpGauge(101),
+		new Motion(position, Transform.angular(Random.angle(), Random.between(100, 200), Random.sign() * 2 * Math.PI), 1),
 
-			new Render(Sprites.smartCrasher),
-			new OnAddExplosion(1, [ Colors.white, Colors.light, Colors.purple, Colors.pink ], 50),
-			new OnRemoveExplosion(0.5, [ Colors.pink, Colors.black, Colors.grey, Colors.purple ], 100)
-		)
-	}
+		new Collider(21),
+		new RammingDamage(17, PlayerShip, RammingDamage.bounceOnDamage),
+
+		new HpGauge(101),
+
+		new Render(Sprites.smartCrasher),
+		new OnAddExplosion(1, [ Colors.white, Colors.light, Colors.purple, Colors.pink ], 50),
+		new OnRemoveExplosion(0.5, [ Colors.pink, Colors.black, Colors.grey, Colors.purple ], 100)
+	)
 }
 
 /** @implements {import("../../core/engine").Routine */
@@ -66,10 +69,10 @@ export class SmartCrasherAttractionRoutine {
 
 	/** @param {Link} link */
 	onAdd(link) {
-		if (!this.player && link instanceof Player)
+		if (!this.player && link.has(PlayerShip))
 			this.player = link
 
-		else if (link instanceof SmartCrasher)
+		else if (link.has(HostileSmartCrasher))
 			this.crashers.add(link)
 	}
 

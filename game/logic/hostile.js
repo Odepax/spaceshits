@@ -1,0 +1,8 @@
+export const HostileStuff = Symbol()
+export const HostileShip = Symbol()
+export const HostileDrone = Symbol()
+export const HostileTurret = Symbol()
+export const HostileSmartTurret = Symbol()
+export const HostileBullet = Symbol()
+export const HostileMissile = Symbol()
+export const HostileProtectiveMissile = Symbol()

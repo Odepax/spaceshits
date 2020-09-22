@@ -1,4 +1,4 @@
-﻿import { Page, PageRegistry } from "../page-registry.js"
+import { Page, PageRegistry } from "../page-registry.js"
 import { GameKeeper } from "../../lore/game-keeper.js"
 import { VictoryPage } from "./victory.js"
 import { DefeatPage } from "./defeat.js"
@@ -30,7 +30,7 @@ export class ArenaPage extends Page {
 	}
 
 	onInstall() {
-		/** @type {HTMLCanvasElement} */ 
+		/** @type {HTMLCanvasElement} */
 		const gameCanvas = this.$.gameCanvas
 
 		gameCanvas.focus()

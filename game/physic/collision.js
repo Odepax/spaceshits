@@ -3,10 +3,9 @@ import { Motion } from "./motion.js"
 import { Collision } from "../math/collision.js"
 
 export class Collider {
-	/** @param {number} radius @param {number} tag */
-	constructor(radius, tag) {
+	/** @param {number} radius */
+	constructor(radius) {
 		this.radius = radius
-		this.tag = tag
 	}
 }
 

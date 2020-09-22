@@ -1,9 +1,8 @@
-﻿import { Link } from "../../core/engine.js"
+import { Link } from "../../core/engine.js"
 import { Transform } from "../../math/transform.js"
 import { Motion } from "../../physic/motion.js"
 import { Random } from "../../math/random.js"
 import { Collider } from "../../physic/collision.js"
-import { Tags } from "../tags.js"
 import { RammingDamage } from "../../logic/ramming-damage.js"
 import { HpGauge } from "../../logic/life-and-death.js"
 import { Render } from "../../graphic/render.js"
@@ -13,69 +12,72 @@ import { Colors } from "../../graphic/assets/colors.js"
 import { AutoWeaponModule } from "../../logic/auto-weapon.js"
 import { Universe } from "../../core/engine.js"
 import { TargetFacing } from "../../math/target-facing.js"
+import { PlayerShip } from "../../logic/player.js"
+import { HostileBullet, HostileDrone, HostileShip, HostileStuff } from "../../logic/hostile.js"
 
-import { Player } from "../player.js"
+/** @param {Transform} position */
+export function drone(position) {
+	return new Link(
+		HostileStuff,
+		HostileShip,
+		HostileDrone,
 
-export class Drone extends Link {
-	/** @param {Transform} position */
-	constructor(position) {
-		super(
-			new Motion(position, Transform.angular(Random.angle(), Random.between(100, 200)), 1),
+		new Motion(position, Transform.angular(Random.angle(), Random.between(100, 200)), 1),
 
-			new Collider(21, Tags.hostile | Tags.ship),
-			new RammingDamage(13, Tags.player | Tags.ship, RammingDamage.bounceOtherOnDamage),
+		new Collider(21),
+		new RammingDamage(13, PlayerShip, RammingDamage.bounceOtherOnDamage),
 
-			new HpGauge(101),
+		new HpGauge(101),
 
-			new Render(Sprites.drone),
-			new OnAddExplosion(1, [ Colors.white, Colors.light, Colors.silver, Colors.blue ], 50),
-			new OnRemoveExplosion(0.5, [ Colors.blue, Colors.black, Colors.grey, Colors.silver ], 100)
-		)
-	}
+		new Render(Sprites.drone),
+		new OnAddExplosion(1, [ Colors.white, Colors.light, Colors.silver, Colors.blue ], 50),
+		new OnRemoveExplosion(0.5, [ Colors.blue, Colors.black, Colors.grey, Colors.silver ], 100)
+	)
 }
 
-export class CombatDrone extends Link {
-	/** @param {Transform} position */
-	constructor(position) {
-		super(
-			new Motion(position, Transform.angular(Random.angle(), Random.between(100, 200)), 1),
+/** @param {Transform} position */
+export function combatDrone(position) {
+	return new Link(
+		HostileStuff,
+		HostileShip,
+		HostileDrone,
 
-			new Collider(21, Tags.hostile | Tags.ship),
-			new RammingDamage(13, Tags.player | Tags.ship, RammingDamage.bounceOtherOnDamage),
+		new Motion(position, Transform.angular(Random.angle(), Random.between(100, 200)), 1),
 
-			new HpGauge(101),
+		new Collider(21),
+		new RammingDamage(13, PlayerShip, RammingDamage.bounceOtherOnDamage),
 
-			new AutoWeaponModule(3, drone => [ -10, +10 ].map(i =>
-				new CombatDroneBullet(
-					drone.get(Motion)[0]
-						.position
-						.copy
-						.relativeOffsetBy({ x: 37, y: i })
-				)
-			)),
+		new HpGauge(101),
 
-			new Render(Sprites.combatDrone),
-			new OnAddExplosion(1, [ Colors.white, Colors.light, Colors.blue, Colors.purple ], 50),
-			new OnRemoveExplosion(0.5, [ Colors.purple, Colors.black, Colors.grey, Colors.pink ], 100)
-		)
-	}
+		new AutoWeaponModule(),
+		new AutoWeaponModule(3, drone => {
+			const dronePosition = drone.get(Motion)[0].position
+
+			return [ -10, +10 ].map(i =>
+				combatDroneBullet(dronePosition.copy.relativeOffsetBy({ x: 37, y: i }))
+			)
+		}),
+
+		new Render(Sprites.combatDrone),
+		new OnAddExplosion(1, [ Colors.white, Colors.light, Colors.blue, Colors.purple ], 50),
+		new OnRemoveExplosion(0.5, [ Colors.purple, Colors.black, Colors.grey, Colors.pink ], 100)
+	)
 }
 
-class CombatDroneBullet extends Link {
-	/** @param {Transform} position */
-	constructor(position) {
-		const r = 7
+/** @param {Transform} position */
+function combatDroneBullet(position) {
+	return new Link(
+		HostileStuff,
+		HostileBullet,
 
-		super(
-			new Motion(position, Transform.angular(position.a, 800), Motion.removeOnEdges),
+		new Motion(position, Transform.angular(position.a, 800), Motion.removeOnEdges),
 
-			new Collider(r, Tags.hostile | Tags.bullet),
-			new RammingDamage(9, Tags.player | Tags.ship, RammingDamage.removeOnDamage),
+		new Collider(7),
+		new RammingDamage(9, PlayerShip, RammingDamage.removeOnDamage),
 
-			new Render(Sprites.combatDroneBullet),
-			new OnRemoveExplosion(r / 15, [ Colors.light, Colors.purple, Colors.blue ], r * 1.5)
-		)
-	}
+		new Render(Sprites.combatDroneBullet),
+		new OnRemoveExplosion(0.5, [ Colors.light, Colors.purple, Colors.blue ], 10)
+	)
 }
 
 /** @implements {import("../../core/engine").Routine */
@@ -92,10 +94,10 @@ export class DroneAimRoutine {
 
 	/** @param {Link} link */
 	onAdd(link) {
-		if (!this.player && link instanceof Player)
+		if (link.has(PlayerShip))
 			this.player = link
 
-		else if (link instanceof Drone || link instanceof CombatDrone)
+		else if (link.has(HostileDrone))
 			this.drones.add(link)
 	}
 

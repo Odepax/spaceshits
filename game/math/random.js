@@ -1,4 +1,4 @@
-﻿export const Random = {
+export const Random = {
 	/** @template T @param {T[]} values */
 	in(values) {
 		return values[parseInt(Math.random() * values.length)]

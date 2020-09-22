@@ -1,85 +1,89 @@
-import { Link } from "../../core/engine.js"
-import { Transform } from "../../math/transform.js"
-import { Motion } from "../../physic/motion.js"
-import { Collider } from "../../physic/collision.js"
-import { Tags } from "../tags.js"
-import { RammingDamage } from "../../logic/ramming-damage.js"
-import { Render } from "../../graphic/render.js"
-import { Sprites } from "../../graphic/assets/sprites.js"
-import { OnRemoveExplosion, OnAddExplosion, AuraFx } from "../../graphic/vfx.js"
+import { Link, Universe } from "../../core/engine.js"
 import { Colors } from "../../graphic/assets/colors.js"
-import { HpGauge } from "../../logic/life-and-death.js"
+import { Sprites } from "../../graphic/assets/sprites.js"
+import { Render } from "../../graphic/render.js"
+import { AuraFx, OnAddExplosion, OnRemoveExplosion } from "../../graphic/vfx.js"
 import { AutoWeaponModule } from "../../logic/auto-weapon.js"
-import { Player } from "../player.js"
-import { Random } from "../../math/random.js"
-import { Universe } from "../../core/engine.js"
-import { TargetFacing } from "../../math/target-facing.js"
+import { HostileBullet, HostileMissile, HostileProtectiveMissile, HostileShip, HostileStuff } from "../../logic/hostile.js"
+import { HpGauge } from "../../logic/life-and-death.js"
 import { MissileControl } from "../../logic/missile-control.js"
+import { PlayerShip, PlayerStuff } from "../../logic/player.js"
+import { RammingDamage } from "../../logic/ramming-damage.js"
+import { Random } from "../../math/random.js"
+import { TargetFacing } from "../../math/target-facing.js"
+import { Transform } from "../../math/transform.js"
+import { Collider } from "../../physic/collision.js"
+import { Motion } from "../../physic/motion.js"
 
-class MissileBossMissileM extends Link {
-	/** @param {Transform} position */
-	constructor(position) {
-		super(
-			new Motion(position, Transform.angular(position.a, 800), Motion.removeOnEdges),
-			new MissileControl(Math.PI),
+/** @param {Transform} position */
+function missileBossMissileM(position) {
+	return new Link(
+		HostileStuff,
+		HostileBullet,
+		HostileMissile,
 
-			new Collider(7, Tags.hostile | Tags.bullet),
-			new RammingDamage(9, Tags.player | Tags.ship, RammingDamage.removeOnDamage),
+		new Motion(position, Transform.angular(position.a, 800), Motion.removeOnEdges),
+		new MissileControl(Math.PI),
 
-			new Render(Sprites.missileBossBulletM),
-			new OnRemoveExplosion(7 /* Collider.radius */ / 15, [ Colors.light, Colors.pink, Colors.purple ], 7 /* Collider.radius */ * 1.5)
-		)
-	}
+		new Collider(7),
+		new RammingDamage(9, PlayerShip, RammingDamage.removeOnDamage),
+
+		new Render(Sprites.missileBossBulletM),
+		new OnRemoveExplosion(0.5, [ Colors.light, Colors.pink, Colors.purple ], 10)
+	)
 }
 
-class ProtectiveMissileControl extends MissileControl {
-	constructor() {
-		super(Random.between(1, 4) * Math.PI)
-	}
+/** @param {Transform} position */
+function missileBossMissileS(position) {
+	return new Link(
+		HostileStuff,
+		HostileBullet,
+		HostileProtectiveMissile,
+
+		new Motion(position, Transform.angular(position.a, Random.between(600, 700)), Motion.ignoreEdges),
+		new MissileControl(Random.between(1, 4) * Math.PI),
+
+		new Collider(7),
+		new RammingDamage(9, PlayerStuff, RammingDamage.removeOnDamage),
+
+		new Render(Sprites.missileBossBulletS),
+		new AuraFx(7, Colors.purple),
+		new OnRemoveExplosion(0.5, [ Colors.light, Colors.pink, Colors.purple ], 10)
+	)
 }
 
-class MissileBossMissileS extends Link {
-	/** @param {Transform} position */
-	constructor(position) {
-		super(
-			new Motion(position, Transform.angular(position.a, Random.between(600, 700)), Motion.ignoreEdges),
-			new ProtectiveMissileControl(),
+/** @param {Transform} position */
+function missileBossMissileL(position) {
+	return new Link(
+		HostileStuff,
+		HostileBullet,
+		HostileProtectiveMissile,
 
-			new Collider(7, Tags.hostile | Tags.bullet),
-			new RammingDamage(9, Tags.player | Tags.ship | Tags.bullet, RammingDamage.removeOnDamage),
+		new Motion(position, Transform.angular(position.a, Random.between(400, 800)), Motion.ignoreEdges),
+		new MissileControl(Random.between(1, 4) * Math.PI),
 
-			new Render(Sprites.missileBossBulletS),
-			new AuraFx(7, Colors.purple),
-			new OnRemoveExplosion(7 /* Collider.radius */ / 15, [ Colors.light, Colors.pink, Colors.purple ], 7 /* Collider.radius */ * 1.5)
-		)
-	}
+		new Collider(7),
+		new RammingDamage(9, PlayerStuff, RammingDamage.removeOnDamage),
+
+		new Render(Sprites.missileBossBulletL),
+		new AuraFx(13, Colors.red),
+		new OnRemoveExplosion(0.5, [ Colors.light, Colors.pink, Colors.purple ], 10)
+	)
 }
 
-class MissileBossMissileL extends Link {
-	/** @param {Transform} position */
-	constructor(position) {
-		super(
-			new Motion(position, Transform.angular(position.a, Random.between(400, 800)), Motion.ignoreEdges),
-			new ProtectiveMissileControl(),
-
-			new Collider(7, Tags.hostile | Tags.bullet),
-			new RammingDamage(9, Tags.player | Tags.ship | Tags.bullet, RammingDamage.removeOnDamage),
-
-			new Render(Sprites.missileBossBulletL),
-			new AuraFx(13, Colors.red),
-			new OnRemoveExplosion(7 /* Collider.radius */ / 15, [ Colors.light, Colors.pink, Colors.purple ], 7 /* Collider.radius */ * 1.5)
-		)
-	}
-}
+const HostileMissileBoss = Symbol()
 
 export class MissileBoss extends Link {
 	/** @param {number} x @param {number} y */
 	constructor(x, y) {
 		super(
+			HostileShip,
+			HostileMissileBoss,
+
 			new Motion(new Transform(x, y), Transform.angular(Random.angle(), 200, Math.PI / 2), 1),
 
-			new Collider(21, Tags.hostile | Tags.ship),
-			new RammingDamage(13, Tags.player | Tags.ship, RammingDamage.bounceOnDamage),
+			new Collider(21),
+			new RammingDamage(13, PlayerShip, RammingDamage.bounceOnDamage),
 
 			new HpGauge(201),
 
@@ -87,10 +91,10 @@ export class MissileBoss extends Link {
 				const bossPosition = boss.get(Motion)[0].position
 
 				return [
-					new MissileBossMissileM(bossPosition.copy.rotateBy(-Math.PI / 2).relativeOffsetBy({ x: 41, y: -19 })),
-					new MissileBossMissileM(bossPosition.copy.rotateBy(-Math.PI / 2).relativeOffsetBy({ x: 41, y: +19 })),
-					new MissileBossMissileM(bossPosition.copy.rotateBy(+Math.PI / 2).relativeOffsetBy({ x: 41, y: -19 })),
-					new MissileBossMissileM(bossPosition.copy.rotateBy(+Math.PI / 2).relativeOffsetBy({ x: 41, y: +19 })),
+					missileBossMissileM(bossPosition.copy.rotateBy(-Math.PI / 2).relativeOffsetBy({ x: 41, y: -19 })),
+					missileBossMissileM(bossPosition.copy.rotateBy(-Math.PI / 2).relativeOffsetBy({ x: 41, y: +19 })),
+					missileBossMissileM(bossPosition.copy.rotateBy(+Math.PI / 2).relativeOffsetBy({ x: 41, y: -19 })),
+					missileBossMissileM(bossPosition.copy.rotateBy(+Math.PI / 2).relativeOffsetBy({ x: 41, y: +19 })),
 				]
 			}),
 
@@ -101,16 +105,16 @@ export class MissileBoss extends Link {
 	}
 }
 
-/** @implements {import("../../core/engine").Routine} */ 
+/** @implements {import("../../core/engine").Routine} */
 export class MissileBossRoutine {
 	/** @param {Universe} universe */
 	constructor(universe) {
 		this.universe = universe
 
-		/** @private @type {Player} */
+		/** @private @type {Link} */
 		this.player = null
 
-		/** @private @type {MissileBoss} */
+		/** @private @type {Link} */
 		this.boss = null
 
 		/** @private @type {Set<Link>} */
@@ -122,15 +126,15 @@ export class MissileBossRoutine {
 
 	/** @param {Link} link */
 	onAdd(link) {
-		if (!this.player && link instanceof Player)
+		if (link.has(PlayerShip))
 			this.player = link
 
-		else if (!this.boss && link instanceof MissileBoss) {
+		else if (link.has(HostileMissileBoss)) {
 			this.boss = link
 			this.nextShotTime = this.universe.clock.time + this.reloadTime
 		}
 
-		else if (link.has(ProtectiveMissileControl))
+		else if (link.has(HostileProtectiveMissile))
 			this.protectiveMissiles.add(link)
 	}
 
@@ -166,14 +170,14 @@ export class MissileBossRoutine {
 			this.nextShotTime = this.universe.clock.time + this.reloadTime
 
 			const bullet = Math.random() < 0.3
-				? new MissileBossMissileL(
+				? missileBossMissileL(
 					this.boss.get(Motion)[0]
 						.position
 						.copy
 						.rotateBy(Random.angle())
 						.relativeOffsetBy({ x: 41, y: 0 })
 				)
-				: new MissileBossMissileS(
+				: missileBossMissileS(
 					this.boss.get(Motion)[0]
 						.position
 						.copy

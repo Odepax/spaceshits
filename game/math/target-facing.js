@@ -1,4 +1,4 @@
-﻿import { Transform } from "./transform.js"
+import { Transform } from "./transform.js"
 import { Angle } from "./angle.js"
 
 export const TargetFacing = {

@@ -1,4 +1,4 @@
-﻿import { Sprites } from "../graphic/assets/sprites.js"
+import { Sprites } from "../graphic/assets/sprites.js"
 import { Random } from "../math/random.js"
 import { ArenaScenarios } from "./arena-scenarios.js"
 import { ShopItems } from "./shop-items.js"

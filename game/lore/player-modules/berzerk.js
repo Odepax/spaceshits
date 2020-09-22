@@ -1,11 +1,8 @@
 import { Link, Universe } from "../../core/engine.js"
-import { Collider } from "../../physic/collision.js"
-import { Tags } from "../tags.js"
+import { PlayerBullet, PlayerEnergy, PlayerShip } from "../../logic/player.js"
 import { RammingDamage } from "../../logic/ramming-damage.js"
 import { UserInputRegistry } from "../../ux/user-input-capture.js"
 import { GameKeeper } from "../game-keeper.js"
-import { Player, PlayerEnergy } from "../player.js"
-import { Flag } from "../../math/flag.js"
 
 export class BerzerkPlayerAuxRoutine {
 	/** @param {UserInputRegistry} userInput @param {GameKeeper} game @param {Universe} universe @param {(link: Link) => void} onActive */
@@ -20,18 +17,18 @@ export class BerzerkPlayerAuxRoutine {
 
 		this.isActive = false
 
-		/** @type {number} */ 
+		/** @type {number} */
 		this.activationEndTime = null
 	}
 
 	/** @param {Link} link */
 	onAdd(link) {
-		if (!this.player && link instanceof Player) {
+		if (!this.player && link.has(PlayerShip)) {
 			this.player = link
 			this.player.get(PlayerEnergy)[0].auxConsumption = 17
 		}
 
-		else if (this.isActive && Flag.contains(link.get(Collider)[0]?.tag, Tags.player | Tags.bullet)) {
+		else if (this.isActive && link.has(PlayerBullet)) {
 			link.get(RammingDamage)[0].damage *= 2
 			this.onActive?.(link)
 		}
@@ -60,8 +57,13 @@ export class BerzerkPlayerAuxRoutine {
 			if (this.activationEndTime < this.universe.clock.time)
 				this.isActive = false
 
-			if (playerEnergy.aux < playerEnergy.auxMax) // TODO: refactor player energy regen (aux and weapons, though weapons might have their own refactor)
-				playerEnergy.aux += playerEnergy.auxRegen * this.universe.clock.spf
+			this.regenerate(playerEnergy)
 		}
+	}
+
+	/** @protected @param {PlayerEnergy} playerEnergy */
+	regenerate(playerEnergy) {
+		if (playerEnergy.aux < playerEnergy.auxMax)
+			playerEnergy.aux += playerEnergy.auxRegen * this.universe.clock.spf
 	}
 }

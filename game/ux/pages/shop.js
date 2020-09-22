@@ -1,4 +1,4 @@
-﻿import { Page, PageRegistry } from "../page-registry.js"
+import { Page, PageRegistry } from "../page-registry.js"
 import { GameKeeper } from "../../lore/game-keeper.js"
 import { ArenaPage } from "./arena.js"
 import { MainPage } from "./main.js"
@@ -22,7 +22,7 @@ export class ShopPage extends Page {
 
 		this.syncLegend(null)
 	}
-	
+
 	/** @private @param {import("../../lore/shop-items").ShopItem} item */
 	addItemButton(item) {
 		const button = document.createElement("button")

@@ -1,9 +1,9 @@
-﻿import { AutoIteratingRoutine } from "../core/routines.js"
+import { AutoIteratingRoutine } from "../core/routines.js"
 import { HpGauge } from "../logic/life-and-death.js"
 import { Render } from "./render.js"
 import { Universe, Link } from "../core/engine.js"
 import { Colors } from "./assets/colors.js"
-import { Player, PlayerEnergy } from "../lore/player.js"
+import { PlayerEnergy, PlayerShip } from "../logic/player.js"
 import { AuraFx } from "./vfx.js"
 import { Ratio } from "../math/ratio.js"
 
@@ -15,13 +15,13 @@ export class PlayerStatsVisualizationRoutine {
 		this.weaponEnergyProgress = weaponEnergyProgress
 		this.auxEnergyProgress = auxEnergyProgress
 
-		/** @private @type {Player} */
+		/** @private @type {Link} */
 		this.player = null
 	}
 
 	/** @param {Link} link */
 	onAdd(link) {
-		if (!this.player && link instanceof Player)
+		if (!this.player && link.has(PlayerShip))
 			this.player = link
 	}
 

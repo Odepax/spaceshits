@@ -1,10 +1,10 @@
-﻿import { Page, PageRegistry } from "../page-registry.js"
+import { Page, PageRegistry } from "../page-registry.js"
 import { GameKeeper } from "../../lore/game-keeper.js"
 import { UserInputCaptureRoutine, UserInputRegistry } from "../user-input-capture.js"
 import { RenderRoutine } from "../../graphic/render.js"
 import { ShockwavePlayerAuxRoutine } from "../../lore/player-modules/shockwave.js"
 import { Universe } from "../../core/engine.js"
-import { Player } from "../../lore/player.js"
+import { player } from "../../lore/player.js"
 import { Transform } from "../../math/transform.js"
 import { Sprites } from "../../graphic/assets/sprites.js"
 import { PlayerControlRoutine } from "../../logic/player-control.js"
@@ -149,7 +149,7 @@ export class SettingsPage extends Page {
 			universe.register(new MotionRoutine(universe))
 			universe.register(new RenderRoutine(testCanvas, spriteSource, universe, userInput, vfx))
 
-			universe.add(new Player(
+			universe.add(player(
 				new Transform(0.5 * universe.width, 0.5 * universe.height),
 				undefined,
 				[ Sprites.playerDoubleGatling ]

@@ -1,16 +1,15 @@
-import { Link, Universe } from "../../core/engine.js"
-import { Transform } from "../../math/transform.js"
-import { Motion } from "../../physic/motion.js"
-import { Collider, CollisionRegistry } from "../../physic/collision.js"
-import { Tags } from "../tags.js"
-import { RammingDamage } from "../../logic/ramming-damage.js"
-import { AuraFx } from "../../graphic/vfx.js"
+import { Link } from "../../core/engine.js"
 import { Colors } from "../../graphic/assets/colors.js"
+import { AuraFx } from "../../graphic/vfx.js"
+import { HostileShip } from "../../logic/hostile.js"
+import { PlayerEnergy, PlayerShip } from "../../logic/player.js"
+import { RammingDamage } from "../../logic/ramming-damage.js"
+import { Ratio } from "../../math/ratio.js"
+import { Transform } from "../../math/transform.js"
+import { Collider, CollisionRegistry } from "../../physic/collision.js"
+import { Motion } from "../../physic/motion.js"
 import { UserInputRegistry } from "../../ux/user-input-capture.js"
 import { GameKeeper } from "../game-keeper.js"
-import { Player, PlayerEnergy } from "../player.js"
-import { Ratio } from "../../math/ratio.js"
-import { Flag } from "../../math/flag.js"
 
 class WaveGrowth {
 	/** @param {number} spawnTime @param {number} deathTime @param {number} maxRadius */
@@ -21,20 +20,18 @@ class WaveGrowth {
 	}
 }
 
-class Shockwave extends Link {
-	/** @param {Transform} position @param {number} time */
-	constructor(position, time) {
-		super(
-			new Motion(position, undefined, Motion.ignoreEdges),
+/** @param {Transform} position @param {number} time */
+function shockwave(position, time) {
+	return new Link(
+		new Motion(position, undefined, Motion.ignoreEdges),
 
-			new Collider(0, Tags.player | Tags.field),
-			new RammingDamage(19, Tags.hostile | Tags.ship/* | Tags.bullet*/, RammingDamage.ignoreDamage),
+		new Collider(0),
+		new RammingDamage(19, HostileShip/* | __OLD__Tags.bullet*/, RammingDamage.ignoreDamage),
 
-			new WaveGrowth(time, time + 0.7, 307),
+		new WaveGrowth(time, time + 0.7, 307),
 
-			new AuraFx(0, Colors.orange)
-		)
-	}
+		new AuraFx(0, Colors.orange)
+	)
 }
 
 export class ShockwavePlayerAuxRoutine {
@@ -50,20 +47,20 @@ export class ShockwavePlayerAuxRoutine {
 
 		/** @private @type {Set<Link>} */
 		this.waves = new Set()
-		
+
 		/** @private @type {Set<Link>} */
 		this.hostiles = new Set()
 	}
 
 	/** @param {Link} link */
 	onAdd(link) {
-		if (link instanceof Shockwave)
-			this.waves.add(link)
-
-		else if (Flag.contains(link.get(Collider)[0]?.tag, Tags.hostile | Tags.ship/* | Tags.bullet*/))
+		if (link.has(HostileShip))
 			this.hostiles.add(link)
 
-		else if (!this.player && link instanceof Player) {
+		else if (link.has(WaveGrowth))
+			this.waves.add(link)
+
+		else if (link.has(PlayerShip)) {
 			this.player = link
 			this.player.get(PlayerEnergy)[0].auxConsumption = 17
 		}
@@ -88,14 +85,13 @@ export class ShockwavePlayerAuxRoutine {
 			) {
 				playerEnergy.aux -= playerEnergy.auxConsumption
 
-				this.universe.add(new Shockwave(
+				this.universe.add(shockwave(
 					this.player.get(Motion)[0].position.copy,
 					this.universe.clock.time
 				))
 			}
 
-			if (playerEnergy.aux < playerEnergy.auxMax)
-				playerEnergy.aux += playerEnergy.auxRegen * this.universe.clock.spf
+			this.regenerate(playerEnergy)
 		}
 
 		for (const wave of this.waves) {
@@ -125,5 +121,11 @@ export class ShockwavePlayerAuxRoutine {
 					}
 				}
 		}
+	}
+
+	/** @protected @param {PlayerEnergy} playerEnergy */
+	regenerate(playerEnergy) {
+		if (playerEnergy.aux < playerEnergy.auxMax)
+			playerEnergy.aux += playerEnergy.auxRegen * this.universe.clock.spf
 	}
 }

@@ -1,4 +1,4 @@
-﻿import { ArenaScenario } from "./arena-scenarios/arena-scenario.js"
+import { ArenaScenario } from "./arena-scenarios/arena-scenario.js"
 import { Floor0Arena0 } from "./arena-scenarios/floor-0-arena-0.js"
 
 /** @type {import("../core/engine").Constructor<ArenaScenario>[]} */

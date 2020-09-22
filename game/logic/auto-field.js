@@ -1,4 +1,4 @@
-﻿import { Link, Universe } from "../core/engine.js"
+import { Link, Universe } from "../core/engine.js"
 import { AutoIteratingRoutine } from "../core/routines.js"
 
 export class AutoFieldModule {

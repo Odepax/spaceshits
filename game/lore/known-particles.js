@@ -1,10 +1,9 @@
-﻿import { VfxRegistry } from "../graphic/vfx.js"
-import { Link } from "../core/engine.js"
-import { Motion } from "../physic/motion.js"
+import { Link, Universe } from "../core/engine.js"
 import { Colors } from "../graphic/assets/colors.js"
-import { Collider } from "../physic/collision.js"
+import { VfxRegistry } from "../graphic/vfx.js"
 import { Ratio } from "../math/ratio.js"
-import { Universe } from "../core/engine.js"
+import { Collider } from "../physic/collision.js"
+import { Motion } from "../physic/motion.js"
 
 /** @param {VfxRegistry} vfx */
 export function spawnBerzerkParticles(vfx) {
@@ -14,6 +13,7 @@ export function spawnBerzerkParticles(vfx) {
 		vfx.spawnParticleBurst(2, x, y, 70, 170, 0.5, [ Colors.orange, Colors.red ], 3, 7)
 	}
 }
+
 /** @param {VfxRegistry} vfx */
 export function spawDamageParticles(vfx) {
 	return /** @param {Link} a @param {Link} b */ (a, b) => {

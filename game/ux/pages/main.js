@@ -1,4 +1,4 @@
-﻿import { Page, PageRegistry } from "../page-registry.js"
+import { Page, PageRegistry } from "../page-registry.js"
 import { GameKeeper } from "../../lore/game-keeper.js"
 import { QuotationPage } from "./quotation.js"
 import { SettingsPage } from "./settings.js"

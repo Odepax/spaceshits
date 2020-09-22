@@ -1,8 +1,7 @@
 import { Universe, Link } from "../core/engine.js"
+import { HostileShip } from "../logic/hostile.js"
+import { PlayerShip } from "../logic/player.js"
 import { Collider } from "../physic/collision.js"
-import { Tags } from "./tags.js"
-import { Player } from "./player.js"
-import { Flag } from "../math/flag.js"
 
 /** @abstract */
 export class ArenaStage {
@@ -145,15 +144,13 @@ export class StagedArenaScenarioRoutine {
 
 	/** @param {Link} link */
 	onAdd(link) {
-		const [ collider ] = link.get(Collider)
-
-		if (collider && Flag.contains(collider.tag, Tags.hostile))
+		if (link.has(HostileShip))
 			++this.remainingHostileCount
 	}
 
 	/** @param {Link} link */
 	onRemove(link) {
-		if (link instanceof Player) {
+		if (link.has(PlayerShip)) {
 			this.currentStage = new CalmStage(3)
 
 			this.currentStage.next = {
@@ -166,11 +163,7 @@ export class StagedArenaScenarioRoutine {
 			this.currentStage.onEnter(this.universe)
 		}
 
-		else {
-			const [ collider ] = link.get(Collider)
-
-			if (collider && Flag.contains(collider.tag, Tags.hostile))
-				--this.remainingHostileCount
-		}
+		else if (link.has(HostileShip))
+			--this.remainingHostileCount
 	}
 }

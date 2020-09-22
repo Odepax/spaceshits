@@ -2,13 +2,12 @@ import { Universe, Link } from "../core/engine.js"
 import { Motion } from "../physic/motion.js"
 import { Collider, CollisionRegistry } from "../physic/collision.js"
 import { HpGauge } from "./life-and-death.js"
-import { Flag } from "../math/flag.js"
 
 export class RammingDamage {
-	/** @param {number} damage @param {number} targetTag @param {number} damageReaction See static flags. */
-	constructor(damage, targetTag, damageReaction = 0) {
+	/** @param {number} damage @param {import("../core/engine.js").Mark} targetMark @param {number} damageReaction See static flags. */
+	constructor(damage, targetMark, damageReaction = 0) {
 		this.damage = damage
-		this.targetTag = targetTag
+		this.targetMark = targetMark
 		this.damageReaction = damageReaction
 	}
 }
@@ -55,9 +54,8 @@ export class RammingDamageRoutine {
 				const b = links[j]
 				const [ motionB, colliderB, rammingDamageB, hpB ] = b.get(Motion, Collider, RammingDamage, HpGauge)
 
-				if ((
-					   Flag.contains(colliderB.tag, rammingDamageA?.targetTag)
-					|| Flag.contains(colliderA.tag, rammingDamageB?.targetTag))
+				if (
+					   (b.has(rammingDamageA?.targetMark) || a.has(rammingDamageB?.targetMark))
 					&& this.collisions.startedColliding(a, b)
 				) {
 					// Assuming that collisions don't go down here by accident,

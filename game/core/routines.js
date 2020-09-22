@@ -1,4 +1,4 @@
-﻿import { Link } from "./engine.js"
+import { Link } from "./engine.js"
 
 /** @abstract @implements {import("./engine").Routine} */
 export class AutoIteratingRoutine {

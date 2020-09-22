@@ -1,4 +1,4 @@
-﻿const traitTokens = new Map()
+const traitTokens = new Map()
 
 export class Link extends Map {
 	constructor(...traits) {

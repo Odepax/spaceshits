@@ -1,10 +1,7 @@
-﻿// TODO: refactor player (& hostile?) bullets
-// TODO: refactor player (& hostile?) weapons
-// TODO: refactor player modules
-// TODO: refactor hostiles
-
+// TODO: refactor player modules => wait for more factors
 // TODO: Apply * boosters.
 
+// TODO: explosion colors
 // TODO: collision radii
 // TODO: balance HP
 // TODO: balance damage
@@ -21,7 +18,7 @@ class HostileBullet extends Link {
 			new RammingDamage(9, Tags.player | Tags.ship, RammingDamage.removeOnDamage),
 
 			new Render(Sprites.cubeQuadBullet),
-			new OnRemoveExplosion(7 /* Collider.radius */ / 15, [ Colors.light, /*TAIL*/, /*HEAD*/ ], 7 /* Collider.radius */ * 1.5)
+			new OnRemoveExplosion(0.5, [ Colors.light, /*TAIL*/, /*HEAD*/ ], 10)
 		)
 	}
 }

@@ -1,4 +1,4 @@
-﻿import { Random } from "../../math/random.js"
+import { Random } from "../../math/random.js"
 import { Page, PageRegistry } from "../page-registry.js"
 import { Quotes } from "../../lore/quotes.js"
 import { ArenaPage } from "./arena.js"

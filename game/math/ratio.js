@@ -1,4 +1,4 @@
-﻿export const Ratio = {
+export const Ratio = {
 	/** @param {number} value @param {number} max */
 	progress(value, max) {
 		return value / max

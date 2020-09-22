@@ -1,4 +1,4 @@
-﻿export const Angle = {
+export const Angle = {
 	/** @param {number} value */
 	clamp(value) {
 		// Adapted from:

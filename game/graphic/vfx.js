@@ -1,4 +1,4 @@
-﻿import { Universe } from "../core/engine.js"
+import { Universe } from "../core/engine.js"
 import { Random } from "../math/random.js"
 
 /**

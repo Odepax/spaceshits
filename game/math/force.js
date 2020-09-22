@@ -1,4 +1,4 @@
-﻿import { Transform } from "./transform.js"
+import { Transform } from "./transform.js"
 
 export const Force = {
 	/** @param {Transform} target @param {number} spf */

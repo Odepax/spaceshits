@@ -1,12 +1,10 @@
-﻿import { Link, Universe } from "../core/engine.js"
+import { Link, Universe } from "../core/engine.js"
 import { AutoIteratingRoutine } from "../core/routines.js"
-import { Player } from "../lore/player.js"
-import { Motion } from "../physic/motion.js"
-import { Tags } from "../lore/tags.js"
-import { Collider } from "../physic/collision.js"
 import { TargetFacing } from "../math/target-facing.js"
+import { Motion } from "../physic/motion.js"
+import { HostileMissile } from "./hostile.js"
 import { MissileControl } from "./missile-control.js"
-import { Flag } from "../math/flag.js"
+import { PlayerShip } from "./player.js"
 
 export class AutoWeaponModule {
 	/** @param {number} reloadTime @param {(parent: Link) => Link[]} factory */
@@ -60,20 +58,20 @@ export class HostileMissileRoutine {
 	constructor(universe) {
 		this.universe = universe
 
-		/** @private @type {Player} */
+		/** @private @type {Link} */
 		this.player = null
 
 		/** @private @type {Set<Link>} */
-		this.links = new Set()
+		this.hostileMissiles = new Set()
 	}
 
 	/** @param {Link} link */
 	onAdd(link) {
-		if (!this.player && link instanceof Player) // TODO: review the way we distinguish the player
+		if (!this.player && link.has(PlayerShip))
 			this.player = link
 
-		else if (link.has(MissileControl) && Flag.contains(link.get(Collider)[0]?.tag, Tags.hostile | Tags.bullet))
-			this.links.add(link)
+		else if (link.has(HostileMissile, MissileControl))
+			this.hostileMissiles.add(link)
 	}
 
 	/** @param {Link} link */
@@ -82,12 +80,12 @@ export class HostileMissileRoutine {
 			this.player = null
 
 		else
-			this.links.delete(link)
+			this.hostileMissiles.delete(link)
 	}
 
 	onStep() {
 		if (this.player)
-		for (const link of this.links) {
+		for (const link of this.hostileMissiles) {
 			const [ missileMotion, missileControl ] = link.get(Motion, MissileControl)
 			const [ playerMotion ] = this.player.get(Motion)
 

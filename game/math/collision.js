@@ -1,4 +1,4 @@
-﻿export const Collision = {
+export const Collision = {
 	/**
 	 * @param {number} box1Left
 	 * @param {number} box1Right

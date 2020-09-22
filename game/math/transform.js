@@ -1,4 +1,4 @@
-﻿import { Angle } from "./angle.js"
+import { Angle } from "./angle.js"
 
 export class Transform {
 	/** @param {number} direction @param {number} length */

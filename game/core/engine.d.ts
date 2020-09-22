@@ -1,4 +1,4 @@
-﻿export declare interface Constructor<T> {
+export declare interface Constructor<T> {
 	new(...parameters: any[]): T
 }
 

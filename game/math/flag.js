@@ -1,4 +1,4 @@
-﻿export const Flag = {
+export const Flag = {
 	/** Checks whether `a` is exactly or is more specific than `b`.
 	 * @param {number} a @param {number} b */
 	contains(a, b) {

@@ -1,4 +1,4 @@
-﻿import { Universe } from "../../core/engine.js"
+import { Universe } from "../../core/engine.js"
 import { DamageColorizationRoutine, PlayerStatsVisualizationRoutine } from "../../graphic/hud.js"
 import { RenderRoutine } from "../../graphic/render.js"
 import { VfxRegistry } from "../../graphic/vfx.js"

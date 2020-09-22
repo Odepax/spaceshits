@@ -1,11 +1,11 @@
 import { Link } from "../core/engine.js"
 import { Motion } from "../physic/motion.js"
 import { UserInputRegistry } from "../ux/user-input-capture.js"
-import { Player } from "../lore/player.js"
 import { Transform } from "../math/transform.js"
 import { Force } from "../math/force.js"
 import { Universe } from "../core/engine.js"
 import { GameKeeper } from "../lore/game-keeper.js"
+import { PlayerShip } from "./player.js"
 
 /** @implements {import("../core/engine").Routine} */
 export class PlayerControlRoutine {
@@ -15,7 +15,7 @@ export class PlayerControlRoutine {
 		this.game = game
 		this.universe = universe
 
-		/** @private @type {Player} */
+		/** @private @type {Link} */
 		this.player = null
 		this.acceleration = new Transform()
 		this.maxAcceleration = 1500
@@ -24,7 +24,7 @@ export class PlayerControlRoutine {
 
 	/** @param {Link} link */
 	onAdd(link) {
-		if (!this.player && link instanceof Player)
+		if (!this.player && link.has(PlayerShip))
 			this.player = link
 	}
 
@@ -67,13 +67,13 @@ export class PlayerAimRoutine {
 		this.userInput = userInput
 		this.game = game
 
-		/** @private @type {Player} */
+		/** @private @type {Link} */
 		this.player = null
 	}
 
 	/** @param {Link} link */
 	onAdd(link) {
-		if (!this.player && link instanceof Player)
+		if (!this.player && link.has(PlayerShip))
 			this.player = link
 	}
 
