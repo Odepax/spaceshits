@@ -59,3 +59,36 @@ export class PlayerControlRoutine {
 		motion.position.a = motion.position.directionTo(this.userInput.mousePosition)
 	}
 }
+
+/** @implements {import("../core/engine").Routine} */
+export class PlayerAimRoutine {
+	/** @param {UserInputRegistry} userInput @param {GameKeeper} game */
+	constructor(userInput, game) {
+		this.userInput = userInput
+		this.game = game
+
+		/** @private @type {Player} */
+		this.player = null
+	}
+
+	/** @param {Link} link */
+	onAdd(link) {
+		if (!this.player && link instanceof Player)
+			this.player = link
+	}
+
+	/** @param {Link} link */
+	onRemove(link) {
+		if (link == this.player)
+			this.player = null
+	}
+
+	onStep() {
+		if (!this.player)
+			return
+
+		const [ motion ] = this.player.get(Motion)
+
+		motion.position.a = motion.position.directionTo(this.userInput.mousePosition)
+	}
+}

@@ -62,7 +62,7 @@ export class SwarmStage extends ArenaStage {
 	}
 }
 
-/** Hostiles spawn regularly until no hostile is left. */
+/** Hostiles spawn regularly until all hostiles have spawned. */
 export class WavesStage extends ArenaStage {
 	/** @param {number} spawnInterval @param {number} maxSpawnCount @param {() => Iterable<Link>} hostilesFactory */
 	constructor(spawnInterval, maxSpawnCount, hostilesFactory) {
