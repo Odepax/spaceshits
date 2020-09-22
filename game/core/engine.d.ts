@@ -2,14 +2,14 @@
 	new(...parameters: any[]): T
 }
 
+export declare type Mark = symbol
 export declare type Trait = object
 
 export declare class Link {
-	constructor(...traits: Trait[])
+	constructor(...traits: (Mark | Trait)[])
 
-	set(trait: Trait): this
-	has(...traits: Constructor<Trait>[]): boolean
-	get<T extends Trait[]>(...traits: T): { [i in keyof T]: InstanceType<T[i]> }
+	has(...traits: (Mark | Constructor<Trait>)[]): boolean
+	get<T extends (Mark | Constructor<Trait>)[]>(...traits: T): { [i in keyof T]: T[i] extends Mark ? Mark : InstanceType<T[i]> }
 }
 
 export declare interface Routine {
@@ -36,25 +36,3 @@ export declare class Universe {
 	start()
 	stop()
 }
-
-// declare interface Token<T> {}
-//
-//declare class Link {
-//	constructor<T>(...traits: [ Token<T>, T ][])
-
-//	mark(mark: Mark): this
-//	add(trait: Trait): this
-//	set<T>(token: Token<T>, trait: T): this
-
-//	has(...traits: Token<any>[]): boolean
-//	get<T extends Token<any>[]>(...traits: T): { [i in keyof T]: T[i] extends Token<infer X> ? X : any }
-//}
-
-//class A {}
-//class B {}
-
-//const At: Token<A> = Symbol()
-//const Bt: Token<B> = Symbol()
-//const Ct: Token<boolean> = Symbol()
-
-//const [ a, b, c ] = (new Link()).get(At, Bt, Ct)

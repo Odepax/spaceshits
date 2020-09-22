@@ -1,13 +1,15 @@
-﻿export class Link extends Map {
+﻿const traitTokens = new Map()
+
+export class Link extends Map {
 	constructor(...traits) {
 		super()
 
 		for (const trait of traits)
-			this.set(trait)
-	}
-
-	set(trait) {
-		return super.set(trait.constructor, trait)
+			super.set(traitTokens.get(trait) ?? (
+				typeof trait == "symbol"
+					? (traitTokens.set(trait, trait), trait)
+					: (traitTokens.set(trait, trait.constructor), trait.constructor)
+			), trait)
 	}
 
 	has(...traits) {
