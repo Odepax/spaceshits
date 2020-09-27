@@ -81,7 +81,7 @@ function turretBullet(position) {
 		new RammingDamage(9, PlayerShip, RammingDamage.removeOnDamage),
 
 		new Render(Sprites.turretBullet),
-		new OnRemoveExplosion(0.5, [ Colors.light, Colors.white, Colors.silver ], 10)
+		new OnRemoveExplosion(0.5, [ Colors.light, Colors.silver, Colors.white ], 10)
 	)
 }
 

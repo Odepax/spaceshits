@@ -24,7 +24,7 @@ function gatlingBullet(position) {
 		new RammingDamage(9, HostileShip, RammingDamage.removeOnDamage),
 
 		new Render(Sprites.playerGatlingBullet),
-		new OnRemoveExplosion(0.5, [ Colors.black, Colors.grey, Colors.yellow, Colors.orange ], 10)
+		new OnRemoveExplosion(0.5, [ Colors.black, Colors.grey, Colors.orange, Colors.yellow ], 10)
 	)
 }
 

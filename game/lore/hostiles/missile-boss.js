@@ -29,7 +29,7 @@ function missileBossMissileM(position) {
 		new RammingDamage(9, PlayerShip, RammingDamage.removeOnDamage),
 
 		new Render(Sprites.missileBossBulletM),
-		new OnRemoveExplosion(0.5, [ Colors.light, Colors.pink, Colors.purple ], 10)
+		new OnRemoveExplosion(0.5, [ Colors.light, Colors.purple, Colors.pink ], 10)
 	)
 }
 
@@ -48,7 +48,7 @@ function missileBossMissileS(position) {
 
 		new Render(Sprites.missileBossBulletS),
 		new AuraFx(7, Colors.purple),
-		new OnRemoveExplosion(0.5, [ Colors.light, Colors.pink, Colors.purple ], 10)
+		new OnRemoveExplosion(0.5, [ Colors.light, Colors.purple, Colors.red ], 10)
 	)
 }
 
@@ -67,7 +67,7 @@ function missileBossMissileL(position) {
 
 		new Render(Sprites.missileBossBulletL),
 		new AuraFx(13, Colors.red),
-		new OnRemoveExplosion(0.5, [ Colors.light, Colors.pink, Colors.purple ], 10)
+		new OnRemoveExplosion(0.5, [ Colors.light, Colors.red, Colors.pink ], 10)
 	)
 }
 
@@ -99,7 +99,7 @@ export class MissileBoss extends Link {
 			}),
 
 			new Render(Sprites.missileBoss),
-			new OnAddExplosion(1, [ Colors.white, Colors.light, Colors.pink, Colors.red ], 50),
+			new OnAddExplosion(1, [ Colors.white, Colors.light, Colors.purple, Colors.red ], 50),
 			new OnRemoveExplosion(0.5, [ Colors.red, Colors.black, Colors.grey, Colors.pink ], 150)
 		)
 	}

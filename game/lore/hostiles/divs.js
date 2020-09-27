@@ -45,7 +45,7 @@ export function divShard(position) {
 		new HpGauge(101),
 
 		new Render(Sprites.divShard),
-		new OnRemoveExplosion(0.5, [ Colors.yellow, Colors.black, Colors.grey, Colors.silver ], 100)
+		new OnRemoveExplosion(0.5, [ Colors.yellow, Colors.black, Colors.grey, Colors.light ], 100)
 	)
 }
 

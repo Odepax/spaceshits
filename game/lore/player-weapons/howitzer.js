@@ -24,7 +24,7 @@ function howitzerBullet(position) {
 		new RammingDamage(9, HostileShip, RammingDamage.removeOnDamage),
 
 		new Render(Sprites.playerBlasterBullet),
-		new OnRemoveExplosion(0.5, [ Colors.black, Colors.grey, Colors.blue, Colors.teal ], 10)
+		new OnRemoveExplosion(0.5, [ Colors.black, Colors.grey, Colors.teal, Colors.blue ], 10)
 	)
 }
 

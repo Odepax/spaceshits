@@ -24,7 +24,7 @@ function shockgunBullet(position) {
 		new RammingDamage(9, HostileShip, RammingDamage.removeOnDamage),
 
 		new Render(Sprites.playerShockgunBullet),
-		new OnRemoveExplosion(0.5, [ Colors.black, Colors.grey, Colors.green, Colors.teal ], 10)
+		new OnRemoveExplosion(0.5, [ Colors.black, Colors.grey, Colors.teal, Colors.green ], 10)
 	)
 }
 

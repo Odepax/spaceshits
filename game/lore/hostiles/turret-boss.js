@@ -35,8 +35,8 @@ export function bossDrone(position) {
 		}),
 
 		new Render(Sprites.turretBossDrone),
-		new OnAddExplosion(1, [ Colors.white, Colors.light, Colors.pink, Colors.red ], 50),
-		new OnRemoveExplosion(0.5, [ Colors.red, Colors.black, Colors.grey, Colors.blue ], 100)
+		new OnAddExplosion(1, [ Colors.white, Colors.light, Colors.blue, Colors.red ], 50),
+		new OnRemoveExplosion(0.5, [ Colors.red, Colors.black, Colors.grey, Colors.pink ], 100)
 	)
 }
 
