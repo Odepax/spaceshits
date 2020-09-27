@@ -37,7 +37,7 @@ export function divShard(position) {
 		HostileStuff,
 		HostileShip,
 
-		new Motion(position, Transform.angular(position.a, Random.between(100, 200), Random.sign() * Math.PI), 1),
+		new Motion(position, Transform.angular(position.a + Math.PI, Random.between(100, 200), Random.sign() * Math.PI), 1),
 
 		new Collider(11),
 		new RammingDamage(13, PlayerShip, RammingDamage.bounceOnDamage),
@@ -66,7 +66,7 @@ export class DivDivisionRoutine {
 					divPosition
 						.copy
 						.rotateBy(i * Math.PI / 3)
-						.relativeOffsetBy({ x: 37, y: 0 })
+						.relativeOffsetBy({ x: -17.8, y: 0 })
 				))
 		}
 	}

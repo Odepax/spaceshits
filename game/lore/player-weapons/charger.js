@@ -91,8 +91,8 @@ export class ChargerPlayerWeaponRoutine extends PlayerWeaponRoutine {
 				this.universe.add(chargerLBullet(
 					playerPosition
 						.copy
-						.rotateBy(Random.between(-0.22, +0.22))
-						.relativeOffsetBy({ x: 37, y: 0 })
+						.rotateBy(Random.between(-0.13, +0.13))
+						.relativeOffsetBy({ x: 42.6, y: 0 })
 				))
 			}
 
@@ -102,8 +102,8 @@ export class ChargerPlayerWeaponRoutine extends PlayerWeaponRoutine {
 				this.universe.add(chargerSBullet(
 					playerPosition
 						.copy
-						.rotateBy(Random.between(-0.22, +0.22))
-						.relativeOffsetBy({ x: 37, y: 0 })
+						.rotateBy(Random.between(-0.26, +0.26))
+						.relativeOffsetBy({ x: 38.2, y: 0 })
 				))
 			}
 		}

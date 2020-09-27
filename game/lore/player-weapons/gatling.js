@@ -42,7 +42,7 @@ export class GatlingPlayerWeaponRoutine extends PlayerWeaponRoutine {
 		this.universe.add(gatlingBullet(
 			playerPosition
 				.copy
-				.relativeOffsetBy({ x: 39, y: 0 })
+				.relativeOffsetBy({ x: 36.5, y: 0 })
 		))
 	}
 }
@@ -58,16 +58,11 @@ export class DoubleGatlingPlayerWeaponRoutine extends PlayerWeaponRoutine {
 	fire() {
 		const playerPosition = this.player.get(Motion)[0].position
 
-		this.universe.add(gatlingBullet(
-			playerPosition
-				.copy
-				.relativeOffsetBy({ x: 39, y: +5 })
-		))
-
-		this.universe.add(gatlingBullet(
-			playerPosition
-				.copy
-				.relativeOffsetBy({ x: 35, y: -5 })
-		))
+		for (const i of [ -9, +9 ])
+			this.universe.add(gatlingBullet(
+				playerPosition
+					.copy
+					.relativeOffsetBy({ x: 36.5, y: i })
+			))
 	}
 }

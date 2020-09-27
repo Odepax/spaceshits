@@ -56,7 +56,8 @@ export class MissilePlayerWeaponRoutine extends PlayerWeaponRoutine {
 	constructor(userInput, game, universe) {
 		super(userInput, game, universe, 0.19, 19)
 
-		this.nextFireAngle = 0.4
+		this.nextFireAngle = 0.26
+		this.nextFireOffset = 12.6
 	}
 
 	/** @protected */
@@ -67,7 +68,7 @@ export class MissilePlayerWeaponRoutine extends PlayerWeaponRoutine {
 			playerPosition
 				.copy
 				.rotateBy(this.nextFireAngle *= -1)
-				.relativeOffsetBy({ x: 37, y: 0 })
+				.relativeOffsetBy({ x: 37, y: this.nextFireOffset *= -1 })
 		))
 	}
 }
@@ -78,19 +79,26 @@ export class DoubleMissilePlayerWeaponRoutine extends PlayerWeaponRoutine {
 	constructor(userInput, game, universe) {
 		super(userInput, game, universe, 0.19, 19)
 
-		this.fireAngles = [ -0.4, -0.1, +0.1, +0.4 ]
-		this.nextFireAngle = 0
+		this.firePositions = [
+			[ 28.1, -17.1, -0.26, ],
+			[ 35.5, -10, -0, ],
+			[ 35.5, +10, +0, ],
+			[ 28.1, +17.1, +0.26 ]
+		]
+
+		this.nextFirePosition = 0
 	}
 
 	/** @protected */
 	fire() {
 		const playerPosition = this.player.get(Motion)[0].position
+		const [ x, y, a ] = this.firePositions[++this.nextFirePosition % this.firePositions.length]
 
 		this.universe.add(doubleMissileBullet(
 			playerPosition
 				.copy
-				.rotateBy(this.fireAngles[++this.nextFireAngle % this.fireAngles.length])
-				.relativeOffsetBy({ x: 37, y: 0 })
+				.rotateBy(a)
+				.relativeOffsetBy({ x, y })
 		))
 	}
 }

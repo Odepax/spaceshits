@@ -1,5 +1,3 @@
-// TODO: bullet & divshard spawn placement
-
 // TODO: scenarii
 
 // TODO: balance HP, damage, and speed
@@ -14,6 +12,11 @@
 //     - charger boss: 28
 //     - charger boss bullet: 13, 9, 8, 7 from Lelf -> Right in sprite.svg
 //     - charger boss shard: 15
+
+// TODO: bullet spawn placement
+//  Remaining:
+//    - Crasher boss bullets: offset x by 39.9, rotate every PI / 4 (8)
+//    - Charger boss bullets: WIP
 
 class HostileBullet extends Link {
 	/** @param {Transform} position */

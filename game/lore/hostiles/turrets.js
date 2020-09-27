@@ -30,9 +30,11 @@ export function turret(position) {
 		new AutoWeaponModule(3, turret => {
 			const turretPosition = turret.get(Motion)[0].position
 
-			return [
-				turretBullet(turretPosition.copy.relativeOffsetBy({ x: 37, y: 0 }))
-			]
+			return [ turretBullet(
+				turretPosition
+					.copy
+					.relativeOffsetBy({ x: 39, y: 0 })
+			) ]
 		}),
 
 		new Render(Sprites.turretBase, Sprites.turret),
@@ -58,9 +60,11 @@ export function smartTurret(position) {
 		new AutoWeaponModule(3, turret => {
 			const turretPosition = turret.get(Motion)[ 0 ].position
 
-			return [
-				smartTurretBullet(turretPosition.copy.relativeOffsetBy({ x: 37, y: 0 }))
-			]
+			return [ smartTurretBullet(
+				turretPosition
+					.copy
+					.relativeOffsetBy({ x: 39, y: 0 })
+			) ]
 		}),
 
 		new Render(Sprites.turretBase, Sprites.smartTurret),

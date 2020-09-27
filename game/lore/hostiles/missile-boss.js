@@ -90,10 +90,10 @@ export function missileBoss(position) {
 			const bossPosition = boss.get(Motion)[0].position
 
 			return [
-				missileBossMissileM(bossPosition.copy.rotateBy(-Math.PI / 2).relativeOffsetBy({ x: 41, y: -19 })),
-				missileBossMissileM(bossPosition.copy.rotateBy(-Math.PI / 2).relativeOffsetBy({ x: 41, y: +19 })),
-				missileBossMissileM(bossPosition.copy.rotateBy(+Math.PI / 2).relativeOffsetBy({ x: 41, y: -19 })),
-				missileBossMissileM(bossPosition.copy.rotateBy(+Math.PI / 2).relativeOffsetBy({ x: 41, y: +19 })),
+				missileBossMissileM(bossPosition.copy.rotateBy(-Math.PI / 2).relativeOffsetBy({ x: 42, y: -11 })),
+				missileBossMissileM(bossPosition.copy.rotateBy(-Math.PI / 2).relativeOffsetBy({ x: 42, y: +11 })),
+				missileBossMissileM(bossPosition.copy.rotateBy(+Math.PI / 2).relativeOffsetBy({ x: 42, y: -11 })),
+				missileBossMissileM(bossPosition.copy.rotateBy(+Math.PI / 2).relativeOffsetBy({ x: 42, y: +11 })),
 			]
 		}),
 
@@ -167,25 +167,31 @@ export class MissileBossRoutine {
 		) {
 			this.nextShotTime = this.universe.clock.time + this.reloadTime
 
-			const bullet = Math.random() < 0.3
-				? missileBossMissileL(
-					this.boss.get(Motion)[0]
-						.position
-						.copy
-						.rotateBy(Random.angle())
-						.relativeOffsetBy({ x: 41, y: 0 })
-				)
-				: missileBossMissileS(
-					this.boss.get(Motion)[0]
-						.position
-						.copy
-						.rotateBy(Random.angle())
-						.relativeOffsetBy({ x: 41, y: 0 })
-				)
+			const bossPosition = this.boss.get(Motion)[0].position
 
-			// TODO: Apply damage boosters.
+			if (Math.random() < 0.3)
+				this.universe.add(missileBossMissileL(
+					bossPosition
+						.copy
+						.rotateBy(Random.in([ 0, Math.PI ]))
+						.relativeOffsetBy({ x: 47.5, y: 0 })
+				))
 
-			this.universe.add(bullet)
+			else {
+				const [ x, y, a ] = Random.in([
+					[ 41, 9.5, 5.24 ],
+					[ 36.8, 2.8, 3.93 ],
+					[ 42.5, 4.5, 2.36 ],
+					[ 41, 5.3, 0.52 ]
+				])
+
+				this.universe.add(missileBossMissileS(
+					bossPosition
+						.copy
+						.rotateBy(a)
+						.relativeOffsetBy({ x, y })
+				))
+			}
 		}
 	}
 

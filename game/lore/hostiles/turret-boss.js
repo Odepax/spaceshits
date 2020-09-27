@@ -29,9 +29,11 @@ export function bossDrone(position) {
 		new AutoWeaponModule(3, drone => {
 			const dronePosition = drone.get(Motion)[0].position
 
-			return [ -10, +10 ].map(i =>
-				bossDroneBullet(dronePosition.copy.relativeOffsetBy({ x: 37, y: i }))
-			)
+			return [ -9, +9 ].map(i => bossDroneBullet(
+				dronePosition
+					.copy
+					.relativeOffsetBy({ x: 30.6, y: i })
+			))
 		}),
 
 		new Render(Sprites.turretBossDrone),

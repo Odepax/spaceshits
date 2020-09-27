@@ -1,4 +1,4 @@
-import { Universe } from "../core/engine.js"
+import { Link, Universe } from "../core/engine.js"
 import { UserInputRegistry } from "../ux/user-input-capture.js"
 import { GameKeeper } from "../lore/game-keeper.js"
 

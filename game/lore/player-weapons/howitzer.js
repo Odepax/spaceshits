@@ -42,7 +42,7 @@ export class HowitzerPlayerWeaponRoutine extends PlayerWeaponRoutine {
 		this.universe.add(howitzerBullet(
 			playerPosition
 				.copy
-				.relativeOffsetBy({ x: 37, y: 0 })
+				.relativeOffsetBy({ x: 39.9, y: 0 })
 		))
 	}
 }

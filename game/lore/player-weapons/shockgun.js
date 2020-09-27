@@ -39,12 +39,12 @@ export class ShockgunPlayerWeaponRoutine extends PlayerWeaponRoutine {
 	fire() {
 		const playerPosition = this.player.get(Motion)[0].position
 
-		for (const i of [ -0.33, -0.11, +0.11, +0.33 ])
+		for (const i of [ -0.39, -0.13, +0.13, +0.39 ])
 			this.universe.add(shockgunBullet(
 				playerPosition
 					.copy
 					.rotateBy(i)
-					.relativeOffsetBy({ x: 37, y: 0 })
+					.relativeOffsetBy({ x: 33, y: 0 })
 			))
 	}
 }

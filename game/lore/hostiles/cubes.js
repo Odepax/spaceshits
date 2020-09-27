@@ -34,7 +34,7 @@ export function duoCube(position) {
 				cubePosition
 					.copy
 					.rotateBy(i * Math.PI / 2)
-					.relativeOffsetBy({ x: 37, y: 0 })
+					.relativeOffsetBy({ x: 35.6, y: 0 })
 			))
 		}),
 
@@ -64,7 +64,7 @@ export function quadCube(position) {
 				cubePosition
 					.copy
 					.rotateBy(i * Math.PI / 2)
-					.relativeOffsetBy({ x: 37, y: 0 })
+					.relativeOffsetBy({ x: 35.6, y: 0 })
 			))
 		}),
 
@@ -94,7 +94,7 @@ export function missileCube(position) {
 				cubePosition
 					.copy
 					.rotateBy(i * Math.PI / 2)
-					.relativeOffsetBy({ x: 37, y: 0 })
+					.relativeOffsetBy({ x: 35.6, y: 0 })
 			))
 		}),
 
