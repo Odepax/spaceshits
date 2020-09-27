@@ -20,7 +20,7 @@ function turretBossBullet(position) {
 
 		new Motion(position, Transform.angular(position.a, 800), Motion.removeOnEdges),
 
-		new Collider(7),
+		new Collider(8),
 		new RammingDamage(9, HostileShip, RammingDamage.removeOnDamage),
 
 		new Render(Sprites.turretBossBullet),

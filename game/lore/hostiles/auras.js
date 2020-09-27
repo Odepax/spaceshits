@@ -26,7 +26,7 @@ export function shieldAura(position) {
 
 		new HpGauge(101),
 
-		new AutoFieldModule(aura => new shield(aura.get(Motion)[0].position), 5),
+		new AutoFieldModule(aura => shield(aura.get(Motion)[0].position), 5),
 
 		new Render(Sprites.auraShield),
 		new OnAddExplosion(1, [ Colors.white, Colors.light, Colors.silver, Colors.blue ], 50),
@@ -46,7 +46,7 @@ export function medicAura(position) {
 
 		new HpGauge(101),
 
-		new AutoFieldModule(aura => new medicShield(aura.get(Motion)[0].position), 5),
+		new AutoFieldModule(aura => medicShield(aura.get(Motion)[0].position), 5),
 
 		new Render(Sprites.auraMedic),
 		new OnAddExplosion(1, [ Colors.white, Colors.light, Colors.teal, Colors.green ], 50),

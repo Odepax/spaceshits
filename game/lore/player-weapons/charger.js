@@ -36,7 +36,7 @@ function chargerLBullet(position) {
 
 		new Motion(position, Transform.angular(position.a, Random.between(500, 700)), Motion.removeOnEdges),
 
-		new Collider(7),
+		new Collider(9),
 		new RammingDamage(9, HostileShip, RammingDamage.removeOnDamage),
 
 		new Render(Sprites.playerChargerBulletL),

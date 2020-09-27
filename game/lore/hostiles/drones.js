@@ -24,7 +24,7 @@ export function drone(position) {
 
 		new Motion(position, Transform.angular(Random.angle(), Random.between(100, 200)), 1),
 
-		new Collider(21),
+		new Collider(16),
 		new RammingDamage(13, PlayerShip, RammingDamage.bounceOtherOnDamage),
 
 		new HpGauge(101),
@@ -44,12 +44,11 @@ export function combatDrone(position) {
 
 		new Motion(position, Transform.angular(Random.angle(), Random.between(100, 200)), 1),
 
-		new Collider(21),
+		new Collider(16),
 		new RammingDamage(13, PlayerShip, RammingDamage.bounceOtherOnDamage),
 
 		new HpGauge(101),
 
-		new AutoWeaponModule(),
 		new AutoWeaponModule(3, drone => {
 			const dronePosition = drone.get(Motion)[0].position
 

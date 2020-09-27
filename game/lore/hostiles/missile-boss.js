@@ -25,7 +25,7 @@ function missileBossMissileM(position) {
 		new Motion(position, Transform.angular(position.a, 800), Motion.removeOnEdges),
 		new MissileControl(Math.PI),
 
-		new Collider(7),
+		new Collider(9),
 		new RammingDamage(9, PlayerShip, RammingDamage.removeOnDamage),
 
 		new Render(Sprites.missileBossBulletM),
@@ -62,7 +62,7 @@ function missileBossMissileL(position) {
 		new Motion(position, Transform.angular(position.a, Random.between(400, 800)), Motion.ignoreEdges),
 		new MissileControl(Random.between(1, 4) * Math.PI),
 
-		new Collider(7),
+		new Collider(13),
 		new RammingDamage(9, PlayerStuff, RammingDamage.removeOnDamage),
 
 		new Render(Sprites.missileBossBulletL),
@@ -73,36 +73,34 @@ function missileBossMissileL(position) {
 
 const HostileMissileBoss = Symbol()
 
-export class MissileBoss extends Link {
-	/** @param {number} x @param {number} y */
-	constructor(x, y) {
-		super(
-			HostileShip,
-			HostileMissileBoss,
+/** @param {Transform} position */
+export function missileBoss(position) {
+	return new Link(
+		HostileShip,
+		HostileMissileBoss,
 
-			new Motion(new Transform(x, y), Transform.angular(Random.angle(), 200, Math.PI / 2), 1),
+		new Motion(position, Transform.angular(Random.angle(), 200, Math.PI / 2), 1),
 
-			new Collider(21),
-			new RammingDamage(13, PlayerShip, RammingDamage.bounceOnDamage),
+		new Collider(24),
+		new RammingDamage(13, PlayerShip, RammingDamage.bounceOnDamage),
 
-			new HpGauge(201),
+		new HpGauge(201),
 
-			new AutoWeaponModule(3, boss => {
-				const bossPosition = boss.get(Motion)[0].position
+		new AutoWeaponModule(3, boss => {
+			const bossPosition = boss.get(Motion)[0].position
 
-				return [
-					missileBossMissileM(bossPosition.copy.rotateBy(-Math.PI / 2).relativeOffsetBy({ x: 41, y: -19 })),
-					missileBossMissileM(bossPosition.copy.rotateBy(-Math.PI / 2).relativeOffsetBy({ x: 41, y: +19 })),
-					missileBossMissileM(bossPosition.copy.rotateBy(+Math.PI / 2).relativeOffsetBy({ x: 41, y: -19 })),
-					missileBossMissileM(bossPosition.copy.rotateBy(+Math.PI / 2).relativeOffsetBy({ x: 41, y: +19 })),
-				]
-			}),
+			return [
+				missileBossMissileM(bossPosition.copy.rotateBy(-Math.PI / 2).relativeOffsetBy({ x: 41, y: -19 })),
+				missileBossMissileM(bossPosition.copy.rotateBy(-Math.PI / 2).relativeOffsetBy({ x: 41, y: +19 })),
+				missileBossMissileM(bossPosition.copy.rotateBy(+Math.PI / 2).relativeOffsetBy({ x: 41, y: -19 })),
+				missileBossMissileM(bossPosition.copy.rotateBy(+Math.PI / 2).relativeOffsetBy({ x: 41, y: +19 })),
+			]
+		}),
 
-			new Render(Sprites.missileBoss),
-			new OnAddExplosion(1, [ Colors.white, Colors.light, Colors.purple, Colors.red ], 50),
-			new OnRemoveExplosion(0.5, [ Colors.red, Colors.black, Colors.grey, Colors.pink ], 150)
-		)
-	}
+		new Render(Sprites.missileBoss),
+		new OnAddExplosion(1, [ Colors.white, Colors.light, Colors.purple, Colors.red ], 50),
+		new OnRemoveExplosion(0.5, [ Colors.red, Colors.black, Colors.grey, Colors.pink ], 150)
+	)
 }
 
 /** @implements {import("../../core/engine").Routine} */

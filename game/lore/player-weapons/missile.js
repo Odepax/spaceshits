@@ -24,7 +24,7 @@ function missileBullet(position) {
 		new Motion(position, Transform.angular(position.a, 800), Motion.removeOnEdges),
 		new MissileControl(Math.PI),
 
-		new Collider(7),
+		new Collider(8),
 		new RammingDamage(9, HostileShip, RammingDamage.removeOnDamage),
 
 		new Render(Sprites.playerMissileBullet),

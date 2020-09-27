@@ -1,12 +1,19 @@
-// TODO: refactor player modules => wait for more factors
-// TODO: Apply * boosters.
-
-// TODO: explosion colors
-// TODO: collision radii
-// TODO: balance HP
-// TODO: balance damage
-// TODO: balance speed
 // TODO: bullet & divshard spawn placement
+
+// TODO: scenarii
+
+// TODO: balance HP, damage, and speed
+// TODO: logic to apply * boosters.
+
+// TODO: refactor player modules => wait for more factors
+
+// TODO: collision radii
+//   Remaining:
+//     - crasher boss: 32
+//     - crasher boss bullet: 7
+//     - charger boss: 28
+//     - charger boss bullet: 13, 9, 8, 7 from Lelf -> Right in sprite.svg
+//     - charger boss shard: 15
 
 class HostileBullet extends Link {
 	/** @param {Transform} position */

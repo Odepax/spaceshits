@@ -22,7 +22,7 @@ export function turret(position) {
 
 		new Motion(position, undefined, Motion.ignoreEdges),
 
-		new Collider(21),
+		new Collider(18),
 		new RammingDamage(13, PlayerShip, RammingDamage.bounceOtherOnDamage),
 
 		new HpGauge(101),
@@ -50,7 +50,7 @@ export function smartTurret(position) {
 
 		new Motion(position, undefined, Motion.ignoreEdges),
 
-		new Collider(21),
+		new Collider(18),
 		new RammingDamage(13, PlayerShip, RammingDamage.bounceOtherOnDamage),
 
 		new HpGauge(101),
@@ -77,7 +77,7 @@ function turretBullet(position) {
 
 		new Motion(position, Transform.angular(position.a, 800), Motion.removeOnEdges),
 
-		new Collider(7),
+		new Collider(8),
 		new RammingDamage(9, PlayerShip, RammingDamage.removeOnDamage),
 
 		new Render(Sprites.turretBullet),
@@ -95,7 +95,7 @@ function smartTurretBullet(position) {
 
 		new Motion(position, Transform.angular(position.a, SMART_TURRET_BULLET_SPEED), Motion.removeOnEdges),
 
-		new Collider(7),
+		new Collider(8),
 		new RammingDamage(9, PlayerShip, RammingDamage.removeOnDamage),
 
 		new Render(Sprites.smartTurretBullet),

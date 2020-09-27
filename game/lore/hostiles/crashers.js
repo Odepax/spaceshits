@@ -21,7 +21,7 @@ export function crasher(position) {
 
 		new Motion(position, Transform.angular(Random.angle(), Random.between(100, 200), Random.sign() * 2 * Math.PI), 1),
 
-		new Collider(21),
+		new Collider(25.5),
 		new RammingDamage(17, PlayerShip, RammingDamage.bounceOnDamage),
 
 		new HpGauge(101),
@@ -43,7 +43,7 @@ export function smartCrasher(position) {
 
 		new Motion(position, Transform.angular(Random.angle(), Random.between(100, 200), Random.sign() * 2 * Math.PI), 1),
 
-		new Collider(21),
+		new Collider(25.5),
 		new RammingDamage(17, PlayerShip, RammingDamage.bounceOnDamage),
 
 		new HpGauge(101),

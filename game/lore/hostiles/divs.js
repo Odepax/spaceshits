@@ -20,7 +20,7 @@ export function div(position) {
 
 		new Motion(position, Transform.angular(Random.angle(), Random.between(100, 200), Random.sign() * 0.2), 1),
 
-		new Collider(21),
+		new Collider(25.5),
 		new RammingDamage(13, PlayerShip, RammingDamage.bounceOnDamage),
 
 		new HpGauge(101),
@@ -39,7 +39,7 @@ export function divShard(position) {
 
 		new Motion(position, Transform.angular(position.a, Random.between(100, 200), Random.sign() * Math.PI), 1),
 
-		new Collider(21),
+		new Collider(11),
 		new RammingDamage(13, PlayerShip, RammingDamage.bounceOnDamage),
 
 		new HpGauge(101),

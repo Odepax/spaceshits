@@ -26,7 +26,7 @@ function shockwave(position, time) {
 		new Motion(position, undefined, Motion.ignoreEdges),
 
 		new Collider(0),
-		new RammingDamage(19, HostileShip/* | __OLD__Tags.bullet*/, RammingDamage.ignoreDamage),
+		new RammingDamage(19, HostileShip/* bullet*/, RammingDamage.ignoreDamage),
 
 		new WaveGrowth(time, time + 0.7, 307),
 
