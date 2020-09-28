@@ -55,7 +55,7 @@ export function medicAura(position) {
 }
 
 /** @param {Transform} position */
-export function shield(position) {
+function shield(position) {
 	return new Link(
 		new Motion(position, undefined, Motion.ignoreEdges),
 

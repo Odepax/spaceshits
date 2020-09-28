@@ -11,11 +11,11 @@ export class PlayerEnergy {
 	constructor() {
 		this.weapon = this.weaponMax = 113
 		this.weaponRegen = 23
-		this.weaponConsumption = 5
+		this.weaponConsumption = 0
 
 		this.aux = this.auxMax = 113
 		this.auxRegen = 23
-		this.auxConsumption = 5
+		this.auxConsumption = 0
 	}
 }
 

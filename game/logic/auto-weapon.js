@@ -70,7 +70,7 @@ export class HostileMissileRoutine {
 		if (!this.player && link.has(PlayerShip))
 			this.player = link
 
-		else if (link.has(HostileMissile, MissileControl))
+		else if (link.has(HostileMissile))
 			this.hostileMissiles.add(link)
 	}
 

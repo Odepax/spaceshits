@@ -1,5 +1,6 @@
 // TODO: scenarii
 
+// TODO: balance explosions
 // TODO: balance HP, damage, and speed
 // TODO: logic to apply * boosters.
 
@@ -17,6 +18,38 @@
 //  Remaining:
 //    - Crasher boss bullets: offset x by 39.9, rotate every PI / 4 (8)
 //    - Charger boss bullets: WIP
+
+class Floor0Arena0 extends ArenaScenario {
+	registerPlayerMovement() {
+		this.universe.register(new PlayerAimRoutine(this.userInput, this.game))
+	}
+
+	registerPlayerWeapon() {
+		this.universe.register(new TurretPlayerWeaponRoutine(this.userInput, this.game, this.universe))
+	}
+
+	registerPlayerModule() {
+		this.universe.register(new BerzerkPlayerAuxRoutine(this.userInput, this.game, this.universe, spawnBerzerkParticles(this.vfx)))
+	}
+
+	registerHostiles() {
+		this.universe.register(new DroneAimRoutine(this.universe))
+		this.universe.register(new AutoWeaponModuleRoutine(this.universe))
+	}
+
+	registerScenario() {
+		this.universe.register(new StagedArenaScenarioRoutine(this.universe, [
+			new WavesStage(0.3, 10, () => [bossDrone(new Transform(0.5 * this.universe.width, 0.95 * this.universe.height, -Math.PI / 4))]),
+			new FightStage()
+		], this.onVictory, this.onDefeat))
+	}
+
+	addPlayer() {
+		this.universe.add(turretPlayer(
+			new Transform(0.5 * this.universe.width, 0.8 * this.universe.height)
+		))
+	}
+}
 
 class HostileBullet extends Link {
 	/** @param {Transform} position */

@@ -1,126 +1,15 @@
 import { ArenaScenario } from "./arena-scenarios/arena-scenario.js"
-import { Floor0Arena0 } from "./arena-scenarios/floor-0-arena-0.js"
+import { Floor1Arena1 } from "./arena-scenarios/floor-1-arena-1.js"
+import { Floor1Arena2 } from "./arena-scenarios/floor-1-arena-2.js"
+import { Floor1Arena3 } from "./arena-scenarios/floor-1-arena-3.js"
+import { Floor1Arena4 } from "./arena-scenarios/floor-1-arena-4.js"
+import { Floor1Arena5 } from "./arena-scenarios/floor-1-arena-5.js"
 
 /** @type {import("../core/engine").Constructor<ArenaScenario>[]} */
 export const ArenaScenarios = [
-	Floor0Arena0,
-	/*
-	(universe, onVictory, onDefeat) => new StagedArenaScenarioRoutine(universe, [
-		new SwarmStage(() => [
-			new Hostile(universe.width * 0.3, universe.height * 0.2, Random.between(-200, 200), Random.between(-200, 200)),
-			new Hostile(universe.width * 0.7, universe.height * 0.2, Random.between(-200, 200), Random.between(-200, 200))
-		]),
-		new FightStage()
-	], onVictory, onDefeat),
-
-	(universe, onVictory, onDefeat) => new StagedArenaScenarioRoutine(universe, [
-		new WavesStage(every * 0.3 * seconds, max * 2 * times, () => [
-			//new Cube(universe.width * 0.5, universe.height * 0.2)
-		]),
-		new FightStage(),
-
-		new CalmStage(3),
-
-		new WavesStage(every * 0.3 * seconds, max * 2 * times, () => [
-			//new Cube(universe.width * 0.3, universe.height * 0.2),
-			//new Cube(universe.width * 0.7, universe.height * 0.2)
-		]),
-		new FightStage()
-	], onVictory, onDefeat),
-
-	(universe, onVictory, onDefeat) => new StagedArenaScenarioRoutine(universe, [
-		new WavesStage(every * 0.3 * seconds, max * 2 * times, () => [
-			//new Cube(universe.width * 0.3, universe.height * 0.2),
-			//new Cube(universe.width * 0.7, universe.height * 0.2)
-		]),
-		new FightStage(),
-
-		new CalmStage(3),
-
-		new WavesStage(every * 0.3 * seconds, max * 2 * times, () => [
-			//new Cube(universe.width * 0.3, universe.height * 0.2),
-			//new Cube(universe.width * 0.5, universe.height * 0.2),
-			//new Cube(universe.width * 0.7, universe.height * 0.2)
-		]),
-		new FightStage()
-	], onVictory, onDefeat),
-
-	(universe, onVictory, onDefeat) => new StagedArenaScenarioRoutine(universe, [
-		new WavesStage(every * 0.3 * seconds, max * 3 * times, () => [
-			//new Cube(universe.width * 0.5, universe.height * 0.2)
-		]),
-
-		new CalmStage(3),
-
-		new WavesStage(every * 2 * seconds, max * 10 * times, () => [
-			//new Cube(universe.width * 0.5, universe.height * 0.2)
-		]),
-		new FightStage()
-	], onVictory, onDefeat),
-
-	(universe, onVictory, onDefeat) => new StagedArenaScenarioRoutine(universe, [
-		new WavesStage(every * 0.3 * seconds, max * 3 * times, () => [
-			//new Cube(universe.width * 0.3, universe.height * 0.2),
-			//new Cube(universe.width * 0.7, universe.height * 0.2)
-		]),
-		new FightStage(),
-
-		new CalmStage(3),
-
-		new SwarmStage(() => [
-			//new CubeMissile(universe.width * 0.5, universe.height * 0.2, player)
-		]),
-		new FightStage()
-	], onVictory, onDefeat),
-
-	(universe, onVictory, onDefeat) => new StagedArenaScenarioRoutine(universe, [
-		new SwarmStage(() => [
-			//new CubeMissile(universe.width * 0.5, universe.height * 0.2, player)
-		]),
-
-		new CalmStage(3),
-
-		new WavesStage(every * 0.3 * seconds, max * 2 * times, () => [
-			//new Cube(universe.width * 0.3, universe.height * 0.2),
-			//new Cube(universe.width * 0.7, universe.height * 0.2),
-			//new CubeMissile(universe.width * 0.5, universe.height * 0.2, player)
-		]),
-		new FightStage()
-	], onVictory, onDefeat),
-
-	(universe, onVictory, onDefeat) => new StagedArenaScenarioRoutine(universe, [
-		new WavesStage(every * 0.3 * seconds, max * 2 * times, () => [
-			//new Cube(universe.width * 0.3, universe.height * 0.2),
-			//new Cube(universe.width * 0.5, universe.height * 0.2),
-			//new Cube(universe.width * 0.7, universe.height * 0.2)
-		]),
-		new FightStage(),
-
-		new CalmStage(3),
-
-		new SwarmStage(() => [
-			//new CubeMissile(universe.width * 0.3, universe.height * 0.2, player),
-			//new CubeMissile(universe.width * 0.5, universe.height * 0.2, player),
-			//new CubeMissile(universe.width * 0.7, universe.height * 0.2, player)
-		]),
-		new FightStage()
-	], onVictory, onDefeat),
-
-	(universe, onVictory, onDefeat) => new StagedArenaScenarioRoutine(universe, [
-		new WavesStage(every * 2 * seconds, max * 3 * times, () => [
-			//new Cube(universe.width * 0.3, universe.height * 0.2),
-			//new Cube(universe.width * 0.7, universe.height * 0.2)
-		]),
-		new FightStage(),
-
-		new CalmStage(3),
-
-		new WavesStage(every * 2 * seconds, max * 2 * times, () => [
-			//new Cube(universe.width * 0.5, universe.height * 0.2),
-			//new CubeMissile(universe.width * 0.3, universe.height * 0.2, player),
-			//new CubeMissile(universe.width * 0.7, universe.height * 0.2, player)
-		]),
-		new FightStage()
-	], onVictory, onDefeat)
-	*/
+	// Floor1Arena1,
+	// Floor1Arena2,
+	// Floor1Arena3,
+	// Floor1Arena4,
+	Floor1Arena5
 ]

@@ -4,7 +4,7 @@ import { Sprites } from "../../graphic/assets/sprites.js"
 import { Render } from "../../graphic/render.js"
 import { AuraFx, OnAddExplosion, OnRemoveExplosion } from "../../graphic/vfx.js"
 import { AutoWeaponModule } from "../../logic/auto-weapon.js"
-import { HostileBullet, HostileMissile, HostileProtectiveMissile, HostileShip, HostileStuff } from "../../logic/hostile.js"
+import { HostileBullet, HostileMissile, HostileShip, HostileStuff } from "../../logic/hostile.js"
 import { HpGauge } from "../../logic/life-and-death.js"
 import { MissileControl } from "../../logic/missile-control.js"
 import { PlayerShip, PlayerStuff } from "../../logic/player.js"
@@ -32,6 +32,8 @@ function missileBossMissileM(position) {
 		new OnRemoveExplosion(0.5, [ Colors.light, Colors.purple, Colors.pink ], 10)
 	)
 }
+
+const HostileProtectiveMissile = Symbol()
 
 /** @param {Transform} position */
 function missileBossMissileS(position) {
@@ -76,6 +78,7 @@ const HostileMissileBoss = Symbol()
 /** @param {Transform} position */
 export function missileBoss(position) {
 	return new Link(
+		HostileStuff,
 		HostileShip,
 		HostileMissileBoss,
 
@@ -98,8 +101,8 @@ export function missileBoss(position) {
 		}),
 
 		new Render(Sprites.missileBoss),
-		new OnAddExplosion(1, [ Colors.white, Colors.light, Colors.purple, Colors.red ], 50),
-		new OnRemoveExplosion(0.5, [ Colors.red, Colors.black, Colors.grey, Colors.pink ], 150)
+		new OnAddExplosion(1, [ Colors.white, Colors.light, Colors.purple, Colors.red ], 100),
+		new OnRemoveExplosion(0.5, [ Colors.red, Colors.black, Colors.grey, Colors.pink ], 200)
 	)
 }
 
@@ -200,7 +203,7 @@ export class MissileBossRoutine {
 		const [ bossMotion ] = this.boss.get(Motion)
 
 		for (const missile of this.protectiveMissiles) {
-			const [ missileMotion, missileControl ] = missile.get(Motion, ProtectiveMissileControl)
+			const [ missileMotion, missileControl ] = missile.get(Motion, MissileControl)
 
 			TargetFacing.smooth(
 				missileMotion.position,

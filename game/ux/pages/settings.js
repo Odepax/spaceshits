@@ -152,7 +152,7 @@ export class SettingsPage extends Page {
 			universe.add(player(
 				new Transform(0.5 * universe.width, 0.5 * universe.height),
 				undefined,
-				[ Sprites.playerDoubleGatling ]
+				Sprites.playerDoubleGatling
 			))
 
 			return universe
