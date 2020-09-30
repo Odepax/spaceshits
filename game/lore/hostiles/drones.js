@@ -22,10 +22,10 @@ export function drone(position) {
 		HostileShip,
 		HostileDrone,
 
-		new Motion(position, Transform.angular(Random.angle(), Random.between(100, 200)), 1),
+		new Motion(position, Transform.angular(position.a, Random.between(100, 200)), 1),
 
 		new Collider(16),
-		new RammingDamage(13, PlayerShip, RammingDamage.bounceOtherOnDamage),
+		new RammingDamage(13, PlayerShip, RammingDamage.bounceOnDamage),
 
 		new HpGauge(101),
 

@@ -22,7 +22,7 @@ export function bossDrone(position) {
 		new Motion(position, Transform.angular(position.a, 200), 1),
 
 		new Collider(16),
-		new RammingDamage(13, PlayerShip, RammingDamage.bounceOtherOnDamage),
+		new RammingDamage(13, PlayerShip, RammingDamage.bounceOnDamage),
 
 		new HpGauge(101),
 

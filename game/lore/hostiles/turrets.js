@@ -8,6 +8,7 @@ import { HostileBullet, HostileShip, HostileSmartTurret, HostileStuff, HostileTu
 import { HpGauge } from "../../logic/life-and-death.js"
 import { PlayerShip } from "../../logic/player.js"
 import { RammingDamage } from "../../logic/ramming-damage.js"
+import { Random } from "../../math/random.js"
 import { TargetFacing } from "../../math/target-facing.js"
 import { Transform } from "../../math/transform.js"
 import { Collider } from "../../physic/collision.js"
@@ -27,7 +28,7 @@ export function turret(position) {
 
 		new HpGauge(101),
 
-		new AutoWeaponModule(3, turret => {
+		new AutoWeaponModule(Random.between(2.6, 3.4), turret => {
 			const turretPosition = turret.get(Motion)[0].position
 
 			return [ turretBullet(
@@ -48,7 +49,7 @@ export function smartTurret(position) {
 	return new Link(
 		HostileStuff,
 		HostileShip,
-		HostileTurret,
+		HostileSmartTurret,
 
 		new Motion(position, undefined, Motion.ignoreEdges),
 
@@ -57,7 +58,7 @@ export function smartTurret(position) {
 
 		new HpGauge(101),
 
-		new AutoWeaponModule(3, turret => {
+		new AutoWeaponModule(Random.between(3.2, 4.8), turret => {
 			const turretPosition = turret.get(Motion)[ 0 ].position
 
 			return [ smartTurretBullet(

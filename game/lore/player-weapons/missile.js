@@ -2,10 +2,10 @@ import { Link, Universe } from "../../core/engine.js"
 import { Colors } from "../../graphic/assets/colors.js"
 import { Sprites } from "../../graphic/assets/sprites.js"
 import { Render } from "../../graphic/render.js"
-import { OnRemoveExplosion } from "../../graphic/vfx.js"
+import { AuraFx, OnRemoveExplosion } from "../../graphic/vfx.js"
 import { HostileShip } from "../../logic/hostile.js"
 import { MissileControl } from "../../logic/missile-control.js"
-import { PlayerBullet, PlayerMissile, PlayerStuff, PlayerWeaponRoutine } from "../../logic/player.js"
+import { PlayerBullet, PlayerMissile, PlayerShip, PlayerStuff, PlayerWeaponRoutine } from "../../logic/player.js"
 import { RammingDamage } from "../../logic/ramming-damage.js"
 import { TargetFacing } from "../../math/target-facing.js"
 import { Transform } from "../../math/transform.js"
@@ -14,6 +14,12 @@ import { Motion } from "../../physic/motion.js"
 import { UserInputRegistry } from "../../ux/user-input-capture.js"
 import { GameKeeper } from "../game-keeper.js"
 
+const ENERGY_PER_SHOT = 17
+const FIRE_RATE = 0.27
+const MISSILE_SPEED = 800
+const MISSILE_STEERING_SPEED = Math.PI
+const DAMAGE_PER_SHOT = 13
+
 /** @param {Transform} position */
 function missileBullet(position) {
 	return new Link(
@@ -21,11 +27,11 @@ function missileBullet(position) {
 		PlayerBullet,
 		PlayerMissile,
 
-		new Motion(position, Transform.angular(position.a, 800), Motion.removeOnEdges),
-		new MissileControl(Math.PI),
+		new Motion(position, Transform.angular(position.a, MISSILE_SPEED), Motion.removeOnEdges),
+		new MissileControl(MISSILE_STEERING_SPEED),
 
 		new Collider(8),
-		new RammingDamage(9, HostileShip, RammingDamage.removeOnDamage),
+		new RammingDamage(DAMAGE_PER_SHOT, HostileShip, RammingDamage.removeOnDamage),
 
 		new Render(Sprites.playerMissileBullet),
 		new OnRemoveExplosion(0.5, [ Colors.black, Colors.grey, Colors.purple, Colors.pink ], 10)
@@ -39,11 +45,11 @@ function doubleMissileBullet(position) {
 		PlayerBullet,
 		PlayerMissile,
 
-		new Motion(position, Transform.angular(position.a, 800), Motion.removeOnEdges),
-		new MissileControl(Math.PI),
+		new Motion(position, Transform.angular(position.a, MISSILE_SPEED), Motion.removeOnEdges),
+		new MissileControl(MISSILE_STEERING_SPEED),
 
 		new Collider(7),
-		new RammingDamage(9, HostileShip, RammingDamage.removeOnDamage),
+		new RammingDamage(DAMAGE_PER_SHOT / 2, HostileShip, RammingDamage.removeOnDamage),
 
 		new Render(Sprites.playerDoubleMissileBullet),
 		new OnRemoveExplosion(0.5, [ Colors.black, Colors.grey, Colors.purple, Colors.pink ], 10)
@@ -54,7 +60,7 @@ function doubleMissileBullet(position) {
 export class MissilePlayerWeaponRoutine extends PlayerWeaponRoutine {
 	/** @param {UserInputRegistry} userInput @param {GameKeeper} game @param {Universe} universe */
 	constructor(userInput, game, universe) {
-		super(userInput, game, universe, 0.19, 19)
+		super(userInput, game, universe, FIRE_RATE, ENERGY_PER_SHOT)
 
 		this.nextFireAngle = 0.26
 		this.nextFireOffset = 12.6
@@ -77,7 +83,7 @@ export class MissilePlayerWeaponRoutine extends PlayerWeaponRoutine {
 export class DoubleMissilePlayerWeaponRoutine extends PlayerWeaponRoutine {
 	/** @param {UserInputRegistry} userInput @param {GameKeeper} game @param {Universe} universe */
 	constructor(userInput, game, universe) {
-		super(userInput, game, universe, 0.19, 19)
+		super(userInput, game, universe, FIRE_RATE / 2, ENERGY_PER_SHOT / 2)
 
 		this.firePositions = [
 			[ 28.1, -17.1, -0.26, ],
@@ -105,10 +111,9 @@ export class DoubleMissilePlayerWeaponRoutine extends PlayerWeaponRoutine {
 
 /** @implements {import("../../core/engine").Routine} */
 export class PlayerMissileControlRoutine {
-	/** @param {UserInputRegistry} userInput @param {GameKeeper} game @param {Universe} universe */
-	constructor(userInput, game, universe) {
+	/** @param {UserInputRegistry} userInput @param {Universe} universe */
+	constructor(userInput, universe) {
 		this.userInput = userInput
-		this.game = game
 		this.universe = universe
 
 		/** @private @type {Set<Link>} */
@@ -146,7 +151,7 @@ export class PlayerMissileControlRoutine {
 	}
 
 	onStep() {
-		if (this.missiles.size == 0 || this.hostiles.size == 0)
+		if (this.hostiles.size == 0)
 			return;
 
 		let closestHostilePosition = this.userInput.mousePosition
