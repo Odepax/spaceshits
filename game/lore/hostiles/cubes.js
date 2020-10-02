@@ -13,6 +13,7 @@ import { Random } from "../../math/random.js"
 import { Transform } from "../../math/transform.js"
 import { Collider } from "../../physic/collision.js"
 import { Motion } from "../../physic/motion.js"
+import { CUBE_DUO_BULLET_DAMAGE, CUBE_DUO_BULLET_SPEED, CUBE_DUO_COLLISION_DAMAGE, CUBE_DUO_GUN_RELOAD_MAX, CUBE_DUO_GUN_RELOAD_MIN, CUBE_DUO_HP, CUBE_DUO_SPEED_MAX, CUBE_DUO_SPEED_MIN, CUBE_DUO_SPIN_MAX, CUBE_DUO_SPIN_MIN, CUBE_MISSILE_BULLET_DAMAGE, CUBE_MISSILE_BULLET_SPEED, CUBE_MISSILE_BULLET_STEER, CUBE_MISSILE_COLLISION_DAMAGE, CUBE_MISSILE_GUN_RELOAD_MAX, CUBE_MISSILE_GUN_RELOAD_MIN, CUBE_MISSILE_HP, CUBE_MISSILE_SPEED_MAX, CUBE_MISSILE_SPEED_MIN, CUBE_MISSILE_SPIN_MAX, CUBE_MISSILE_SPIN_MIN, CUBE_QUAD_BULLET_DAMAGE, CUBE_QUAD_BULLET_SPEED, CUBE_QUAD_COLLISION_DAMAGE, CUBE_QUAD_GUN_RELOAD_MAX, CUBE_QUAD_GUN_RELOAD_MIN, CUBE_QUAD_HP, CUBE_QUAD_SPEED_MAX, CUBE_QUAD_SPEED_MIN, CUBE_QUAD_SPIN_MAX, CUBE_QUAD_SPIN_MIN } from "../game-balance.js"
 
 /** @param {Transform} position */
 export function duoCube(position) {
@@ -20,14 +21,14 @@ export function duoCube(position) {
 		HostileStuff,
 		HostileShip,
 
-		new Motion(position, Transform.angular(Random.angle(), Random.between(0.8, 1.2) * 250, Random.sign() * Math.PI / 2), 1),
+		new Motion(position, Transform.angular(Random.angle(), Random.between(CUBE_DUO_SPEED_MIN, CUBE_DUO_SPEED_MAX), Random.sign() * Random.between(CUBE_DUO_SPIN_MIN, CUBE_DUO_SPIN_MAX)), 1),
 
 		new Collider(21),
-		new RammingDamage(13, PlayerShip, RammingDamage.bounceOnDamage),
+		new RammingDamage(CUBE_DUO_COLLISION_DAMAGE, PlayerShip, RammingDamage.bounceOnDamage),
 
-		new HpGauge(101),
+		new HpGauge(CUBE_DUO_HP),
 
-		new AutoWeaponModule(Random.between(2.6, 3.4), cube => {
+		new AutoWeaponModule(Random.between(CUBE_DUO_GUN_RELOAD_MIN, CUBE_DUO_GUN_RELOAD_MAX), cube => {
 			const cubePosition = cube.get(Motion)[0].position
 
 			return [ 1, 3 ].map(i => duoCubeBullet(
@@ -50,14 +51,14 @@ export function quadCube(position) {
 		HostileStuff,
 		HostileShip,
 
-		new Motion(position, Transform.angular(Random.angle(), Random.between(0.8, 1.2) * 250, Random.sign() * Math.PI / 2), 1),
+		new Motion(position, Transform.angular(Random.angle(), Random.between(CUBE_QUAD_SPEED_MIN, CUBE_QUAD_SPEED_MAX), Random.sign() * Random.between(CUBE_QUAD_SPIN_MIN, CUBE_QUAD_SPIN_MAX)), 1),
 
 		new Collider(21),
-		new RammingDamage(19, PlayerShip, RammingDamage.bounceOnDamage),
+		new RammingDamage(CUBE_QUAD_COLLISION_DAMAGE, PlayerShip, RammingDamage.bounceOnDamage),
 
-		new HpGauge(101),
+		new HpGauge(CUBE_QUAD_HP),
 
-		new AutoWeaponModule(Random.between(2.6, 3.4), cube => {
+		new AutoWeaponModule(Random.between(CUBE_QUAD_GUN_RELOAD_MIN, CUBE_QUAD_GUN_RELOAD_MAX), cube => {
 			const cubePosition = cube.get(Motion)[0].position
 
 			return [ 1, 2, 3, 4 ].map(i => quadCubeBullet(
@@ -80,14 +81,14 @@ export function missileCube(position) {
 		HostileStuff,
 		HostileShip,
 
-		new Motion(position, Transform.angular(Random.angle(), Random.between(0.8, 1.2) * 250, Random.sign() * Math.PI / 2), 1),
+		new Motion(position, Transform.angular(Random.angle(), Random.between(CUBE_MISSILE_SPEED_MIN, CUBE_MISSILE_SPEED_MAX), Random.sign() * Random.between(CUBE_MISSILE_SPIN_MIN, CUBE_MISSILE_SPIN_MAX)), 1),
 
 		new Collider(21),
-		new RammingDamage(13, PlayerShip, RammingDamage.bounceOnDamage),
+		new RammingDamage(CUBE_MISSILE_COLLISION_DAMAGE, PlayerShip, RammingDamage.bounceOnDamage),
 
-		new HpGauge(101),
+		new HpGauge(CUBE_MISSILE_HP),
 
-		new AutoWeaponModule(Random.between(3.2, 4.8), cube => {
+		new AutoWeaponModule(Random.between(CUBE_MISSILE_GUN_RELOAD_MIN, CUBE_MISSILE_GUN_RELOAD_MAX), cube => {
 			const cubePosition = cube.get(Motion)[0].position
 
 			return [ 1, 3 ].map(i => missileCubeBullet(
@@ -110,10 +111,10 @@ function duoCubeBullet(position) {
 		HostileStuff,
 		HostileBullet,
 
-		new Motion(position, Transform.angular(position.a, 800), Motion.removeOnEdges),
+		new Motion(position, Transform.angular(position.a, CUBE_DUO_BULLET_SPEED), Motion.removeOnEdges),
 
 		new Collider(7),
-		new RammingDamage(9, PlayerShip, RammingDamage.removeOnDamage),
+		new RammingDamage(CUBE_DUO_BULLET_DAMAGE, PlayerShip, RammingDamage.removeOnDamage),
 
 		new Render(Sprites.cubeBullet),
 		new OnRemoveExplosion(0.5, [ Colors.light, Colors.silver, Colors.white ], 15)
@@ -126,10 +127,10 @@ function quadCubeBullet(position) {
 		HostileStuff,
 		HostileBullet,
 
-		new Motion(position, Transform.angular(position.a, 800), Motion.removeOnEdges),
+		new Motion(position, Transform.angular(position.a, CUBE_QUAD_BULLET_SPEED), Motion.removeOnEdges),
 
 		new Collider(7),
-		new RammingDamage(13, PlayerShip, RammingDamage.removeOnDamage),
+		new RammingDamage(CUBE_QUAD_BULLET_DAMAGE, PlayerShip, RammingDamage.removeOnDamage),
 
 		new Render(Sprites.cubeQuadBullet),
 		new OnRemoveExplosion(0.5, [ Colors.light, Colors.orange, Colors.yellow ], 15)
@@ -143,11 +144,11 @@ function missileCubeBullet(position) {
 		HostileBullet,
 		HostileMissile,
 
-		new Motion(position, Transform.angular(position.a, 800), Motion.removeOnEdges),
-		new MissileControl(Math.PI),
+		new Motion(position, Transform.angular(position.a, CUBE_MISSILE_BULLET_SPEED), Motion.removeOnEdges),
+		new MissileControl(CUBE_MISSILE_BULLET_STEER),
 
 		new Collider(7),
-		new RammingDamage(9, PlayerShip, RammingDamage.removeOnDamage),
+		new RammingDamage(CUBE_MISSILE_BULLET_DAMAGE, PlayerShip, RammingDamage.removeOnDamage),
 
 		new Render(Sprites.cubeMissileBullet),
 		new OnRemoveExplosion(0.5, [ Colors.light, Colors.purple, Colors.pink ], 15)

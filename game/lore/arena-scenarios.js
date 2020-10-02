@@ -12,15 +12,15 @@ import { Floor2Arena5 } from "./arena-scenarios/floor-2-arena-5.js"
 
 /** @type {import("../core/engine").Constructor<ArenaScenario>[]} */
 export const ArenaScenarios = [
-	// Floor1Arena1,
-	// Floor1Arena2,
-	// Floor1Arena3,
-	// Floor1Arena4,
-	// Floor1Arena5,
+	Floor1Arena1,
+	Floor1Arena2,
+	Floor1Arena3,
+	Floor1Arena4,
+	Floor1Arena5,
 
 	Floor2Arena1,
-	// Floor2Arena2,
-	// Floor2Arena3,
-	// Floor2Arena4,
-	// Floor2Arena5,
+	Floor2Arena2,
+	Floor2Arena3,
+	Floor2Arena4,
+	Floor2Arena5,
 ]

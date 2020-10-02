@@ -8,13 +8,14 @@ export const PlayerBullet = Symbol()
 export const PlayerMissile = Symbol()
 
 export class PlayerEnergy {
-	constructor() {
-		this.weapon = this.weaponMax = 113
-		this.weaponRegen = 23
+	/** @param {number} weapon @param {number} weaponRegen @param {number} aux @param {number} auxRegen */
+	constructor(weapon, weaponRegen, aux, auxRegen) {
+		this.weapon = this.weaponMax = weapon
+		this.weaponRegen = weaponRegen
 		this.weaponConsumption = 0
 
-		this.aux = this.auxMax = 113
-		this.auxRegen = 23
+		this.aux = this.auxMax = aux
+		this.auxRegen = auxRegen
 		this.auxConsumption = 0
 	}
 }

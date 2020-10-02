@@ -14,6 +14,7 @@ import { TargetFacing } from "../../math/target-facing.js"
 import { Transform } from "../../math/transform.js"
 import { Collider } from "../../physic/collision.js"
 import { Motion } from "../../physic/motion.js"
+import { BOSS_MISSILE_COLLISION_DAMAGE, BOSS_MISSILE_GUN_BULLET_DAMAGE, BOSS_MISSILE_GUN_BULLET_SPEED, BOSS_MISSILE_GUN_RELOAD, BOSS_MISSILE_HP, BOSS_MISSILE_PROTEC_L_DAMAGE, BOSS_MISSILE_PROTEC_L_SPEED_MAX, BOSS_MISSILE_PROTEC_L_SPEED_MIN, BOSS_MISSILE_PROTEC_L_STEER_MAX, BOSS_MISSILE_PROTEC_L_STEER_MIN, BOSS_MISSILE_PROTEC_S_DAMAGE, BOSS_MISSILE_PROTEC_S_SPEED_MAX, BOSS_MISSILE_PROTEC_S_SPEED_MIN, BOSS_MISSILE_PROTEC_S_STEER_MAX, BOSS_MISSILE_PROTEC_S_STEER_MIN, BOSS_MISSILE_SPEED, BOSS_MISSILE_SPIN } from "../game-balance.js"
 
 /** @param {Transform} position */
 function missileBossMissileM(position) {
@@ -22,11 +23,11 @@ function missileBossMissileM(position) {
 		HostileBullet,
 		HostileMissile,
 
-		new Motion(position, Transform.angular(position.a, 800), Motion.removeOnEdges),
+		new Motion(position, Transform.angular(position.a, BOSS_MISSILE_GUN_BULLET_SPEED), Motion.removeOnEdges),
 		new MissileControl(Math.PI),
 
 		new Collider(9),
-		new RammingDamage(9, PlayerShip, RammingDamage.removeOnDamage),
+		new RammingDamage(BOSS_MISSILE_GUN_BULLET_DAMAGE, PlayerShip, RammingDamage.removeOnDamage),
 
 		new Render(Sprites.missileBossBulletM),
 		new OnRemoveExplosion(0.5, [ Colors.light, Colors.purple, Colors.pink ], 20)
@@ -42,11 +43,11 @@ function missileBossMissileS(position) {
 		HostileBullet,
 		HostileProtectiveMissile,
 
-		new Motion(position, Transform.angular(position.a, Random.between(600, 700)), Motion.ignoreEdges),
-		new MissileControl(Random.between(1, 4) * Math.PI),
+		new Motion(position, Transform.angular(position.a, Random.between(BOSS_MISSILE_PROTEC_S_SPEED_MIN, BOSS_MISSILE_PROTEC_S_SPEED_MAX)), Motion.ignoreEdges),
+		new MissileControl(Random.between(BOSS_MISSILE_PROTEC_S_STEER_MIN, BOSS_MISSILE_PROTEC_S_STEER_MAX)),
 
 		new Collider(7),
-		new RammingDamage(9, PlayerStuff, RammingDamage.removeOnDamage),
+		new RammingDamage(BOSS_MISSILE_PROTEC_S_DAMAGE, PlayerStuff, RammingDamage.removeOnDamage),
 
 		new Render(Sprites.missileBossBulletS),
 		new AuraFx(7, Colors.purple),
@@ -61,11 +62,11 @@ function missileBossMissileL(position) {
 		HostileBullet,
 		HostileProtectiveMissile,
 
-		new Motion(position, Transform.angular(position.a, Random.between(400, 800)), Motion.ignoreEdges),
-		new MissileControl(Random.between(1, 4) * Math.PI),
+		new Motion(position, Transform.angular(position.a, Random.between(BOSS_MISSILE_PROTEC_L_SPEED_MIN, BOSS_MISSILE_PROTEC_L_SPEED_MAX)), Motion.ignoreEdges),
+		new MissileControl(Random.between(BOSS_MISSILE_PROTEC_L_STEER_MIN, BOSS_MISSILE_PROTEC_L_STEER_MAX)),
 
 		new Collider(13),
-		new RammingDamage(9, PlayerStuff, RammingDamage.removeOnDamage),
+		new RammingDamage(BOSS_MISSILE_PROTEC_L_DAMAGE, PlayerStuff, RammingDamage.removeOnDamage),
 
 		new Render(Sprites.missileBossBulletL),
 		new AuraFx(13, Colors.red),
@@ -82,14 +83,14 @@ export function missileBoss(position) {
 		HostileShip,
 		HostileMissileBoss,
 
-		new Motion(position, Transform.angular(Random.angle(), 200, Math.PI / 2), 1),
+		new Motion(position, Transform.angular(Random.angle(), BOSS_MISSILE_SPEED, BOSS_MISSILE_SPIN), 1),
 
 		new Collider(24),
-		new RammingDamage(13, PlayerShip, RammingDamage.bounceOnDamage),
+		new RammingDamage(BOSS_MISSILE_COLLISION_DAMAGE, PlayerShip, RammingDamage.bounceOnDamage),
 
-		new HpGauge(201),
+		new HpGauge(BOSS_MISSILE_HP),
 
-		new AutoWeaponModule(3, boss => {
+		new AutoWeaponModule(BOSS_MISSILE_GUN_RELOAD, boss => {
 			const bossPosition = boss.get(Motion)[0].position
 
 			return [

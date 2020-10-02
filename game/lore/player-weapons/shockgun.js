@@ -10,6 +10,7 @@ import { Transform } from "../../math/transform.js"
 import { Collider } from "../../physic/collision.js"
 import { Motion } from "../../physic/motion.js"
 import { UserInputRegistry } from "../../ux/user-input-capture.js"
+import { PLAYER_SHOCK_GUN_BULLET_DAMAGE, PLAYER_SHOCK_GUN_BULLET_SPEED, PLAYER_SHOCK_GUN_ENERGY, PLAYER_SHOCK_GUN_RELOAD } from "../game-balance.js"
 import { GameKeeper } from "../game-keeper.js"
 
 /** @param {Transform} position */
@@ -18,10 +19,10 @@ function shockgunBullet(position) {
 		PlayerStuff,
 		PlayerBullet,
 
-		new Motion(position, Transform.angular(position.a, 700), Motion.removeOnEdges),
+		new Motion(position, Transform.angular(position.a, PLAYER_SHOCK_GUN_BULLET_SPEED), Motion.removeOnEdges),
 
 		new Collider(7),
-		new RammingDamage(9, HostileShip, RammingDamage.removeOnDamage),
+		new RammingDamage(PLAYER_SHOCK_GUN_BULLET_DAMAGE, HostileShip, RammingDamage.removeOnDamage),
 
 		new Render(Sprites.playerShockgunBullet),
 		new OnRemoveExplosion(0.5, [ Colors.black, Colors.grey, Colors.teal, Colors.green ], 10)
@@ -32,7 +33,7 @@ function shockgunBullet(position) {
 export class ShockgunPlayerWeaponRoutine extends PlayerWeaponRoutine {
 	/** @param {UserInputRegistry} userInput @param {GameKeeper} game @param {Universe} universe */
 	constructor(userInput, game, universe) {
-		super(userInput, game, universe, 0.19, 19)
+		super(userInput, game, universe, PLAYER_SHOCK_GUN_RELOAD, PLAYER_SHOCK_GUN_ENERGY)
 	}
 
 	/** @protected */

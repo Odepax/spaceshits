@@ -4,12 +4,13 @@ import { Sprites } from "../../graphic/assets/sprites.js"
 import { Render } from "../../graphic/render.js"
 import { OnRemoveExplosion } from "../../graphic/vfx.js"
 import { HostileShip } from "../../logic/hostile.js"
-import { PlayerBullet, PlayerStuff, PlayerWeaponRoutine } from "../../logic/player.js"
+import { PlayerBullet, PlayerEnergy, PlayerStuff, PlayerWeaponRoutine } from "../../logic/player.js"
 import { RammingDamage } from "../../logic/ramming-damage.js"
 import { Transform } from "../../math/transform.js"
 import { Collider } from "../../physic/collision.js"
 import { Motion } from "../../physic/motion.js"
 import { UserInputRegistry } from "../../ux/user-input-capture.js"
+import { PLAYER_CHARGE_GUN_BULLET_L_CHARGE, PLAYER_CHARGE_GUN_BULLET_L_DAMAGE, PLAYER_CHARGE_GUN_BULLET_L_SPEED_MAX, PLAYER_CHARGE_GUN_BULLET_L_SPEED_MIN, PLAYER_CHARGE_GUN_BULLET_S_CHARGE, PLAYER_CHARGE_GUN_BULLET_S_DAMAGE, PLAYER_CHARGE_GUN_BULLET_S_SPEED_MAX, PLAYER_CHARGE_GUN_BULLET_S_SPEED_MIN, PLAYER_CHARGE_GUN_ENERGY, PLAYER_CHARGE_GUN_RELOAD } from "../game-balance.js"
 import { GameKeeper } from "../game-keeper.js"
 
 /** @param {Transform} position */
@@ -18,10 +19,10 @@ function chargerSBullet(position) {
 		PlayerStuff,
 		PlayerBullet,
 
-		new Motion(position, Transform.angular(position.a, Random.between(400, 800)), Motion.removeOnEdges),
+		new Motion(position, Transform.angular(position.a, Random.between(PLAYER_CHARGE_GUN_BULLET_S_SPEED_MIN, PLAYER_CHARGE_GUN_BULLET_S_SPEED_MAX)), Motion.removeOnEdges),
 
 		new Collider(7),
-		new RammingDamage(9, HostileShip, RammingDamage.removeOnDamage),
+		new RammingDamage(PLAYER_CHARGE_GUN_BULLET_S_DAMAGE, HostileShip, RammingDamage.removeOnDamage),
 
 		new Render(Sprites.playerChargerBulletS),
 		new OnRemoveExplosion(0.5, [ Colors.black, Colors.grey, Colors.red, Colors.orange ], 15)
@@ -34,10 +35,10 @@ function chargerLBullet(position) {
 		PlayerStuff,
 		PlayerBullet,
 
-		new Motion(position, Transform.angular(position.a, Random.between(500, 700)), Motion.removeOnEdges),
+		new Motion(position, Transform.angular(position.a, Random.between(PLAYER_CHARGE_GUN_BULLET_L_SPEED_MIN, PLAYER_CHARGE_GUN_BULLET_L_SPEED_MAX)), Motion.removeOnEdges),
 
 		new Collider(9),
-		new RammingDamage(9, HostileShip, RammingDamage.removeOnDamage),
+		new RammingDamage(PLAYER_CHARGE_GUN_BULLET_L_DAMAGE, HostileShip, RammingDamage.removeOnDamage),
 
 		new Render(Sprites.playerChargerBulletL),
 		new OnRemoveExplosion(0.5, [ Colors.black, Colors.grey, Colors.red, Colors.orange ], 20)
@@ -48,10 +49,10 @@ function chargerLBullet(position) {
 export class ChargerPlayerWeaponRoutine extends PlayerWeaponRoutine {
 	/** @param {UserInputRegistry} userInput @param {GameKeeper} game @param {Universe} universe */
 	constructor(userInput, game, universe) {
-		super(userInput, game, universe, 11, 0)
+		super(userInput, game, universe, PLAYER_CHARGE_GUN_RELOAD, PLAYER_CHARGE_GUN_ENERGY)
 
-		this.largeBulletConsumption = 7
-		this.smallBulletConsumption = 3
+		this.largeBulletConsumption = PLAYER_CHARGE_GUN_BULLET_L_CHARGE
+		this.smallBulletConsumption = PLAYER_CHARGE_GUN_BULLET_S_CHARGE
 
 		this.charge = 0
 	}

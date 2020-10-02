@@ -1,19 +1,19 @@
-import { Link } from "../../core/engine.js"
-import { Transform } from "../../math/transform.js"
-import { Motion } from "../../physic/motion.js"
-import { Random } from "../../math/random.js"
-import { Collider } from "../../physic/collision.js"
-import { RammingDamage } from "../../logic/ramming-damage.js"
-import { HpGauge } from "../../logic/life-and-death.js"
-import { Render } from "../../graphic/render.js"
-import { Sprites } from "../../graphic/assets/sprites.js"
-import { OnAddExplosion, OnRemoveExplosion } from "../../graphic/vfx.js"
+import { Link, Universe } from "../../core/engine.js"
 import { Colors } from "../../graphic/assets/colors.js"
+import { Sprites } from "../../graphic/assets/sprites.js"
+import { Render } from "../../graphic/render.js"
+import { OnAddExplosion, OnRemoveExplosion } from "../../graphic/vfx.js"
 import { AutoWeaponModule } from "../../logic/auto-weapon.js"
-import { Universe } from "../../core/engine.js"
-import { TargetFacing } from "../../math/target-facing.js"
-import { PlayerShip } from "../../logic/player.js"
 import { HostileBullet, HostileDrone, HostileShip, HostileStuff } from "../../logic/hostile.js"
+import { HpGauge } from "../../logic/life-and-death.js"
+import { PlayerShip } from "../../logic/player.js"
+import { RammingDamage } from "../../logic/ramming-damage.js"
+import { Random } from "../../math/random.js"
+import { TargetFacing } from "../../math/target-facing.js"
+import { Transform } from "../../math/transform.js"
+import { Collider } from "../../physic/collision.js"
+import { Motion } from "../../physic/motion.js"
+import { DRONE_ANY_STEER, DRONE_COLLISION_DAMAGE, DRONE_COMBAT_BULLET_DAMAGE, DRONE_COMBAT_BULLET_SPEED, DRONE_COMBAT_COLLISION_DAMAGE, DRONE_COMBAT_GUN_RELOAD_MAX, DRONE_COMBAT_GUN_RELOAD_MIN, DRONE_COMBAT_HP, DRONE_COMBAT_SPEED_MAX, DRONE_COMBAT_SPEED_MIN, DRONE_HP, DRONE_SPEED_MAX, DRONE_SPEED_MIN } from "../game-balance.js"
 
 /** @param {Transform} position */
 export function drone(position) {
@@ -22,12 +22,12 @@ export function drone(position) {
 		HostileShip,
 		HostileDrone,
 
-		new Motion(position, Transform.angular(position.a, Random.between(100, 200)), 1),
+		new Motion(position, Transform.angular(position.a, Random.between(DRONE_SPEED_MIN, DRONE_SPEED_MAX)), 1),
 
 		new Collider(16),
-		new RammingDamage(13, PlayerShip, RammingDamage.bounceOnDamage),
+		new RammingDamage(DRONE_COLLISION_DAMAGE, PlayerShip, RammingDamage.bounceOnDamage),
 
-		new HpGauge(101),
+		new HpGauge(DRONE_HP),
 
 		new Render(Sprites.drone),
 		new OnAddExplosion(1, [ Colors.white, Colors.light, Colors.silver, Colors.blue ], 60),
@@ -42,14 +42,14 @@ export function combatDrone(position) {
 		HostileShip,
 		HostileDrone,
 
-		new Motion(position, Transform.angular(Random.angle(), Random.between(100, 200)), 1),
+		new Motion(position, Transform.angular(Random.angle(), Random.between(DRONE_COMBAT_SPEED_MIN, DRONE_COMBAT_SPEED_MAX)), 1),
 
 		new Collider(16),
-		new RammingDamage(13, PlayerShip, RammingDamage.bounceOtherOnDamage),
+		new RammingDamage(DRONE_COMBAT_COLLISION_DAMAGE, PlayerShip, RammingDamage.bounceOtherOnDamage),
 
-		new HpGauge(101),
+		new HpGauge(DRONE_COMBAT_HP),
 
-		new AutoWeaponModule(3, drone => {
+		new AutoWeaponModule(Random.between(DRONE_COMBAT_GUN_RELOAD_MIN, DRONE_COMBAT_GUN_RELOAD_MAX), drone => {
 			const dronePosition = drone.get(Motion)[0].position
 
 			return [ -9, +9 ].map(i => combatDroneBullet(
@@ -71,10 +71,10 @@ function combatDroneBullet(position) {
 		HostileStuff,
 		HostileBullet,
 
-		new Motion(position, Transform.angular(position.a, 800), Motion.removeOnEdges),
+		new Motion(position, Transform.angular(position.a, DRONE_COMBAT_BULLET_SPEED), Motion.removeOnEdges),
 
 		new Collider(7),
-		new RammingDamage(9, PlayerShip, RammingDamage.removeOnDamage),
+		new RammingDamage(DRONE_COMBAT_BULLET_DAMAGE, PlayerShip, RammingDamage.removeOnDamage),
 
 		new Render(Sprites.combatDroneBullet),
 		new OnRemoveExplosion(0.5, [ Colors.light, Colors.purple, Colors.blue ], 15)
@@ -122,7 +122,7 @@ export class DroneAimRoutine {
 					dronePosition,
 					droneVelocity,
 					playerPosition,
-					2 * Math.PI,
+					DRONE_ANY_STEER,
 					this.universe.clock.spf
 				)
 

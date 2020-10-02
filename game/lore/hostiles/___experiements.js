@@ -1,9 +1,9 @@
-// TODO: scenarii
-
 // TODO: balance HPs, damages, and speeds
 // TODO: logic to apply * boosters.
 
 // TODO: refactor player modules => wait for more factors
+
+// TODO: more scenarii
 
 // TODO: collision radii
 //   Remaining:

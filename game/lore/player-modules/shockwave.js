@@ -9,6 +9,7 @@ import { Transform } from "../../math/transform.js"
 import { Collider, CollisionRegistry } from "../../physic/collision.js"
 import { Motion } from "../../physic/motion.js"
 import { UserInputRegistry } from "../../ux/user-input-capture.js"
+import { PLAYER_SHOCKWAVE_DAMAGE, PLAYER_SHOCKWAVE_ENERGY, PLAYER_SHOCKWAVE_RADIUS, PLAYER_SHOCKWAVE_TTL } from "../game-balance.js"
 import { GameKeeper } from "../game-keeper.js"
 
 class WaveGrowth {
@@ -26,9 +27,9 @@ function shockwave(position, time) {
 		new Motion(position, undefined, Motion.ignoreEdges),
 
 		new Collider(0),
-		new RammingDamage(19, HostileShip/* bullet*/, RammingDamage.ignoreDamage),
+		new RammingDamage(PLAYER_SHOCKWAVE_DAMAGE, HostileShip/* bullet*/, RammingDamage.ignoreDamage),
 
-		new WaveGrowth(time, time + 0.7, 307),
+		new WaveGrowth(time, time + PLAYER_SHOCKWAVE_TTL, PLAYER_SHOCKWAVE_RADIUS),
 
 		new AuraFx(0, Colors.orange)
 	)
@@ -62,7 +63,7 @@ export class ShockwavePlayerAuxRoutine {
 
 		else if (link.has(PlayerShip)) {
 			this.player = link
-			this.player.get(PlayerEnergy)[0].auxConsumption = 17
+			this.player.get(PlayerEnergy)[0].auxConsumption = PLAYER_SHOCKWAVE_ENERGY
 		}
 	}
 

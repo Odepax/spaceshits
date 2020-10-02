@@ -12,6 +12,7 @@ import { Random } from "../../math/random.js"
 import { Transform } from "../../math/transform.js"
 import { Collider } from "../../physic/collision.js"
 import { Motion } from "../../physic/motion.js"
+import { CRASHER_COLLISION_DAMAGE, CRASHER_HP, CRASHER_SMART_COLLISION_DAMAGE, CRASHER_SMART_HP, CRASHER_SMART_SPEED_MAX, CRASHER_SMART_SPEED_MIN, CRASHER_SMART_SPIN, CRASHER_SMART_STEER, CRASHER_SPEED_MAX, CRASHER_SPEED_MIN, CRASHER_SPIN } from "../game-balance.js"
 
 /** @param {Transform} position */
 export function crasher(position) {
@@ -19,12 +20,12 @@ export function crasher(position) {
 		HostileStuff,
 		HostileShip,
 
-		new Motion(position, Transform.angular(Random.angle(), Random.between(100, 200), Random.sign() * 2 * Math.PI), 1),
+		new Motion(position, Transform.angular(Random.angle(), Random.between(CRASHER_SPEED_MIN, CRASHER_SPEED_MAX), Random.sign() * CRASHER_SPIN), 1),
 
 		new Collider(25.5),
-		new RammingDamage(17, PlayerShip, RammingDamage.bounceOnDamage),
+		new RammingDamage(CRASHER_COLLISION_DAMAGE, PlayerShip, RammingDamage.bounceOnDamage),
 
-		new HpGauge(101),
+		new HpGauge(CRASHER_HP),
 
 		new Render(Sprites.crasher),
 		new OnAddExplosion(1, [ Colors.white, Colors.light, Colors.silver, Colors.orange ], 80),
@@ -41,12 +42,12 @@ export function smartCrasher(position) {
 		HostileShip,
 		HostileSmartCrasher,
 
-		new Motion(position, Transform.angular(Random.angle(), Random.between(100, 200), Random.sign() * 2 * Math.PI), 1),
+		new Motion(position, Transform.angular(Random.angle(), Random.between(CRASHER_SMART_SPEED_MIN, CRASHER_SMART_SPEED_MAX), Random.sign() * CRASHER_SMART_SPIN), 1),
 
 		new Collider(25.5),
-		new RammingDamage(17, PlayerShip, RammingDamage.bounceOnDamage),
+		new RammingDamage(CRASHER_SMART_COLLISION_DAMAGE, PlayerShip, RammingDamage.bounceOnDamage),
 
-		new HpGauge(101),
+		new HpGauge(CRASHER_SMART_HP),
 
 		new Render(Sprites.smartCrasher),
 		new OnAddExplosion(1, [ Colors.white, Colors.light, Colors.purple, Colors.pink ], 80),
@@ -86,8 +87,6 @@ export class SmartCrasherAttractionRoutine {
 	}
 
 	onStep() {
-		const steeringSpeed = Math.PI / 4
-
 		if (this.player)
 		for (const crasher of this.crashers) {
 			const [ { position: crasherPosition, velocity: crasherVelocity } ] = crasher.get(Motion)
@@ -95,11 +94,11 @@ export class SmartCrasherAttractionRoutine {
 
 			const directionAngle = Angle.shortArcBetween(crasherVelocity.d, crasherPosition.directionTo(playerPosition))
 
-			if (Math.abs(directionAngle) < steeringSpeed * this.universe.clock.spf)
+			if (Math.abs(directionAngle) < CRASHER_SMART_STEER * this.universe.clock.spf)
 				crasherVelocity.d += directionAngle
 
 			else
-				crasherVelocity.d += Math.sign(directionAngle) * steeringSpeed * this.universe.clock.spf
+				crasherVelocity.d += Math.sign(directionAngle) * CRASHER_SMART_STEER * this.universe.clock.spf
 		}
 	}
 }

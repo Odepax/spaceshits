@@ -2,6 +2,7 @@ import { Link, Universe } from "../../core/engine.js"
 import { PlayerBullet, PlayerEnergy, PlayerShip } from "../../logic/player.js"
 import { RammingDamage } from "../../logic/ramming-damage.js"
 import { UserInputRegistry } from "../../ux/user-input-capture.js"
+import { PLAYER_BERZERK_DAMAGE_MULT, PLAYER_BERZERK_DURATION, PLAYER_BERZERK_ENERGY } from "../game-balance.js"
 import { GameKeeper } from "../game-keeper.js"
 
 export class BerzerkPlayerAuxRoutine {
@@ -25,11 +26,11 @@ export class BerzerkPlayerAuxRoutine {
 	onAdd(link) {
 		if (!this.player && link.has(PlayerShip)) {
 			this.player = link
-			this.player.get(PlayerEnergy)[0].auxConsumption = 17
+			this.player.get(PlayerEnergy)[0].auxConsumption = PLAYER_BERZERK_ENERGY
 		}
 
 		else if (this.isActive && link.has(PlayerBullet)) {
-			link.get(RammingDamage)[0].damage *= 2
+			link.get(RammingDamage)[0].damage *= PLAYER_BERZERK_DAMAGE_MULT
 			this.onActive?.(link)
 		}
 	}
@@ -51,7 +52,7 @@ export class BerzerkPlayerAuxRoutine {
 				playerEnergy.aux -= playerEnergy.auxConsumption
 
 				this.isActive = true
-				this.activationEndTime = this.universe.clock.time + 5
+				this.activationEndTime = this.universe.clock.time + PLAYER_BERZERK_DURATION
 			}
 
 			if (this.activationEndTime < this.universe.clock.time)

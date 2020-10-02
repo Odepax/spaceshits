@@ -12,6 +12,7 @@ import { RammingDamage } from "../../logic/ramming-damage.js"
 import { Transform } from "../../math/transform.js"
 import { Collider } from "../../physic/collision.js"
 import { Motion } from "../../physic/motion.js"
+import { AURA_MEDIC_COLLISION_DAMAGE, AURA_MEDIC_FIELD_HEAL, AURA_MEDIC_FIELD_HP, AURA_MEDIC_FIELD_HP_REGEN, AURA_MEDIC_FIELD_RELOAD, AURA_MEDIC_HP, AURA_SHIELD_COLLISION_DAMAGE, AURA_SHIELD_FIELD_HP, AURA_SHIELD_FIELD_HP_REGEN, AURA_SHIELD_FIELD_RELOAD, AURA_SHIELD_HP } from "../game-balance.js"
 
 /** @param {Transform} position */
 export function shieldAura(position) {
@@ -22,11 +23,11 @@ export function shieldAura(position) {
 		new Motion(position, undefined, Motion.ignoreEdges),
 
 		new Collider(21),
-		new RammingDamage(13, PlayerShip, RammingDamage.bounceOtherOnDamage),
+		new RammingDamage(AURA_SHIELD_COLLISION_DAMAGE, PlayerShip, RammingDamage.bounceOtherOnDamage),
 
-		new HpGauge(101),
+		new HpGauge(AURA_SHIELD_HP),
 
-		new AutoFieldModule(aura => shield(aura.get(Motion)[0].position), 5),
+		new AutoFieldModule(aura => shield(aura.get(Motion)[0].position), AURA_SHIELD_FIELD_RELOAD),
 
 		new Render(Sprites.auraShield),
 		new OnAddExplosion(1, [ Colors.white, Colors.light, Colors.silver, Colors.blue ], 75),
@@ -42,11 +43,11 @@ export function medicAura(position) {
 		new Motion(position, undefined, Motion.ignoreEdges),
 
 		new Collider(21),
-		new RammingDamage(13, PlayerShip, RammingDamage.bounceOtherOnDamage),
+		new RammingDamage(AURA_MEDIC_COLLISION_DAMAGE, PlayerShip, RammingDamage.bounceOtherOnDamage),
 
-		new HpGauge(101),
+		new HpGauge(AURA_MEDIC_HP),
 
-		new AutoFieldModule(aura => medicShield(aura.get(Motion)[0].position), 5),
+		new AutoFieldModule(aura => medicShield(aura.get(Motion)[0].position), AURA_MEDIC_FIELD_RELOAD),
 
 		new Render(Sprites.auraMedic),
 		new OnAddExplosion(1, [ Colors.white, Colors.light, Colors.teal, Colors.green ], 75),
@@ -62,7 +63,7 @@ function shield(position) {
 		new Collider(101),
 		new RammingDamage(0, PlayerBullet, RammingDamage.ignoreDamage),
 
-		new HpGauge(123, 13),
+		new HpGauge(AURA_SHIELD_FIELD_HP, AURA_SHIELD_FIELD_HP_REGEN),
 
 		new AuraFx(101, Colors.blue)
 	)
@@ -75,9 +76,9 @@ function medicShield(position) {
 
 		new Collider(101),
 		new RammingDamage(0, PlayerBullet, RammingDamage.ignoreDamage),
-		new HealField(13, HostileShip),
+		new HealField(AURA_MEDIC_FIELD_HEAL, HostileShip),
 
-		new HpGauge(123, 13),
+		new HpGauge(AURA_MEDIC_FIELD_HP, AURA_MEDIC_FIELD_HP_REGEN),
 
 		new AuraFx(101, Colors.green)
 	)

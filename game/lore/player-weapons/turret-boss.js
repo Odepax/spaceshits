@@ -10,6 +10,7 @@ import { Transform } from "../../math/transform.js"
 import { Collider } from "../../physic/collision.js"
 import { Motion } from "../../physic/motion.js"
 import { UserInputRegistry } from "../../ux/user-input-capture.js"
+import { PLAYER_TURRET_GUN_BULLET_DAMAGE, PLAYER_TURRET_GUN_BULLET_SPEED, PLAYER_TURRET_GUN_ENERGY, PLAYER_TURRET_GUN_RELOAD } from "../game-balance.js"
 import { GameKeeper } from "../game-keeper.js"
 
 /** @param {Transform} position */
@@ -18,10 +19,10 @@ function turretBossBullet(position) {
 		PlayerStuff,
 		PlayerBullet,
 
-		new Motion(position, Transform.angular(position.a, 800), Motion.removeOnEdges),
+		new Motion(position, Transform.angular(position.a, PLAYER_TURRET_GUN_BULLET_SPEED), Motion.removeOnEdges),
 
 		new Collider(8),
-		new RammingDamage(9, HostileShip, RammingDamage.removeOnDamage),
+		new RammingDamage(PLAYER_TURRET_GUN_BULLET_DAMAGE, HostileShip, RammingDamage.removeOnDamage),
 
 		new Render(Sprites.turretBossBullet),
 		new OnRemoveExplosion(0.5, [ Colors.black, Colors.grey, Colors.purple, Colors.blue ], 18)
@@ -32,7 +33,7 @@ function turretBossBullet(position) {
 export class TurretPlayerWeaponRoutine extends PlayerWeaponRoutine {
 	/** @param {UserInputRegistry} userInput @param {GameKeeper} game @param {Universe} universe */
 	constructor(userInput, game, universe) {
-		super(userInput, game, universe, 0.19, 19)
+		super(userInput, game, universe, PLAYER_TURRET_GUN_RELOAD, PLAYER_TURRET_GUN_ENERGY)
 	}
 
 	/** @protected */

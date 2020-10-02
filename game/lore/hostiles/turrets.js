@@ -13,6 +13,7 @@ import { TargetFacing } from "../../math/target-facing.js"
 import { Transform } from "../../math/transform.js"
 import { Collider } from "../../physic/collision.js"
 import { Motion } from "../../physic/motion.js"
+import { TURRET_COLLISION_DAMAGE, TURRET_GUN_BULLET_DAMAGE, TURRET_GUN_BULLET_SPEED, TURRET_GUN_RELOAD_MAX, TURRET_GUN_RELOAD_MIN, TURRET_HP, TURRET_SMART_COLLISION_DAMAGE, TURRET_SMART_GUN_BULLET_DAMAGE, TURRET_SMART_GUN_BULLET_SPEED, TURRET_SMART_GUN_RELOAD_MAX, TURRET_SMART_GUN_RELOAD_MIN, TURRET_SMART_HP, TURRET_SMART_STEER } from "../game-balance.js"
 
 /** @param {Transform} position */
 export function turret(position) {
@@ -24,11 +25,11 @@ export function turret(position) {
 		new Motion(position, undefined, Motion.ignoreEdges),
 
 		new Collider(18),
-		new RammingDamage(13, PlayerShip, RammingDamage.bounceOtherOnDamage),
+		new RammingDamage(TURRET_COLLISION_DAMAGE, PlayerShip, RammingDamage.bounceOtherOnDamage),
 
-		new HpGauge(101),
+		new HpGauge(TURRET_HP),
 
-		new AutoWeaponModule(Random.between(2.6, 3.4), turret => {
+		new AutoWeaponModule(Random.between(TURRET_GUN_RELOAD_MIN, TURRET_GUN_RELOAD_MAX), turret => {
 			const turretPosition = turret.get(Motion)[0].position
 
 			return [ turretBullet(
@@ -54,11 +55,11 @@ export function smartTurret(position) {
 		new Motion(position, undefined, Motion.ignoreEdges),
 
 		new Collider(18),
-		new RammingDamage(13, PlayerShip, RammingDamage.bounceOtherOnDamage),
+		new RammingDamage(TURRET_SMART_COLLISION_DAMAGE, PlayerShip, RammingDamage.bounceOtherOnDamage),
 
-		new HpGauge(101),
+		new HpGauge(TURRET_SMART_HP),
 
-		new AutoWeaponModule(Random.between(3.2, 4.8), turret => {
+		new AutoWeaponModule(Random.between(TURRET_SMART_GUN_RELOAD_MIN, TURRET_SMART_GUN_RELOAD_MAX), turret => {
 			const turretPosition = turret.get(Motion)[ 0 ].position
 
 			return [ smartTurretBullet(
@@ -80,17 +81,15 @@ function turretBullet(position) {
 		HostileStuff,
 		HostileBullet,
 
-		new Motion(position, Transform.angular(position.a, 800), Motion.removeOnEdges),
+		new Motion(position, Transform.angular(position.a, TURRET_GUN_BULLET_SPEED), Motion.removeOnEdges),
 
 		new Collider(8),
-		new RammingDamage(9, PlayerShip, RammingDamage.removeOnDamage),
+		new RammingDamage(TURRET_GUN_BULLET_DAMAGE, PlayerShip, RammingDamage.removeOnDamage),
 
 		new Render(Sprites.turretBullet),
 		new OnRemoveExplosion(0.5, [ Colors.light, Colors.silver, Colors.white ], 18)
 	)
 }
-
-const SMART_TURRET_BULLET_SPEED = 800
 
 /** @param {Transform} position */
 function smartTurretBullet(position) {
@@ -98,10 +97,10 @@ function smartTurretBullet(position) {
 		HostileStuff,
 		HostileBullet,
 
-		new Motion(position, Transform.angular(position.a, SMART_TURRET_BULLET_SPEED), Motion.removeOnEdges),
+		new Motion(position, Transform.angular(position.a, TURRET_SMART_GUN_BULLET_SPEED), Motion.removeOnEdges),
 
 		new Collider(8),
-		new RammingDamage(9, PlayerShip, RammingDamage.removeOnDamage),
+		new RammingDamage(TURRET_SMART_GUN_BULLET_DAMAGE, PlayerShip, RammingDamage.removeOnDamage),
 
 		new Render(Sprites.smartTurretBullet),
 		new OnRemoveExplosion(0.5, [ Colors.light, Colors.purple, Colors.blue ], 18)
@@ -172,9 +171,9 @@ export class SmartTurretAimRoutine extends TurretAimRoutine {
 			turretMotion.velocity,
 			playerMotion.position,
 			playerMotion.velocity,
-			Math.PI,
+			TURRET_SMART_STEER,
 			this.universe.clock.spf,
-			SMART_TURRET_BULLET_SPEED
+			TURRET_SMART_GUN_BULLET_SPEED
 		)
 	}
 }

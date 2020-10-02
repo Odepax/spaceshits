@@ -12,13 +12,8 @@ import { Transform } from "../../math/transform.js"
 import { Collider } from "../../physic/collision.js"
 import { Motion } from "../../physic/motion.js"
 import { UserInputRegistry } from "../../ux/user-input-capture.js"
+import { PLAYER_MISSILE_DOUBLE_GUN_BULLET_DAMAGE, PLAYER_MISSILE_DOUBLE_GUN_BULLET_SPEED, PLAYER_MISSILE_DOUBLE_GUN_BULLET_STEER, PLAYER_MISSILE_DOUBLE_GUN_ENERGY, PLAYER_MISSILE_DOUBLE_GUN_RELOAD, PLAYER_MISSILE_GUN_BULLET_DAMAGE, PLAYER_MISSILE_GUN_BULLET_SPEED, PLAYER_MISSILE_GUN_BULLET_STEER, PLAYER_MISSILE_GUN_ENERGY, PLAYER_MISSILE_GUN_RELOAD } from "../game-balance.js"
 import { GameKeeper } from "../game-keeper.js"
-
-const ENERGY_PER_SHOT = 17
-const FIRE_RATE = 0.27
-const MISSILE_SPEED = 800
-const MISSILE_STEERING_SPEED = Math.PI
-const DAMAGE_PER_SHOT = 13
 
 /** @param {Transform} position */
 function missileBullet(position) {
@@ -27,11 +22,11 @@ function missileBullet(position) {
 		PlayerBullet,
 		PlayerMissile,
 
-		new Motion(position, Transform.angular(position.a, MISSILE_SPEED), Motion.removeOnEdges),
-		new MissileControl(MISSILE_STEERING_SPEED),
+		new Motion(position, Transform.angular(position.a, PLAYER_MISSILE_GUN_BULLET_SPEED), Motion.removeOnEdges),
+		new MissileControl(PLAYER_MISSILE_GUN_BULLET_STEER),
 
 		new Collider(8),
-		new RammingDamage(DAMAGE_PER_SHOT, HostileShip, RammingDamage.removeOnDamage),
+		new RammingDamage(PLAYER_MISSILE_GUN_BULLET_DAMAGE, HostileShip, RammingDamage.removeOnDamage),
 
 		new Render(Sprites.playerMissileBullet),
 		new OnRemoveExplosion(0.5, [ Colors.black, Colors.grey, Colors.purple, Colors.pink ], 18)
@@ -45,11 +40,11 @@ function doubleMissileBullet(position) {
 		PlayerBullet,
 		PlayerMissile,
 
-		new Motion(position, Transform.angular(position.a, MISSILE_SPEED), Motion.removeOnEdges),
-		new MissileControl(MISSILE_STEERING_SPEED),
+		new Motion(position, Transform.angular(position.a, PLAYER_MISSILE_DOUBLE_GUN_BULLET_SPEED), Motion.removeOnEdges),
+		new MissileControl(PLAYER_MISSILE_DOUBLE_GUN_BULLET_STEER),
 
 		new Collider(7),
-		new RammingDamage(DAMAGE_PER_SHOT / 2, HostileShip, RammingDamage.removeOnDamage),
+		new RammingDamage(PLAYER_MISSILE_DOUBLE_GUN_BULLET_DAMAGE, HostileShip, RammingDamage.removeOnDamage),
 
 		new Render(Sprites.playerDoubleMissileBullet),
 		new OnRemoveExplosion(0.5, [ Colors.black, Colors.grey, Colors.purple, Colors.pink ], 10)
@@ -60,7 +55,7 @@ function doubleMissileBullet(position) {
 export class MissilePlayerWeaponRoutine extends PlayerWeaponRoutine {
 	/** @param {UserInputRegistry} userInput @param {GameKeeper} game @param {Universe} universe */
 	constructor(userInput, game, universe) {
-		super(userInput, game, universe, FIRE_RATE, ENERGY_PER_SHOT)
+		super(userInput, game, universe, PLAYER_MISSILE_GUN_RELOAD, PLAYER_MISSILE_GUN_ENERGY)
 
 		this.nextFireAngle = 0.26
 		this.nextFireOffset = 12.6
@@ -83,7 +78,7 @@ export class MissilePlayerWeaponRoutine extends PlayerWeaponRoutine {
 export class DoubleMissilePlayerWeaponRoutine extends PlayerWeaponRoutine {
 	/** @param {UserInputRegistry} userInput @param {GameKeeper} game @param {Universe} universe */
 	constructor(userInput, game, universe) {
-		super(userInput, game, universe, FIRE_RATE / 2, ENERGY_PER_SHOT / 2)
+		super(userInput, game, universe, PLAYER_MISSILE_DOUBLE_GUN_RELOAD, PLAYER_MISSILE_DOUBLE_GUN_ENERGY)
 
 		this.firePositions = [
 			[ 28.1, -17.1, -0.26, ],
