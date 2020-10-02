@@ -1,4 +1,5 @@
 import { Universe } from "../../core/engine.js"
+import { Particles } from "../../graphic/assets/particles.js"
 import { DamageColorizationRoutine, PlayerStatsVisualizationRoutine } from "../../graphic/hud.js"
 import { RenderRoutine } from "../../graphic/render.js"
 import { VfxRegistry } from "../../graphic/vfx.js"
@@ -9,7 +10,6 @@ import { CollisionDetectionRoutine, CollisionRegistry } from "../../physic/colli
 import { MotionRoutine } from "../../physic/motion.js"
 import { UserInputCaptureRoutine, UserInputRegistry } from "../../ux/user-input-capture.js"
 import { GameKeeper } from "../game-keeper.js"
-import { spawDamageParticles } from "../known-particles.js"
 
 /** @abstract */
 export class ArenaScenario {
@@ -56,7 +56,7 @@ export class ArenaScenario {
 		this.universe.register(new CollisionDetectionRoutine(this.collisions))
 
 		// 4. Collision reactions.
-		this.universe.register(new RammingDamageRoutine(this.collisions, this.universe, spawDamageParticles(this.vfx)))
+		this.universe.register(new RammingDamageRoutine(this.collisions, this.universe, Particles.spawDamage(this.vfx)))
 		this.registerFields()
 		this.universe.register(new LifeAndDeathRoutine(this.universe))
 

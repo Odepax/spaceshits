@@ -28,7 +28,7 @@ class Floor0Arena0 extends ArenaScenario {
 	}
 
 	registerPlayerModule() {
-		this.universe.register(new BerzerkPlayerAuxRoutine(this.userInput, this.game, this.universe, spawnBerzerkParticles(this.vfx)))
+		this.universe.register(new BerzerkPlayerAuxRoutine(this.userInput, this.game, this.universe, Particles.spawnBerzerk(this.vfx)))
 	}
 
 	registerHostiles() {
@@ -38,7 +38,7 @@ class Floor0Arena0 extends ArenaScenario {
 
 	registerScenario() {
 		this.universe.register(new StagedArenaScenarioRoutine(this.universe, [
-			new WavesStage(0.3, 10, () => [bossDrone(new Transform(0.5 * this.universe.width, 0.95 * this.universe.height, -Math.PI / 4))]),
+			new WavesStage(0.3, 10, () => [ bossDrone(new Transform(0.5 * this.universe.width, 0.95 * this.universe.height, -Math.PI / 4)) ]),
 			new FightStage()
 		], this.onVictory, this.onDefeat))
 	}
