@@ -52,7 +52,7 @@ export class GameKeeper {
 
 	/** @param {number} arenaCompletionTime */
 	completeArena(arenaCompletionTime) {
-		this.balance += ~~(1500 * this.arenaIndex / arenaCompletionTime)
+		this.balance += ~~(3000 * this.arenaIndex / arenaCompletionTime)
 		++this.arenaIndex
 	}
 

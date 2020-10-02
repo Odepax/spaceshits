@@ -14,6 +14,8 @@ export class PlayerEnergy {
 		this.weaponRegen = weaponRegen
 		this.weaponConsumption = 0
 
+		this.weaponReloadTime = 0
+
 		this.aux = this.auxMax = aux
 		this.auxRegen = auxRegen
 		this.auxConsumption = 0
@@ -41,7 +43,11 @@ export class PlayerWeaponRoutine {
 	onAdd(link) {
 		if (link.has(PlayerShip)) {
 			this.player = link
-			this.player.get(PlayerEnergy)[0].weaponConsumption = this.shotConsumption
+
+			const [ playerEnergy ] = this.player.get(PlayerEnergy)
+
+			playerEnergy.weaponReloadTime = this.reloadTime
+			playerEnergy.weaponConsumption = this.shotConsumption
 		}
 	}
 
@@ -60,7 +66,7 @@ export class PlayerWeaponRoutine {
 				&& playerEnergy.weaponConsumption <= playerEnergy.weapon // Has energy?
 				&& this.userInput.isPressed(this.game.keyBindings.shoot) // Has order?
 			) {
-				this.nextShotTime = this.universe.clock.time + this.reloadTime
+				this.nextShotTime = this.universe.clock.time + playerEnergy.weaponReloadTime
 				playerEnergy.weapon -= playerEnergy.weaponConsumption
 
 				this.fire()

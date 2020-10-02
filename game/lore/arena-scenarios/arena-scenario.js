@@ -10,6 +10,7 @@ import { CollisionDetectionRoutine, CollisionRegistry } from "../../physic/colli
 import { MotionRoutine } from "../../physic/motion.js"
 import { UserInputCaptureRoutine, UserInputRegistry } from "../../ux/user-input-capture.js"
 import { GameKeeper } from "../game-keeper.js"
+import { PlayerBoostRoutine as PlayerBoostsRoutine } from "../player.js"
 
 /** @abstract */
 export class ArenaScenario {
@@ -50,6 +51,8 @@ export class ArenaScenario {
 
 		this.registerHostiles()
 		this.registerScenario()
+
+		this.universe.register(new PlayerBoostsRoutine(this.game))
 
 		// 3. Motion dynamics.
 		this.universe.register(new MotionRoutine(this.universe))
