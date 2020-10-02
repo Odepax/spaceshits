@@ -29,8 +29,8 @@ export function shieldAura(position) {
 		new AutoFieldModule(aura => shield(aura.get(Motion)[0].position), 5),
 
 		new Render(Sprites.auraShield),
-		new OnAddExplosion(1, [ Colors.white, Colors.light, Colors.silver, Colors.blue ], 50),
-		new OnRemoveExplosion(0.5, [ Colors.blue, Colors.black, Colors.grey, Colors.silver ], 100)
+		new OnAddExplosion(1, [ Colors.white, Colors.light, Colors.silver, Colors.blue ], 75),
+		new OnRemoveExplosion(0.5, [ Colors.blue, Colors.black, Colors.grey, Colors.silver ], 150)
 	)
 }
 
@@ -49,8 +49,8 @@ export function medicAura(position) {
 		new AutoFieldModule(aura => medicShield(aura.get(Motion)[0].position), 5),
 
 		new Render(Sprites.auraMedic),
-		new OnAddExplosion(1, [ Colors.white, Colors.light, Colors.teal, Colors.green ], 50),
-		new OnRemoveExplosion(0.5, [ Colors.green, Colors.black, Colors.grey, Colors.teal ], 100)
+		new OnAddExplosion(1, [ Colors.white, Colors.light, Colors.teal, Colors.green ], 75),
+		new OnRemoveExplosion(0.5, [ Colors.green, Colors.black, Colors.grey, Colors.teal ], 150)
 	)
 }
 

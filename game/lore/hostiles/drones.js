@@ -30,8 +30,8 @@ export function drone(position) {
 		new HpGauge(101),
 
 		new Render(Sprites.drone),
-		new OnAddExplosion(1, [ Colors.white, Colors.light, Colors.silver, Colors.blue ], 50),
-		new OnRemoveExplosion(0.5, [ Colors.blue, Colors.black, Colors.grey, Colors.silver ], 100)
+		new OnAddExplosion(1, [ Colors.white, Colors.light, Colors.silver, Colors.blue ], 60),
+		new OnRemoveExplosion(0.5, [ Colors.blue, Colors.black, Colors.grey, Colors.silver ], 120)
 	)
 }
 
@@ -60,8 +60,8 @@ export function combatDrone(position) {
 		}),
 
 		new Render(Sprites.combatDrone),
-		new OnAddExplosion(1, [ Colors.white, Colors.light, Colors.blue, Colors.purple ], 50),
-		new OnRemoveExplosion(0.5, [ Colors.purple, Colors.black, Colors.grey, Colors.pink ], 100)
+		new OnAddExplosion(1, [ Colors.white, Colors.light, Colors.blue, Colors.purple ], 60),
+		new OnRemoveExplosion(0.5, [ Colors.purple, Colors.black, Colors.grey, Colors.pink ], 120)
 	)
 }
 
@@ -77,7 +77,7 @@ function combatDroneBullet(position) {
 		new RammingDamage(9, PlayerShip, RammingDamage.removeOnDamage),
 
 		new Render(Sprites.combatDroneBullet),
-		new OnRemoveExplosion(0.5, [ Colors.light, Colors.purple, Colors.blue ], 10)
+		new OnRemoveExplosion(0.5, [ Colors.light, Colors.purple, Colors.blue ], 15)
 	)
 }
 

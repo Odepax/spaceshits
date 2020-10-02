@@ -1,7 +1,6 @@
 // TODO: scenarii
 
-// TODO: balance explosions
-// TODO: balance HP, damage, and speed
+// TODO: balance HPs, damages, and speeds
 // TODO: logic to apply * boosters.
 
 // TODO: refactor player modules => wait for more factors

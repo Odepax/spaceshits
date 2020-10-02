@@ -24,7 +24,7 @@ function chargerSBullet(position) {
 		new RammingDamage(9, HostileShip, RammingDamage.removeOnDamage),
 
 		new Render(Sprites.playerChargerBulletS),
-		new OnRemoveExplosion(0.5, [ Colors.black, Colors.grey, Colors.red, Colors.orange ], 10)
+		new OnRemoveExplosion(0.5, [ Colors.black, Colors.grey, Colors.red, Colors.orange ], 15)
 	)
 }
 
@@ -40,7 +40,7 @@ function chargerLBullet(position) {
 		new RammingDamage(9, HostileShip, RammingDamage.removeOnDamage),
 
 		new Render(Sprites.playerChargerBulletL),
-		new OnRemoveExplosion(0.5, [ Colors.black, Colors.grey, Colors.red, Colors.orange ], 10)
+		new OnRemoveExplosion(0.5, [ Colors.black, Colors.grey, Colors.red, Colors.orange ], 20)
 	)
 }
 

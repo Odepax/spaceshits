@@ -43,7 +43,7 @@ export function spawnHealParticles(vfx, universe) {
 
 			const { x, y } = link.get(Motion)[0].position
 
-			vfx.spawnParticleBurst(2, x, y, 70, 170, 0.5, [ Colors.green, Colors.teal ], 3, 7)
+			vfx.spawnParticleBurst(2, x, y, 80, 180, 0.75, [ Colors.green, Colors.teal ], 3, 7)
 		}
 	}
 }

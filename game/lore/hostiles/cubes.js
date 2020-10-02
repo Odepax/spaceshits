@@ -39,8 +39,8 @@ export function duoCube(position) {
 		}),
 
 		new Render(Sprites.cube),
-		new OnAddExplosion(1, [ Colors.white, Colors.light, Colors.silver, Colors.orange ], 50),
-		new OnRemoveExplosion(0.5, [ Colors.orange, Colors.black, Colors.grey, Colors.silver ], 100)
+		new OnAddExplosion(1, [ Colors.white, Colors.light, Colors.silver, Colors.orange ], 75),
+		new OnRemoveExplosion(0.5, [ Colors.orange, Colors.black, Colors.grey, Colors.silver ], 150)
 	)
 }
 
@@ -69,8 +69,8 @@ export function quadCube(position) {
 		}),
 
 		new Render(Sprites.cubeQuad),
-		new OnAddExplosion(1, [ Colors.white, Colors.light, Colors.orange, Colors.yellow ], 50),
-		new OnRemoveExplosion(0.5, [ Colors.yellow, Colors.black, Colors.grey, Colors.orange ], 100)
+		new OnAddExplosion(1, [ Colors.white, Colors.light, Colors.orange, Colors.yellow ], 75),
+		new OnRemoveExplosion(0.5, [ Colors.yellow, Colors.black, Colors.grey, Colors.orange ], 150)
 	)
 }
 
@@ -99,8 +99,8 @@ export function missileCube(position) {
 		}),
 
 		new Render(Sprites.cubeMissile),
-		new OnAddExplosion(1, [ Colors.white, Colors.light, Colors.orange, Colors.pink ], 50),
-		new OnRemoveExplosion(0.5, [ Colors.pink, Colors.black, Colors.grey, Colors.orange ], 100)
+		new OnAddExplosion(1, [ Colors.white, Colors.light, Colors.orange, Colors.pink ], 75),
+		new OnRemoveExplosion(0.5, [ Colors.pink, Colors.black, Colors.grey, Colors.orange ], 150)
 	)
 }
 
@@ -116,7 +116,7 @@ function duoCubeBullet(position) {
 		new RammingDamage(9, PlayerShip, RammingDamage.removeOnDamage),
 
 		new Render(Sprites.cubeBullet),
-		new OnRemoveExplosion(0.5, [ Colors.light, Colors.silver, Colors.white ], 10)
+		new OnRemoveExplosion(0.5, [ Colors.light, Colors.silver, Colors.white ], 15)
 	)
 }
 
@@ -132,7 +132,7 @@ function quadCubeBullet(position) {
 		new RammingDamage(13, PlayerShip, RammingDamage.removeOnDamage),
 
 		new Render(Sprites.cubeQuadBullet),
-		new OnRemoveExplosion(0.5, [ Colors.light, Colors.orange, Colors.yellow ], 10)
+		new OnRemoveExplosion(0.5, [ Colors.light, Colors.orange, Colors.yellow ], 15)
 	)
 }
 
@@ -150,6 +150,6 @@ function missileCubeBullet(position) {
 		new RammingDamage(9, PlayerShip, RammingDamage.removeOnDamage),
 
 		new Render(Sprites.cubeMissileBullet),
-		new OnRemoveExplosion(0.5, [ Colors.light, Colors.purple, Colors.pink ], 10)
+		new OnRemoveExplosion(0.5, [ Colors.light, Colors.purple, Colors.pink ], 15)
 	)
 }

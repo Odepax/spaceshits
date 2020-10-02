@@ -18,9 +18,9 @@ export const ArenaScenarios = [
 	// Floor1Arena4,
 	// Floor1Arena5,
 
-	// Floor2Arena1,
+	Floor2Arena1,
 	// Floor2Arena2,
 	// Floor2Arena3,
 	// Floor2Arena4,
-	Floor2Arena5,
+	// Floor2Arena5,
 ]

@@ -26,8 +26,8 @@ export function div(position) {
 		new HpGauge(101),
 
 		new Render(Sprites.div),
-		new OnAddExplosion(1, [ Colors.white, Colors.light, Colors.orange, Colors.teal ], 50),
-		new OnRemoveExplosion(0.5, [ Colors.teal, Colors.black, Colors.grey, Colors.orange ], 100)
+		new OnAddExplosion(1, [ Colors.white, Colors.light, Colors.orange, Colors.teal ], 80),
+		new OnRemoveExplosion(0.5, [ Colors.teal, Colors.black, Colors.grey, Colors.orange, Colors.yellow ], 200)
 	)
 }
 

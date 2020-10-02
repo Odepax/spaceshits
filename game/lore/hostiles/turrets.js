@@ -39,8 +39,8 @@ export function turret(position) {
 		}),
 
 		new Render(Sprites.turretBase, Sprites.turret),
-		new OnAddExplosion(1, [ Colors.white, Colors.light, Colors.silver, Colors.yellow ], 50),
-		new OnRemoveExplosion(0.5, [ Colors.yellow, Colors.black, Colors.grey, Colors.silver ], 100)
+		new OnAddExplosion(1, [ Colors.white, Colors.light, Colors.silver, Colors.yellow ], 75),
+		new OnRemoveExplosion(0.5, [ Colors.yellow, Colors.black, Colors.grey, Colors.silver ], 150)
 	)
 }
 
@@ -69,8 +69,8 @@ export function smartTurret(position) {
 		}),
 
 		new Render(Sprites.turretBase, Sprites.smartTurret),
-		new OnAddExplosion(1, [ Colors.white, Colors.light, Colors.blue, Colors.purple ], 50),
-		new OnRemoveExplosion(0.5, [ Colors.purple, Colors.black, Colors.grey, Colors.orange ], 100)
+		new OnAddExplosion(1, [ Colors.white, Colors.light, Colors.blue, Colors.purple ], 75),
+		new OnRemoveExplosion(0.5, [ Colors.purple, Colors.black, Colors.grey, Colors.orange ], 150)
 	)
 }
 
@@ -86,7 +86,7 @@ function turretBullet(position) {
 		new RammingDamage(9, PlayerShip, RammingDamage.removeOnDamage),
 
 		new Render(Sprites.turretBullet),
-		new OnRemoveExplosion(0.5, [ Colors.light, Colors.silver, Colors.white ], 10)
+		new OnRemoveExplosion(0.5, [ Colors.light, Colors.silver, Colors.white ], 18)
 	)
 }
 
@@ -104,7 +104,7 @@ function smartTurretBullet(position) {
 		new RammingDamage(9, PlayerShip, RammingDamage.removeOnDamage),
 
 		new Render(Sprites.smartTurretBullet),
-		new OnRemoveExplosion(0.5, [ Colors.light, Colors.purple, Colors.blue ], 10)
+		new OnRemoveExplosion(0.5, [ Colors.light, Colors.purple, Colors.blue ], 18)
 	)
 }
 

@@ -27,8 +27,8 @@ export function crasher(position) {
 		new HpGauge(101),
 
 		new Render(Sprites.crasher),
-		new OnAddExplosion(1, [ Colors.white, Colors.light, Colors.silver, Colors.orange ], 50),
-		new OnRemoveExplosion(0.5, [ Colors.orange, Colors.black, Colors.grey, Colors.silver ], 100)
+		new OnAddExplosion(1, [ Colors.white, Colors.light, Colors.silver, Colors.orange ], 80),
+		new OnRemoveExplosion(0.5, [ Colors.orange, Colors.black, Colors.grey, Colors.silver ], 150)
 	)
 }
 
@@ -49,8 +49,8 @@ export function smartCrasher(position) {
 		new HpGauge(101),
 
 		new Render(Sprites.smartCrasher),
-		new OnAddExplosion(1, [ Colors.white, Colors.light, Colors.purple, Colors.pink ], 50),
-		new OnRemoveExplosion(0.5, [ Colors.pink, Colors.black, Colors.grey, Colors.purple ], 100)
+		new OnAddExplosion(1, [ Colors.white, Colors.light, Colors.purple, Colors.pink ], 80),
+		new OnRemoveExplosion(0.5, [ Colors.pink, Colors.black, Colors.grey, Colors.purple ], 150)
 	)
 }
 

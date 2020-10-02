@@ -34,7 +34,7 @@ function missileBullet(position) {
 		new RammingDamage(DAMAGE_PER_SHOT, HostileShip, RammingDamage.removeOnDamage),
 
 		new Render(Sprites.playerMissileBullet),
-		new OnRemoveExplosion(0.5, [ Colors.black, Colors.grey, Colors.purple, Colors.pink ], 10)
+		new OnRemoveExplosion(0.5, [ Colors.black, Colors.grey, Colors.purple, Colors.pink ], 18)
 	)
 }
 

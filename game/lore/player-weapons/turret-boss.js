@@ -24,7 +24,7 @@ function turretBossBullet(position) {
 		new RammingDamage(9, HostileShip, RammingDamage.removeOnDamage),
 
 		new Render(Sprites.turretBossBullet),
-		new OnRemoveExplosion(0.5, [ Colors.black, Colors.grey, Colors.purple, Colors.blue ], 10)
+		new OnRemoveExplosion(0.5, [ Colors.black, Colors.grey, Colors.purple, Colors.blue ], 18)
 	)
 }
 
