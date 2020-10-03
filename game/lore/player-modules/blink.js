@@ -1,22 +1,21 @@
 import { Link, Universe } from "../../core/engine.js"
-import { PlayerBullet, PlayerEnergy, PlayerShip } from "../../logic/player.js"
-import { RammingDamage } from "../../logic/ramming-damage.js"
+import { PlayerEnergy, PlayerShip } from "../../logic/player.js"
+import { Transform } from "../../math/transform.js"
+import { Motion } from "../../physic/motion.js"
 import { UserInputRegistry } from "../../ux/user-input-capture.js"
-import { PLAYER_BERZERK_DAMAGE_MULT, PLAYER_BERZERK_DURATION, PLAYER_BERZERK_ENERGY } from "../game-balance.js"
+import { PLAYER_BLINK_ENERGY } from "../game-balance.js"
 import { GameKeeper } from "../game-keeper.js"
 
-export class BerzerkPlayerAuxRoutine {
-	/** @param {UserInputRegistry} userInput @param {GameKeeper} game @param {Universe} universe @param {(link: Link) => void} onActive */
-	constructor(userInput, game, universe, onActive = null) {
+export class BlinkPlayerAuxRoutine {
+	/** @param {UserInputRegistry} userInput @param {GameKeeper} game @param {Universe} universe @param {(link: Link, nextPosition: Transform) => void} onBlink */
+	constructor(userInput, game, universe, onBlink = null) {
 		this.userInput = userInput
 		this.game = game
 		this.universe = universe
-		this.onActive = onActive
+		this.onBlink = onBlink
 
 		/** @private @type {Link} */
 		this.player = null
-
-		this.isActive = false
 
 		/** @type {number} */
 		this.activationEndTime = null
@@ -26,12 +25,7 @@ export class BerzerkPlayerAuxRoutine {
 	onAdd(link) {
 		if (link.has(PlayerShip)) {
 			this.player = link
-			this.player.get(PlayerEnergy)[0].auxConsumption = PLAYER_BERZERK_ENERGY
-		}
-
-		else if (this.isActive && link.has(PlayerBullet)) {
-			link.get(RammingDamage)[0].damage *= PLAYER_BERZERK_DAMAGE_MULT
-			this.onActive?.(link)
+			this.player.get(PlayerEnergy)[0].auxConsumption = PLAYER_BLINK_ENERGY
 		}
 	}
 
@@ -43,7 +37,7 @@ export class BerzerkPlayerAuxRoutine {
 
 	onStep() {
 		if (this.player) {
-			const [ playerEnergy ] = this.player.get(PlayerEnergy)
+			const [ playerEnergy, playerMotion ] = this.player.get(PlayerEnergy, Motion)
 
 			if (
 				   playerEnergy.auxConsumption <= playerEnergy.aux // Has energy?
@@ -51,12 +45,11 @@ export class BerzerkPlayerAuxRoutine {
 			) {
 				playerEnergy.aux -= playerEnergy.auxConsumption
 
-				this.isActive = true
-				this.activationEndTime = this.universe.clock.time + PLAYER_BERZERK_DURATION
-			}
+				this.onBlink?.(this.player, this.userInput.mousePosition)
 
-			if (this.activationEndTime < this.universe.clock.time)
-				this.isActive = false
+				playerMotion.position.x = this.userInput.mousePosition.x
+				playerMotion.position.y = this.userInput.mousePosition.y
+			}
 
 			this.regenerate(playerEnergy)
 		}

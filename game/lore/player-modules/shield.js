@@ -47,7 +47,7 @@ export class ShieldPlayerAuxRoutine {
 
 	/** @param {Link} link */
 	onAdd(link) {
-		if (!this.player && link.has(PlayerShip)) {
+		if (link.has(PlayerShip)) {
 			this.player = link
 			this.player.get(PlayerEnergy)[0].auxConsumption = PLAYER_SHIELD_ENERGY
 		}

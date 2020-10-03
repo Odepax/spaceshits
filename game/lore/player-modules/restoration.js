@@ -22,7 +22,7 @@ export class RestorationPlayerAuxRoutine {
 
 	/** @param {Link} link */
 	onAdd(link) {
-		if (!this.player && link.has(PlayerShip)) {
+		if (link.has(PlayerShip)) {
 			this.player = link
 			this.player.get(PlayerEnergy)[0].auxConsumption = PLAYER_RESTORATION_ENERGY
 		}
@@ -49,7 +49,7 @@ export class RestorationPlayerAuxRoutine {
 			}
 
 			if (this.universe.clock.time < this.activationEndTime)
-				this.onHeal(this.player)
+				this.onHeal?.(this.player)
 
 			else
 				playerHp.regen = 0

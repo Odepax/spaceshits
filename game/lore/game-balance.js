@@ -203,6 +203,8 @@ export const PLAYER_SHIELD_RADIUS = 101
 export const PLAYER_SHIELD_HP = 59
 export const PLAYER_SHIELD_HP_REGEN = 3
 
+export const PLAYER_BLINK_ENERGY = 31
+
 export const PLAYER_BERZERK_ENERGY = 17
 export const PLAYER_BERZERK_DURATION = 5
 export const PLAYER_BERZERK_DAMAGE_MULT = 2

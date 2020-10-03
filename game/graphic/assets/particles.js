@@ -1,10 +1,11 @@
 import { Link, Universe } from "../../core/engine.js"
-import { Colors } from "./colors.js"
-import { VfxRegistry } from "../vfx.js"
+import { Random } from "../../math/random.js"
 import { Ratio } from "../../math/ratio.js"
+import { Transform } from "../../math/transform.js"
 import { Collider } from "../../physic/collision.js"
 import { Motion } from "../../physic/motion.js"
-import { Random } from "../../math/random.js"
+import { VfxRegistry } from "../vfx.js"
+import { Colors } from "./colors.js"
 
 export const Particles = {
 	/** @param {VfxRegistry} vfx */
@@ -47,6 +48,17 @@ export const Particles = {
 			const { x, y } = link.get(Motion)[0].position
 
 			vfx.spawnParticleBurst(3, x, y, 70, 170, 0.5, [ Colors.orange, Colors.red ], 3, 7)
+		}
+	},
+
+	/** @param {VfxRegistry} vfx */
+	spawnBlink(vfx) {
+		return /** @param {Link} link @param {Transform} nextPosition */ (link, nextPosition) => {
+			const { x: xIn, y: yIn } = link.get(Motion)[0].position
+			const { x: xOut, y: yOut } = nextPosition
+
+			vfx.spawnParticleBurst(30, xIn, yIn, 100, 200, 0.8, [ Colors.orange, Colors.grey, Colors.black ], 3, 7)
+			vfx.spawnExplosion(xOut, yOut, 0.8, [ Colors.blue, Colors.grey, Colors.black ], 50)
 		}
 	}
 }
