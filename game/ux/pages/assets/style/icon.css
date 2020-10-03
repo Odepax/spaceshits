@@ -32,7 +32,8 @@
 
 .icon.sholds::before { content: "$"; }
 
-.icon.gatling::before { content: "G"; }
+.icon.double-gatling::before { content: "g"; }
+.icon.double-missile::before { content: "m"; }
 
 .icon.damage-booster::before { content: "D"; }
 .icon.fire-rate-booster::before { content: "F"; }

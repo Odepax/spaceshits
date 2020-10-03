@@ -17,16 +17,22 @@ export class ShopPage extends Page {
 		this.$.arenaNumber.textContent = this.game.currentArena
 		this.$.balanceDisplay.textContent = this.game.balance
 
-		for (const item of this.game.buildShop())
-			this.addItemButton(item)
+		const { boosters, upgrades, modules } = this.game.buildShop()
+
+		for (let i = 0; i < upgrades.length; ++i) this.addItemButton(upgrades[i], 2 - i, 1)
+		for (let i = 0; i < boosters.length; ++i) this.addItemButton(boosters[i], ~~(i / 2 + 1), i % 2 + 3)
+		for (let i = 0; i < modules.length; ++i) this.addItemButton(modules[i], 2 - i, 6)
 
 		this.syncLegend(null)
 	}
 
-	/** @private @param {import("../../lore/shop-items").ShopItem} item */
-	addItemButton(item) {
+	/** @private @param {import("../../lore/shop-items").ShopItem} item @param {number} row @param {number} col */
+	addItemButton(item, row, col) {
 		const button = document.createElement("button")
 		const iconSpan = document.createElement("span")
+
+		button.style.setProperty('--row', row);
+		button.style.setProperty('--col', col);
 
 		button.className = "large " + item.colorName
 		iconSpan.className = "icon " + item.icon
@@ -34,18 +40,21 @@ export class ShopPage extends Page {
 		button.appendChild(iconSpan)
 
 		button.addEventListener("mouseenter", () => this.syncLegend(item), false)
-		button.addEventListener("click", () => this.buy(item), false)
+		button.addEventListener("click", () => this.buy(item, button), false)
 		button.addEventListener("mouseleave", () => this.syncLegend(null), false)
 
 		this.$.itemButtons.appendChild(button)
 	}
 
-	/** @private @param {import("../../lore/shop-items").ShopItem} item */
-	buy(item) {
+	/** @private @param {import("../../lore/shop-items").ShopItem} item @param {HTMLElement} button */
+	buy(item, button) {
 		if (item.price <= this.game.balance) {
 			item.apply(this.game)
 
 			this.$.balanceDisplay.textContent = this.game.balance -= item.price
+
+			if (item.isUnique)
+				button.parentElement.removeChild(button)
 		}
 	}
 

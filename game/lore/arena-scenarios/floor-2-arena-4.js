@@ -5,6 +5,12 @@ import { smartTurret, SmartTurretAimRoutine, turret, TurretAimRoutine } from "..
 import { Floor2 } from "./floor-2.js"
 
 export class Floor2Arena4 extends Floor2 {
+	registerPlayerWeapon() {
+		super.registerPlayerWeapon()
+
+		this.game.weaponUpgrade = null
+	}
+
 	registerHostiles() {
 		this.universe.register(new TurretAimRoutine())
 		this.universe.register(new SmartTurretAimRoutine(this.universe))

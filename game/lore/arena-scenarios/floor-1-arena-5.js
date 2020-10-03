@@ -7,6 +7,12 @@ import { missileBoss, MissileBossRoutine } from "../hostiles/missile-boss.js"
 import { Floor1 } from "./floor-1.js"
 
 export class Floor1Arena5 extends Floor1 {
+	registerPlayerWeapon() {
+		super.registerPlayerWeapon()
+
+		this.game.weaponUpgrade = null
+	}
+
 	registerHostiles() {
 		this.universe.register(new AutoWeaponModuleRoutine(this.universe))
 		this.universe.register(new MissileBossRoutine(this.universe))

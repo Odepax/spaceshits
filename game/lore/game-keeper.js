@@ -1,7 +1,7 @@
 import { Sprites } from "../graphic/assets/sprites.js"
 import { Random } from "../math/random.js"
 import { ArenaScenarios } from "./arena-scenarios.js"
-import { ShopItems } from "./shop-items.js"
+import { ShopBoosters } from "./shop-items.js"
 
 /** Keeps track of key bindings, game settings and player's items and progresion; builds shop and arenas. */
 export class GameKeeper {
@@ -32,6 +32,10 @@ export class GameKeeper {
 		this.weaponEnergyRegenBoosts = 0
 		this.auxEnergyCapBoosts = 0
 		this.auxEnergyRegenBoosts = 0
+
+		/** @type {import("./shop-items").ShopItem} */
+		this.weaponUpgrade = null
+		this.isWeaponUpgraded = false
 	}
 
 	get currentArena() {
@@ -65,14 +69,19 @@ export class GameKeeper {
 	}
 
 	buildShop() {
-		const availableItems = Array.from(ShopItems)
+		const availableBoosters = Array.from(ShopBoosters)
 
-		return [
-			Random.pop(availableItems),
-			Random.pop(availableItems),
-			Random.pop(availableItems),
-			Random.pop(availableItems)
-		]
+		return {
+			boosters: [
+				Random.pop(availableBoosters),
+				Random.pop(availableBoosters),
+				Random.pop(availableBoosters),
+				Random.pop(availableBoosters)
+			],
+
+			upgrades: this.weaponUpgrade && !this.isWeaponUpgraded ? [ this.weaponUpgrade ] : [],
+			modules: []
+		}
 	}
 
 	/**

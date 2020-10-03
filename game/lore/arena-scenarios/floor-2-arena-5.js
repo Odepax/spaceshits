@@ -17,6 +17,7 @@ export class Floor2Arena5 extends Floor2 {
 
 	registerPlayerWeapon() {
 		this.universe.register(new TurretPlayerWeaponRoutine(this.userInput, this.game, this.universe))
+		this.game.weaponUpgrade = null
 	}
 
 	addPlayer() {
