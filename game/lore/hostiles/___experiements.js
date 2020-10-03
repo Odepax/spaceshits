@@ -1,10 +1,11 @@
-// TODO: balance HPs, damages, and speeds
-
 // TODO: refactor player modules => wait for more factors
+// TODO: Buy modules
+// TODO: Upgrade modules
+// TODO: Better game balance (HP, damages, speeds, ...)
+// TODO: More levels
+// TODO: Add audio
 
-// TODO: more scenarii
-
-// TODO: collision radii
+// Collision radii
 //   Remaining:
 //     - crasher boss: 32
 //     - crasher boss bullet: 7
@@ -12,10 +13,12 @@
 //     - charger boss bullet: 13, 9, 8, 7 from Lelf -> Right in sprite.svg
 //     - charger boss shard: 15
 
-// TODO: bullet spawn placement
+// Bullet spawn placement
 //  Remaining:
 //    - Crasher boss bullets: offset x by 39.9, rotate every PI / 4 (8)
 //    - Charger boss bullets: WIP
+
+// Following is old stuff
 
 class Floor0Arena0 extends ArenaScenario {
 	registerPlayerMovement() {

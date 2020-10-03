@@ -4,6 +4,7 @@ import { VfxRegistry } from "../vfx.js"
 import { Ratio } from "../../math/ratio.js"
 import { Collider } from "../../physic/collision.js"
 import { Motion } from "../../physic/motion.js"
+import { Random } from "../../math/random.js"
 
 export const Particles = {
 	/** @param {VfxRegistry} vfx */
@@ -35,7 +36,7 @@ export const Particles = {
 
 				const { x, y } = link.get(Motion)[0].position
 
-				vfx.spawnParticleBurst(2, x, y, 80, 180, 0.75, [ Colors.green, Colors.teal ], 3, 7)
+				vfx.spawnParticleBurst(5, x, y, 80, 180, 0.75, [ Colors.green, Colors.teal ], 3, 7)
 			}
 		}
 	},
@@ -45,7 +46,7 @@ export const Particles = {
 		return /** @param {Link} link */ link => {
 			const { x, y } = link.get(Motion)[0].position
 
-			vfx.spawnParticleBurst(2, x, y, 70, 170, 0.5, [ Colors.orange, Colors.red ], 3, 7)
+			vfx.spawnParticleBurst(3, x, y, 70, 170, 0.5, [ Colors.orange, Colors.red ], 3, 7)
 		}
 	}
 }
