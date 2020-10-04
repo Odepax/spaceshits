@@ -10,7 +10,7 @@ import { RammingDamage } from "../logic/ramming-damage.js"
 import { Transform } from "../math/transform.js"
 import { Collider } from "../physic/collision.js"
 import { Motion } from "../physic/motion.js"
-import { PLAYER_BOOST_AUX, PLAYER_BOOST_AUX_REGEN, PLAYER_BOOST_DAMAGE_PERCENT, PLAYER_BOOST_HP, PLAYER_BOOST_WEAPON, PLAYER_BOOST_WEAPON_REGEN, PLAYER_BOOST_WEAPON_RELOAD_PERCENT, PLAYER_COLLISION_DAMAGE, PLAYER_ENERGY_AUX, PLAYER_ENERGY_AUX_REGEN, PLAYER_ENERGY_WEAPON, PLAYER_ENERGY_WEAPON_REGEN, PLAYER_HP, PLAYER_TURRET_COLLISION_DAMAGE, PLAYER_TURRET_ENERGY_AUX, PLAYER_TURRET_ENERGY_AUX_REGEN, PLAYER_TURRET_ENERGY_WEAPON, PLAYER_TURRET_ENERGY_WEAPON_REGEN, PLAYER_TURRET_HP } from "./game-balance.js"
+import { PLAYER_BOOST_AUX, PLAYER_BOOST_AUX_REGEN, PLAYER_BOOST_COLLISION_DAMAGE_PERCENT, PLAYER_BOOST_DAMAGE_PERCENT, PLAYER_BOOST_HP, PLAYER_BOOST_WEAPON, PLAYER_BOOST_WEAPON_REGEN, PLAYER_BOOST_WEAPON_RELOAD_PERCENT, PLAYER_COLLISION_DAMAGE, PLAYER_ENERGY_AUX, PLAYER_ENERGY_AUX_REGEN, PLAYER_ENERGY_WEAPON, PLAYER_ENERGY_WEAPON_REGEN, PLAYER_HP, PLAYER_TURRET_COLLISION_DAMAGE, PLAYER_TURRET_ENERGY_AUX, PLAYER_TURRET_ENERGY_AUX_REGEN, PLAYER_TURRET_ENERGY_WEAPON, PLAYER_TURRET_ENERGY_WEAPON_REGEN, PLAYER_TURRET_HP } from "./game-balance.js"
 import { GameKeeper } from "./game-keeper.js"
 
 /** @param {Transform} position @param {Transform} velocity @param {Sprite} sprite */
@@ -63,10 +63,10 @@ export class PlayerBoostRoutine {
 	/** @param {Link} link */
 	onAdd(link) {
 		if (link.has(PlayerBullet))
-			link.get(RammingDamage)[0].damage *= 1 + PLAYER_BOOST_DAMAGE_PERCENT * this.game.damageBoosts
+			link.get(RammingDamage)[0].damage *= 1 + PLAYER_BOOST_DAMAGE_PERCENT * this.game.weaponDamageBoosts
 
 		else if (link.has(PlayerShip)) {
-			const [ hp, energy ] = link.get(HpGauge, PlayerEnergy)
+			const [ hp, energy, rammingDamage ] = link.get(HpGauge, PlayerEnergy, RammingDamage)
 
 			hp.value = hp.max += PLAYER_BOOST_HP * this.game.hullBoosts
 			energy.weapon = energy.weaponMax += PLAYER_BOOST_WEAPON * this.game.weaponEnergyCapBoosts
@@ -76,6 +76,8 @@ export class PlayerBoostRoutine {
 			energy.auxRegen += PLAYER_BOOST_AUX_REGEN * this.game.auxEnergyRegenBoosts
 
 			energy.weaponReloadTime *= 1 - PLAYER_BOOST_WEAPON_RELOAD_PERCENT * this.game.fireRateBoosts
+
+			rammingDamage.damage *= 1 + PLAYER_BOOST_COLLISION_DAMAGE_PERCENT * this.game.rammingDamageBoosts
 		}
 	}
 

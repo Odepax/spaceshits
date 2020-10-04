@@ -1,7 +1,9 @@
 import { Sprites } from "../graphic/assets/sprites.js"
 import { Random } from "../math/random.js"
 import { ArenaScenarios } from "./arena-scenarios.js"
-import { ShopBoosters } from "./shop-items.js"
+import { ArenaScenario } from "./arena-scenarios/arena-scenario.js"
+import { PLAYER_BALANCE_START } from "./game-balance.js"
+import { ShopBoosters, ShopModules } from "./shop-items.js"
 
 /** Keeps track of key bindings, game settings and player's items and progresion; builds shop and arenas. */
 export class GameKeeper {
@@ -23,10 +25,11 @@ export class GameKeeper {
 		/** @private */
 		this.arenaIndex = 0
 
-		this.balance = 101
+		this.balance = PLAYER_BALANCE_START
 
-		this.damageBoosts = 0
 		this.hullBoosts = 0
+		this.rammingDamageBoosts = 0
+		this.weaponDamageBoosts = 0
 		this.fireRateBoosts = 0
 		this.weaponEnergyCapBoosts = 0
 		this.weaponEnergyRegenBoosts = 0
@@ -36,6 +39,15 @@ export class GameKeeper {
 		/** @type {import("./shop-items").ShopItem} */
 		this.weaponUpgrade = null
 		this.isWeaponUpgraded = false
+
+		/** @type {import("./shop-items").ShopItem} */
+		this.currentModule = null
+
+		/** @type {import("./shop-items").ShopItem} */
+		this.moduleUpgrade = null
+
+		/** @type {(arena: ArenaScenario) => void} */
+		this.registerModule = null
 	}
 
 	get currentArena() {
@@ -70,18 +82,30 @@ export class GameKeeper {
 
 	buildShop() {
 		const availableBoosters = Array.from(ShopBoosters)
+		const availableModules = Array.from(ShopModules).filter(it => it != this.currentModule)
 
-		return {
-			boosters: [
-				Random.pop(availableBoosters),
-				Random.pop(availableBoosters),
-				Random.pop(availableBoosters),
-				Random.pop(availableBoosters)
-			],
+		const boosters = [
+			Random.pop(availableBoosters),
+			Random.pop(availableBoosters),
+			Random.pop(availableBoosters),
+			Random.pop(availableBoosters)
+		]
 
-			upgrades: this.weaponUpgrade && !this.isWeaponUpgraded ? [ this.weaponUpgrade ] : [],
-			modules: []
-		}
+		const modules = [
+			Random.pop(availableModules),
+			Random.pop(availableModules)
+		]
+
+		/** @type {import("./shop-items").ShopItem[]} */
+		const upgrades = []
+
+		if (this.weaponUpgrade && !this.isWeaponUpgraded)
+			upgrades.push(this.weaponUpgrade)
+
+		if (this.moduleUpgrade)
+			upgrades.push(this.moduleUpgrade)
+
+		return { boosters, upgrades, modules }
 	}
 
 	/**

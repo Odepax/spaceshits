@@ -78,8 +78,12 @@ export class ArenaScenario {
 		this.universe.register(new PlayerControlRoutine(this.userInput, this.game, this.universe))
 	}
 
+	/** @protected */
+	registerPlayerModule() {
+		this.game.registerModule?.(this)
+	}
+
 	/** @protected */ registerPlayerWeapon() {}
-	/** @protected */ registerPlayerModule() {}
 	/** @protected */ registerHostiles() {}
 	/** @protected */ registerScenario() {}
 	/** @protected */ registerFields() {}

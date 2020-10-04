@@ -1,4 +1,4 @@
-import { Link } from "../../core/engine.js"
+import { Link, Universe } from "../../core/engine.js"
 import { Colors } from "../../graphic/assets/colors.js"
 import { AuraFx } from "../../graphic/vfx.js"
 import { HostileShip } from "../../logic/hostile.js"

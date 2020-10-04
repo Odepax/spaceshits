@@ -28,12 +28,12 @@
 .icon.plus::before { content: "+"; }
 .icon.cross::before { content: "x"; }
 .icon.gear::before { content: "*"; }
-.icon.pause::before { content: "P"; }
+.icon.pause::before { content: "p"; }
 
 .icon.sholds::before { content: "$"; }
 
-.icon.double-gatling::before { content: "g"; }
-.icon.double-missile::before { content: "m"; }
+.icon.double-gatling::before { content: "G"; }
+.icon.double-missile::before { content: "M"; }
 
 .icon.damage-booster::before { content: "D"; }
 .icon.fire-rate-booster::before { content: "F"; }
@@ -42,3 +42,11 @@
 .icon.weapon-regen-booster::before { content: "X"; }
 .icon.aux-cap-booster::before { content: "E"; }
 .icon.aux-regen-booster::before { content: "U"; }
+.icon.ramming-damage-booster::before { content: "R"; }
+
+.icon.restoration-module::before { content: "T"; }
+.icon.shield-module::before { content: "S"; }
+.icon.blink-module::before { content: "B"; }
+.icon.berzerk-module::before { content: "K"; }
+.icon.shockwave-module::before { content: "O"; }
+.icon.blastwave-module::before { content: "A"; }
