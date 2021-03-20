@@ -23,6 +23,15 @@ export class RammingDamageRoutine {
 	constructor(collisions, universe, onBounce = null) {
 		this.collisions = collisions
 		this.universe = universe
+
+		// Routines don't have to use callbacks:
+		//
+		// - They can universe.add(new Link([ new TypedEvent() ])),
+		//   and use the universe as a message bus.
+		//
+		// - They can universe.add(new Link([ new TypedEventBus() ])),
+		//   where the event bus is a wrapper container around a set of callbacks,
+		//   and has a method to emit new events.
 		this.onBounce = onBounce
 
 		/** @private @type {Set<Link>} */
