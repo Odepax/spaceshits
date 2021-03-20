@@ -9,7 +9,7 @@ export const Quotes = {
 		"Alone in the darkness, it shines...",
 		"Snakes appear strait under a bent ruler...",
 		"When the conquerors come in, the mountain perspires by the tiger's ass, and the dragon fucks the weasel.",
-		"The fact we have the luxury to to complain about inanities is an indicator that we feel safe enough otherwise to do so.",
+		"The fact they have the luxury to complain about inanities is an indicator that they feel safe enough otherwise to do so.",
 		"Could they have alleviated the part of the report about undergone physical sufferings?",
 		"It likes to see their hope vanish...",
 		"Life is not beautiful by nature, it becomes what they make of it.",
